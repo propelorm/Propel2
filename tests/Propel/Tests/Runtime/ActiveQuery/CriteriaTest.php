@@ -1362,15 +1362,6 @@ class CriteriaTest extends BookstoreTestBase
                 'offset' => '123.9',
                 'expected' => 123,
             ],
-
-            'Non-numeric string' => [
-                'offset' => 'foo',
-                'expected' => 0,
-            ],
-            'Injected SQL' => [
-                'offset' => '3;DROP TABLE abc',
-                'expected' => 3,
-            ],
         ];
     }
 
