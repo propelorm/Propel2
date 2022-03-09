@@ -371,7 +371,7 @@ class Criteria
     /**
      * Storage for Criterions expected to be combined
      *
-     * @var array<\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
+     * @var array<string, \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
      */
     protected $namedCriterions = [];
 
@@ -1007,13 +1007,13 @@ class Criteria
      * so the Column name must be something like 'TABLE.id'.
      *
      * @param string $name name to combine the criterion later
-     * @param string $p1 The column to run the comparison on, or AbstractCriterion object.
-     * @param mixed $value
+     * @param string|\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $p1 The column to run the comparison on, or AbstractCriterion object.
+     * @param mixed|null $value
      * @param string|null $comparison A String.
      *
      * @return $this A modified Criteria object.
      */
-    public function addCond(string $name, string $p1, $value = null, ?string $comparison = null)
+    public function addCond(string $name, $p1, $value = null, ?string $comparison = null)
     {
         $this->namedCriterions[$name] = $this->getCriterionForCondition($p1, $value, $comparison);
 
@@ -1121,7 +1121,7 @@ class Criteria
     /**
      * Add a join with multiple conditions
      *
-     * @deprecated use Join::setJoinCondition($criterion) instead
+     * @deprecated Use {@link \Propel\Runtime\ActiveQuery\Join::setJoinCondition()} instead
      *
      * @see http://propel.phpdb.org/trac/ticket/167, http://propel.phpdb.org/trac/ticket/606
      *
@@ -2027,9 +2027,9 @@ class Criteria
      *  - Otherwise, create a classic Criterion based on a column name and a comparison.
      *    <code>$c->getCriterionForCondition(BookTableMap::TITLE, 'War%', Criteria::LIKE);</code>
      *
-     * @param mixed $p1 A Criterion, or a SQL clause with a question mark placeholder, or a column name
-     * @param mixed $value The value to bind in the condition
-     * @param mixed $comparison A Criteria class constant, or a PDO::PARAM_ class constant
+     * @param string|\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $p1 A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param mixed|null $value The value to bind in the condition
+     * @param string|int $comparison A Criteria class constant, or a PDO::PARAM_ class constant
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
