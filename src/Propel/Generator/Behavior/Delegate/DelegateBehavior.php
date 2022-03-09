@@ -17,6 +17,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\NameGeneratorInterface;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Util\PhpParser;
+use RuntimeException;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -185,6 +186,8 @@ if (method_exists({$ARFQCN}::class, \$name)) {
     /**
      * @param string $script
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     public function objectFilter(string &$script): void
@@ -192,7 +195,11 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         $p = new PhpParser($script, true);
         $text = $p->findMethod('toArray');
         $matches = [];
-        preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
+        preg_match('/(\$result = (?:\[|array\()([^;]+)(?:\[|\));)/U', $text, $matches);
+        if (!$matches) {
+            throw new RuntimeException('Cannot find toArray() method in code snippet: ' . $script);
+        }
+
         $values = rtrim($matches[2]) . "\n";
         $newResult = '';
         $indent = '        ';

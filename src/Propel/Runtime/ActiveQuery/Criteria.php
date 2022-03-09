@@ -1522,7 +1522,7 @@ class Criteria
      */
     public function setLimit(int $limit)
     {
-        $this->limit = (int)$limit;
+        $this->limit = $limit;
 
         return $this;
     }
