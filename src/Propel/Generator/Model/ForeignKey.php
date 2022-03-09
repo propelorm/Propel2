@@ -301,11 +301,11 @@ class ForeignKey extends MappingModel
     /**
      * Sets the onDelete behavior.
      *
-     * @param string $behavior
+     * @param string|null $behavior
      *
      * @return void
      */
-    public function setOnDelete(string $behavior): void
+    public function setOnDelete(?string $behavior): void
     {
         $this->onDelete = $this->normalizeFKey($behavior);
     }
