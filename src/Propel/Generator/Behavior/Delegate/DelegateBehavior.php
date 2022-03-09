@@ -195,7 +195,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         $p = new PhpParser($script, true);
         $text = $p->findMethod('toArray');
         $matches = [];
-        preg_match('/(\$result = (?:\[|array\()([^;]+)(?:\[|\));)/U', $text, $matches);
+        preg_match('/(\$result = \[([^;]+)\];)/U', $text, $matches);
         if (!$matches) {
             throw new RuntimeException('Cannot find toArray() method in code snippet: ' . $script);
         }
