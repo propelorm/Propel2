@@ -23,11 +23,11 @@ interface StatementInterface
     /**
      * Executes a prepared statement.
      *
-     * @param array|null $inputParameters
+     * @param array $inputParameters
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute(?array $inputParameters = null): bool;
+    public function execute(array $inputParameters = []): bool;
 
     /**
      * Fetches the next row from a result set.
