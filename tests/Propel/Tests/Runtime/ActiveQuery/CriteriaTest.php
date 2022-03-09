@@ -1289,15 +1289,6 @@ class CriteriaTest extends BookstoreTestBase
                 'limit' => '123.9',
                 'expected' => 123,
             ],
-
-            'Non-numeric string' => [
-                'limit' => 'foo',
-                'expected' => 0,
-            ],
-            'Injected SQL' => [
-                'limit' => '3;DROP TABLE abc',
-                'expected' => 3,
-            ],
         ];
     }
 
