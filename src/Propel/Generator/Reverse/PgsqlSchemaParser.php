@@ -332,7 +332,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                 $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $defaultType));
             }
 
-            $column->setAutoIncrement($autoincrement);
+            $column->setAutoIncrement((bool)$autoincrement);
             $column->setNotNull(!$isNullable);
 
             $table->addColumn($column);
