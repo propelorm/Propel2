@@ -1007,7 +1007,7 @@ class Criteria
      * so the Column name must be something like 'TABLE.id'.
      *
      * @param string $name name to combine the criterion later
-     * @param string|\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $p1 The column to run the comparison on, or AbstractCriterion object.
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1 The column to run the comparison on, or AbstractCriterion object.
      * @param mixed|null $value
      * @param string|null $comparison A String.
      *
@@ -2027,9 +2027,9 @@ class Criteria
      *  - Otherwise, create a classic Criterion based on a column name and a comparison.
      *    <code>$c->getCriterionForCondition(BookTableMap::TITLE, 'War%', Criteria::LIKE);</code>
      *
-     * @param string|\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $p1 A Criterion, or a SQL clause with a question mark placeholder, or a column name
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1 A Criterion, or a SQL clause with a question mark placeholder, or a column name
      * @param mixed|null $value The value to bind in the condition
-     * @param string|int $comparison A Criteria class constant, or a PDO::PARAM_ class constant
+     * @param string|int|null $comparison A Criteria class constant, or a PDO::PARAM_ class constant
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
