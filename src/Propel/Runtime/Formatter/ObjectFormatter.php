@@ -60,7 +60,7 @@ class ObjectFormatter extends AbstractFormatter
         } else {
             // only many-to-one relationships
             foreach ($dataFetcher as $row) {
-                $collection[] = $this->getAllObjectsFromRow($row);
+                $collection[] = clone $this->getAllObjectsFromRow($row);
             }
         }
         $dataFetcher->close();
