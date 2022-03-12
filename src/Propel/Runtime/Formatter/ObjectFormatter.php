@@ -41,6 +41,7 @@ class ObjectFormatter extends AbstractFormatter
             $dataFetcher = $this->getDataFetcher();
         }
 
+        $collectionInstanceIds = array();
         $collection = $this->getCollection();
 
         if ($this->isWithOneToMany()) {
@@ -54,13 +55,22 @@ class ObjectFormatter extends AbstractFormatter
 
                 if (!isset($this->objects[$serializedPk])) {
                     $this->objects[$serializedPk] = $object;
+                    $collectionInstanceIds[] = spl_object_id($object);
                     $collection[] = $object;
                 }
             }
         } else {
             // only many-to-one relationships
             foreach ($dataFetcher as $row) {
-                $collection[] = clone $this->getAllObjectsFromRow($row);
+                $object = $this->getAllObjectsFromRow($row);
+                $objectId = spl_object_id($object);
+                if(in_array($objectId, $collectionInstanceIds))
+                {
+                    throw new Exception('Duplicate ObjectIds were found in the data collection.');                    
+                }
+                
+                $collectionInstanceIds[] = spl_object_id($object);
+                $collection[] = $object;
             }
         }
         $dataFetcher->close();
