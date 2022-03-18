@@ -248,7 +248,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * This declares the class use and returns the correct name to use (short classname, Alias, or FQCN)
      *
-     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     * @param self $builder
      * @param bool $fqcn true to return the $fqcn classname
      *
      * @return string ClassName, Alias or FQCN

@@ -2314,7 +2314,7 @@ class Criteria
      *
      * @return \Propel\Runtime\Map\ColumnMap|null
      */
-    public function getPrimaryKey(self $criteria = null): ?ColumnMap
+    public function getPrimaryKey(?self $criteria = null): ?ColumnMap
     {
         if (!$criteria) {
             $criteria = $this;
