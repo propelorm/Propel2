@@ -40,13 +40,13 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param string $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue(string $parameter, $value, int $dataType = PDO::PARAM_STR): bool
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool
     {
         $this->connection->getProfiler()->start();
 

@@ -69,13 +69,13 @@ interface StatementInterface
     /**
      * Binds a value to a parameter
      *
-     * @param string $parameter Parameter identifier.
+     * @param mixed $parameter Parameter identifier.
      * @param mixed $value The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants.
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue(string $parameter, $value, int $dataType = PDO::PARAM_STR): bool;
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool;
 
     /**
      * Returns the number of rows affected by the last SQL statement.
