@@ -21,7 +21,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param string $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $variable The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      * @param int|null $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
@@ -29,7 +29,7 @@ class ProfilerStatementWrapper extends StatementWrapper
      *
      * @return bool
      */
-    public function bindParam(string $parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
     {
         $this->connection->getProfiler()->start();
 
@@ -40,13 +40,13 @@ class ProfilerStatementWrapper extends StatementWrapper
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param string $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue(string $parameter, $value, int $dataType = PDO::PARAM_STR): bool
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool
     {
         $this->connection->getProfiler()->start();
 
