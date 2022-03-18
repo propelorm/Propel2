@@ -931,17 +931,18 @@ class ModelCriteria extends BaseModelCriteria
      * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
      * @param string $type Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
      *
-     * @return self
+     * @return static
      */
     public function useExistsQuery(
         string $relationName,
         ?string $modelAlias = null,
         ?string $queryClass = null,
         string $type = ExistsCriterion::TYPE_EXISTS
-    ): self {
+    ) {
         $relationMap = $this->getTableMap()->getRelation($relationName);
         $className = $relationMap->getRightTable()->getClassName();
 
+        /** @var static $queryInExists */
         $queryInExists = ($queryClass === null) ? PropelQuery::from($className) : new $queryClass();
         $queryInExists->isExistsQuery = true;
         $queryInExists->primaryCriteria = $this;
@@ -964,9 +965,9 @@ class ModelCriteria extends BaseModelCriteria
      * @param string|null $modelAlias sets an alias for the nested query
      * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
      *
-     * @return self
+     * @return static
      */
-    public function useNotExistsQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null): self
+    public function useNotExistsQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null)
     {
         return $this->useExistsQuery($relationName, $modelAlias, $queryClass, ExistsCriterion::TYPE_NOT_EXISTS);
     }

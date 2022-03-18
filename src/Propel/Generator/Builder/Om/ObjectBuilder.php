@@ -4561,7 +4561,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $this->getClassNameFromTable($refFK->getTable(), true);
+            $className = $this->getClassNameFromTable($refFK->getTable());
         }
 
         $collName = $this->getRefFKCollVarName($refFK);
@@ -4818,7 +4818,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $this->getClassNameFromTable($refFK->getTable(), true);
+            $className = $this->getClassNameFromTable($refFK->getTable());
         }
 
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
@@ -4850,7 +4850,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $className = $this->getClassNameFromTable($refFK->getTable());
 
         if ($tblFK->getChildrenColumn()) {
-            $className = $this->getClassNameFromTable($refFK->getTable(), true);
+            $className = $this->getClassNameFromTable($refFK->getTable());
         }
 
         $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);

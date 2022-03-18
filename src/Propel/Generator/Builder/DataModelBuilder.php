@@ -262,11 +262,11 @@ abstract class DataModelBuilder
      * @param \Propel\Generator\Model\Table $table
      * @param string $classname The class of builder
      *
-     * @return self
+     * @return static
      */
-    public function getNewBuilder(Table $table, string $classname): self
+    public function getNewBuilder(Table $table, string $classname)
     {
-        /** @var \Propel\Generator\Builder\DataModelBuilder $builder */
+        /** @var static $builder */
         $builder = new $classname($table);
         $builder->setGeneratorConfig($this);
 

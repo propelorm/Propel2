@@ -9,7 +9,6 @@
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Builder\DataModelBuilder;
-use Propel\Generator\Builder\Om\AbstractOMBuilder as OmAbstractOMBuilder;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
@@ -254,7 +253,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string ClassName, Alias or FQCN
      */
-    public function getClassNameFromBuilder(OmAbstractOMBuilder $builder, bool $fqcn = false): string
+    public function getClassNameFromBuilder(self $builder, bool $fqcn = false): string
     {
         if ($fqcn) {
             return $builder->getFullyQualifiedClassName();
@@ -277,11 +276,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This declares the class use and returns the correct name to use
      *
      * @param \Propel\Generator\Model\Table $table
-     * @param bool $fqcn
      *
      * @return string
      */
-    public function getClassNameFromTable(Table $table, bool $fqcn = false): string
+    public function getClassNameFromTable(Table $table): string
     {
         $namespace = $table->getNamespace();
         $class = $table->getPhpName();
