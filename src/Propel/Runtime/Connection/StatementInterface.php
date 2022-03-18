@@ -43,7 +43,7 @@ interface StatementInterface
     /**
      * Binds a parameter to the specified variable name.
      *
-     * @param string $parameter Parameter identifier.
+     * @param mixed $parameter Parameter identifier.
      * @param mixed $variable Name of the PHP variable to bind to the SQL statement parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants.
      * @param int|null $length Length of the data type.
@@ -51,7 +51,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam(string $parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool;
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool;
 
     /**
      * Bind a column to a PHP variable.
