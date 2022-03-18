@@ -107,7 +107,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param string $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $variable The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      * @param int|null $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
@@ -115,7 +115,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function bindParam(string $parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
     {
         $return = $this->statement->bindParam($parameter, $variable, $dataType, (int)$length, $driverOptions);
         if ($this->connection->useDebug) {

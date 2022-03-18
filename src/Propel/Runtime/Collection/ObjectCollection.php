@@ -347,13 +347,13 @@ class ObjectCollection extends Collection
      * @throws \Propel\Runtime\Exception\RuntimeException
      * @throws \Propel\Runtime\Collection\Exception\UnsupportedRelationException
      *
-     * @return self The list of related objects
+     * @return static The list of related objects.
      */
     public function populateRelation(
         string $relation,
         ?Criteria $criteria = null,
         ?ConnectionInterface $con = null
-    ): self {
+    ) {
         if (!Propel::isInstancePoolingEnabled()) {
             throw new RuntimeException(__METHOD__ . ' needs instance pooling to be enabled prior to populating the collection');
         }
@@ -363,12 +363,14 @@ class ObjectCollection extends Collection
             $relationClassName = $relationMap->getRightTable()->getClassName();
             $collectionClassName = $relationMap->getRightTable()->getCollectionClassName();
 
+            /** @var static $coll */
             $coll = new $collectionClassName();
             $coll->setModel($relationClassName);
             $coll->setFormatter($this->getFormatter());
 
             return $coll;
         }
+
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
         $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
@@ -377,6 +379,7 @@ class ObjectCollection extends Collection
         }
         // query the db for the related objects
         $filterMethod = 'filterBy' . $symRelationMap->getName();
+        /** @var static $relatedObjects */
         $relatedObjects = $query
             ->$filterMethod($this)
             ->find($con);
