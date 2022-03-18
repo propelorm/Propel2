@@ -9,7 +9,6 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Exception;
-use Propel\Runtime\ActiveQuery\Criteria as ActiveQueryCriteria;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
@@ -1247,12 +1246,12 @@ class Criteria
     /**
      * Adds a Criteria as subQuery in the From Clause.
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $subQueryCriteria Criteria to build the subquery from
+     * @param self $subQueryCriteria Criteria to build the subquery from
      * @param string|null $alias alias for the subQuery
      *
      * @return $this this modified Criteria object (Fluid API)
      */
-    public function addSelectQuery(Criteria $subQueryCriteria, ?string $alias = null)
+    public function addSelectQuery(self $subQueryCriteria, ?string $alias = null)
     {
         if ($alias === null) {
             $alias = 'alias_' . ($subQueryCriteria->forgeSelectQueryAlias() + count($this->selectQueries));
@@ -1822,11 +1821,11 @@ class Criteria
      * This method checks another Criteria to see if they contain
      * the same attributes and hashtable entries.
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $crit
+     * @param self $crit
      *
      * @return bool
      */
-    public function equals(ActiveQueryCriteria $crit): bool
+    public function equals(self $crit): bool
     {
         if ($this === $crit) {
             return true;
@@ -1894,7 +1893,7 @@ class Criteria
      * Add the content of a Criteria to the current Criteria
      * In case of conflict, the current Criteria keeps its properties
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria The criteria to read properties from
+     * @param self $criteria The criteria to read properties from
      * @param string|null $operator The logical operator used to combine conditions
      *                           Defaults to Criteria::LOGICAL_AND, also accepts Criteria::LOGICAL_OR
      *                           This parameter is deprecated, use _or() instead
@@ -1903,7 +1902,7 @@ class Criteria
      *
      * @return $this The current criteria object
      */
-    public function mergeWith(Criteria $criteria, ?string $operator = null)
+    public function mergeWith(self $criteria, ?string $operator = null)
     {
         // merge limit
         $limit = $criteria->getLimit();
@@ -2311,11 +2310,11 @@ class Criteria
     }
 
     /**
-     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
+     * @param self|null $criteria
      *
      * @return \Propel\Runtime\Map\ColumnMap|null
      */
-    public function getPrimaryKey(?Criteria $criteria = null): ?ColumnMap
+    public function getPrimaryKey(?self $criteria = null): ?ColumnMap
     {
         if (!$criteria) {
             $criteria = $this;
