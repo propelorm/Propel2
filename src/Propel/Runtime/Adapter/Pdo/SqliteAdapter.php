@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -28,7 +29,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset): void
+    public function setCharset(ConnectionInterface $con, string $charset): void
     {
     }
 
@@ -59,7 +60,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string
+    public function concatString(string $s1, string $s2): string
     {
         return "($s1 || $s2)";
     }
@@ -73,7 +74,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string
+    public function subString(string $s, int $pos, int $len): string
     {
         return "substr($s, $pos, $len)";
     }
@@ -85,7 +86,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string
+    public function strLength(string $s): string
     {
         return "length($s)";
     }
@@ -97,7 +98,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         return "[$text]";
     }
@@ -112,7 +113,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . $limit . ($offset > 0 ? ' OFFSET ' . $offset : '');
@@ -126,7 +127,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null): string
+    public function random(?string $seed = null): string
     {
         return 'random()';
     }
@@ -139,7 +140,7 @@ class SqliteAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void
+    public function applyLock(string &$sql, Lock $lock): void
     {
     }
 }

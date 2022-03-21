@@ -54,7 +54,7 @@ class DatabaseComparator
     /**
      * @param \Propel\Generator\Model\Diff\DatabaseDiff|null $databaseDiff
      */
-    public function __construct($databaseDiff = null)
+    public function __construct(?DatabaseDiff $databaseDiff = null)
     {
         $this->databaseDiff = ($databaseDiff === null) ? new DatabaseDiff() : $databaseDiff;
     }
@@ -118,7 +118,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setRemoveTable($removeTable): void
+    public function setRemoveTable(bool $removeTable): void
     {
         $this->removeTable = $removeTable;
     }
@@ -168,10 +168,10 @@ class DatabaseComparator
     public static function computeDiff(
         Database $fromDatabase,
         Database $toDatabase,
-        $caseInsensitive = false,
-        $withRenaming = false,
-        $removeTable = true,
-        $excludedTables = []
+        bool $caseInsensitive = false,
+        bool $withRenaming = false,
+        bool $removeTable = true,
+        array $excludedTables = []
     ) {
         $databaseComparator = new self();
         $databaseComparator->setFromDatabase($fromDatabase);
@@ -202,7 +202,7 @@ class DatabaseComparator
      *
      * @return void
      */
-    public function setWithRenaming($withRenaming): void
+    public function setWithRenaming(bool $withRenaming): void
     {
         $this->withRenaming = $withRenaming;
     }
@@ -225,7 +225,7 @@ class DatabaseComparator
      *
      * @return int
      */
-    public function compareTables($caseInsensitive = false): int
+    public function compareTables(bool $caseInsensitive = false): int
     {
         $fromDatabaseTables = $this->fromDatabase->getTables();
         $toDatabaseTables = $this->toDatabase->getTables();

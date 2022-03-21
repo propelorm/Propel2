@@ -348,7 +348,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $books = BookQuery::create(null, $c)->joinWith('Author')->find();
         $book = $books[0];
 
-        $arr1 = $book->toArray(TableMap::TYPE_PHPNAME, null, [], true);
+        $arr1 = $book->toArray(TableMap::TYPE_PHPNAME, false, [], true);
         $expectedKeys = [
             'Id',
             'Title',
@@ -370,7 +370,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $a1 = new Author();
         $a1->setFirstName('Leo');
         $a1->setLastName('Tolstoi');
-        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, null, [], true);
+        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, false, [], true);
         $this->assertFalse(array_key_exists('Books', $arr));
         $b1 = new Book();
         $b1->setTitle('War and Peace');
@@ -378,7 +378,7 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $b2->setTitle('Anna Karenina');
         $a1->addBook($b1);
         $a1->addBook($b2);
-        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, null, [], true);
+        $arr = $a1->toArray(TableMap::TYPE_PHPNAME, false, [], true);
         $this->assertTrue(array_key_exists('Books', $arr));
         $this->assertEquals(2, count($arr['Books']));
         $this->assertEquals('War and Peace', $arr['Books'][0]['Title']);

@@ -101,7 +101,7 @@ abstract class AbstractSqlQueryBuilder
      *
      * @return array
      */
-    public function buildParams($columnNames, ?Criteria $values = null): array
+    public function buildParams(array $columnNames, ?Criteria $values = null): array
     {
         if (!$values) {
             $values = $this->criteria;

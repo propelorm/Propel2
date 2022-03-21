@@ -59,7 +59,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function setAddedTables($tables): void
+    public function setAddedTables(array $tables): void
     {
         $this->addedTables = $tables;
     }
@@ -72,7 +72,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addAddedTable($name, Table $table): void
+    public function addAddedTable(string $name, Table $table): void
     {
         $this->addedTables[$name] = $table;
     }
@@ -84,7 +84,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function removeAddedTable($name): void
+    public function removeAddedTable(string $name): void
     {
         unset($this->addedTables[$name]);
     }
@@ -105,7 +105,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addPossibleRenamedTable($fromName, $toName): void
+    public function addPossibleRenamedTable(string $fromName, string $toName): void
     {
         $this->possibleRenamedTables[$fromName] = $toName;
     }
@@ -137,7 +137,7 @@ class DatabaseDiff
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getAddedTable($name): Table
+    public function getAddedTable(string $name): Table
     {
         return $this->addedTables[$name];
     }
@@ -149,7 +149,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function setRemovedTables($tables): void
+    public function setRemovedTables(array $tables): void
     {
         $this->removedTables = $tables;
     }
@@ -162,7 +162,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addRemovedTable($name, Table $table): void
+    public function addRemovedTable(string $name, Table $table): void
     {
         $this->removedTables[$name] = $table;
     }
@@ -174,7 +174,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function removeRemovedTable($name): void
+    public function removeRemovedTable(string $name): void
     {
         unset($this->removedTables[$name]);
     }
@@ -206,7 +206,7 @@ class DatabaseDiff
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getRemovedTable($name): Table
+    public function getRemovedTable(string $name): Table
     {
         return $this->removedTables[$name];
     }
@@ -218,7 +218,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function setModifiedTables($tables): void
+    public function setModifiedTables(array $tables): void
     {
         $this->modifiedTables = $tables;
     }
@@ -231,7 +231,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addModifiedTable($name, TableDiff $difference): void
+    public function addModifiedTable(string $name, TableDiff $difference): void
     {
         $this->modifiedTables[$name] = $difference;
     }
@@ -263,7 +263,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function setRenamedTables($tables): void
+    public function setRenamedTables(array $tables): void
     {
         $this->renamedTables = $tables;
     }
@@ -276,7 +276,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addRenamedTable($fromName, $toName): void
+    public function addRenamedTable(string $fromName, string $toName): void
     {
         $this->renamedTables[$fromName] = $toName;
     }

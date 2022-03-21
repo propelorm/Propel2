@@ -50,7 +50,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset): void
+    public function setCharset(ConnectionInterface $con, string $charset): void
     {
         switch (strtolower($charset)) {
             case 'utf-8':
@@ -76,7 +76,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
         $i = 1;
         foreach ($params as $param) {
@@ -107,7 +107,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);

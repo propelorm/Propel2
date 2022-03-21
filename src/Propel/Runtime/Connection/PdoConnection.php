@@ -48,7 +48,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -166,7 +166,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return string|int
      */
-    public function lastInsertId($name = null)
+    public function lastInsertId(?string $name = null)
     {
         return $this->pdo->lastInsertId();
     }
@@ -192,7 +192,7 @@ class PdoConnection implements ConnectionInterface
      *
      * @return string
      */
-    public function quote($string, $parameterType = PDO::PARAM_STR): string
+    public function quote(string $string, int $parameterType = PDO::PARAM_STR): string
     {
         return $this->pdo->quote($string, $parameterType);
     }

@@ -44,7 +44,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -81,7 +81,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setConfiguration($configuration): void
+    public function setConfiguration(?array $configuration): void
     {
         $this->configuration = (array)$configuration;
         $this->closeConnections();

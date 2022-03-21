@@ -21,7 +21,7 @@ class CustomCriterion extends AbstractCriterion
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
      * @param string $value The condition to be added to the query string
      */
-    public function __construct(Criteria $outer, $value)
+    public function __construct(Criteria $outer, string $value)
     {
         $this->value = $value;
         $this->init($outer);
@@ -35,7 +35,7 @@ class CustomCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         if ($this->value !== '') {
             $sb .= (string)$this->value;

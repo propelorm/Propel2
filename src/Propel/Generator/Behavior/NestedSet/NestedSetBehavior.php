@@ -117,7 +117,7 @@ class NestedSetBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnConstant($columnName): string
+    public function getColumnConstant(string $columnName): string
     {
         return $this->getColumn($columnName)->getName();
     }
@@ -127,7 +127,7 @@ class NestedSetBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Column
      */
-    public function getColumn($columnName): Column
+    public function getColumn(string $columnName): Column
     {
         return $this->getColumnForParameter($columnName);
     }

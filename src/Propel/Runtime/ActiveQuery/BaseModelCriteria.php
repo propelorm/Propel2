@@ -70,7 +70,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * @param string|null $modelName The phpName of a model, e.g. 'Book'
      * @param string|null $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = null, $modelName = null, $modelAlias = null)
+    public function __construct(?string $dbName = null, ?string $modelName = null, ?string $modelAlias = null)
     {
         parent::__construct($dbName);
         $this->setModelName($modelName);
@@ -98,7 +98,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return $this The current object, for fluid interface
      */
-    public function setWith($with)
+    public function setWith(array $with)
     {
         $this->with = $with;
 
@@ -168,7 +168,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return $this The current object, for fluid interface
      */
-    public function setModelName($modelName)
+    public function setModelName(?string $modelName)
     {
         if (!$modelName) {
             $this->modelName = null;
@@ -206,7 +206,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @return $this The current object, for fluid interface
      */
-    public function setModelAlias($modelAlias, $useAliasInSQL = false)
+    public function setModelAlias(string $modelAlias, bool $useAliasInSQL = false)
     {
         if ($useAliasInSQL) {
             $this->addAlias($modelAlias, $this->tableMap->getName());

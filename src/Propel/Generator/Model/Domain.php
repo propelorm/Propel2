@@ -71,7 +71,7 @@ class Domain extends MappingModel
      * @param int|null $size
      * @param int|null $scale
      */
-    public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
+    public function __construct(?string $type = null, ?string $sqlType = null, ?int $size = null, ?int $scale = null)
     {
         if ($type !== null) {
             $this->setType($type);
@@ -172,7 +172,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setDescription($description): void
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -194,7 +194,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -216,7 +216,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setScale($scale): void
+    public function setScale(int $scale): void
     {
         $this->scale = $scale === null ? null : (int)$scale;
     }
@@ -228,7 +228,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceScale($scale): void
+    public function replaceScale(?int $scale): void
     {
         if ($scale !== null) {
             $this->scale = (int)$scale;
@@ -252,7 +252,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setSize($size): void
+    public function setSize(?int $size): void
     {
         $this->size = $size === null ? null : (int)$size;
     }
@@ -264,7 +264,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceSize($size): void
+    public function replaceSize(?int $size): void
     {
         if ($size !== null) {
             $this->size = (int)$size;
@@ -302,7 +302,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceType($mappingType): void
+    public function replaceType(?string $mappingType): void
     {
         if ($mappingType !== null) {
             $this->mappingType = $mappingType;
@@ -389,11 +389,11 @@ class Domain extends MappingModel
     /**
      * Sets the SQL type.
      *
-     * @param string $sqlType
+     * @param string|null $sqlType
      *
      * @return void
      */
-    public function setSqlType($sqlType): void
+    public function setSqlType(?string $sqlType): void
     {
         $this->sqlType = $sqlType;
     }
@@ -405,7 +405,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceSqlType($sqlType): void
+    public function replaceSqlType(?string $sqlType): void
     {
         if ($sqlType !== null) {
             $this->sqlType = $sqlType;

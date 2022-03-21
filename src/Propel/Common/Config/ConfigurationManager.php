@@ -89,7 +89,7 @@ class ConfigurationManager
      *
      * @return array|null
      */
-    public function getSection($section): ?array
+    public function getSection(string $section): ?array
     {
         if (!array_key_exists($section, $this->config)) {
             return null;
@@ -112,10 +112,10 @@ class ConfigurationManager
      *
      * @return mixed The configuration property
      */
-    public function getConfigProperty($name)
+    public function getConfigProperty(string $name)
     {
-        if (!is_string($name)) {
-            throw new InvalidArgumentException("Invalid configuration property name '$name'.");
+        if ($name === '') {
+            throw new InvalidArgumentException('Invalid empty configuration property name.');
         }
 
         $keys = explode('.', $name);
@@ -138,7 +138,7 @@ class ConfigurationManager
      *
      * @return array|null
      */
-    public function getConnectionParametersArray($section = 'runtime'): ?array
+    public function getConnectionParametersArray(string $section = 'runtime'): ?array
     {
         if (!in_array($section, ['runtime', 'generator'], true)) {
             return null;

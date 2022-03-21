@@ -114,7 +114,7 @@ class RelationMap
     /**
      * @param string $name Name of the relation.
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -132,7 +132,7 @@ class RelationMap
      *
      * @return void
      */
-    public function setPolymorphic($polymorphic): void
+    public function setPolymorphic(bool $polymorphic): void
     {
         $this->polymorphic = $polymorphic;
     }
@@ -152,7 +152,7 @@ class RelationMap
      *
      * @return void
      */
-    public function setPluralName($pluralName): void
+    public function setPluralName(string $pluralName): void
     {
         $this->pluralName = $pluralName;
     }
@@ -218,7 +218,7 @@ class RelationMap
      *
      * @return void
      */
-    public function setForeignTable($table): void
+    public function setForeignTable(TableMap $table): void
     {
         $this->foreignTable = $table;
     }
@@ -284,7 +284,7 @@ class RelationMap
      *
      * @return array Associative array (local => foreign) of fully qualified column names
      */
-    public function getColumnMappings($direction = self::LOCAL_TO_FOREIGN): array
+    public function getColumnMappings(int $direction = self::LOCAL_TO_FOREIGN): array
     {
         $h = [];
         if (
@@ -377,11 +377,11 @@ class RelationMap
     /**
      * Set the onUpdate behavior
      *
-     * @param string $onUpdate
+     * @param string|null $onUpdate
      *
      * @return void
      */
-    public function setOnUpdate($onUpdate): void
+    public function setOnUpdate(?string $onUpdate): void
     {
         $this->onUpdate = $onUpdate;
     }
@@ -399,11 +399,11 @@ class RelationMap
     /**
      * Set the onDelete behavior
      *
-     * @param string $onDelete
+     * @param string|null $onDelete
      *
      * @return void
      */
-    public function setOnDelete($onDelete): void
+    public function setOnDelete(?string $onDelete): void
     {
         $this->onDelete = $onDelete;
     }

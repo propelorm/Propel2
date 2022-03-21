@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Behavior\Versionable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+
 /**
  * Behavior to add versionable columns and abilities
  *
@@ -43,7 +45,7 @@ class VersionableBehaviorQueryBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(VersionableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -67,7 +69,7 @@ static \$isVersioningEnabled = true;
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -77,7 +79,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    protected function getColumnAttribute($name = 'version_column'): string
+    protected function getColumnAttribute(string $name = 'version_column'): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -87,7 +89,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    protected function getColumnPhpName($name = 'version_column'): string
+    protected function getColumnPhpName(string $name = 'version_column'): string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
@@ -105,7 +107,7 @@ static \$isVersioningEnabled = true;
      *
      * @return void
      */
-    protected function setBuilder($builder): void
+    protected function setBuilder(AbstractOMBuilder $builder): void
     {
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
@@ -119,7 +121,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string The related getter, e.g. 'getVersion'
      */
-    protected function getColumnGetter($name = 'version_column'): string
+    protected function getColumnGetter(string $name = 'version_column'): string
     {
         return 'get' . $this->getColumnPhpName($name);
     }
@@ -131,7 +133,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string The related setter, e.g. 'setVersion'
      */
-    protected function getColumnSetter($name = 'version_column'): string
+    protected function getColumnSetter(string $name = 'version_column'): string
     {
         return 'set' . $this->getColumnPhpName($name);
     }
@@ -141,7 +143,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    public function queryMethods($builder): string
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $this->setBuilder($builder);
         $script = '';
@@ -162,7 +164,7 @@ static \$isVersioningEnabled = true;
      *
      * @return void
      */
-    protected function addFilterByVersion(&$script): void
+    protected function addFilterByVersion(string &$script): void
     {
         $script .= "
 /**
@@ -184,7 +186,7 @@ public function filterByVersion(\$version = null, \$comparison = null)
      *
      * @return void
      */
-    protected function addOrderByVersion(&$script): void
+    protected function addOrderByVersion(string &$script): void
     {
         $script .= "
 /**

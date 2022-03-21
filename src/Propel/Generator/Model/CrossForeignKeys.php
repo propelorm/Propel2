@@ -80,13 +80,13 @@ class CrossForeignKeys
     }
 
     /**
-     * @param \Propel\Generator\Model\ForeignKey|null $foreignKey
+     * @param \Propel\Generator\Model\ForeignKey $foreignKey
      *
      * @return void
      */
-    public function setIncomingForeignKey($foreignKey): void
+    public function setIncomingForeignKey(ForeignKey $foreignKey): void
     {
-        $this->setMiddleTable($foreignKey ? $foreignKey->getTable() : null);
+        $this->setMiddleTable($foreignKey->getTable());
         $this->incomingForeignKey = $foreignKey;
     }
 

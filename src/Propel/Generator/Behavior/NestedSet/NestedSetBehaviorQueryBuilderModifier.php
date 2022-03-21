@@ -62,7 +62,7 @@ class NestedSetBehaviorQueryBuilderModifier
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -72,7 +72,7 @@ class NestedSetBehaviorQueryBuilderModifier
      *
      * @return \Propel\Generator\Model\Column
      */
-    protected function getColumn($name): Column
+    protected function getColumn(string $name): Column
     {
         return $this->behavior->getColumnForParameter($name);
     }
@@ -148,7 +148,7 @@ class NestedSetBehaviorQueryBuilderModifier
      *
      * @return void
      */
-    protected function addTreeRoots(&$script): void
+    protected function addTreeRoots(string &$script): void
     {
         $script .= "
 /**
@@ -168,7 +168,7 @@ public function treeRoots()
      *
      * @return void
      */
-    protected function addInTree(&$script): void
+    protected function addInTree(string &$script): void
     {
         $script .= "
 /**
@@ -190,7 +190,7 @@ public function inTree(\$scope = null)
      *
      * @return void
      */
-    protected function addDescendantsOf(&$script): void
+    protected function addDescendantsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -220,7 +220,7 @@ public function descendantsOf($this->objectClassName $objectName)
      *
      * @return void
      */
-    protected function addBranchOf(&$script): void
+    protected function addBranchOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -251,7 +251,7 @@ public function branchOf($this->objectClassName $objectName)
      *
      * @return void
      */
-    protected function addChildrenOf(&$script): void
+    protected function addChildrenOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -276,7 +276,7 @@ public function childrenOf($this->objectClassName $objectName)
      *
      * @return void
      */
-    protected function addSiblingsOf(&$script): void
+    protected function addSiblingsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -308,7 +308,7 @@ public function siblingsOf($this->objectClassName $objectName, ConnectionInterfa
      *
      * @return void
      */
-    protected function addAncestorsOf(&$script): void
+    protected function addAncestorsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -338,7 +338,7 @@ public function ancestorsOf($this->objectClassName $objectName)
      *
      * @return void
      */
-    protected function addRootsOf(&$script): void
+    protected function addRootsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -369,7 +369,7 @@ public function rootsOf($this->objectClassName $objectName)
      *
      * @return void
      */
-    protected function addOrderByBranch(&$script): void
+    protected function addOrderByBranch(string &$script): void
     {
         $script .= "
 /**
@@ -397,7 +397,7 @@ public function orderByBranch(\$reverse = false)
      *
      * @return void
      */
-    protected function addOrderByLevel(&$script): void
+    protected function addOrderByLevel(string &$script): void
     {
         $script .= "
 /**
@@ -427,7 +427,7 @@ public function orderByLevel(\$reverse = false)
      *
      * @return void
      */
-    protected function addFindRoot(&$script): void
+    protected function addFindRoot(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -463,7 +463,7 @@ public function findRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionI
      *
      * @return void
      */
-    protected function addFindRoots(&$script): void
+    protected function addFindRoots(string &$script): void
     {
         $script .= "
 /**
@@ -487,7 +487,7 @@ public function findRoots(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addFindTree(&$script): void
+    protected function addFindTree(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -523,7 +523,7 @@ public function findTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionI
      *
      * @return void
      */
-    protected function addRetrieveRoots(&$script): void
+    protected function addRetrieveRoots(string &$script): void
     {
         $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
@@ -554,7 +554,7 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
      *
      * @return void
      */
-    protected function addRetrieveRoot(&$script): void
+    protected function addRetrieveRoot(string &$script): void
     {
         $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
@@ -593,7 +593,7 @@ static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "
      *
      * @return void
      */
-    protected function addRetrieveTree(&$script): void
+    protected function addRetrieveTree(string &$script): void
     {
         $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
@@ -635,7 +635,7 @@ static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "
      *
      * @return void
      */
-    protected function addIsValid(&$script): void
+    protected function addIsValid(string &$script): void
     {
         $objectClassName = $this->objectClassName;
 
@@ -662,7 +662,7 @@ static public function isValid($objectClassName \$node = null)
      *
      * @return void
      */
-    protected function addDeleteTree(&$script): void
+    protected function addDeleteTree(string &$script): void
     {
         $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
@@ -704,7 +704,7 @@ static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "Co
      *
      * @return void
      */
-    protected function addShiftRLValues(&$script): void
+    protected function addShiftRLValues(string &$script): void
     {
         $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
@@ -777,7 +777,7 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
      *
      * @return void
      */
-    protected function addShiftLevel(&$script): void
+    protected function addShiftLevel(string &$script): void
     {
         $objectClassName = $this->objectClassName;
         $useScope = $this->behavior->useScope();
@@ -828,7 +828,7 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ', $s
      *
      * @return void
      */
-    protected function addUpdateLoadedNodes(&$script): void
+    protected function addUpdateLoadedNodes(string &$script): void
     {
         $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
@@ -844,7 +844,7 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ', $s
 static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
 {
     if (Propel::isInstancePoolingEnabled()) {
-        \$keys = array();
+        \$keys = [];
         /** @var \$obj $objectClassName */
         foreach ($tableMapClassName::\$instances as \$obj) {
             if (!\$prune || !\$prune->equals(\$obj)) {
@@ -930,7 +930,7 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
      *
      * @return void
      */
-    protected function addMakeRoomForLeaf(&$script): void
+    protected function addMakeRoomForLeaf(string &$script): void
     {
         $queryClassName = $this->queryClassName;
         $useScope = $this->behavior->useScope();
@@ -964,7 +964,7 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ', $scope' : '') .
      *
      * @return void
      */
-    protected function addFixLevels(&$script): void
+    protected function addFixLevels(string &$script): void
     {
         $objectClassName = $this->objectClassName;
         $queryClassName = $this->queryClassName;
@@ -1056,7 +1056,7 @@ static public function fixLevels(" . ($useScope ? '$scope, ' : '') . "Connection
      *
      * @return void
      */
-    protected function addSetNegativeScope(&$script): void
+    protected function addSetNegativeScope(string &$script): void
     {
         $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->tableMapClassName;
@@ -1086,7 +1086,7 @@ public static function setNegativeScope(\$scope, ConnectionInterface \$con = nul
      *
      * @return string
      */
-    protected function getColumnPhpName($columnName): string
+    protected function getColumnPhpName(string $columnName): string
     {
         return $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }

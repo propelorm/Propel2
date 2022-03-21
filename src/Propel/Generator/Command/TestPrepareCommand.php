@@ -114,7 +114,7 @@ class TestPrepareCommand extends AbstractCommand
      *
      * @return int Exit code
      */
-    protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output): int
+    protected function buildFixtures(string $fixturesDir, array $connections, InputInterface $input, OutputInterface $output): int
     {
         if (!file_exists($this->root . '/' . $fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));

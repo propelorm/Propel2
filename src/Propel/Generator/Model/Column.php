@@ -229,7 +229,7 @@ class Column extends MappingModel
      * @param string|null $type The column's type
      * @param string|int|null $size The column's size
      */
-    public function __construct($name = null, $type = null, $size = null)
+    public function __construct(?string $name = null, ?string $type = null, $size = null)
     {
         if ($name !== null) {
             $this->setName($name);
@@ -257,7 +257,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTypeHint($typeHint): void
+    public function setTypeHint(?string $typeHint): void
     {
         $this->typeHint = $typeHint;
     }
@@ -400,7 +400,7 @@ class Column extends MappingModel
      *
      * @return string|null
      */
-    private function getMethodVisibility($attribute, $parentAttribute): ?string
+    private function getMethodVisibility(string $attribute, string $parentAttribute): ?string
     {
         $database = $this->getDatabase();
 
@@ -503,7 +503,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -549,7 +549,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDescription($description): void
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -595,7 +595,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPhpName($phpName = null): void
+    public function setPhpName(?string $phpName = null): void
     {
         if ($phpName === null) {
             $this->phpName = self::generatePhpName($this->name, $this->phpNamingMethod, $this->namePrefix);
@@ -615,7 +615,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPhpSingularName($phpSingularName = null): void
+    public function setPhpSingularName(?string $phpSingularName = null): void
     {
         if ($phpSingularName === null) {
             $this->phpSingularName = self::generatePhpSingularName($this->getPhpName());
@@ -743,7 +743,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTableMapName($name): void
+    public function setTableMapName(string $name): void
     {
         $this->tableMapName = $name;
     }
@@ -777,7 +777,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPosition($position): void
+    public function setPosition(int $position): void
     {
         $this->position = (int)$position;
     }
@@ -910,9 +910,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNotNull($flag = true): void
+    public function setNotNull(bool $flag): void
     {
-        $this->isNotNull = (bool)$flag;
+        $this->isNotNull = $flag;
     }
 
     /**
@@ -935,7 +935,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPrimaryString($isPrimaryString): void
+    public function setPrimaryString(bool $isPrimaryString): void
     {
         $this->isPrimaryString = (bool)$isPrimaryString;
     }
@@ -958,9 +958,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPrimaryKey($flag = true): void
+    public function setPrimaryKey(bool $flag): void
     {
-        $this->isPrimaryKey = (bool)$flag;
+        $this->isPrimaryKey = $flag;
     }
 
     /**
@@ -980,7 +980,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNodeKey($isNodeKey): void
+    public function setNodeKey(bool $isNodeKey): void
     {
         $this->isNodeKey = (bool)$isNodeKey;
     }
@@ -1002,7 +1002,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNodeKeySep($sep): void
+    public function setNodeKeySep(string $sep): void
     {
         $this->nodeKeySep = (string)$sep;
     }
@@ -1024,7 +1024,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNestedSetLeftKey($isNestedSetLeftKey): void
+    public function setNestedSetLeftKey(bool $isNestedSetLeftKey): void
     {
         $this->isNestedSetLeftKey = (bool)$isNestedSetLeftKey;
     }
@@ -1046,7 +1046,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNestedSetRightKey($isNestedSetRightKey): void
+    public function setNestedSetRightKey(bool $isNestedSetRightKey): void
     {
         $this->isNestedSetRightKey = (bool)$isNestedSetRightKey;
     }
@@ -1068,7 +1068,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setTreeScopeKey($isTreeScopeKey): void
+    public function setTreeScopeKey(bool $isTreeScopeKey): void
     {
         $this->isTreeScopeKey = (bool)$isTreeScopeKey;
     }
@@ -1210,7 +1210,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setDomainForType($mappingType): void
+    public function setDomainForType(string $mappingType): void
     {
         $this->getDomain()->copy($this->getPlatform()->getDomainForType($mappingType));
     }
@@ -1224,7 +1224,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setType($mappingType): void
+    public function setType(string $mappingType): void
     {
         $this->getDomain()->setType($mappingType);
 
@@ -1409,7 +1409,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setSize($size): void
+    public function setSize(?int $size): void
     {
         $this->domain->setSize($size);
     }
@@ -1431,7 +1431,7 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setScale($scale): void
+    public function setScale(int $scale): void
     {
         $this->domain->setScale($scale);
     }
@@ -1584,9 +1584,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setAutoIncrement($flag = true): void
+    public function setAutoIncrement(bool $flag): void
     {
-        $this->isAutoIncrement = (bool)$flag;
+        $this->isAutoIncrement = $flag;
     }
 
     /**
@@ -1680,25 +1680,29 @@ class Column extends MappingModel
      * Returns a generated PHP name.
      *
      * @param string $name
-     * @param string $phpNamingMethod
+     * @param string|null $phpNamingMethod
      * @param string|null $namePrefix
      *
      * @return string
      */
-    public static function generatePhpName($name, $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN, $namePrefix = null): string
+    public static function generatePhpName(string $name, ?string $phpNamingMethod = null, ?string $namePrefix = null): string
     {
+        if ($phpNamingMethod === null) {
+            $phpNamingMethod = PhpNameGenerator::CONV_METHOD_CLEAN;
+        }
+
         return NameFactory::generateName(NameFactory::PHP_GENERATOR, [$name, $phpNamingMethod, (string)$namePrefix]);
     }
 
     /**
      * Generates the singular form of a PHP name.
      *
-     * @param string $phpname
+     * @param string $phpName
      *
      * @return string
      */
-    public static function generatePhpSingularName($phpname): string
+    public static function generatePhpSingularName(string $phpName): string
     {
-        return rtrim($phpname, 's');
+        return rtrim($phpName, 's');
     }
 }

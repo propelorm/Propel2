@@ -123,7 +123,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setModelName($modelName): void
+    public function setModelName(string $modelName): void
     {
         if (strpos($modelName, '\\') === 0) {
             $this->modelName = substr($modelName, 1);
@@ -153,7 +153,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsSingleTableInheritance($isSingleTableInheritance): void
+    public function setIsSingleTableInheritance(bool $isSingleTableInheritance): void
     {
         $this->isSingleTableInheritance = $isSingleTableInheritance;
     }
@@ -171,7 +171,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsAdd($isAdd): void
+    public function setIsAdd(bool $isAdd): void
     {
         $this->isAdd = $isAdd;
     }
@@ -189,7 +189,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsWithOneToMany($isWithOneToMany): void
+    public function setIsWithOneToMany(bool $isWithOneToMany): void
     {
         $this->isWithOneToMany = $isWithOneToMany;
     }
@@ -207,7 +207,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setRelationName($relationName): void
+    public function setRelationName(string $relationName): void
     {
         $this->relationName = $relationName;
     }
@@ -225,7 +225,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setRelationMethod($relationMethod): void
+    public function setRelationMethod(string $relationMethod): void
     {
         $this->relationMethod = $relationMethod;
     }
@@ -243,7 +243,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setInitMethod($initMethod): void
+    public function setInitMethod(string $initMethod): void
     {
         $this->initMethod = $initMethod;
     }
@@ -261,7 +261,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setResetPartialMethod($resetPartialMethod): void
+    public function setResetPartialMethod(string $resetPartialMethod): void
     {
         $this->resetPartialMethod = $resetPartialMethod;
     }
@@ -279,7 +279,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setLeftPhpName($leftPhpName): void
+    public function setLeftPhpName(string $leftPhpName): void
     {
         $this->leftPhpName = $leftPhpName;
     }
@@ -297,7 +297,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setRightPhpName($rightPhpName): void
+    public function setRightPhpName(string $rightPhpName): void
     {
         $this->rightPhpName = $rightPhpName;
     }

@@ -17,7 +17,7 @@ interface ConnectionManagerInterface
      *
      * @return void
      */
-    public function setName($name): void;
+    public function setName(string $name): void;
 
     /**
      * @return string The datasource name associated to this connection

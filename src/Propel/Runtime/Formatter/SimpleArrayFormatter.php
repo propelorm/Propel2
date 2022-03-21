@@ -121,7 +121,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @return array|string|false
      */
-    public function getStructuredArrayFromRow($row)
+    public function getStructuredArrayFromRow(array $row)
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {

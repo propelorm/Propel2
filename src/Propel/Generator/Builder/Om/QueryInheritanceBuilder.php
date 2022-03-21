@@ -124,7 +124,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -170,7 +170,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
         $this->declareClassFromBuilder($this->getTableMapBuilder());
         $this->declareClasses(
@@ -191,7 +191,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addFactory(&$script): void
+    protected function addFactory(string &$script): void
     {
         $builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
         $this->declareClassFromBuilder($builder, 'Child');
@@ -228,7 +228,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addPreSelect(&$script): void
+    protected function addPreSelect(string &$script): void
     {
         $child = $this->getChild();
 
@@ -248,7 +248,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addPreUpdate(&$script): void
+    protected function addPreUpdate(string &$script): void
     {
         $child = $this->getChild();
 
@@ -272,7 +272,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addPreDelete(&$script): void
+    protected function addPreDelete(string &$script): void
     {
         $child = $this->getChild();
 
@@ -307,7 +307,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addDoDeleteAll(&$script): void
+    protected function addDoDeleteAll(string &$script): void
     {
         $child = $this->getChild();
 
@@ -336,7 +336,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }

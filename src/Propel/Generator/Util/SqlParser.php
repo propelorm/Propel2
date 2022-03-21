@@ -51,7 +51,7 @@ class SqlParser
      *
      * @return void
      */
-    public function setSQL($sql): void
+    public function setSQL(string $sql): void
     {
         $this->sql = $sql;
         $this->pos = 0;
@@ -77,7 +77,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    public static function executeString($input, ConnectionInterface $connection): int
+    public static function executeString(string $input, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseString($input), $connection);
     }
@@ -91,7 +91,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    public static function executeFile($file, ConnectionInterface $connection): int
+    public static function executeFile(string $file, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseFile($file), $connection);
     }
@@ -105,7 +105,7 @@ class SqlParser
      *
      * @return int the number of executed statements
      */
-    protected static function executeStatements($statements, ConnectionInterface $connection): int
+    protected static function executeStatements(array $statements, ConnectionInterface $connection): int
     {
         $executed = 0;
 
@@ -148,7 +148,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseString($input): array
+    public static function parseString(string $input): array
     {
         $parser = new self();
         $parser->setSQL($input);
@@ -179,7 +179,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseFile($file): array
+    public static function parseFile(string $file): array
     {
         if (!file_exists($file)) {
             return [];

@@ -27,11 +27,11 @@ abstract class AbstractModelCriterion extends AbstractCriterion
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
      * @param string $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
-     * @param \Propel\Runtime\Map\ColumnMap $column A Column object to help escaping the value
+     * @param \Propel\Runtime\Map\ColumnMap|string $column A Column object to help escaping the value
      * @param mixed $value
      * @param string|null $tableAlias optional table alias
      */
-    public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null)
+    public function __construct(Criteria $outer, string $clause, $column, $value = null, ?string $tableAlias = null)
     {
         $this->value = $value;
         $this->setColumn($column);
@@ -58,7 +58,7 @@ abstract class AbstractModelCriterion extends AbstractCriterion
      *
      * @return bool
      */
-    public function equals($obj): bool
+    public function equals(?object $obj): bool
     {
         // TODO: optimize me with early outs
         if ($this === $obj) {

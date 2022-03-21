@@ -622,7 +622,7 @@ EOF;
     public function testGetConfigPropertyBadNameThrowsException()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid configuration property name');
+        $this->expectExceptionMessage('Invalid empty configuration property name');
 
         $yamlConf = <<<EOF
 propel:
@@ -656,7 +656,7 @@ EOF;
         $this->newFile('propel.yaml', $yamlConf);
 
         $manager = new ConfigurationManager();
-        $manager->getConfigProperty(10);
+        $manager->getConfigProperty('');
     }
 
     /**

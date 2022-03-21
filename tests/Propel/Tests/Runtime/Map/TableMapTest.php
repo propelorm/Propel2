@@ -160,7 +160,7 @@ class TableMapTest extends TestCase
         $this->assertTrue($column1->isPrimaryKey(), 'Columns added by way of addPrimaryKey() are primary keys');
         $column2 = $this->tmap->addColumn('BAZ', 'Baz', 'INTEGER');
         $this->assertFalse($column2->isPrimaryKey(), 'Columns added by way of addColumn() are not primary keys by default');
-        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, true);
+        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', false, null, null, true);
         $this->assertTrue($column3->isPrimaryKey(), 'Columns added by way of addColumn() can be defined as primary keys');
         $column4 = $this->tmap->addForeignKey('BAZZZ', 'Bazzz', 'INTEGER', 'Table1', 'column1');
         $this->assertFalse($column4->isPrimaryKey(), 'Columns added by way of addForeignKey() are not primary keys');
@@ -175,7 +175,7 @@ class TableMapTest extends TestCase
     {
         $this->assertEquals([], $this->tmap->getPrimaryKeys(), 'getPrimaryKeys() returns an empty array by default');
         $column1 = $this->tmap->addPrimaryKey('BAR', 'Bar', 'INTEGER');
-        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, true);
+        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', false, null, null, true);
         $expected = ['BAR' => $column1, 'BAZZ' => $column3];
         $this->assertEquals($expected, $this->tmap->getPrimaryKeys(), 'getPrimaryKeys() returns an array of the table primary keys');
     }
@@ -189,7 +189,7 @@ class TableMapTest extends TestCase
         $this->assertTrue($column1->isForeignKey(), 'Columns added by way of addForeignKey() are foreign keys');
         $column2 = $this->tmap->addColumn('BAZ', 'Baz', 'INTEGER');
         $this->assertFalse($column2->isForeignKey(), 'Columns added by way of addColumn() are not foreign keys by default');
-        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, false, 'Table1', 'column1');
+        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', false, null, null, false, 'Table1', 'column1');
         $this->assertTrue($column3->isForeignKey(), 'Columns added by way of addColumn() can be defined as foreign keys');
         $column4 = $this->tmap->addPrimaryKey('BAZZZ', 'Bazzz', 'INTEGER');
         $this->assertFalse($column4->isForeignKey(), 'Columns added by way of addPrimaryKey() are not foreign keys');
@@ -204,7 +204,7 @@ class TableMapTest extends TestCase
     {
         $this->assertEquals([], $this->tmap->getForeignKeys(), 'getForeignKeys() returns an empty array by default');
         $column1 = $this->tmap->addForeignKey('BAR', 'Bar', 'INTEGER', 'Table1', 'column1');
-        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', null, null, null, false, 'Table1', 'column1');
+        $column3 = $this->tmap->addColumn('BAZZ', 'Bazz', 'INTEGER', false, null, null, false, 'Table1', 'column1');
         $expected = ['BAR' => $column1, 'BAZZ' => $column3];
         $this->assertEquals($expected, $this->tmap->getForeignKeys(), 'getForeignKeys() returns an array of the table foreign keys');
     }

@@ -552,7 +552,7 @@ class XmlDumper implements DumperInterface
      *
      * @return void
      */
-    private function appendGenericIndexNode($nodeType, Index $index, DOMNode $parentNode): void
+    private function appendGenericIndexNode(string $nodeType, Index $index, DOMNode $parentNode): void
     {
         /** @var \DOMElement $indexNode */
         $indexNode = $parentNode->appendChild($this->document->createElement($nodeType));

@@ -259,7 +259,7 @@ class TableMap
      *
      * @return void
      */
-    public function setPhpName($phpName): void
+    public function setPhpName(string $phpName): void
     {
         $this->phpName = $phpName;
     }
@@ -282,7 +282,7 @@ class TableMap
      *
      * @return void
      */
-    public function setClassName($classname): void
+    public function setClassName(string $classname): void
     {
         $this->classname = $classname;
     }
@@ -319,7 +319,7 @@ class TableMap
      *
      * @return void
      */
-    public function setPackage($package): void
+    public function setPackage(string $package): void
     {
         $this->package = $package;
     }
@@ -341,7 +341,7 @@ class TableMap
      *
      * @return void
      */
-    public function setUseIdGenerator($bit): void
+    public function setUseIdGenerator(bool $bit): void
     {
         $this->useIdGenerator = (bool)$bit;
     }
@@ -363,7 +363,7 @@ class TableMap
      *
      * @return void
      */
-    public function setSingleTableInheritance($bit): void
+    public function setSingleTableInheritance(bool $bit): void
     {
         $this->isSingleTableInheritance = $bit;
     }
@@ -418,7 +418,7 @@ class TableMap
      * @param string $type A string specifying the Propel type.
      * @param bool $isNotNull Whether column does not allow NULL values.
      * @param int|null $size An int specifying the size.
-     * @param string|null $defaultValue
+     * @param string|bool|null $defaultValue
      * @param bool $pk True if column is a primary key.
      * @param string|null $fkTable A String with the foreign key table name.
      * @param string|null $fkColumn A String with the foreign key column name.
@@ -426,15 +426,15 @@ class TableMap
      * @return \Propel\Runtime\Map\ColumnMap The newly created column.
      */
     public function addColumn(
-        $name,
-        $phpName,
-        $type,
-        $isNotNull = false,
-        $size = null,
+        string $name,
+        string $phpName,
+        string $type,
+        bool $isNotNull = false,
+        ?int $size = null,
         $defaultValue = null,
-        $pk = false,
-        $fkTable = null,
-        $fkColumn = null
+        bool $pk = false,
+        ?string $fkTable = null,
+        ?string $fkColumn = null
     ): ColumnMap {
         $col = new ColumnMap($name, $this);
         $col->setType($type);
@@ -482,7 +482,7 @@ class TableMap
      *
      * @return bool True if the table contains the column.
      */
-    public function hasColumn($name, $normalize = true): bool
+    public function hasColumn($name, bool $normalize = true): bool
     {
         if ($name instanceof ColumnMap) {
             $name = $name->getName();
@@ -503,7 +503,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A ColumnMap.
      */
-    public function getColumn($name, $normalize = true): ColumnMap
+    public function getColumn(string $name, bool $normalize = true): ColumnMap
     {
         if ($normalize) {
             $name = $this->getNormalizedColumnName($name);
@@ -536,7 +536,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A ColumnMap.
      */
-    public function getColumnByPhpName($phpName): ColumnMap
+    public function getColumnByPhpName(string $phpName): ColumnMap
     {
         if (!isset($this->columnsByPhpName[$phpName])) {
             throw new ColumnNotFoundException("Cannot fetch ColumnMap for undefined column phpName: $phpName");
@@ -589,8 +589,14 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly added PrimaryKey column.
      */
-    public function addPrimaryKey($columnName, $phpName, $type, $isNotNull = false, $size = null, $defaultValue = null): ColumnMap
-    {
+    public function addPrimaryKey(
+        string $columnName,
+        string $phpName,
+        string $type,
+        bool $isNotNull = false,
+        ?int $size = null,
+        ?string $defaultValue = null
+    ): ColumnMap {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, true, null, null);
     }
 
@@ -603,20 +609,20 @@ class TableMap
      * @param string $fkTable A String with the foreign key table name.
      * @param string $fkColumn A String with the foreign key column name.
      * @param bool $isNotNull Whether column does not allow NULL values.
-     * @param int $size An int specifying the size.
+     * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue The default value for this column.
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly added ForeignKey column.
      */
     public function addForeignKey(
-        $columnName,
-        $phpName,
-        $type,
-        $fkTable,
-        $fkColumn,
-        $isNotNull = false,
-        $size = 0,
-        $defaultValue = null
+        string $columnName,
+        string $phpName,
+        string $type,
+        string $fkTable,
+        string $fkColumn,
+        bool $isNotNull = false,
+        ?int $size = null,
+        ?string $defaultValue = null
     ): ColumnMap {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, false, $fkTable, $fkColumn);
     }
@@ -630,20 +636,20 @@ class TableMap
      * @param string $fkTable A String with the foreign key table name.
      * @param string $fkColumn A String with the foreign key column name.
      * @param bool $isNotNull Whether column does not allow NULL values.
-     * @param int $size An int specifying the size.
+     * @param int|null $size An int specifying the size.
      * @param string|null $defaultValue The default value for this column.
      *
      * @return \Propel\Runtime\Map\ColumnMap Newly created foreign pkey column.
      */
     public function addForeignPrimaryKey(
-        $columnName,
-        $phpName,
-        $type,
-        $fkTable,
-        $fkColumn,
-        $isNotNull = false,
-        $size = 0,
-        $defaultValue = null
+        string $columnName,
+        string $phpName,
+        string $type,
+        string $fkTable,
+        string $fkColumn,
+        bool $isNotNull = false,
+        ?int $size = null,
+        ?string $defaultValue = null
     ): ColumnMap {
         return $this->addColumn($columnName, $phpName, $type, $isNotNull, $size, $defaultValue, true, $fkTable, $fkColumn);
     }
@@ -663,7 +669,7 @@ class TableMap
      *
      * @return void
      */
-    public function setIsCrossRef($isCrossRef): void
+    public function setIsCrossRef(bool $isCrossRef): void
     {
         $this->isCrossRef = $isCrossRef;
     }
@@ -714,14 +720,14 @@ class TableMap
      * @return \Propel\Runtime\Map\RelationMap the built RelationMap object
      */
     public function addRelation(
-        $name,
-        $tablePhpName,
-        $type,
-        $joinConditionMapping = [],
-        $onDelete = null,
-        $onUpdate = null,
-        $pluralName = null,
-        $polymorphic = false
+        string $name,
+        string $tablePhpName,
+        int $type,
+        array $joinConditionMapping = [],
+        ?string $onDelete = null,
+        ?string $onUpdate = null,
+        ?string $pluralName = null,
+        bool $polymorphic = false
     ): RelationMap {
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
@@ -761,7 +767,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\ColumnMap|mixed
      */
-    protected function getColumnOrValue($value, TableMap $table)
+    protected function getColumnOrValue(string $value, TableMap $table)
     {
         if (substr($value, 0, 1) === ':') {
             return $table->getColumn(substr($value, 1));
@@ -778,7 +784,7 @@ class TableMap
      *
      * @return bool true if the relation exists
      */
-    public function hasRelation($name): bool
+    public function hasRelation(string $name): bool
     {
         return array_key_exists($name, $this->getRelations());
     }
@@ -793,7 +799,7 @@ class TableMap
      *
      * @return \Propel\Runtime\Map\RelationMap The relation object
      */
-    public function getRelation($name): RelationMap
+    public function getRelation(string $name): RelationMap
     {
         if (!array_key_exists($name, $this->getRelations())) {
             throw new RelationNotFoundException(sprintf('Calling getRelation() on an unknown relation: %s.', $name));
@@ -860,7 +866,7 @@ class TableMap
      *
      * @return mixed
      */
-    public static function getFieldnamesForClass($classname, $type = self::TYPE_PHPNAME)
+    public static function getFieldnamesForClass(string $classname, string $type = self::TYPE_PHPNAME)
     {
         return ($classname::TABLE_MAP)::getFieldnames($type);
     }
@@ -873,7 +879,7 @@ class TableMap
      *
      * @return mixed
      */
-    public static function translateFieldnameForClass($classname, $fieldname, $fromType, $toType)
+    public static function translateFieldnameForClass(string $classname, string $fieldname, string $fromType, string $toType)
     {
         return ($classname::TABLE_MAP)::translateFieldname($fieldname, $fromType, $toType);
     }
@@ -891,7 +897,7 @@ class TableMap
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting): void
+    public function setIdentifierQuoting(bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }

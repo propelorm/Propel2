@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\QueryCache;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -37,13 +38,13 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryAttributes($builder): string
+    public function queryAttributes(AbstractOMBuilder $builder): string
     {
         $script = "protected \$queryKey = '';
 ";
         switch ($this->getParameter('backend')) {
             case 'backend':
-                $script .= "protected static \$cacheBackend = array();
+                $script .= "protected static \$cacheBackend = [];
             ";
 
                 break;
@@ -65,7 +66,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryMethods($builder): string
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $builder->declareClasses('\Propel\Runtime\Propel');
         $this->tableClassName = $builder->getTableMapClassName();
@@ -86,7 +87,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return void
      */
-    protected function addSetQueryKey(&$script): void
+    protected function addSetQueryKey(string &$script): void
     {
         $script .= "
 public function setQueryKey(\$key)
@@ -103,7 +104,7 @@ public function setQueryKey(\$key)
      *
      * @return void
      */
-    protected function addGetQueryKey(&$script): void
+    protected function addGetQueryKey(string &$script): void
     {
         $script .= "
 public function getQueryKey()
@@ -118,7 +119,7 @@ public function getQueryKey()
      *
      * @return void
      */
-    protected function addCacheContains(&$script): void
+    protected function addCacheContains(string &$script): void
     {
         $script .= "
 public function cacheContains(\$key)
@@ -153,7 +154,7 @@ public function cacheContains(\$key)
      *
      * @return void
      */
-    protected function addCacheStore(&$script): void
+    protected function addCacheStore(string &$script): void
     {
         $script .= "
 public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter('lifetime') . ")
@@ -186,7 +187,7 @@ public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter(
      *
      * @return void
      */
-    protected function addCacheFetch(&$script): void
+    protected function addCacheFetch(string &$script): void
     {
         $script .= "
 public function cacheFetch(\$key)
@@ -221,7 +222,7 @@ public function cacheFetch(\$key)
      *
      * @return void
      */
-    protected function addDoSelect(&$script): void
+    protected function addDoSelect(string &$script): void
     {
         $script .= "
 public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
@@ -240,7 +241,7 @@ public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\Data
         \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
-        \$params = array();
+        \$params = [];
         \$sql = \$this->createSelectSql(\$params);
     }
 
@@ -267,7 +268,7 @@ public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\Data
      *
      * @return void
      */
-    protected function addDoCount(&$script): void
+    protected function addDoCount(string &$script): void
     {
         $script .= "
 public function doCount(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
@@ -295,7 +296,7 @@ public function doCount(ConnectionInterface \$con = null): \Propel\Runtime\DataF
             || count(\$this->selectQueries) > 0
         ;
 
-        \$params = array();
+        \$params = [];
         if (\$needsComplexCount) {
             if (\$this->needsSelectAliases()) {
                 if (\$this->getHaving()) {

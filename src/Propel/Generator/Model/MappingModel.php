@@ -76,7 +76,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return mixed
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, $default = null)
     {
         $name = strtolower($name);
         if (isset($this->attributes[$name])) {
@@ -145,7 +145,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return array|null
      */
-    protected function getDefaultValueForSet($stringValue): ?array
+    protected function getDefaultValueForSet(string $stringValue): ?array
     {
         $stringValue = trim($stringValue);
 
@@ -189,7 +189,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return \Propel\Generator\Model\VendorInfo
      */
-    public function getVendorInfoForType($type): VendorInfo
+    public function getVendorInfoForType(string $type): VendorInfo
     {
         if (isset($this->vendorInfos[$type])) {
             return $this->vendorInfos[$type];

@@ -71,7 +71,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setKey($key): void
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -115,7 +115,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setClassName($name): void
+    public function setClassName(string $name): void
     {
         $this->className = $name;
     }
@@ -137,7 +137,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setPackage($package): void
+    public function setPackage(string $package): void
     {
         $this->package = $package;
     }
@@ -159,7 +159,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setAncestor($ancestor): void
+    public function setAncestor(string $ancestor): void
     {
         $this->ancestor = $ancestor;
     }

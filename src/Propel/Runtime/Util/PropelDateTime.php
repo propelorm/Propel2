@@ -72,7 +72,7 @@ class PropelDateTime extends DateTime
      *
      * @return \DateTime
      */
-    public static function createHighPrecision($time = null): DateTime
+    public static function createHighPrecision(?bool $time = null): DateTime
     {
         $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
 
@@ -105,7 +105,7 @@ class PropelDateTime extends DateTime
      *
      * @return mixed|null An instance of $dateTimeClass
      */
-    public static function newInstance($value, ?DateTimeZone $timeZone = null, $dateTimeClass = 'DateTime')
+    public static function newInstance($value, ?DateTimeZone $timeZone = null, string $dateTimeClass = 'DateTime')
     {
         if ($value instanceof DateTimeInterface) {
             return $value;

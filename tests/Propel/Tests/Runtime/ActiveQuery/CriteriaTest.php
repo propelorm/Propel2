@@ -1165,7 +1165,7 @@ class CriteriaTest extends BookstoreTestBase
         $c2 = $c->setComment('foo');
         $this->assertSame('foo', $c->getComment(), 'Comment is set by setComment()');
         $this->assertEquals($c, $c2, 'setComment() returns the current Criteria');
-        $c->setComment();
+        $c->setComment(null);
         $this->assertNull($c->getComment(), 'Comment is reset by setComment(null)');
     }
 
@@ -1289,15 +1289,6 @@ class CriteriaTest extends BookstoreTestBase
                 'limit' => '123.9',
                 'expected' => 123,
             ],
-
-            'Non-numeric string' => [
-                'limit' => 'foo',
-                'expected' => 0,
-            ],
-            'Injected SQL' => [
-                'limit' => '3;DROP TABLE abc',
-                'expected' => 3,
-            ],
         ];
     }
 
@@ -1370,15 +1361,6 @@ class CriteriaTest extends BookstoreTestBase
             'Decimal value as a string' => [
                 'offset' => '123.9',
                 'expected' => 123,
-            ],
-
-            'Non-numeric string' => [
-                'offset' => 'foo',
-                'expected' => 0,
-            ],
-            'Injected SQL' => [
-                'offset' => '3;DROP TABLE abc',
-                'expected' => 3,
             ],
         ];
     }

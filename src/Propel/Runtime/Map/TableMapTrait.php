@@ -23,7 +23,7 @@ trait TableMapTrait
      *
      * @return array A list of field names
      */
-    public static function getFieldNames($type = TableMap::TYPE_PHPNAME): array
+    public static function getFieldNames(string $type = TableMap::TYPE_PHPNAME): array
     {
         if (!array_key_exists($type, static::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . $type . ' was given.');
@@ -44,7 +44,7 @@ trait TableMapTrait
      *
      * @return string translated name of the field.
      */
-    public static function translateFieldName($name, $fromType, $toType): string
+    public static function translateFieldName(string $name, string $fromType, string $toType): string
     {
         $toNames = static::getFieldNames($toType);
         $key = static::$fieldKeys[$fromType][$name] ?? null;
@@ -62,7 +62,7 @@ trait TableMapTrait
      *
      * @return array
      */
-    public static function translateFieldNames($row, $fromType, $toType): array
+    public static function translateFieldNames(array $row, string $fromType, string $toType): array
     {
         $toNames = static::getFieldNames($toType);
         $newRow = [];
@@ -91,7 +91,7 @@ trait TableMapTrait
      *
      * @return string
      */
-    public static function alias($alias, $column): string
+    public static function alias(string $alias, string $column): string
     {
         return str_replace(static::TABLE_NAME . '.', $alias . '.', $column);
     }

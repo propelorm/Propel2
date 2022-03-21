@@ -112,7 +112,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string Some code
      */
-    public function buildObjectInstanceCreationCode($objName, $clsName): string
+    public function buildObjectInstanceCreationCode(string $objName, string $clsName): string
     {
         return "$objName = new $clsName();";
     }
@@ -248,12 +248,12 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * This declares the class use and returns the correct name to use (short classname, Alias, or FQCN)
      *
-     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     * @param self $builder
      * @param bool $fqcn true to return the $fqcn classname
      *
      * @return string ClassName, Alias or FQCN
      */
-    public function getClassNameFromBuilder($builder, bool $fqcn = false): string
+    public function getClassNameFromBuilder(self $builder, bool $fqcn = false): string
     {
         if ($fqcn) {
             return $builder->getFullyQualifiedClassName();
@@ -276,11 +276,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * This declares the class use and returns the correct name to use
      *
      * @param \Propel\Generator\Model\Table $table
-     * @param bool $fqcn
      *
      * @return string
      */
-    public function getClassNameFromTable(Table $table, $fqcn = false): string
+    public function getClassNameFromTable(Table $table): string
     {
         $namespace = $table->getNamespace();
         $class = $table->getPhpName();
@@ -299,7 +298,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string The class name or its alias
      */
-    public function declareClassNamespace($class, $namespace = '', $alias = false): string
+    public function declareClassNamespace(string $class, string $namespace = '', $alias = false): string
     {
         $namespace = trim($namespace, '\\');
 
@@ -357,7 +356,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return bool
      */
-    protected function needAliasForClassName($class, $classNamespace): bool
+    protected function needAliasForClassName(string $class, string $classNamespace): bool
     {
         // Should remove this check by not allowing nullable return values in getNamespace
         if ($this->getNamespace() === null) {
@@ -409,7 +408,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string the short ClassName or an alias
      */
-    public function declareClassNamespacePrefix($class, $namespace = '', $aliasPrefix = false): string
+    public function declareClassNamespacePrefix(string $class, string $namespace = '', $aliasPrefix = false): string
     {
         if ($aliasPrefix !== false && $aliasPrefix !== true) {
             $alias = $aliasPrefix . $class;
@@ -429,7 +428,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string the short ClassName or an alias
      */
-    public function declareClass($fullyQualifiedClassName, $aliasPrefix = false): string
+    public function declareClass(string $fullyQualifiedClassName, $aliasPrefix = false): string
     {
         $fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
         if (($pos = strrpos($fullyQualifiedClassName, '\\')) !== false) {
@@ -469,7 +468,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return array list of declared classes
      */
-    public function getDeclaredClasses($namespace = null): array
+    public function getDeclaredClasses(?string $namespace = null): array
     {
         if ($namespace !== null && isset($this->declaredClasses[$namespace])) {
             return $this->declaredClasses[$namespace];
@@ -502,7 +501,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    public function getUseStatements($ignoredNamespace = null): string
+    public function getUseStatements(?string $ignoredNamespace = null): string
     {
         $script = '';
         $declaredClasses = $this->declaredClasses;
@@ -537,7 +536,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string (e.g. 'Myquery')
      */
-    public function getQueryClassName($fqcn = false): string
+    public function getQueryClassName(bool $fqcn = false): string
     {
         return $this->getClassNameFromBuilder($this->getStubQueryBuilder(), $fqcn);
     }
@@ -551,7 +550,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string (e.g. 'MyTable' or 'ChildMyTable')
      */
-    public function getObjectClassName($fqcn = false): string
+    public function getObjectClassName(bool $fqcn = false): string
     {
         return $this->getClassNameFromBuilder($this->getStubObjectBuilder(), $fqcn);
     }
@@ -576,7 +575,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string (e.g. 'My')
      */
-    public function getTableMapClassName($fqcn = false): string
+    public function getTableMapClassName(bool $fqcn = false): string
     {
         return $this->getClassNameFromBuilder($this->getTableMapBuilder(), $fqcn);
     }
@@ -584,19 +583,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     /**
      * Get the column constant name (e.g. TableMapName::COLUMN_NAME).
      *
-     * @param \Propel\Generator\Model\Column|null $col The column we need a name for.
+     * @param \Propel\Generator\Model\Column $col The column we need a name for.
      * @param string|null $classname The TableMap classname to use.
-     *
-     * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string If $classname is provided, then will return $classname::COLUMN_NAME; if not, then the TableMapName is looked up for current table to yield $currTableTableMap::COLUMN_NAME.
      */
-    public function getColumnConstant($col, $classname = null): string
+    public function getColumnConstant(Column $col, ?string $classname = null): string
     {
-        if ($col === null) {
-            throw new InvalidArgumentException('No columns were specified.');
-        }
-
         if ($classname === null) {
             return $this->getBuildProperty('generator.objectModel.classPrefix') . $col->getFQConstantName();
         }
@@ -644,7 +637,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string|null
      */
-    public function getFKPhpNameAffix(ForeignKey $fk, $plural = false): ?string
+    public function getFKPhpNameAffix(ForeignKey $fk, bool $plural = false): ?string
     {
         if ($fk->getPhpName()) {
             if ($plural) {
@@ -668,7 +661,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, $plural = true): string
+    protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, bool $plural = true): string
     {
         $names = [];
 
@@ -812,10 +805,10 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     protected function extractCrossInformation(
         CrossForeignKeys $crossFKs,
         $crossFKToIgnore,
-        &$signature,
-        &$shortSignature,
-        &$normalizedShortSignature,
-        &$phpDoc
+        array &$signature,
+        array &$shortSignature,
+        array &$normalizedShortSignature,
+        array &$phpDoc
     ): void {
         foreach ($crossFKs->getCrossForeignKeys() as $fk) {
             if (is_array($crossFKToIgnore) && in_array($fk, $crossFKToIgnore)) {
@@ -925,7 +918,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string|null
      */
-    public function getRefFKPhpNameAffix(ForeignKey $fk, $plural = false): ?string
+    public function getRefFKPhpNameAffix(ForeignKey $fk, bool $plural = false): ?string
     {
         $pluralizer = $this->getPluralizer();
         if ($fk->getRefPhpName()) {
@@ -987,7 +980,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier): bool
+    public function hasBehaviorModifier(string $hookName, string $modifier): bool
     {
         $modifierGetter = 'get' . $modifier;
         foreach ($this->getTable()->getBehaviors() as $behavior) {
@@ -1009,7 +1002,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return void
      */
-    public function applyBehaviorModifierBase($hookName, $modifier, &$script, $tab = '        '): void
+    public function applyBehaviorModifierBase(string $hookName, string $modifier, string &$script, string $tab = '        '): void
     {
         $modifierGetter = 'get' . $modifier;
         foreach ($this->getTable()->getBehaviors() as $behavior) {
@@ -1041,7 +1034,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string|null
      */
-    public function getBehaviorContentBase($contentName, $modifier): ?string
+    public function getBehaviorContentBase(string $contentName, string $modifier): ?string
     {
         $modifierGetter = 'get' . $modifier;
         foreach ($this->getTable()->getBehaviors() as $behavior) {
@@ -1067,7 +1060,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/'): string
+    public function renderTemplate(string $filename, array $vars = [], string $templateDir = '/templates/'): string
     {
         $filePath = __DIR__ . $templateDir . $filename;
         if (!file_exists($filePath)) {
@@ -1099,7 +1092,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return string
      */
-    private function clean($content): string
+    private function clean(string $content): string
     {
         // line feed
         $content = str_replace("\r\n", "\n", $content);
@@ -1143,7 +1136,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return void
      */
-    abstract protected function addClassOpen(&$script): void;
+    abstract protected function addClassOpen(string &$script): void;
 
     /**
      * This method adds the contents of the generated class to the script.
@@ -1157,7 +1150,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return void
      */
-    abstract protected function addClassBody(&$script): void;
+    abstract protected function addClassBody(string &$script): void;
 
     /**
      * Closes class.
@@ -1166,5 +1159,5 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @return void
      */
-    abstract protected function addClassClose(&$script): void;
+    abstract protected function addClassClose(string &$script): void;
 }

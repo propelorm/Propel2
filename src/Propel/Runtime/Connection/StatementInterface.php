@@ -27,18 +27,18 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute($inputParameters = null): bool;
+    public function execute(?array $inputParameters = null): bool;
 
     /**
      * Fetches the next row from a result set.
      *
-     * @param int|null $fetchStyle Controls how the next row will be returned to the caller.
+     * @param int $fetchStyle Controls how the next row will be returned to the caller.
      * @param int $cursorOrientation This value determines which row will be returned to the caller.
      * @param int $cursorOffset
      *
      * @return mixed
      */
-    public function fetch($fetchStyle = PDO::FETCH_BOTH, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0);
+    public function fetch(int $fetchStyle = PDO::FETCH_BOTH, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0);
 
     /**
      * Binds a parameter to the specified variable name.
@@ -51,7 +51,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = null, $driverOptions = null): bool;
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool;
 
     /**
      * Bind a column to a PHP variable.
@@ -64,7 +64,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool;
+    public function bindColumn($column, &$param, ?int $type = null, ?int $maxlen = null, $driverdata = null): bool;
 
     /**
      * Binds a value to a parameter
@@ -75,7 +75,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR): bool;
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool;
 
     /**
      * Returns the number of rows affected by the last SQL statement.
@@ -91,7 +91,7 @@ interface StatementInterface
      *
      * @return string|null Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
-    public function fetchColumn($columnIndex = 0): ?string;
+    public function fetchColumn(int $columnIndex = 0): ?string;
 
     /**
      * Returns an array containing all of the result set rows.
@@ -102,7 +102,7 @@ interface StatementInterface
      *
      * @return array returns an array containing all of the remaining rows in the result set.
      */
-    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []): array;
+    public function fetchAll(?int $fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []): array;
 
     /**
      * Fetches the next row and returns it as an object.
@@ -112,7 +112,7 @@ interface StatementInterface
      *
      * @return mixed
      */
-    public function fetchObject($className = 'stdClass', array $ctorArgs = []);
+    public function fetchObject(string $className = 'stdClass', array $ctorArgs = []);
 
     /**
      * Fetch the SQLSTATE associated with the last operation on the statement handle.
@@ -136,7 +136,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value): bool;
+    public function setAttribute(int $attribute, $value): bool;
 
     /**
      * Retrieve a statement attribute.
@@ -145,7 +145,7 @@ interface StatementInterface
      *
      * @return mixed the attribute value.
      */
-    public function getAttribute($attribute);
+    public function getAttribute(int $attribute);
 
     /**
      * Returns the number of columns in the result set.
@@ -161,7 +161,7 @@ interface StatementInterface
      *
      * @return array|false
      */
-    public function getColumnMeta($column);
+    public function getColumnMeta(int $column);
 
     /**
      * Set the default fetch mode for this statement.
@@ -172,7 +172,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = []): bool;
+    public function setFetchMode(int $mode, $classNameObject = null, array $ctorarfg = []): bool;
 
     /**
      * Advances to the next rowset in a multi-rowset statement handle.

@@ -352,7 +352,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string oracle vendor sql part
      */
-    public function generateBlockStorage($object, $isPrimaryKey = false): string
+    public function generateBlockStorage($object, bool $isPrimaryKey = false): string
     {
         $vendorSpecific = $object->getVendorInfoForType('oracle');
         if ($vendorSpecific->isEmpty()) {
@@ -443,7 +443,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            '): string
+    public function getColumnBindingPHP(Column $column, string $identifier, string $columnValueAccessor, string $tab = '            '): string
     {
         if ($column->getType() === PropelTypes::CLOB_EMU) {
             return sprintf(
@@ -475,8 +475,13 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @return array<string>|string|null
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
-    {
+    public function getIdentifierPhp(
+        string $columnValueMutator,
+        string $connectionVariableName = '$con',
+        string $sequenceName = '',
+        string $tab = '            ',
+        ?string $phpType = null
+    ) {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }

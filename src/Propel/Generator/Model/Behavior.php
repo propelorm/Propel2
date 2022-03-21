@@ -95,7 +95,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
 
@@ -111,7 +111,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setId($id): void
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -239,7 +239,7 @@ class Behavior extends MappingModel
      *
      * @return mixed
      */
-    public function getParameter($name)
+    public function getParameter(string $name)
     {
         return $this->parameters[$name];
     }
@@ -255,9 +255,9 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setTableModificationOrder($tableModificationOrder): void
+    public function setTableModificationOrder(int $tableModificationOrder): void
     {
-        $this->tableModificationOrder = (int)$tableModificationOrder;
+        $this->tableModificationOrder = $tableModificationOrder;
     }
 
     /**
@@ -323,7 +323,7 @@ class Behavior extends MappingModel
      *
      * @return void
      */
-    public function setTableModified($modified): void
+    public function setTableModified(bool $modified): void
     {
         $this->isTableModified = $modified;
     }
@@ -351,7 +351,7 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/'): string
+    public function renderTemplate(string $filename, array $vars = [], string $templateDir = '/templates/'): string
     {
         $filePath = $this->getDirname() . $templateDir . $filename;
         if (!file_exists($filePath)) {
@@ -396,7 +396,7 @@ class Behavior extends MappingModel
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnForParameter($name): ?Column
+    public function getColumnForParameter(string $name): ?Column
     {
         return $this->table->getColumn($this->getParameter($name));
     }

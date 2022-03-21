@@ -26,11 +26,11 @@ class LikeCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
-     * @param string $column ignored
-     * @param string $value The condition to be added to the query string
+     * @param \Propel\Runtime\Map\ColumnMap|string $column ignored
+     * @param mixed $value The condition to be added to the query string
      * @param string $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::LIKE)
+    public function __construct(Criteria $outer, $column, $value, string $comparison = Criteria::LIKE)
     {
         parent::__construct($outer, $column, $value, $comparison);
     }
@@ -42,7 +42,7 @@ class LikeCriterion extends AbstractCriterion
      *
      * @return $this A modified Criterion object.
      */
-    public function setIgnoreCase($b)
+    public function setIgnoreCase(bool $b)
     {
         $this->ignoreStringCase = (bool)$b;
 
@@ -67,7 +67,7 @@ class LikeCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
         $db = $this->getAdapter();

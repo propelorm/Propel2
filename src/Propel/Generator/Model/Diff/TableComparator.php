@@ -97,7 +97,7 @@ class TableComparator
      *
      * @return \Propel\Generator\Model\Diff\TableDiff|false
      */
-    public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
+    public static function computeDiff(Table $fromTable, Table $toTable, bool $caseInsensitive = false)
     {
         $tc = new self();
 
@@ -123,7 +123,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareColumns($caseInsensitive = false): int
+    public function compareColumns(bool $caseInsensitive = false): int
     {
         $fromTableColumns = $this->getFromTable()->getColumns();
         $toTableColumns = $this->getToTable()->getColumns();
@@ -186,7 +186,7 @@ class TableComparator
      *
      * @return int
      */
-    public function comparePrimaryKeys($caseInsensitive = false): int
+    public function comparePrimaryKeys(bool $caseInsensitive = false): int
     {
         $pkDifferences = 0;
         $fromTablePk = $this->getFromTable()->getPrimaryKey();
@@ -243,7 +243,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareIndices($caseInsensitive = false): int
+    public function compareIndices(bool $caseInsensitive = false): int
     {
         $indexDifferences = 0;
         $fromTableIndices = array_merge($this->getFromTable()->getIndices(), $this->getFromTable()->getUnices());
@@ -293,7 +293,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareForeignKeys($caseInsensitive = false): int
+    public function compareForeignKeys(bool $caseInsensitive = false): int
     {
         $fkDifferences = 0;
         $fromTableFks = $this->getFromTable()->getForeignKeys();

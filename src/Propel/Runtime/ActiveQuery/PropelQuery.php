@@ -24,7 +24,7 @@ class PropelQuery
      *
      * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
-    public static function from($queryClassAndAlias): ModelCriteria
+    public static function from(string $queryClassAndAlias): ModelCriteria
     {
         [$class, $alias] = ModelCriteria::getClassAndAlias($queryClassAndAlias);
         $queryClass = $class . 'Query';
