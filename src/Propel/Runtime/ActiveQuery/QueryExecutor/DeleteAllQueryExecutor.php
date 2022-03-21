@@ -47,6 +47,8 @@ class DeleteAllQueryExecutor extends AbstractQueryExecutor
         }
 
         $preparedStatementDto = DeleteQuerySqlBuilder::createDeleteAllSql($this->criteria, $tableName);
+
+        /** @var \Propel\Runtime\Connection\StatementInterface $stmt */
         $stmt = $this->executeStatement($preparedStatementDto);
 
         return $stmt->rowCount();

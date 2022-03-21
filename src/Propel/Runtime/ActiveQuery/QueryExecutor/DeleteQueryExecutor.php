@@ -50,6 +50,7 @@ class DeleteQueryExecutor extends AbstractQueryExecutor
         $builder = new DeleteQuerySqlBuilder($this->criteria);
         foreach ($tables as $tableName => $columnNames) {
             $preparedStatementDto = $builder->build($tableName, $columnNames);
+            /** @var \Propel\Runtime\Connection\StatementInterface $stmt */
             $stmt = $this->executeStatement($preparedStatementDto);
             $affectedRows += $stmt->rowCount();
         }
