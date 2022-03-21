@@ -1597,7 +1597,7 @@ class Criteria
      *
      * @return $this Modified Criteria object (for fluent API)
      */
-    public function setComment(?string $comment = null)
+    public function setComment(?string $comment)
     {
         $this->queryComment = $comment;
 

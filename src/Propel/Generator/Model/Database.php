@@ -402,9 +402,9 @@ class Database extends ScopedMappingModel
      *
      * @return void
      */
-    public function setHeavyIndexing(bool $flag = true): void
+    public function setHeavyIndexing(bool $flag): void
     {
-        $this->heavyIndexing = (bool)$flag;
+        $this->heavyIndexing = $flag;
     }
 
     /**

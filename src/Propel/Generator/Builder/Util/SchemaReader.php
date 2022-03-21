@@ -425,13 +425,13 @@ class SchemaReader
     }
 
     /**
-     * @param string $tag_name
+     * @param string $tagName
      *
      * @return void
      */
-    protected function throwInvalidTagException(string $tag_name): void
+    protected function throwInvalidTagException(string $tagName): void
     {
-        $this->throwSchemaExceptionWithLocation('Unexpected tag <%s>', $tag_name);
+        $this->throwSchemaExceptionWithLocation('Unexpected tag <%s>', $tagName);
     }
 
     /**

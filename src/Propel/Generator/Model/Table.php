@@ -1498,9 +1498,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReadOnly(bool $flag = true): void
+    public function setReadOnly(bool $flag): void
     {
-        $this->readOnly = (bool)$flag;
+        $this->readOnly = $flag;
     }
 
     /**
@@ -1520,9 +1520,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReloadOnInsert(bool $flag = true): void
+    public function setReloadOnInsert(bool $flag): void
     {
-        $this->reloadOnInsert = (bool)$flag;
+        $this->reloadOnInsert = $flag;
     }
 
     /**
@@ -1542,9 +1542,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setReloadOnUpdate(bool $flag = true): void
+    public function setReloadOnUpdate(bool $flag): void
     {
-        $this->reloadOnUpdate = (bool)$flag;
+        $this->reloadOnUpdate = $flag;
     }
 
     /**
@@ -1626,9 +1626,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setAbstract(bool $flag = true): void
+    public function setAbstract(bool $flag): void
     {
-        $this->isAbstract = (bool)$flag;
+        $this->isAbstract = $flag;
     }
 
     /**
@@ -2004,9 +2004,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setForReferenceOnly(bool $flag = true): void
+    public function setForReferenceOnly(bool $flag): void
     {
-        $this->forReferenceOnly = (bool)$flag;
+        $this->forReferenceOnly = $flag;
     }
 
     /**
@@ -2137,7 +2137,7 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setIsCrossRef(bool $flag = true): void
+    public function setIsCrossRef(bool $flag): void
     {
         $this->setCrossRef($flag);
     }
@@ -2149,9 +2149,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-    public function setCrossRef(bool $flag = true): void
+    public function setCrossRef(bool $flag): void
     {
-        $this->isCrossRef = (bool)$flag;
+        $this->isCrossRef = $flag;
     }
 
     /**

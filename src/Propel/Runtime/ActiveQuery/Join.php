@@ -366,7 +366,7 @@ class Join
      *
      * @return void
      */
-    public function setJoinType(?string $joinType = null): void
+    public function setJoinType(?string $joinType): void
     {
         $this->joinType = $joinType;
     }

@@ -257,7 +257,7 @@ class Behavior extends MappingModel
      */
     public function setTableModificationOrder(int $tableModificationOrder): void
     {
-        $this->tableModificationOrder = (int)$tableModificationOrder;
+        $this->tableModificationOrder = $tableModificationOrder;
     }
 
     /**

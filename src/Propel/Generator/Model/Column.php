@@ -910,9 +910,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setNotNull(bool $flag = true): void
+    public function setNotNull(bool $flag): void
     {
-        $this->isNotNull = (bool)$flag;
+        $this->isNotNull = $flag;
     }
 
     /**
@@ -958,9 +958,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setPrimaryKey(bool $flag = true): void
+    public function setPrimaryKey(bool $flag): void
     {
-        $this->isPrimaryKey = (bool)$flag;
+        $this->isPrimaryKey = $flag;
     }
 
     /**
@@ -1584,9 +1584,9 @@ class Column extends MappingModel
      *
      * @return void
      */
-    public function setAutoIncrement(bool $flag = true): void
+    public function setAutoIncrement(bool $flag): void
     {
-        $this->isAutoIncrement = (bool)$flag;
+        $this->isAutoIncrement = $flag;
     }
 
     /**
@@ -1697,12 +1697,12 @@ class Column extends MappingModel
     /**
      * Generates the singular form of a PHP name.
      *
-     * @param string $phpname
+     * @param string $phpName
      *
      * @return string
      */
-    public static function generatePhpSingularName(string $phpname): string
+    public static function generatePhpSingularName(string $phpName): string
     {
-        return rtrim($phpname, 's');
+        return rtrim($phpName, 's');
     }
 }
