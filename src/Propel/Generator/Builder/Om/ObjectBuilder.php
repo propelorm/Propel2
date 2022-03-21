@@ -7135,7 +7135,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return \$this
      */
-    public function clear()
+    public function clear(): void
     {";
 
         foreach ($table->getForeignKeys() as $fk) {
