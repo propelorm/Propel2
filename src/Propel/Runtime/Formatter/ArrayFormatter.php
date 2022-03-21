@@ -88,7 +88,7 @@ class ArrayFormatter extends AbstractFormatter
      *
      * @return array|null
      */
-    public function formatOne(?DataFetcherInterface $dataFetcher = null): ?array
+    public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
         $this->checkInit();
         $result = null;
