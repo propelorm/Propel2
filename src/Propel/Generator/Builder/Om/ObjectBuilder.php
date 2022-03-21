@@ -4508,7 +4508,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
 
-        @return \$this;
+        return \$this;
     }
 ";
     }
