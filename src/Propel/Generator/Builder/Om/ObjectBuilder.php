@@ -4501,7 +4501,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return $this
+     * @return \$this
      * @see add$relCol()
      */
     public function clear$relCol()
