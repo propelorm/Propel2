@@ -10,6 +10,6 @@ namespace Propel\Tests\Helpers\Bookstore\Behavior;
 
 use Propel\Generator\Model\Behavior;
 
-class DonothingBehavior extends Behavior
+class DoNothingBehavior extends Behavior
 {
 }

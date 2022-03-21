@@ -1907,7 +1907,7 @@ EOT;
      * @param     ConnectionInterface \$con The connection object used by the query
      * @return int|null
      */
-    protected function basePostDelete(\$affectedRows, ConnectionInterface \$con): ?int
+    protected function basePostDelete(int \$affectedRows, ConnectionInterface \$con): ?int
     {" . $behaviorCode . "
 
         return \$this->postDelete(\$affectedRows, \$con);

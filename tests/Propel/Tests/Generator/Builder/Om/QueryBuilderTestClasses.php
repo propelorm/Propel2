@@ -14,7 +14,7 @@ use Propel\Tests\Bookstore\BookQuery;
 
 class MyCustomBookQuery extends BookQuery
 {
-    public static function create($modelAlias = null, ?Criteria $criteria = null)
+    public static function create(?string $modelAlias = null, ?Criteria $criteria = null): Criteria
     {
         if ($criteria instanceof MyCustomBookQuery) {
             return $criteria;
@@ -23,7 +23,7 @@ class MyCustomBookQuery extends BookQuery
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
-        if ($criteria instanceof Criteria) {
+        if ($criteria !== null) {
             $query->mergeWith($criteria);
         }
 

@@ -311,7 +311,7 @@ protected function processNestedSetQueries(ConnectionInterface \$con): void
  */
 public function getLeftValue(): int
 {
-    return \$this->{$this->getColumnAttribute('left_column')};
+    return \$this->{$this->getColumnAttribute('left_column')} ?: 0;
 }
 ";
     }
@@ -332,7 +332,7 @@ public function getLeftValue(): int
  */
 public function getRightValue(): int
 {
-    return \$this->{$this->getColumnAttribute('right_column')};
+    return \$this->{$this->getColumnAttribute('right_column')} ?: 0;
 }
 ";
     }
@@ -353,7 +353,7 @@ public function getRightValue(): int
  */
 public function getLevel(): int
 {
-    return \$this->{$this->getColumnAttribute('level_column')};
+    return \$this->{$this->getColumnAttribute('level_column')} ?: 0;
 }
 ";
     }

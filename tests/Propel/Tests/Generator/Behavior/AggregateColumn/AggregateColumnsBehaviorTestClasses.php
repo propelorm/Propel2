@@ -58,7 +58,7 @@ class TestableComment extends AggregateComment
 
 class TestableAggregateCommentQuery extends AggregateCommentQuery
 {
-    public static function create($modelAlias = null, ?Criteria $criteria = null)
+    public static function create(?string $modelAlias = null, ?Criteria $criteria = null): Criteria
     {
         return new TestableAggregateCommentQuery();
     }
@@ -71,7 +71,7 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
     }
 
     // overrides the parent basePostDelete() to bypass behavior hooks
-    protected function basePostDelete($affectedRows, ConnectionInterface $con): ?int
+    protected function basePostDelete(int $affectedRows, ConnectionInterface $con): ?int
     {
         return $this->postDelete($affectedRows, $con);
     }

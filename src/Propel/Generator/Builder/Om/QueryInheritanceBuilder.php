@@ -211,10 +211,10 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
             return \$criteria;
         }
         \$query = new " . $classname . "();
-        if (null !== \$modelAlias) {
+        if (\$modelAlias !== null) {
             \$query->setModelAlias(\$modelAlias);
         }
-        if (\$criteria instanceof Criteria) {
+        if (\$criteria !== null) {
             \$query->mergeWith(\$criteria);
         }
 

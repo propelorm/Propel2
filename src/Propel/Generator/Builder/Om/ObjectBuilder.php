@@ -4019,10 +4019,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function isPrimaryKeyNull(): bool
     {";
-        if (count($pkeys) == 1) {
-            $script .= "
-        return null === \$this->get" . $pkeys[0]->getPhpName() . '();';
-        } else {
+        if (count($pkeys) === 1) {
+            $script .= '
+        return null === $this->get' . $pkeys[0]->getPhpName() . '();';
+        } elseif ($pkeys) {
             $tests = [];
             foreach ($pkeys as $pkey) {
                 $tests[] = '(null === $this->get' . $pkey->getPhpName() . '())';
@@ -6406,7 +6406,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if ($reloadOnInsert || $reloadOnUpdate) {
             $script .= "
             if (\$reloadObject) {
-                \$this->reload(\$con);
+                \$this->reload((bool)\$con);
             }
 ";
         }
