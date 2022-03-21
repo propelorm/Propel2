@@ -3937,7 +3937,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     }
 
     /**
-     * Adds the setPrimaryKey() method for tables that contain a multi-columnprimary key.
+     * Adds the setPrimaryKey() method for tables that contain a multi-column primary key.
      *
      * @param string $script The script will be modified in this method.
      *

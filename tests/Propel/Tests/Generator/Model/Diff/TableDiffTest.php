@@ -143,7 +143,7 @@ class TableDiffTest extends TestCase
     public function testSetAddedPkColumns()
     {
         $column = new Column('id', 'integer', 7);
-        $column->setPrimaryKey();
+        $column->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->setAddedPkColumns([ $column ]);
@@ -159,7 +159,7 @@ class TableDiffTest extends TestCase
     public function testRemoveAddedPkColumn()
     {
         $column = new Column('id', 'integer', 7);
-        $column->setPrimaryKey();
+        $column->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->setAddedPkColumns([ $column ]);
@@ -186,7 +186,7 @@ class TableDiffTest extends TestCase
     public function testSetRemovedPkColumns()
     {
         $column = new Column('id', 'integer');
-        $column->setPrimaryKey();
+        $column->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->setRemovedPkColumns([ $column ]);
@@ -428,7 +428,7 @@ class TableDiffTest extends TestCase
     public function testReverseDiffHasAddedPkColumns()
     {
         $column = new Column('client_id', 'integer');
-        $column->setPrimaryKey();
+        $column->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->addRemovedPkColumn('client_id', $column);
@@ -444,7 +444,7 @@ class TableDiffTest extends TestCase
     public function testReverseDiffHasRemovedPkColumns()
     {
         $column = new Column('client_id', 'integer');
-        $column->setPrimaryKey();
+        $column->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->addAddedPkColumn('client_id', $column);
@@ -460,10 +460,10 @@ class TableDiffTest extends TestCase
     public function testReverseDiffHasRenamedPkColumn()
     {
         $fromColumn = new Column('post_id', 'integer');
-        $fromColumn->setPrimaryKey();
+        $fromColumn->setPrimaryKey(true);
 
         $toColumn = new Column('id', 'integer');
-        $toColumn->setPrimaryKey();
+        $toColumn->setPrimaryKey(true);
 
         $diff = $this->createTableDiff();
         $diff->addRenamedPkColumn($fromColumn, $toColumn);
