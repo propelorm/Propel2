@@ -4501,12 +4501,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
-     * @return void
-     * @see        add$relCol()
+     * @return $this
+     * @see add$relCol()
      */
     public function clear$relCol()
     {
         \$this->$collName = null; // important to set this to NULL since that means it is uninitialized
+
+        @return \$this;
     }
 ";
     }
@@ -5504,7 +5506,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return bool
      */
-    public function is{$relCol}Loaded()
+    public function is{$relCol}Loaded(): bool
     {
         return null !== \$this->$collName;
     }
@@ -5631,7 +5633,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return ObjectCombinationCollection Combination list of {$classNames} objects
      */
-    public function get{$relatedName}(\$criteria = null, ?ConnectionInterface \$con = null)
+    public function get{$relatedName}(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collVarName}Partial && !\$this->isNew();
         if (null === \$this->$collVarName || null !== \$criteria || \$partial) {
@@ -5912,7 +5914,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return int The number of related $relatedObjectClassName objects
      */
-    public function count{$relatedName}(?Criteria \$criteria = null, \$distinct = false, ?ConnectionInterface \$con = null)
+    public function count{$relatedName}(?Criteria \$criteria = null, \$distinct = false, ?ConnectionInterface \$con = null): int
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
         if (null === \$this->$collName || null !== \$criteria || \$partial) {
@@ -7130,8 +7132,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
+     *
+     * @return \$this
      */
-    public function clear(): void
+    public function clear()
     {";
 
         foreach ($table->getForeignKeys() as $fk) {
@@ -7178,6 +7182,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$this->resetModified();
         \$this->setNew(true);
         \$this->setDeleted(false);
+
+        return $this;
     }
 ";
     }
@@ -7201,9 +7207,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Necessary for object serialisation.
      *
      * @param bool \$deep Whether to also clear the references on all referrer objects.
-     * @return void
+     * @return \$this
      */
-    public function clearAllReferences(bool \$deep = false): void
+    public function clearAllReferences(bool \$deep = false)
     {
         if (\$deep) {";
         $vars = [];
@@ -7257,6 +7263,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
+        return \$this;
     }
 ";
     }
