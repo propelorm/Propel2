@@ -4015,6 +4015,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Returns true if the primary key for this object is null.
+     *
      * @return bool
      */
     public function isPrimaryKeyNull(): bool
@@ -7130,7 +7131,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
-    public function clear()
+    public function clear(): void
     {";
 
         foreach ($table->getForeignKeys() as $fk) {
@@ -7199,9 +7200,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * This method is used to reset all php object references (not the actual reference in the database).
      * Necessary for object serialisation.
      *
-     * @param      bool \$deep Whether to also clear the references on all referrer objects.
+     * @param bool \$deep Whether to also clear the references on all referrer objects.
+     * @return void
      */
-    public function clearAllReferences(\$deep = false)
+    public function clearAllReferences(bool \$deep = false): void
     {
         if (\$deep) {";
         $vars = [];
