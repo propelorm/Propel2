@@ -1165,7 +1165,7 @@ class CriteriaTest extends BookstoreTestBase
         $c2 = $c->setComment('foo');
         $this->assertSame('foo', $c->getComment(), 'Comment is set by setComment()');
         $this->assertEquals($c, $c2, 'setComment() returns the current Criteria');
-        $c->setComment();
+        $c->setComment(null);
         $this->assertNull($c->getComment(), 'Comment is reset by setComment(null)');
     }
 
