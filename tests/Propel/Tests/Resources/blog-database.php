@@ -13,15 +13,15 @@ use Propel\Generator\Platform\MysqlPlatform;
 
 /* Columns */
 $column11 = new Column('id', 'integer', 7);
-$column11->setAutoIncrement();
-$column11->setNotNull();
-$column11->setPrimaryKey();
+$column11->setAutoIncrement(true);
+$column11->setNotNull(true);
+$column11->setPrimaryKey(true);
 $column12 = new Column('author_id', 'smallint', 3);
-$column12->setNotNull();
+$column12->setNotNull(true);
 $column13 = new Column('category_id', 'tinyint', 2);
-$column13->setNotNull();
+$column13->setNotNull(true);
 $column14 = new Column('title', 'varchar', 100);
-$column14->setNotNull();
+$column14->setNotNull(true);
 $column15 = new Column('body', 'clob');
 $column16 = new Column('average_rating', 'float', 2);
 $column16->setScale(2);
@@ -31,57 +31,57 @@ $column17->setScale(0);
 $column17->setDescription('The Price without decimal places');
 
 $column21 = new Column('id', 'smallint', 3);
-$column21->setAutoIncrement();
-$column21->setNotNull();
-$column21->setPrimaryKey();
+$column21->setAutoIncrement(true);
+$column21->setNotNull(true);
+$column21->setPrimaryKey(true);
 $column22 = new Column('username', 'varchar', 15);
-$column22->setNotNull();
+$column22->setNotNull(true);
 $column23 = new Column('password', 'varchar', 40);
-$column23->setNotNull();
+$column23->setNotNull(true);
 
 $column31 = new Column('id', 'tinyint', 2);
-$column31->setAutoIncrement();
-$column31->setNotNull();
-$column31->setPrimaryKey();
+$column31->setAutoIncrement(true);
+$column31->setNotNull(true);
+$column31->setPrimaryKey(true);
 $column32 = new Column('name', 'varchar', 40);
-$column32->setNotNull();
+$column32->setNotNull(true);
 
 $column41 = new Column('id', 'integer', 7);
-$column41->setAutoIncrement();
-$column41->setNotNull();
-$column41->setPrimaryKey();
+$column41->setAutoIncrement(true);
+$column41->setNotNull(true);
+$column41->setPrimaryKey(true);
 $column42 = new Column('name', 'varchar', 40);
-$column42->setNotNull();
+$column42->setNotNull(true);
 
 $column51 = new Column('post_id', 'integer', 7);
-$column51->setNotNull();
-$column51->setPrimaryKey();
+$column51->setNotNull(true);
+$column51->setPrimaryKey(true);
 $column52 = new Column('tag_id', 'integer', 7);
-$column52->setNotNull();
-$column52->setPrimaryKey();
+$column52->setNotNull(true);
+$column52->setPrimaryKey(true);
 
 $column61 = new Column('id', 'integer', 5);
-$column61->setNotNull();
-$column61->setAutoIncrement();
-$column61->setPrimaryKey();
+$column61->setNotNull(true);
+$column61->setAutoIncrement(true);
+$column61->setPrimaryKey(true);
 $column62 = new Column('title', 'varchar', 150);
-$column62->setNotNull();
+$column62->setNotNull(true);
 $column63 = new Column('content', 'clob');
 $column63->addVendorInfo(new VendorInfo('mysql', [
     'Charset' => 'latin1',
     'Collate' => 'latin1_general_ci',
 ]));
 $column64 = new Column('is_published', 'boolean');
-$column64->setNotNull();
+$column64->setNotNull(true);
 $column64->setDefaultValue('false');
 
 $column71 = new Column('id', 'integer');
-$column71->setNotNull();
-$column71->setPrimaryKey();
+$column71->setNotNull(true);
+$column71->setPrimaryKey(true);
 
 $column81 = new Column('id', 'integer');
-$column81->setNotNull();
-$column81->setPrimaryKey();
+$column81->setNotNull(true);
+$column81->setPrimaryKey(true);
 
 /* Foreign Keys */
 $fkAuthorPost = new ForeignKey('fk_post_has_author');
@@ -161,7 +161,7 @@ $table4->addColumns([ $column41, $column42 ]);
 $table5 = new Table('blog_post_tag');
 $table5->setNamespace('\Acme\Model\Blog');
 $table5->setPackage('Acme.Blog');
-$table5->setCrossRef();
+$table5->setCrossRef(true);
 $table5->addColumns([ $column51, $column52 ]);
 $table5->addForeignKeys([ $fkPostTag, $fkTagPost ]);
 $table5->setDescription('This table was given with an absolute namespace');
@@ -192,7 +192,7 @@ $database->setTablePrefix('acme_');
 $database->setNamespace('Acme\\Model');
 $database->setBaseClass('Acme\\Model\\ActiveRecord');
 $database->setPackage('Acme');
-$database->setHeavyIndexing();
+$database->setHeavyIndexing(true);
 $database->addVendorInfo(new VendorInfo('mysql', [ 'Engine' => 'InnoDB', 'Charset' => 'utf8' ]));
 $database->addTables([ $table1, $table2, $table3, $table4, $table5, $table6, $table7, $table8 ]);
 
