@@ -7183,7 +7183,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$this->setNew(true);
         \$this->setDeleted(false);
 
-        return $this;
+        return \$this;
     }
 ";
     }
