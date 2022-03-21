@@ -33,7 +33,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     /**
      * @var array
      */
-    protected $readConfiguration;
+    protected $readConfiguration = [];
 
     /**
      * @var \Propel\Runtime\Connection\ConnectionInterface|null
@@ -181,7 +181,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
             return $this->getWriteConnection($adapter);
         }
         if ($this->readConnection === null) {
-            if ($this->readConfiguration === null) {
+            if (!$this->readConfiguration) {
                 $this->readConnection = $this->getWriteConnection($adapter);
             } else {
                 $keys = array_keys($this->readConfiguration);
