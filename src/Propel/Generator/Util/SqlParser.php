@@ -75,7 +75,7 @@ class SqlParser
      * @param string $input The SQL statements
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
     public static function executeString(string $input, ConnectionInterface $connection): int
     {
@@ -89,7 +89,7 @@ class SqlParser
      * @param string $file the path to the SQL file
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
     public static function executeFile(string $file, ConnectionInterface $connection): int
     {
@@ -103,7 +103,7 @@ class SqlParser
      * @param array $statements a list of SQL statements
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
     protected static function executeStatements(array $statements, ConnectionInterface $connection): int
     {

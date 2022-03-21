@@ -36,7 +36,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
 
         foreach ($table->getColumns() as $col) {
             $type = $col->getType();
-            // if they're not using the DateTime class than we will generate "compatibility" accessor method
+            // if they're not using the DateTime class then we will generate "compatibility" accessor method
             if (
                 $type === PropelTypes::DATE
                 || $type === PropelTypes::TIME

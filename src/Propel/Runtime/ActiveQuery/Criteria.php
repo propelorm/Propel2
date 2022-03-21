@@ -2402,7 +2402,7 @@ class Criteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function doDelete(?ConnectionInterface $con = null): int
     {
@@ -2415,7 +2415,7 @@ class Criteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function doDeleteAll(?ConnectionInterface $con = null): int
     {

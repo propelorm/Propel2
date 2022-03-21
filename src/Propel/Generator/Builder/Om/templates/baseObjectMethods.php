@@ -137,7 +137,7 @@
      * @param  string $name The virtual column name
      * @return mixed
      *
-     * @throws PropelException
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function getVirtualColumn($name)
     {

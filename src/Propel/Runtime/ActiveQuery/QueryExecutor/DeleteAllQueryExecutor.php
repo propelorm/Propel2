@@ -33,7 +33,7 @@ class DeleteAllQueryExecutor extends AbstractQueryExecutor
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     protected function runDeleteAll(): int
     {

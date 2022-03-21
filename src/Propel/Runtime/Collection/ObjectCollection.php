@@ -286,11 +286,11 @@ class ObjectCollection extends Collection
      * <code>
      *   $res = $userCollection->toKeyIndex('Name');
      *
-     *   $res = array(
+     *   $res = [
      *       'peter' => class User #1 {$name => 'peter', ...},
      *       'hans' => class User #2 {$name => 'hans', ...},
      *       ...
-     *   )
+     *   ]
      * </code>
      *
      * @param string $keyColumn
@@ -314,11 +314,11 @@ class ObjectCollection extends Collection
      * <code>
      *   $res = $userCollection->toKeyIndex('Name');
      *
-     *   $res = array(
+     *   $res = [
      *       'peter',
      *       'hans',
      *       ...
-     *   )
+     *   ]
      * </code>
      *
      * @param string $columnName

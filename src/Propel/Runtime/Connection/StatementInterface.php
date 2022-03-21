@@ -80,7 +80,7 @@ interface StatementInterface
     /**
      * Returns the number of rows affected by the last SQL statement.
      *
-     * @return int the number of rows.
+     * @return int The number of rows.
      */
     public function rowCount(): int;
 
@@ -150,7 +150,7 @@ interface StatementInterface
     /**
      * Returns the number of columns in the result set.
      *
-     * @return int the number of columns in the result set represented by the StatementInterface object.
+     * @return int The number of columns in the result set represented by the StatementInterface object.
      */
     public function columnCount(): int;
 

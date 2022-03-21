@@ -219,7 +219,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
             }
         }
 
-        $newResult .= "{$indent}\$result = array({$values}\n{$indent});";
+        $newResult .= "{$indent}\$result = [{$values}\n{$indent}];";
         $text = str_replace($matches[1], ltrim($newResult), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();

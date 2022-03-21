@@ -170,13 +170,15 @@ static \$isVersioningEnabled = true;
 /**
  * Wrap the filter on the version column
  *
- * @param     integer \$version
- * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
- * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @param     int|null \$version
+ * @param     string|null  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+ * @return    \$this The current query, for fluid interface
  */
-public function filterByVersion(\$version = null, \$comparison = null)
+public function filterByVersion(\$version = null, ?string \$comparison = null)
 {
-    return \$this->filterBy{$this->getColumnPhpName()}(\$version, \$comparison);
+    \$this->filterBy{$this->getColumnPhpName()}(\$version, \$comparison);
+
+    return \$this;
 }
 ";
     }
@@ -193,11 +195,13 @@ public function filterByVersion(\$version = null, \$comparison = null)
  * Wrap the order on the version column
  *
  * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
- * @return  \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return  \$this The current query, for fluid interface
  */
-public function orderByVersion(\$order = Criteria::ASC)
+public function orderByVersion(string \$order = Criteria::ASC)
 {
-    return \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+    \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+
+    return \$this;
 }
 ";
     }

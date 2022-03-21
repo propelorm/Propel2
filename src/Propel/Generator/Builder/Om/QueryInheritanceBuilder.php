@@ -205,7 +205,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @return " . $classname . "
      */
-    public static function create(\$modelAlias = null, Criteria \$criteria = null)
+    public static function create(?string \$modelAlias = null, ?Criteria \$criteria = null): Criteria
     {
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;
@@ -319,9 +319,9 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
      *
      * @param ConnectionInterface \$con a connection object
      *
-     * @return integer the number of deleted rows
+     * @return int The number of deleted rows
      */
-    public function doDeleteAll(ConnectionInterface \$con = null): int
+    public function doDeleteAll(?ConnectionInterface \$con = null): int
     {
         // condition on class key is already added in preDelete()
         return parent::delete(\$con);

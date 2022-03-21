@@ -1651,7 +1651,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
-     * @return int the number of results
+     * @return int The number of results
      */
     public function count(?ConnectionInterface $con = null): int
     {
@@ -1796,7 +1796,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function delete(?ConnectionInterface $con = null): int
     {
@@ -1834,7 +1834,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function deleteAll(?ConnectionInterface $con = null): int
     {

@@ -225,7 +225,7 @@ public function cacheFetch(\$key)
     protected function addDoSelect(string &$script): void
     {
         $script .= "
-public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
+public function doSelect(?ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     // check that the columns of the main class are already added (if this is the primary ModelCriteria)
     if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
@@ -271,7 +271,7 @@ public function doSelect(ConnectionInterface \$con = null): \Propel\Runtime\Data
     protected function addDoCount(string &$script): void
     {
         $script .= "
-public function doCount(ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
+public function doCount(?ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
     \$db = Propel::getServiceContainer()->getAdapter(\$this->getDbName());

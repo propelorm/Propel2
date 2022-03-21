@@ -292,7 +292,7 @@ class QuickBuilder
      *
      * @throws \Exception
      *
-     * @return int the number of statements executed
+     * @return int The number of statements executed
      */
     public function buildSQL(ConnectionInterface $con): int
     {

@@ -104,7 +104,7 @@ public function hasChildObject(): bool
 /**
  * Get the child object of this object
  *
- * @return    mixed
+ * @return mixed
  */
 public function getChildObject()
 {
