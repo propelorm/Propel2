@@ -31,7 +31,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
     protected $writeConnection;
 
     /**
-     * @var array|null
+     * @var array
      */
     protected $readConfiguration = [];
 
