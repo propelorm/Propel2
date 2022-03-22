@@ -69,6 +69,8 @@ class SimpleArrayFormatter extends AbstractFormatter
      * @throws \Propel\Runtime\Exception\LogicException
      *
      * @return array|string|null
+     *
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
