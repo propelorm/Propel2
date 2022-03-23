@@ -11,7 +11,6 @@ namespace Propel\Runtime\Formatter;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
-use ReflectionClass;
 
 /**
  * Array formatter for Propel query
@@ -56,7 +55,8 @@ class ArrayFormatter extends AbstractFormatter
 
         $items = [];
         foreach ($dataFetcher as $row) {
-            $object = &$this->getStructuredArrayFromRow($row);
+            $structuredArrayFromRow = $this->getStructuredArrayFromRow($row);
+            $object = &$structuredArrayFromRow;
             if ($object) {
                 $items[] = &$object;
             }
@@ -104,7 +104,8 @@ class ArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            $object = &$this->getStructuredArrayFromRow($row);
+            $structuredArrayFromRow = $this->getStructuredArrayFromRow($row);
+            $object = &$structuredArrayFromRow;
             if ($object) {
                 $result = &$object;
             }
