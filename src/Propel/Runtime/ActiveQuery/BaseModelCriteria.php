@@ -161,6 +161,24 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     }
 
     /**
+     * Returns the name of the class for this model criteria
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getModelNameOrFail(): string
+    {
+        $modelName = $this->getModelName();
+
+        if ($modelName === null) {
+            throw new LogicException('Model name is not defined.');
+        }
+
+        return $modelName;
+    }
+
+    /**
      * Sets the model name.
      * This also sets `this->modelTableMapName` and `this->tableMap`.
      *
@@ -270,6 +288,24 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     public function getTableMap(): ?TableMap
     {
         return $this->tableMap;
+    }
+
+    /**
+     * Returns the TableMap object for this Criteria
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return \Propel\Runtime\Map\TableMap
+     */
+    public function getTableMapOrFail(): TableMap
+    {
+        $tableMap = $this->getTableMap();
+
+        if ($tableMap === null) {
+            throw new LogicException('Table map is not defined.');
+        }
+
+        return $tableMap;
     }
 
     /**

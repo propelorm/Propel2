@@ -10,6 +10,7 @@ namespace Propel\Generator\Model;
 
 use Exception;
 use Propel\Generator\Exception\EngineException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -474,6 +475,24 @@ class Column extends MappingModel
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * Returns the column name.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getNameOrFail(): string
+    {
+        $name = $this->getName();
+
+        if ($name === null) {
+            throw new LogicException('Name is not defined.');
+        }
+
+        return $name;
     }
 
     /**
