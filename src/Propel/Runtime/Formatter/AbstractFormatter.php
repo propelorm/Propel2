@@ -14,6 +14,7 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
+use ReflectionClass;
 
 /**
  * Abstract class for query formatter
@@ -334,7 +335,7 @@ abstract class AbstractFormatter
      *
      * @return array
      */
-    public function &getStructuredArrayFromRow(array $row): array
+    public function getStructuredArrayFromRow(array $row): array
     {
         $col = 0;
 
