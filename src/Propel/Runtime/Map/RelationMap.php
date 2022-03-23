@@ -8,6 +8,8 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Runtime\Exception\LogicException;
+
 /**
  * RelationMap is used to model a database relationship.
  *
@@ -251,6 +253,24 @@ class RelationMap
     public function getRightTable(): ?TableMap
     {
         return $this->getType() === self::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
+    }
+
+    /**
+     * Get the right table of the relation
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return \Propel\Runtime\Map\TableMap The right table for this relationship
+     */
+    public function getRightTableOrFail(): TableMap
+    {
+        $tableMap = $this->getRightTable();
+
+        if ($tableMap === null) {
+            throw new LogicException('Right table is not defined.');
+        }
+
+        return $tableMap;
     }
 
     /**

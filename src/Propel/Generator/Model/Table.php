@@ -12,6 +12,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
@@ -1362,6 +1363,24 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Returns the common name (without schema name), but with table prefix if defined.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getCommonNameOrFail(): string
+    {
+        $commonName = $this->getCommonName();
+
+        if ($commonName === null) {
+            throw new LogicException('Common name is not defined.');
+        }
+
+        return $commonName;
+    }
+
+    /**
      * Sets the table common name (without schema name).
      *
      * @param string $name
@@ -1951,6 +1970,24 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Get the database that contains this table.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Database
+     */
+    public function getDatabaseOrFail(): Database
+    {
+        $database = $this->getDatabase();
+
+        if ($database === null) {
+            throw new LogicException('Database is not defined.');
+        }
+
+        return $database;
+    }
+
+    /**
      * Returns the Database platform.
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
@@ -2107,6 +2144,24 @@ class Table extends ScopedMappingModel implements IdMethod
         }
 
         return null;
+    }
+
+    /**
+     * Returns the auto incremented primary key.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    public function getAutoIncrementPrimaryKeyOrFail(): Column
+    {
+        $column = $this->getAutoIncrementPrimaryKey();
+
+        if ($column === null) {
+            throw new LogicException('Autoincrement primary key is not defined.');
+        }
+
+        return $column;
     }
 
     /**

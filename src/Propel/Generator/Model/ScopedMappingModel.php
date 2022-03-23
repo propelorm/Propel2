@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\LogicException;
+
 /**
  * Data about an element with a name and optional namespace, schema and package
  * attributes.
@@ -87,6 +89,26 @@ abstract class ScopedMappingModel extends MappingModel
         }
 
         return $this->namespace;
+    }
+
+    /**
+     * Returns the namespace.
+     *
+     * @param bool $getAbsoluteNamespace
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getNamespaceOrFail(bool $getAbsoluteNamespace = false): string
+    {
+        $namespace = $this->getNamespace($getAbsoluteNamespace);
+
+        if ($namespace === null) {
+            throw new LogicException('Namespace is not defined.');
+        }
+
+        return $namespace;
     }
 
     /**

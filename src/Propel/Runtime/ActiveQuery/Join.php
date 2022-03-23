@@ -712,6 +712,24 @@ class Join
     }
 
     /**
+     * Get the custom join condition, if previously set
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
+     */
+    public function getJoinConditionOrFail(): AbstractCriterion
+    {
+        $joinCondition = $this->getJoinCondition();
+
+        if ($joinCondition === null) {
+            throw new LogicException('Join condition is not defined.');
+        }
+
+        return $joinCondition;
+    }
+
+    /**
      * Set the custom join condition Criterion based on the conditions of this join
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $c A Criteria object to get Criterions from

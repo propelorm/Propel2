@@ -11,6 +11,7 @@ namespace Propel\Runtime\Map;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 
@@ -253,6 +254,24 @@ class TableMap
     }
 
     /**
+     * Get the name of the Table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string A String with the name of the table.
+     */
+    public function getNameOrFail(): string
+    {
+        $name = $this->getName();
+
+        if ($name === null) {
+            throw new LogicException('Name is not defined.');
+        }
+
+        return $name;
+    }
+
+    /**
      * Set the PHP name of the Table.
      *
      * @param string $phpName The PHP Name for this table
@@ -272,6 +291,24 @@ class TableMap
     public function getPhpName(): ?string
     {
         return $this->phpName;
+    }
+
+    /**
+     * Get the PHP name of the Table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string A String with the name of the table.
+     */
+    public function getPhpNameOrFail(): string
+    {
+        $phpName = $this->getPhpName();
+
+        if ($phpName === null) {
+            throw new LogicException('PHP name is not defined.');
+        }
+
+        return $phpName;
     }
 
     /**
@@ -295,6 +332,24 @@ class TableMap
     public function getClassName(): ?string
     {
         return $this->classname;
+    }
+
+    /**
+     * Get the ClassName of the Propel Class belonging to this table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getClassNameOrFail(): string
+    {
+        $className = $this->getClassName();
+
+        if ($className === null) {
+            throw new LogicException('Class name is not defined.');
+        }
+
+        return $className;
     }
 
     /**

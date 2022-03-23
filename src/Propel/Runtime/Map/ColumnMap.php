@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Map;
 
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;
@@ -181,6 +182,24 @@ class ColumnMap
     public function getPhpName(): ?string
     {
         return $this->phpName;
+    }
+
+    /**
+     * Get the name of a column.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return string A String with the column name.
+     */
+    public function getPhpNameOrFail(): string
+    {
+        $phpName = $this->getPhpName();
+
+        if ($phpName === null) {
+            throw new LogicException('PHP name is not defined.');
+        }
+
+        return $phpName;
     }
 
     /**
