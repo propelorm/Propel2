@@ -119,9 +119,9 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @param array $row
      *
-     * @return array|string|false
+     * @return array
      */
-    public function getStructuredArrayFromRow(array $row)
+    public function &getStructuredArrayFromRow(array $row): array
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {
@@ -130,7 +130,7 @@ class SimpleArrayFormatter extends AbstractFormatter
                 $finalRow[str_replace('"', '', $columnNames[$index])] = $value;
             }
         } else {
-            $finalRow = $row[0];
+            $finalRow = (array)$row[0];
         }
 
         return $finalRow;
