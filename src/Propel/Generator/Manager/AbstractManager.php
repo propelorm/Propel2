@@ -67,8 +67,6 @@ abstract class AbstractManager
     /**
      * The XSD schema file to use for validation.
      *
-     * @deprecated Not in use and not working due to missing class.
-     *
      * @var mixed
      */
     protected $xsd;
