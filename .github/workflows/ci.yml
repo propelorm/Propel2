@@ -77,7 +77,7 @@ jobs:
               run: mv tests/composer/composer-symfony${{ matrix.symfony-version }}.json composer.json
 
             - name: Composer install (Symfony version ${{ matrix.symfony-version }})
-              run: composer install --no-progress --prefer-dist --optimize-autoloader
+              run: composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
             - name: Setup Postgresql database for test suite
               if: matrix.db-type == 'pgsql'
