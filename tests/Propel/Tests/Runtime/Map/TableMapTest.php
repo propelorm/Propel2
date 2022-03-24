@@ -36,7 +36,15 @@ class TableMapTest extends TestCase
         parent::setUp();
         $this->databaseMap = new DatabaseMap('foodb');
         $this->tableName = 'foo';
-        $this->tmap = new TableMap($this->tableName, $this->databaseMap);
+        $this->tmap = new class($this->tableName, $this->databaseMap) extends TableMap {
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
     }
 
     /**
@@ -57,7 +65,15 @@ class TableMapTest extends TestCase
         $this->assertEquals($this->tableName, $this->tmap->getName(), 'constructor can set the table name');
         $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
         try {
-            $tmap = new TableMap();
+            $tmap = new class extends TableMap {
+                static function getPrimaryKeyHashFromRow(
+                    array $row,
+                    int $offset = 0,
+                    string $indexType = TableMap::TYPE_NUM
+                ): ?string {
+                    return null;
+                }
+            };
             $this->assertTrue(true, 'A table map can be instantiated with no parameters');
         } catch (Exception $e) {
             $this->fail('A table map can be instantiated with no parameters');
@@ -69,7 +85,15 @@ class TableMapTest extends TestCase
      */
     public function testProperties()
     {
-        $tmap = new TableMap();
+        $tmap = new class extends TableMap {
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $properties = ['name', 'phpName', 'className', 'package'];
         foreach ($properties as $property) {
             $getter = 'get' . ucfirst($property);
@@ -237,10 +261,26 @@ class TableMapTest extends TestCase
      */
     public function testAddRelation()
     {
-        $foreigntmap1 = new TableMap('bar');
+        $foreigntmap1 = new class('bar') extends TableMap {
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $foreigntmap1->setClassName('Bar');
         $this->databaseMap->addTableObject($foreigntmap1);
-        $foreigntmap2 = new TableMap('baz');
+        $foreigntmap2 =new class('baz') extends TableMap {
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $foreigntmap2->setClassName('Baz');
         $this->databaseMap->addTableObject($foreigntmap2);
         $this->rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
@@ -342,6 +382,14 @@ class TestableTableMap extends TableMap
     {
         return parent::removePrefix($data);
     }
+
+    public static function getPrimaryKeyHashFromRow(
+        array $row,
+        int $offset = 0,
+        string $indexType = TableMap::TYPE_NUM
+    ): ?string {
+        return null;
+    }
 }
 
 class FooTableMap extends TableMap
@@ -355,6 +403,14 @@ class FooTableMap extends TableMap
     {
         $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
     }
+
+    public static function getPrimaryKeyHashFromRow(
+        array $row,
+        int $offset = 0,
+        string $indexType = TableMap::TYPE_NUM
+    ): ?string {
+        return null;
+    }
 }
 
 class BarTableMap extends TableMap
@@ -366,5 +422,13 @@ class BarTableMap extends TableMap
     {
         $this->setName('bar');
         $this->setClassName('Bar');
+    }
+
+    public static function getPrimaryKeyHashFromRow(
+        array $row,
+        int $offset = 0,
+        string $indexType = TableMap::TYPE_NUM
+    ): ?string {
+        return null;
     }
 }
