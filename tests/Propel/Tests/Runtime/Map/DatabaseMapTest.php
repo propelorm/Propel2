@@ -81,7 +81,22 @@ class DatabaseMapTest extends TestCaseFixtures
         } catch (TableNotFoundException $e) {
             $this->assertTrue(true, 'getTable() throws an exception when called on a table with no builder');
         }
-        $tmap = new TableMap('foo2');
+        $tmap = new class('foo2') extends TableMap {
+            /**
+             * @param array $row
+             * @param int $offset
+             * @param string $indexType
+             *
+             * @return string|null
+             */
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $this->databaseMap->addTableObject($tmap);
         $this->assertTrue($this->databaseMap->hasTable('foo2'), 'hasTable() returns true when the table was added by way of addTableObject()');
         $this->assertEquals($tmap, $this->databaseMap->getTable('foo2'), 'getTable() returns a table by name when the table was added by way of addTableObject()');
@@ -141,7 +156,22 @@ class DatabaseMapTest extends TestCaseFixtures
         } catch (TableNotFoundException $e) {
             $this->assertTrue(true, 'getTableByPhpName() throws an exception when called on a table with no phpName');
         }
-        $tmap2 = new TableMap('foo2');
+        $tmap2 = new class('foo2') extends TableMap {
+            /**
+             * @param array $row
+             * @param int $offset
+             * @param string $indexType
+             *
+             * @return string|null
+             */
+            static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $tmap2->setClassName('Foo2');
         $this->databaseMap->addTableObject($tmap2);
         $this->assertEquals($tmap2, $this->databaseMap->getTableByPhpName('Foo2'), 'getTableByPhpName() returns tableMap when phpName was set by way of TableMap::setPhpName()');
@@ -194,5 +224,20 @@ class BazTableMap extends TableMap
     {
         $this->setName('baz');
         $this->setPhpName('Baz');
+    }
+
+    /**
+     * @param array $row
+     * @param int $offset
+     * @param string $indexType
+     *
+     * @return string|null
+     */
+    static function getPrimaryKeyHashFromRow(
+        array $row,
+        int $offset = 0,
+        string $indexType = TableMap::TYPE_NUM
+    ): ?string {
+        return null;
     }
 }
