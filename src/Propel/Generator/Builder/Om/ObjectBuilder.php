@@ -3004,7 +3004,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return array An associative array containing the field names (as keys) and field values
      */
-    public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = []" . ($hasFks ? ', bool $includeForeignObjects = false' : '') . ")
+    public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = []" . ($hasFks ? ', bool $includeForeignObjects = false' : '') . "): array
     {
         if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
             throw new PropelException('*RECURSION*');
