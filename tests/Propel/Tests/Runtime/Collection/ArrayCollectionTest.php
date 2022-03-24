@@ -229,7 +229,7 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
                 'Email' => null,
                 'Age' => null,
                 'Books' => [
-                    0 => '*RECURSION*',
+                    0 => ['*RECURSION*'],
                 ],
             ],
         ]];
