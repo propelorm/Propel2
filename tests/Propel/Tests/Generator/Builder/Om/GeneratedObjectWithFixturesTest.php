@@ -383,6 +383,6 @@ class GeneratedObjectWithFixturesTest extends BookstoreEmptyTestBase
         $this->assertEquals(2, count($arr['Books']));
         $this->assertEquals('War and Peace', $arr['Books'][0]['Title']);
         $this->assertEquals('Anna Karenina', $arr['Books'][1]['Title']);
-        $this->assertEquals('*RECURSION*', $arr['Books'][0]['Author']);
+        $this->assertEquals(['*RECURSION*'], $arr['Books'][0]['Author']);
     }
 }
