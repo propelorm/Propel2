@@ -21,16 +21,6 @@ use Propel\Runtime\Exception\LogicException;
 class ArrayFormatter extends AbstractFormatter
 {
     /**
-     * @var array
-     */
-    protected $alreadyHydratedObjects = [];
-
-    /**
-     * @var array
-     */
-    protected $emptyVariable = [];
-
-    /**
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException

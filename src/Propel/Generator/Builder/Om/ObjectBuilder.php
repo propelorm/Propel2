@@ -3000,12 +3000,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
         $script .= "
      *
-     * @return array|string An associative array containing the field names (as keys) and field values
+     * @throw \Propel\Runtime\Exception\PropelException
+     *
+     * @return array An associative array containing the field names (as keys) and field values
      */
     public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = []" . ($hasFks ? ', bool $includeForeignObjects = false' : '') . ")
     {
         if (isset(\$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()])) {
-            return '*RECURSION*';
+            throw new PropelException('*RECURSION*');
         }
         \$alreadyDumpedObjects['$objectClassName'][\$this->hashCode()] = true;
         \$keys = " . $this->getTableMapClassName() . "::getFieldNames(\$keyType);

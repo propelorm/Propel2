@@ -64,6 +64,16 @@ abstract class AbstractFormatter
     protected $dataFetcher;
 
     /**
+     * @var array<mixed>
+     */
+    protected $alreadyHydratedObjects = [];
+
+    /**
+     * @var array
+     */
+    protected $emptyVariable = [];
+
+    /**
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      */
