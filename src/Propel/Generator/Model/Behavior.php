@@ -9,6 +9,7 @@
 namespace Propel\Generator\Model;
 
 use InvalidArgumentException;
+use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
 use ReflectionObject;
@@ -21,6 +22,8 @@ use ReflectionObject;
  */
 class Behavior extends MappingModel
 {
+    use PathTrait;
+
     /**
      * The table object on which the behavior is applied.
      *
@@ -345,23 +348,27 @@ class Behavior extends MappingModel
      *
      * @param string $filename
      * @param array $vars
-     * @param string $templateDir
+     * @param string|null $templatePath
      *
      * @throws \InvalidArgumentException
      *
      * @return string
      */
-    public function renderTemplate(string $filename, array $vars = [], string $templateDir = '/templates/'): string
+    public function renderTemplate(string $filename, array $vars = [], ?string $templatePath = null): string
     {
-        $filePath = $this->getDirname() . $templateDir . $filename;
+        if ($templatePath === null) {
+            $templatePath = $this->getTemplatePath($this->getDirname());
+        }
+
+        $filePath = $templatePath . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
                 throw new InvalidArgumentException(sprintf(
-                    'Template "%s" not found in "%s" directory',
+                    'Template `%s` not found in `%s` directory',
                     $filename,
-                    $this->getDirname() . $templateDir,
+                    $templatePath,
                 ));
             }
         }
