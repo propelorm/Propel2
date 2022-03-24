@@ -53,7 +53,7 @@ class DelegateBehavior extends Behavior
     /**
      * @var array|null
      */
-    protected $double_defined;
+    protected $doubleDefined;
 
     /**
      * Lists the delegates and checks that the behavior can use them,
@@ -236,22 +236,22 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         $table = $this->getTable();
         $fks = [];
 
-        if ($this->double_defined === null) {
-            $this->double_defined = [];
+        if ($this->doubleDefined === null) {
+            $this->doubleDefined = [];
 
             foreach ($this->delegates + [$table->getName() => 1] as $key => $value) {
                 $delegateTable = $this->getDelegateTable($key);
                 foreach ($delegateTable->getColumns() as $columnDelegated) {
-                    if (isset($this->double_defined[$columnDelegated->getName()])) {
-                        $this->double_defined[$columnDelegated->getName()]++;
+                    if (isset($this->doubleDefined[$columnDelegated->getName()])) {
+                        $this->doubleDefined[$columnDelegated->getName()]++;
                     } else {
-                        $this->double_defined[$columnDelegated->getName()] = 1;
+                        $this->doubleDefined[$columnDelegated->getName()] = 1;
                     }
                 }
             }
         }
 
-        if (1 < $this->double_defined[$column->getName()]) {
+        if (1 < $this->doubleDefined[$column->getName()]) {
             return true;
         }
 

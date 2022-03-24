@@ -1196,25 +1196,6 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
-     * Get the early table behaviors
-     *
-     * @deprecated Unused (no isEarly() method available).
-     *
-     * @return array<\Propel\Generator\Model\Behavior> Array of Behavior objects
-     */
-    public function getEarlyBehaviors(): array
-    {
-        $behaviors = [];
-        foreach ($this->behaviors as $name => $behavior) {
-            if ($behavior->isEarly()) {
-                $behaviors[$name] = $behavior;
-            }
-        }
-
-        return $behaviors;
-    }
-
-    /**
      * Returns the list of additional builders provided by the table behaviors.
      *
      * @return array
