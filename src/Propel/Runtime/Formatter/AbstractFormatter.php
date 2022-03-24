@@ -335,7 +335,7 @@ abstract class AbstractFormatter
      *
      * @return array
      */
-    public function &getStructuredArrayFromRow(array $row): array
+    protected function &hydratePropelObjectCollection(array $row): array
     {
         $col = 0;
 

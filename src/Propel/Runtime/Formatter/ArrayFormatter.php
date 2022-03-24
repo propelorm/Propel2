@@ -103,8 +103,7 @@ class ArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            $structuredArrayFromRow = $this->getStructuredArrayFromRow($row);
-            $object = &$structuredArrayFromRow;
+            $object = &$this->getStructuredArrayFromRow($row);
             if ($object) {
                 $result = &$object;
             }
@@ -134,5 +133,22 @@ class ArrayFormatter extends AbstractFormatter
     public function isObjectFormatter(): bool
     {
         return false;
+    }
+
+    /**
+     * Hydrates a series of objects from a result row
+     * The first object to hydrate is the model of the Criteria
+     * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
+     *
+     * @param array $row associative array indexed by column number,
+     *                   as returned by DataFetcher::fetch()
+     *
+     * @return array
+     */
+    public function &getStructuredArrayFromRow(array $row): array
+    {
+        $result = &$this->hydratePropelObjectCollection($row);
+
+        return $result;
     }
 }

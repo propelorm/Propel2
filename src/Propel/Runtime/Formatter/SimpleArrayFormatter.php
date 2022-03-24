@@ -45,7 +45,10 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            $collection[] = $this->getStructuredArrayFromRow($row);
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
+                $collection[] = $rowArray;
+            }
         }
         $dataFetcher->close();
 
@@ -83,7 +86,10 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            $result = &$this->getStructuredArrayFromRow($row);
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
+                $result = $rowArray;
+            }
         }
         $dataFetcher->close();
 
@@ -113,9 +119,9 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @param array $row
      *
-     * @return array
+     * @return array|string|false
      */
-    public function &getStructuredArrayFromRow(array $row): array
+    public function getStructuredArrayFromRow(array $row)
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {
@@ -124,7 +130,7 @@ class SimpleArrayFormatter extends AbstractFormatter
                 $finalRow[str_replace('"', '', $columnNames[$index])] = $value;
             }
         } else {
-            $finalRow = (array)$row[0];
+            $finalRow = $row[0];
         }
 
         return $finalRow;
