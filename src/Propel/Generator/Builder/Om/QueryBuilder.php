@@ -192,8 +192,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass|null findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
- * @method     $modelClass findOneOrCreate(ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
+ * @method     $modelClass|null findOne(?ConnectionInterface \$con = null) Return the first $modelClass matching the query
+ * @method     $modelClass findOneOrCreate(?ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
  *";
 
         // magic findBy() methods, for IDE completion
@@ -206,8 +206,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::require*() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass requirePk(\$key, ConnectionInterface \$con = null) Return the $modelClass by primary key and throws {$this->getEntityNotFoundExceptionClass()} when not found
- * @method     $modelClass requireOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ * @method     $modelClass requirePk(\$key, ?ConnectionInterface \$con = null) Return the $modelClass by primary key and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ * @method     $modelClass requireOne(?ConnectionInterface \$con = null) Return the first $modelClass matching the query and throws {$this->getEntityNotFoundExceptionClass()} when not found
  *";
 
         // magic requireOneBy() methods, for IDE completion
@@ -218,8 +218,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= "
  *
- * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
- * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
+ * @method     {$modelClass}[]|ObjectCollection find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
+ * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
  * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column' . "
@@ -227,8 +227,8 @@ class QueryBuilder extends AbstractOMBuilder
         }
 
         $script .= "
- * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
- * @psalm-method \\Propel\\Runtime\\Util\\PropelModelPager&\Traversable<{$modelClass}> paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ?ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @psalm-method \\Propel\\Runtime\\Util\\PropelModelPager&\Traversable<{$modelClass}> paginate(\$page = 1, \$maxPerPage = 10, ?ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass . "
@@ -536,7 +536,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     protected function addFactoryOpen(string &$script): void
     {
         $script .= "
-    public static function create(\$modelAlias = null, Criteria \$criteria = null)
+    public static function create(?string \$modelAlias = null, ?Criteria \$criteria = null): Criteria
     {";
     }
 
@@ -621,7 +621,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return $class|array|mixed the result, formatted by the current formatter
      */
-    public function findPk(\$key, ConnectionInterface \$con = null)
+    public function findPk(\$key, ?ConnectionInterface \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
             $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
@@ -860,7 +860,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
-    public function findPks(\$keys, ConnectionInterface \$con = null)
+    public function findPks(\$keys, ?ConnectionInterface \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
             $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
@@ -1907,7 +1907,7 @@ EOT;
      * @param     ConnectionInterface \$con The connection object used by the query
      * @return int|null
      */
-    protected function basePostDelete(\$affectedRows, ConnectionInterface \$con): ?int
+    protected function basePostDelete(int \$affectedRows, ConnectionInterface \$con): ?int
     {" . $behaviorCode . "
 
         return \$this->postDelete(\$affectedRows, \$con);
@@ -2035,10 +2035,10 @@ EOT;
      * @param ConnectionInterface \$con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                         if supported by native driver or if emulated using Propel.
-     * @throws PropelException Any exceptions caught during processing will be
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public function delete(ConnectionInterface \$con = null): int
+    public function delete(?ConnectionInterface \$con = null): int
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
@@ -2262,7 +2262,7 @@ EOT;
      * @param ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
-    public function doDeleteAll(ConnectionInterface \$con = null): int
+    public function doDeleteAll(?ConnectionInterface \$con = null): int
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);

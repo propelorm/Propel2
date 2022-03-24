@@ -189,7 +189,7 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
  *
 $paramsDoc
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return    \$this The current query, for fluid interface
  */
 public function inList($methodSignature)
 {
@@ -477,7 +477,7 @@ public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionI
  *
  * @return    bool true if the reordering took place, false if a database problem prevented it
  */
-public function reorder(\$order, ConnectionInterface \$con = null)
+public function reorder(\$order, ?ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -559,7 +559,7 @@ static public function retrieveByRank(\$rank, " . ($useScope ? '$scope = null, '
  *
  * @return    array list of sortable objects
  */
-static public function doSelectOrderByRank(Criteria \$criteria = null, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+static public function doSelectOrderByRank(?Criteria \$criteria = null, \$order = Criteria::ASC, ?ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -601,7 +601,7 @@ static public function doSelectOrderByRank(Criteria \$criteria = null, \$order =
  *
  * @return    \Propel\Runtime\Collection\ObjectCollection List of sortable objects
  */
-static public function retrieveList(\$scope, \$order = Criteria::ASC, ConnectionInterface \$con = null)
+static public function retrieveList(\$scope, \$order = Criteria::ASC, ?ConnectionInterface \$con = null)
 {
     \$c = new Criteria();
     static::sortableApplyScopeCriteria(\$c, \$scope);
@@ -627,7 +627,7 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, Connection
  *
  * @return    int Count.
  */
-static public function countList(\$scope, ConnectionInterface \$con = null): int
+static public function countList(\$scope, ?ConnectionInterface \$con = null): int
 {
     \$c = new Criteria();
     \$c->add({$this->tableMapClassName}::SCOPE_COL, \$scope);
@@ -653,7 +653,7 @@ static public function countList(\$scope, ConnectionInterface \$con = null): int
  *
  * @return    int number of deleted objects
  */
-static public function deleteList(\$scope, ConnectionInterface \$con = null): int
+static public function deleteList(\$scope, ?ConnectionInterface \$con = null): int
 {
     \$c = new Criteria();
     static::sortableApplyScopeCriteria(\$c, \$scope);

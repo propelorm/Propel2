@@ -11,6 +11,7 @@ namespace Propel\Runtime\ActiveQuery\Criterion;
 use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\Exception\InvalidClauseException;
+use Propel\Runtime\Map\ColumnMap;
 
 /**
  * Specialized Criterion used for custom expressions with a typed binding, e.g. 'foobar = ?'
@@ -34,6 +35,10 @@ class RawCriterion extends AbstractCriterion
      */
     public function __construct(Criteria $outer, $column, $value, int $type = PDO::PARAM_STR)
     {
+        if ($column instanceof ColumnMap) {
+            $column = $column->getName();
+        }
+
         $this->value = $value;
         $this->column = $column;
         $this->type = $type;

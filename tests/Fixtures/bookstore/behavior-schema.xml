@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.alternative_coding_standards" namespace="Propel\Tests\Bookstore\Behavior">
 
-    <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\DonothingBehavior">
+    <behavior name="Propel\Tests\Helpers\Bookstore\Behavior\DoNothingBehavior">
         <parameter name="foo" value="bar"/>
     </behavior>
 

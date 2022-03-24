@@ -438,9 +438,9 @@ class Criteria
      * can be reused as if it was new. Except if the criteria has grown in
      * capacity, it is left at the current capacity.
      *
-     * @return void
+     * @return $this
      */
-    public function clear(): void
+    public function clear()
     {
         $this->map = [];
         $this->namedCriterions = [];
@@ -460,6 +460,8 @@ class Criteria
         $this->limit = -1;
         $this->aliases = [];
         $this->useTransaction = false;
+
+        return $this;
     }
 
     /**
@@ -651,11 +653,13 @@ class Criteria
      *
      * @param bool $v
      *
-     * @return void
+     * @return $this
      */
-    public function setUseTransaction(bool $v): void
+    public function setUseTransaction(bool $v)
     {
         $this->useTransaction = (bool)$v;
+
+        return $this;
     }
 
     /**
@@ -819,11 +823,13 @@ class Criteria
      *
      * @param string|null $dbName The Database (Map) name.
      *
-     * @return void
+     * @return $this
      */
-    public function setDbName(?string $dbName = null): void
+    public function setDbName(?string $dbName = null)
     {
         $this->dbName = ($dbName ?? Propel::getServiceContainer()->getDefaultDatasource());
+
+        return $this;
     }
 
     /**
@@ -849,11 +855,13 @@ class Criteria
      *
      * @param string $tableName
      *
-     * @return void
+     * @return $this
      */
-    public function setPrimaryTableName(string $tableName): void
+    public function setPrimaryTableName(string $tableName)
     {
         $this->primaryTableName = $tableName;
+
+        return $this;
     }
 
     /**
@@ -932,9 +940,9 @@ class Criteria
      *
      * @param mixed $t Mappings to be stored in this map.
      *
-     * @return void
+     * @return $this
      */
-    public function putAll($t): void
+    public function putAll($t)
     {
         if (is_array($t)) {
             foreach ($t as $key => $value) {
@@ -947,6 +955,8 @@ class Criteria
         } elseif ($t instanceof Criteria) {
             $this->joins = $t->joins;
         }
+
+        return $this;
     }
 
     /**
@@ -2402,7 +2412,7 @@ class Criteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function doDelete(?ConnectionInterface $con = null): int
     {
@@ -2415,7 +2425,7 @@ class Criteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con a connection object
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function doDeleteAll(?ConnectionInterface $con = null): int
     {
@@ -2565,10 +2575,12 @@ class Criteria
     /**
      * @param bool $identifierQuoting
      *
-     * @return void
+     * @return $this
      */
-    public function setIdentifierQuoting(bool $identifierQuoting): void
+    public function setIdentifierQuoting(bool $identifierQuoting)
     {
         $this->identifierQuoting = $identifierQuoting;
+
+        return $this;
     }
 }

@@ -21,7 +21,7 @@ use Propel\Runtime\Exception\PropelException;
 class ArrayCollection extends Collection
 {
     /**
-     * @var object
+     * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     protected $workerObject;
 
@@ -211,6 +211,7 @@ class ArrayCollection extends Collection
             if (!$model) {
                 throw new PropelException('You must set the collection model before interacting with it');
             }
+            /** @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface> $class */
             $class = $this->getFullyQualifiedModel();
             $this->workerObject = new $class();
         }

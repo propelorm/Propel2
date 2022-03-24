@@ -6,7 +6,7 @@
  * @param      ConnectionInterface $con an optional connection object
  * @param      bool $forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), ortherwise it is a series of save() calls on all the found objects
  *
- * @return integer the number of deleted rows
+ * @return int The number of deleted rows
  */
 public function updateWithoutArchive($values, $con = null, $forceIndividualSaves = false): int
 {

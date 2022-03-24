@@ -559,11 +559,13 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param \Propel\Runtime\ActiveQuery\Join $previousJoin The previousJoin for this ModelCriteria
      *
-     * @return void
+     * @return $this
      */
-    public function setPreviousJoin(Join $previousJoin): void
+    public function setPreviousJoin(Join $previousJoin)
     {
         $this->previousJoin = $previousJoin;
+
+        return $this;
     }
 
     /**
@@ -1012,9 +1014,9 @@ class ModelCriteria extends BaseModelCriteria
      * Clear the conditions to allow the reuse of the query object.
      * The ModelCriteria's Model and alias 'all the properties set by construct) will remain.
      *
-     * @return void
+     * @return $this
      */
-    public function clear(): void
+    public function clear()
     {
         parent::clear();
 
@@ -1023,6 +1025,8 @@ class ModelCriteria extends BaseModelCriteria
         $this->formatter = null;
         $this->select = null;
         $this->isSelfSelected = false;
+
+        return $this;
     }
 
     /**
@@ -1031,12 +1035,14 @@ class ModelCriteria extends BaseModelCriteria
      * @param \Propel\Runtime\ActiveQuery\ModelCriteria $criteria The primary criteria
      * @param \Propel\Runtime\ActiveQuery\Join $previousJoin The previousJoin for this ModelCriteria
      *
-     * @return void
+     * @return $this
      */
-    public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin): void
+    public function setPrimaryCriteria(ModelCriteria $criteria, Join $previousJoin)
     {
         $this->primaryCriteria = $criteria;
         $this->setPreviousJoin($previousJoin);
+
+        return $this;
     }
 
     /**
@@ -1233,7 +1239,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function keepQuery(bool $isKeepQuery = true)
     {
-        $this->isKeepQuery = (bool)$isKeepQuery;
+        $this->isKeepQuery = $isKeepQuery;
 
         return $this;
     }
@@ -1651,7 +1657,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
-     * @return int the number of results
+     * @return int The number of results
      */
     public function count(?ConnectionInterface $con = null): int
     {
@@ -1796,7 +1802,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function delete(?ConnectionInterface $con = null): int
     {
@@ -1834,7 +1840,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return int the number of deleted rows
+     * @return int The number of deleted rows
      */
     public function deleteAll(?ConnectionInterface $con = null): int
     {

@@ -326,11 +326,13 @@ public function getRank()
  * Wrap the setter for rank value
  *
  * @param     int
- * @return    \$this|{$this->objectClassName}
+ * @return    \$this
  */
 public function setRank(\$v)
 {
-    return \$this->{$this->getColumnSetter()}(\$v);
+    \$this->{$this->getColumnSetter()}(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -398,7 +400,7 @@ public function getScopeValue(\$returnNulls = true)
  * Wrap the setter for scope value
  *
  * @param     mixed A array or a native type
- * @return    \$this|{$this->objectClassName}
+ * @return    \$this
  */
 public function setScopeValue(\$v)
 {
@@ -413,7 +415,9 @@ public function setScopeValue(\$v)
         } else {
             $script .= "
 
-    return \$this->{$this->getColumnSetter('scope_column')}(\$v);
+    \$this->{$this->getColumnSetter('scope_column')}(\$v);
+
+    return \$this;
 ";
         }
         $script .= "
@@ -457,7 +461,7 @@ public function isFirst()
  *
  * @return    bool
  */
-public function isLast(ConnectionInterface \$con = null)
+public function isLast(?ConnectionInterface \$con = null)
 {
     return \$this->{$this->getColumnGetter()}() == {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 }
@@ -484,7 +488,7 @@ public function isLast(ConnectionInterface \$con = null)
  *
  * @return    {$this->objectClassName}
  */
-public function getNext(ConnectionInterface \$con = null)
+public function getNext(?ConnectionInterface \$con = null)
 {";
         $script .= "
 
@@ -533,7 +537,7 @@ public function getNext(ConnectionInterface \$con = null)
  *
  * @return    {$this->objectClassName}
  */
-public function getPrevious(ConnectionInterface \$con = null)
+public function getPrevious(?ConnectionInterface \$con = null)
 {";
         $script .= "
 
@@ -578,11 +582,11 @@ public function getPrevious(ConnectionInterface \$con = null)
  * @param     integer    \$rank rank value
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this The current object
  *
  * @throws    PropelException
  */
-public function insertAtRank(\$rank, ConnectionInterface \$con = null)
+public function insertAtRank(\$rank, ?ConnectionInterface \$con = null)
 {";
         $script .= "
     \$maxRank = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
@@ -593,10 +597,10 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     \$this->{$this->getColumnSetter()}(\$rank);
     if (\$rank != \$maxRank + 1) {
         // Keep the list modification query for the save() transaction
-        \$this->sortableQueries []= array(
+        \$this->sortableQueries []= [
             'callable'  => array('{$queryClassName}', 'sortableShiftRank'),
-            'arguments' => array(1, \$rank, null, " . ($useScope ? '$this->getScopeValue()' : '') . ")
-        );
+            'arguments' => array(1, \$rank, null, " . ($useScope ? '$this->getScopeValue()' : '') . "),
+        ];
     }
 
     return \$this;
@@ -619,11 +623,11 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws    PropelException
  */
-public function insertAtBottom(ConnectionInterface \$con = null)
+public function insertAtBottom(?ConnectionInterface \$con = null)
 {";
         $script .= "
     \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con) + 1);
@@ -645,11 +649,13 @@ public function insertAtBottom(ConnectionInterface \$con = null)
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
 public function insertAtTop()
 {
-    return \$this->insertAtRank(1);
+    \$this->insertAtRank(1);
+
+    return \$this;
 }
 ";
     }
@@ -670,11 +676,11 @@ public function insertAtTop()
  * @param     integer   \$newRank rank value
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws    PropelException
  */
-public function moveToRank(\$newRank, ConnectionInterface \$con = null)
+public function moveToRank(\$newRank, ?ConnectionInterface \$con = null)
 {
     if (\$this->isNew()) {
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
@@ -720,11 +726,11 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
  * @param     {$this->objectClassName} \$object
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
-public function swapWith(\$object, ConnectionInterface \$con = null)
+public function swapWith(\$object, ?ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -769,9 +775,9 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveUp(ConnectionInterface \$con = null)
+public function moveUp(?ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
@@ -802,9 +808,9 @@ public function moveUp(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveDown(ConnectionInterface \$con = null)
+public function moveDown(?ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return \$this;
@@ -835,15 +841,17 @@ public function moveDown(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveToTop(ConnectionInterface \$con = null)
+public function moveToTop(?ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
     }
 
-    return \$this->moveToRank(1, \$con);
+    \$this->moveToRank(1, \$con);
+
+    return \$this;
 }
 ";
     }
@@ -864,7 +872,7 @@ public function moveToTop(ConnectionInterface \$con = null)
  *
  * @return \$this|{$this->objectClassName}|null The old object's rank or null if already last
  */
-public function moveToBottom(ConnectionInterface \$con = null)
+public function moveToBottom(?ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return null;
@@ -895,7 +903,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
  * Removes the current object from the list" . ($useScope ? ' (moves it to the null scope)' : '') . ".
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
 public function removeFromList()
 {";
@@ -912,10 +920,10 @@ public function removeFromList()
         } else {
             $script .= "
     // Keep the list modification query for the save() transaction
-    \$this->sortableQueries[] = array(
-        'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
-        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ', $this->getScopeValue()' : '') . ")
-    );
+    \$this->sortableQueries[] = [
+        'callable'  => ['{$this->queryFullClassName}', 'sortableShiftRank'],
+        'arguments' => [-1, \$this->{$this->getColumnGetter()}() + 1, null]
+    ];
     // remove the object from the list
     \$this->{$this->getColumnSetter('rank_column')}(null);
     ";

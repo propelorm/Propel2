@@ -332,7 +332,7 @@ public function syncParentToChild($parentClass \$parent): void
  *
  * @return    " . $parentClass . " The parent object
  */
-public function getParentOrCreate(\$con = null)
+public function getParentOrCreate(?ConnectionInterface \$con = null)
 {
     if (\$this->isNew()) {
         if (\$this->isPrimaryKeyNull()) {
@@ -374,7 +374,7 @@ public function getParentOrCreate(\$con = null)
  *
  * @return    " . $cptype . " The primary key of the parent object
  */
-public function getSyncParent(\$con = null)
+public function getSyncParent(?ConnectionInterface \$con = null)
 {
     \$parent = \$this->getParentOrCreate(\$con);";
         foreach ($parentTable->getColumns() as $column) {

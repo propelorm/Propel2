@@ -646,7 +646,7 @@ class NestedSetBehaviorQueryBuilderModifierTest extends TestCase
         $fixtures = $this->initTree();
         // reset the levels
         foreach ($fixtures as $node) {
-            $node->setLevel(null)->save();
+            $node->setLevel(0)->save();
         }
         // fix the levels
         NestedSetTable9Query::fixLevels();

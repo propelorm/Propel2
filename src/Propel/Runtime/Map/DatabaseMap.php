@@ -113,6 +113,7 @@ class DatabaseMap
      */
     public function addTableFromMapClass(string $tableMapClass): TableMap
     {
+        /** @var \Propel\Runtime\Map\TableMap $table */
         $table = new $tableMapClass();
         $this->addTableObject($table);
 

@@ -114,6 +114,7 @@ abstract class AbstractParser
      */
     public static function getParser(string $type = 'XML'): self
     {
+        /** @phpstan-var class-string<\Propel\Runtime\Parser\AbstractParser> $class */
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
 
         if (!class_exists($class)) {
