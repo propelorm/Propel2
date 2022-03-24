@@ -22,6 +22,15 @@ trait PathTrait
      * - templates/
      * - besides src/ folder (which is required to detect root path)
      *
+     * Note:
+     * - Propel/Generator/ prefix is removed from the path
+     *
+     * Examples:
+     * - Behavior/BehaviorName/
+     * - Builder/Om/
+     * - Command/
+     * - Manager/
+     *
      * @param string $path
      *
      * @throws \RuntimeException
@@ -54,8 +63,11 @@ trait PathTrait
         }
 
         $elements = array_reverse($elements);
-
+        // Propel/Generator/ prefixes are just noise and filtered out
         if ($elements[0] === 'Propel') {
+            array_shift($elements);
+        }
+        if ($elements[0] === 'Generator') {
             array_shift($elements);
         }
 
