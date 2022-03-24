@@ -55,8 +55,7 @@ class ArrayFormatter extends AbstractFormatter
 
         $items = [];
         foreach ($dataFetcher as $row) {
-            $structuredArrayFromRow = $this->getStructuredArrayFromRow($row);
-            $object = &$structuredArrayFromRow;
+            $object = &$this->getStructuredArrayFromRow($row);
             if ($object) {
                 $items[] = &$object;
             }
