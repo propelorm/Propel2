@@ -45,7 +45,8 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            $collection[] = &$this->getStructuredArrayFromRow($row);
+            $structuredArrayFromRow = $this->getStructuredArrayFromRow($row);
+            $collection[] = &$structuredArrayFromRow;
         }
         $dataFetcher->close();
 
