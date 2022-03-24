@@ -11,6 +11,7 @@ namespace Propel\Generator\Manager;
 use Exception;
 use PDO;
 use PDOException;
+use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Column;
@@ -29,6 +30,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class MigrationManager extends AbstractManager
 {
+    use PathTrait;
+
     /**
      * @var array
      */
@@ -422,8 +425,10 @@ class MigrationManager extends AbstractManager
             'connectionToVariableName' => $connectionToVariableName,
         ];
 
+        $templatePath = $this->getTemplatePath(__DIR__);
+
         $template = new PropelTemplate();
-        $filePath = implode(DIRECTORY_SEPARATOR, [__DIR__, 'templates', 'migration_template.php']);
+        $filePath = $templatePath . 'migration_template.php';
         $template->setTemplateFile($filePath);
 
         return $template->render($vars);
@@ -435,7 +440,7 @@ class MigrationManager extends AbstractManager
      * @param array $migrationsUp
      * @param array $migrationsDown
      *
-     * @return array
+     * @return array<string, string>
      */
     protected static function buildConnectionToVariableNameMap(array $migrationsUp, array $migrationsDown): array
     {
