@@ -276,7 +276,7 @@ class InitCommand extends AbstractCommand
      */
     private function generateProject(OutputInterface $output, array $options): void
     {
-        $templatesPath = dirname(__FILE__, 5) . DIRECTORY_SEPARATOR . 'templates' . DS;
+        $templatesPath = dirname(__FILE__, 5) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
         if (!is_dir($templatesPath)) {
             throw new RuntimeException(sprintf('Cannot find templates path `%s`', $templatesPath));
         }
