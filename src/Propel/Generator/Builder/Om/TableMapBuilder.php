@@ -1025,21 +1025,21 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * objects that inherit from the default.
      *
      * @param array   \$row ConnectionInterface result row.
-     * @param int     \$column Column to examine for OM class information (first is 0).
+     * @param int     \$colNum Column to examine for OM class information (first is 0).
      * @param bool \$withPrefix Whether to return the path with the class name
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      *
      * @return string The OM class
      */
-    public static function getOMClass(array \$row, int \$column bool \$withPrefix = true): string
+    public static function getOMClass(array \$row, int \$colNum bool \$withPrefix = true): string
     {
         try {
 ";
         if ($col->isEnumeratedClasses()) {
             $script .= "
             \$omClass = null;
-            \$classKey = \$row[\$colnum + " . ($col->getPosition() - 1) . "];
+            \$classKey = \$row[\$colNum + " . ($col->getPosition() - 1) . "];
 
             switch (\$classKey) {
 ";
@@ -1064,7 +1064,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
 ";
         } else { /* if not enumerated */
             $script .= "
-            \$omClass = \$row[\$colnum + " . ($col->getPosition() - 1) . "];
+            \$omClass = \$row[\$colNum + " . ($col->getPosition() - 1) . "];
             \$omClass = preg_replace('#\.#', '\\\\', '.'.\$omClass);
 ";
         }
