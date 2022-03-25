@@ -61,7 +61,15 @@ class RelationMapTest extends TestCase
     public function testLocalTable()
     {
         $this->assertNull($this->rmap->getLocalTable(), 'A new relation has no local table');
-        $tmap1 = new TableMap('foo', $this->databaseMap);
+        $tmap1 = new class('foo', $this->databaseMap) extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $this->rmap->setLocalTable($tmap1);
         $this->assertEquals($tmap1, $this->rmap->getLocalTable(), 'The local table is set by setLocalTable()');
     }
@@ -72,7 +80,15 @@ class RelationMapTest extends TestCase
     public function testForeignTable()
     {
         $this->assertNull($this->rmap->getForeignTable(), 'A new relation has no foreign table');
-        $tmap2 = new TableMap('bar', $this->databaseMap);
+        $tmap2 = new class('bar', $this->databaseMap) extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $this->rmap->setForeignTable($tmap2);
         $this->assertEquals($tmap2, $this->rmap->getForeignTable(), 'The foreign table is set by setForeignTable()');
     }
@@ -99,9 +115,25 @@ class RelationMapTest extends TestCase
     {
         $this->assertEquals([], $this->rmap->getLocalColumns(), 'A new relation has no local columns');
         $this->assertEquals([], $this->rmap->getForeignColumns(), 'A new relation has no foreign columns');
-        $tmap1 = new TableMap('foo', $this->databaseMap);
+        $tmap1 = new class('foo', $this->databaseMap) extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $col1 = $tmap1->addColumn('FOO1', 'Foo1PhpName', 'INTEGER');
-        $tmap2 = new TableMap('bar', $this->databaseMap);
+        $tmap2 = new class('bar', $this->databaseMap) extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $col2 = $tmap2->addColumn('BAR1', 'Bar1PhpName', 'INTEGER');
         $this->rmap->addColumnMapping($col1, $col2);
         $this->assertEquals([$col1], $this->rmap->getLocalColumns(), 'addColumnMapping() adds a local table');

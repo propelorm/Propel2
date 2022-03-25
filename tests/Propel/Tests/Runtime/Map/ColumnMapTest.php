@@ -32,7 +32,15 @@ class ColumnMapTest extends TestCaseFixtures
     {
         parent::setUp();
         $this->dmap = new DatabaseMap('foodb');
-        $this->tmap = new TableMap('foo', $this->dmap);
+        $this->tmap = new class('foo', $this->dmap) extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $this->columnName = 'bar';
         $this->cmap = new ColumnMap($this->columnName, $this->tmap);
     }

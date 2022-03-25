@@ -31,7 +31,15 @@ class ModelJoinTest extends TestCaseFixtures
         $join = new ModelJoin();
         $this->assertNull($join->getTableMap(), 'getTableMap() returns null as long as no table map is set');
 
-        $tmap = new TableMap();
+        $tmap = new class() extends TableMap {
+            public static function getPrimaryKeyHashFromRow(
+                array $row,
+                int $offset = 0,
+                string $indexType = TableMap::TYPE_NUM
+            ): ?string {
+                return null;
+            }
+        };
         $tmap->foo = 'bar';
 
         $join->setTableMap($tmap);
