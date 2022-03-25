@@ -81,22 +81,7 @@ class DatabaseMapTest extends TestCaseFixtures
         } catch (TableNotFoundException $e) {
             $this->assertTrue(true, 'getTable() throws an exception when called on a table with no builder');
         }
-        $tmap = new class('foo2') extends TableMap {
-            /**
-             * @param array $row
-             * @param int $offset
-             * @param string $indexType
-             *
-             * @return string|null
-             */
-            static function getPrimaryKeyHashFromRow(
-                array $row,
-                int $offset = 0,
-                string $indexType = TableMap::TYPE_NUM
-            ): ?string {
-                return null;
-            }
-        };
+        $tmap = new TableMap('foo2');
         $this->databaseMap->addTableObject($tmap);
         $this->assertTrue($this->databaseMap->hasTable('foo2'), 'hasTable() returns true when the table was added by way of addTableObject()');
         $this->assertEquals($tmap, $this->databaseMap->getTable('foo2'), 'getTable() returns a table by name when the table was added by way of addTableObject()');

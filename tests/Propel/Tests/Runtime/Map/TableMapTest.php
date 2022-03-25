@@ -36,15 +36,7 @@ class TableMapTest extends TestCase
         parent::setUp();
         $this->databaseMap = new DatabaseMap('foodb');
         $this->tableName = 'foo';
-        $this->tmap = new class($this->tableName, $this->databaseMap) extends TableMap {
-            static function getPrimaryKeyHashFromRow(
-                array $row,
-                int $offset = 0,
-                string $indexType = TableMap::TYPE_NUM
-            ): ?string {
-                return null;
-            }
-        };
+        $this->tmap = new TableMap($this->tableName, $this->databaseMap);
     }
 
     /**
@@ -66,7 +58,7 @@ class TableMapTest extends TestCase
         $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
         try {
             $tmap = new class extends TableMap {
-                static function getPrimaryKeyHashFromRow(
+                public static function getPrimaryKeyHashFromRow(
                     array $row,
                     int $offset = 0,
                     string $indexType = TableMap::TYPE_NUM
@@ -85,15 +77,7 @@ class TableMapTest extends TestCase
      */
     public function testProperties()
     {
-        $tmap = new class extends TableMap {
-            static function getPrimaryKeyHashFromRow(
-                array $row,
-                int $offset = 0,
-                string $indexType = TableMap::TYPE_NUM
-            ): ?string {
-                return null;
-            }
-        };
+        $tmap = new TableMap();
         $properties = ['name', 'phpName', 'className', 'package'];
         foreach ($properties as $property) {
             $getter = 'get' . ucfirst($property);
@@ -261,26 +245,10 @@ class TableMapTest extends TestCase
      */
     public function testAddRelation()
     {
-        $foreigntmap1 = new class('bar') extends TableMap {
-            static function getPrimaryKeyHashFromRow(
-                array $row,
-                int $offset = 0,
-                string $indexType = TableMap::TYPE_NUM
-            ): ?string {
-                return null;
-            }
-        };
+        $foreigntmap1 = new TableMap('bar');
         $foreigntmap1->setClassName('Bar');
         $this->databaseMap->addTableObject($foreigntmap1);
-        $foreigntmap2 =new class('baz') extends TableMap {
-            static function getPrimaryKeyHashFromRow(
-                array $row,
-                int $offset = 0,
-                string $indexType = TableMap::TYPE_NUM
-            ): ?string {
-                return null;
-            }
-        };
+        $foreigntmap2 =new TableMap('baz');
         $foreigntmap2->setClassName('Baz');
         $this->databaseMap->addTableObject($foreigntmap2);
         $this->rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
