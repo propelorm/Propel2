@@ -13,7 +13,7 @@ namespace Propel\Runtime\ActiveRecord;
  *
  * @author jaugustin
  *
- * @method array toArray
+ * @method array toArray()
  */
 interface ActiveRecordInterface
 {

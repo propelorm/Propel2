@@ -23,7 +23,7 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author William Durand <william.durand1@gmail.com>
  *
- * @method string getOMClass
+ * @method string getOMClass()
  * @method string|null getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM): ?string;getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM)
  */
 class TableMap
