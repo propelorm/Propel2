@@ -1025,14 +1025,14 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * objects that inherit from the default.
      *
      * @param array   \$row ConnectionInterface result row.
-     * @param int     \$colnum Column to examine for OM class information (first is 0).
+     * @param int     \$column Column to examine for OM class information (first is 0).
      * @param bool \$withPrefix Whether to return the path with the class name
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      *
      * @return string The OM class
      */
-    public static function getOMClass(array \$row, int \$colnum, bool \$withPrefix = true): string
+    public static function getOMClass(array \$row, int \$column bool \$withPrefix = true): string
     {
         try {
 ";

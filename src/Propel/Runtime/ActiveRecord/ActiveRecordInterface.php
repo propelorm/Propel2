@@ -8,12 +8,14 @@
 
 namespace Propel\Runtime\ActiveRecord;
 
+use Propel\Runtime\Map\TableMap;
+
 /**
  * This ActiveRecord interface helps to find Propel Object
  *
  * @author jaugustin
  *
- * @method array toArray()
+ * @method array toArray(string $keyType = TableMap::TYPE_FIELDNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = [], bool $includeForeignObjects = false): array
  */
 interface ActiveRecordInterface
 {
