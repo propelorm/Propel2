@@ -61,7 +61,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Id>1234</Id>
     <Name><![CDATA[Penguin]]></Name>
     <Books>
-      <Book><![CDATA[[*RECURSION*]]]></Book>
+      <Book>
+        <item id="0"><![CDATA[*RECURSION*]]></item>
+      </Book>
     </Books>
   </Publisher>
   <Author>
@@ -71,7 +73,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Email></Email>
     <Age></Age>
     <Books>
-      <Book><![CDATA[[*RECURSION*]]]></Book>
+      <Book>
+        <item id="0"><![CDATA[*RECURSION*]]></item>
+      </Book>
     </Books>
   </Author>
 </data>
@@ -230,7 +234,7 @@ EOF;
 
     public function toCsvDataProvider()
     {
-        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
+        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
 
         return [[$expected]];
     }
