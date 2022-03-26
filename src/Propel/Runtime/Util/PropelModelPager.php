@@ -166,7 +166,9 @@ class PropelModelPager implements IteratorAggregate, Countable
                 ->find($this->con);
         }
 
-        return $this->results;
+        return is_array($this->results)
+            ? new Collection($this->results)
+            : $this->results;
     }
 
     /**
@@ -359,7 +361,7 @@ class PropelModelPager implements IteratorAggregate, Countable
      */
     public function setPage(int $page): void
     {
-        $this->page = (int)$page;
+        $this->page = $page;
         if ($this->page <= 0 && $this->nbResults > 0) {
             // set first page, which depends on a maximum set
             $this->page = $this->getMaxPerPage() ? 1 : 0;
