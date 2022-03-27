@@ -1032,7 +1032,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      *
      * @return string The OM class
      */
-    public static function getOMClass(array \$row, int \$colNum bool \$withPrefix = true): string
+    public static function getOMClass(array \$row, int \$colNum, bool \$withPrefix = true): string
     {
         try {
 ";
