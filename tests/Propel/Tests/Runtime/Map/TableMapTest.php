@@ -57,15 +57,7 @@ class TableMapTest extends TestCase
         $this->assertEquals($this->tableName, $this->tmap->getName(), 'constructor can set the table name');
         $this->assertEquals($this->databaseMap, $this->tmap->getDatabaseMap(), 'Constructor can set the database map');
         try {
-            $tmap = new class extends TableMap {
-                public static function getPrimaryKeyHashFromRow(
-                    array $row,
-                    int $offset = 0,
-                    string $indexType = TableMap::TYPE_NUM
-                ): ?string {
-                    return null;
-                }
-            };
+            $tmap = new TableMap();
             $this->assertTrue(true, 'A table map can be instantiated with no parameters');
         } catch (Exception $e) {
             $this->fail('A table map can be instantiated with no parameters');
@@ -248,7 +240,7 @@ class TableMapTest extends TestCase
         $foreigntmap1 = new TableMap('bar');
         $foreigntmap1->setClassName('Bar');
         $this->databaseMap->addTableObject($foreigntmap1);
-        $foreigntmap2 =new TableMap('baz');
+        $foreigntmap2 = new TableMap('baz');
         $foreigntmap2->setClassName('Baz');
         $this->databaseMap->addTableObject($foreigntmap2);
         $this->rmap1 = $this->tmap->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
@@ -350,14 +342,6 @@ class TestableTableMap extends TableMap
     {
         return parent::removePrefix($data);
     }
-
-    public static function getPrimaryKeyHashFromRow(
-        array $row,
-        int $offset = 0,
-        string $indexType = TableMap::TYPE_NUM
-    ): ?string {
-        return null;
-    }
 }
 
 class FooTableMap extends TableMap
@@ -371,14 +355,6 @@ class FooTableMap extends TableMap
     {
         $this->rmap = $this->addRelation('Bar', 'Bar', RelationMap::MANY_TO_ONE);
     }
-
-    public static function getPrimaryKeyHashFromRow(
-        array $row,
-        int $offset = 0,
-        string $indexType = TableMap::TYPE_NUM
-    ): ?string {
-        return null;
-    }
 }
 
 class BarTableMap extends TableMap
@@ -390,13 +366,5 @@ class BarTableMap extends TableMap
     {
         $this->setName('bar');
         $this->setClassName('Bar');
-    }
-
-    public static function getPrimaryKeyHashFromRow(
-        array $row,
-        int $offset = 0,
-        string $indexType = TableMap::TYPE_NUM
-    ): ?string {
-        return null;
     }
 }

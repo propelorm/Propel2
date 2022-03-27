@@ -24,7 +24,7 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
  * @author William Durand <william.durand1@gmail.com>
  *
  * @method static string getOMClass(array $row, int $column, bool $withPrefix = true)
- * @method static string|null getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM): ?string;getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM)
+ * @method static string|null getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM): ?string;getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM)
  */
 class TableMap
 {
