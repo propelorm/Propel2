@@ -23,6 +23,21 @@ use Propel\Tests\TestCaseFixtures;
  */
 class ColumnMapTest extends TestCaseFixtures
 {
+    /**
+     * @var string
+     */
+    protected const COLUMN_NAME = 'bar';
+
+    /**
+     * @var string
+     */
+    protected const PHP_NAME = 'php_bar';
+
+    /**
+     * @var string
+     */
+    protected const TYPE = 'type';
+
     protected $databaseMap;
 
     /**
@@ -33,8 +48,7 @@ class ColumnMapTest extends TestCaseFixtures
         parent::setUp();
         $this->dmap = new DatabaseMap('foodb');
         $this->tmap = new TableMap('foo', $this->dmap);
-        $this->columnName = 'bar';
-        $this->cmap = new ColumnMap($this->columnName, $this->tmap);
+        $this->cmap = new ColumnMap(static::COLUMN_NAME, $this->tmap, static::PHP_NAME, static::TYPE);
     }
 
     /**
@@ -51,7 +65,7 @@ class ColumnMapTest extends TestCaseFixtures
      */
     public function testConstructor()
     {
-        $this->assertEquals($this->columnName, $this->cmap->getName(), 'constructor sets the column name');
+        $this->assertEquals(static::COLUMN_NAME, $this->cmap->getName(), 'constructor sets the column name');
         $this->assertEquals($this->tmap, $this->cmap->getTable(), 'Constructor sets the table map');
         $this->assertNull($this->cmap->getType(), 'A new column map has no type');
     }
@@ -61,7 +75,7 @@ class ColumnMapTest extends TestCaseFixtures
      */
     public function testPhpName()
     {
-        $this->assertNull($this->cmap->getPhpName(), 'phpName is empty until set');
+        $this->assertEquals(static::PHP_NAME, $this->cmap->getPhpName(), 'constructor sets the php name');
         $this->cmap->setPhpName('FooBar');
         $this->assertEquals('FooBar', $this->cmap->getPhpName(), 'phpName is set by setPhpName()');
     }
@@ -71,7 +85,7 @@ class ColumnMapTest extends TestCaseFixtures
      */
     public function testType()
     {
-        $this->assertNull($this->cmap->getType(), 'type is empty until set');
+        $this->assertEquals(static::TYPE, $this->cmap->getType(), 'constructor sets the type');
         $this->cmap->setType('FooBar');
         $this->assertEquals('FooBar', $this->cmap->getType(), 'type is set by setType()');
     }

@@ -253,9 +253,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * If autoPrefix is set. Otherwise get the common name.
      *
-     * @return string|null
+     * @return string
      */
-    private function getStdSeparatedName(): ?string
+    private function getStdSeparatedName(): string
     {
         if ($this->schema && $this->getBuildProperty('generator.schema.autoPrefix')) {
             return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
@@ -1339,24 +1339,6 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getCommonName(): string
     {
         return $this->commonName;
-    }
-
-    /**
-     * Returns the common name (without schema name), but with table prefix if defined.
-     *
-     * @throws \Propel\Generator\Exception\LogicException
-     *
-     * @return string
-     */
-    public function getCommonNameOrFail(): string
-    {
-        $commonName = $this->getCommonName();
-
-        if ($commonName === null) {
-            throw new LogicException('Common name is not defined.');
-        }
-
-        return $commonName;
     }
 
     /**

@@ -284,9 +284,7 @@ class TableMapTest extends TestCase
     {
         $this->assertFalse($this->tmap->hasPrimaryStringColumn(), 'hasPrimaryStringColumn() returns false while none set.');
 
-        $column = new ColumnMap('BAR', $this->tmap);
-        $column->setPhpName('Bar');
-        $column->setType('VARCHAR');
+        $column = new ColumnMap('BAR', $this->tmap, 'Bar', 'VARCHAR');
         $column->setPrimaryString(true);
         $this->tmap->addConfiguredColumn($column);
 
