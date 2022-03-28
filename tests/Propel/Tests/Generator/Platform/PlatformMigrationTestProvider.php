@@ -497,14 +497,14 @@ EOF;
     {
         $t1 = new Table('test');
         $t1->setIdentifierQuoting(true);
-        $c1 = new Column();
+        $c1 = new Column('');
         $c1->setName('test');
         $c1->getDomain()->setType('INTEGER');
         $c1->setDefaultValue(0);
         $t1->addColumn($c1);
         $t2 = new Table('test');
         $t2->setIdentifierQuoting(true);
-        $c2 = new Column();
+        $c2 = new Column('');
         $c2->setName('test');
         $c2->getDomain()->setType('INTEGER');
         $t2->addColumn($c2);

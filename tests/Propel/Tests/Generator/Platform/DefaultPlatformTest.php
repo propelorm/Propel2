@@ -114,7 +114,7 @@ class DefaultPlatformTest extends TestCase
 
     protected function createColumn($type, $defaultValue)
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setType($type);
         $column->setDefaultValue($defaultValue);
 
@@ -123,7 +123,7 @@ class DefaultPlatformTest extends TestCase
 
     public function createEnumColumn($defaultValues, $defaultValue)
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setType(PropelTypes::ENUM);
         $column->setValueSet($defaultValues);
         $column->setDefaultValue($defaultValue);
@@ -133,7 +133,7 @@ class DefaultPlatformTest extends TestCase
 
     public function createSetColumn($defaultValues, $defaultValue)
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setType(PropelTypes::SET);
         $column->setValueSet($defaultValues);
         $column->setDefaultValue($defaultValue);

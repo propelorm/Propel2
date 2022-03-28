@@ -234,15 +234,13 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Constructs a table object with a name
      *
-     * @param string|null $name table name
+     * @param string $name table name
      */
-    public function __construct(?string $name = null)
+    public function __construct(string $name)
     {
         parent::__construct();
 
-        if ($name !== null) {
-            $this->setCommonName($name);
-        }
+        $this->setCommonName($name);
 
         $this->idMethod = IdMethod::NO_ID_METHOD;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
@@ -662,7 +660,7 @@ class Table extends ScopedMappingModel implements IdMethod
             return $col;
         }
 
-        $column = new Column();
+        $column = new Column($col['name']);
         $column->setTable($this);
         $column->loadMapping($col);
 
@@ -1336,9 +1334,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the common name (without schema name), but with table prefix if defined.
      *
-     * @return string|null
+     * @return string
      */
-    public function getCommonName(): ?string
+    public function getCommonName(): string
     {
         return $this->commonName;
     }

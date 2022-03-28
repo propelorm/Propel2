@@ -224,7 +224,7 @@ class TableDiffTest extends TestCase
      */
     public function testSetAddedIndices()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase(new Database('foo', new DefaultPlatform()));
 
         $index = new Index('username_unique_idx');
@@ -242,7 +242,7 @@ class TableDiffTest extends TestCase
      */
     public function testSetRemovedIndices()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase(new Database('foo', new DefaultPlatform()));
 
         $index = new Index('username_unique_idx');
@@ -478,7 +478,7 @@ class TableDiffTest extends TestCase
      */
     public function testReverseDiffHasAddedIndices()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase(new Database('foo', new DefaultPlatform()));
 
         $index = new Index('username_unique_idx');
@@ -497,7 +497,7 @@ class TableDiffTest extends TestCase
      */
     public function testReverseDiffHasRemovedIndices()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase(new Database('foo', new DefaultPlatform()));
 
         $index = new Index('username_unique_idx');
@@ -516,7 +516,7 @@ class TableDiffTest extends TestCase
      */
     public function testReverseDiffHasModifiedIndices()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase(new Database('foo', new DefaultPlatform()));
 
         $fromIndex = new Index('i1');

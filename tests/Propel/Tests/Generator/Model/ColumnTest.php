@@ -59,7 +59,7 @@ class ColumnTest extends ModelTestCase
 
         $table = $this->getTableMock('books', ['database' => $database]);
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->loadMapping(['name' => 'title']);
 
@@ -95,7 +95,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue('VARCHAR'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->setDomain($domain);
         $column->loadMapping(['name' => 'title']);
@@ -121,7 +121,7 @@ class ColumnTest extends ModelTestCase
             'platform' => $platform,
         ]);
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('VARCHAR'));
         $column->loadMapping([
@@ -147,7 +147,7 @@ class ColumnTest extends ModelTestCase
 
         $table = $this->getTableMock('books', ['database' => $database]);
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->setDomain($this->getDomainMock('BOOLEAN'));
         $column->loadMapping([
@@ -195,7 +195,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetPosition()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setPosition(2);
 
         $this->assertSame(2, $column->getPosition());
@@ -212,7 +212,7 @@ class ColumnTest extends ModelTestCase
             ->method('getDefaultValue')
             ->will($this->returnValue(null));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
 
         $this->assertSame('null', $column->getDefaultValueString());
@@ -248,7 +248,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setDefaultValue('foo');          // Test with a scalar
         $column->setDefaultValue($defaultValue);  // Test with an object
@@ -273,7 +273,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testAddInheritance()
     {
-        $column = new Column();
+        $column = new Column('');
 
         $inheritance = $this
             ->getMockBuilder('Propel\Generator\Model\Inheritance')
@@ -298,7 +298,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testAddArrayInheritance()
     {
-        $column = new Column();
+        $column = new Column('');
 
         $column->addInheritance([
             'key' => 'baz',
@@ -385,7 +385,7 @@ class ColumnTest extends ModelTestCase
             ->method('getSqlType')
             ->will($this->returnValue('INTEGER'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($this->getTableMock('books', [
             'platform' => $platform,
         ]));
@@ -400,7 +400,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testIsDefaultSqlType()
     {
-        $column = new Column();
+        $column = new Column('');
 
         $this->assertTrue($column->isDefaultSqlType());
     }
@@ -418,7 +418,7 @@ class ColumnTest extends ModelTestCase
 
         $table = $this->getTableMock('books', ['platform' => $platform]);
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->setNotNull(true);
 
@@ -438,7 +438,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -490,7 +490,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue('ENUM'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType('ENUM');
         $column->setValueSet(['FOO', 'BAR']);
@@ -513,7 +513,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue('SET'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType('SET');
         $column->setValueSet(['FOO', 'BAR']);
@@ -530,7 +530,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetStringValueSet()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setValueSet(' FOO , BAR , BAZ');
 
         $this->assertContains('FOO', $column->getValueSet());
@@ -549,7 +549,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue('OBJECT'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType('OBJECT');
 
@@ -575,7 +575,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -613,7 +613,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -649,7 +649,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -684,7 +684,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -727,7 +727,7 @@ class ColumnTest extends ModelTestCase
             ->method('getType')
             ->will($this->returnValue($mappingType));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setType($mappingType);
 
@@ -762,7 +762,7 @@ class ColumnTest extends ModelTestCase
             ->method('getSizeDefinition')
             ->will($this->returnValue('(10,2)'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
 
         $this->assertSame('(10,2)', $column->getSizeDefinition());
@@ -816,7 +816,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetDefaultMutatorAndAccessorMethodsVisibility()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setAccessorVisibility('foo');
         $column->setMutatorVisibility('bar');
 
@@ -829,7 +829,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetMutatorAndAccessorMethodsVisibility()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setAccessorVisibility('private');
         $column->setMutatorVisibility('private');
 
@@ -848,7 +848,7 @@ class ColumnTest extends ModelTestCase
             ->method('getPhpDefaultValue')
             ->will($this->returnValue(true));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
 
         $this->assertTrue($column->getPhpDefaultValue());
@@ -867,7 +867,7 @@ class ColumnTest extends ModelTestCase
             ->method('getIdMethod')
             ->will($this->returnValue('none'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
         $column->setAutoIncrement(true);
         $column->getAutoIncrementString();
@@ -890,7 +890,7 @@ class ColumnTest extends ModelTestCase
             ->method('getIdMethod')
             ->will($this->returnValue('native'));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setAutoIncrement(true);
         $column->setTable($table);
 
@@ -917,7 +917,7 @@ class ColumnTest extends ModelTestCase
             'platform' => $this->getPlatformMock(),
         ]);
 
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($table);
 
         $this->assertTrue($column->hasPlatform());
@@ -929,7 +929,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testIsPhpArrayType()
     {
-        $column = new Column();
+        $column = new Column('');
         $this->assertFalse($column->isPhpArrayType());
 
         $column->setType(PropelTypes::PHP_ARRAY);
@@ -951,7 +951,7 @@ class ColumnTest extends ModelTestCase
             ->method('getSize')
             ->will($this->returnValue(50));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setSize(50);
 
@@ -973,7 +973,7 @@ class ColumnTest extends ModelTestCase
             ->method('getScale')
             ->will($this->returnValue(2));
 
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($domain);
         $column->setScale(2);
 
@@ -985,7 +985,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testGetDefaultDomain()
     {
-        $column = new Column();
+        $column = new Column('');
 
         $this->assertInstanceOf('Propel\Generator\Model\Domain', $column->getDomain());
     }
@@ -1006,7 +1006,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetTable()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setTable($this->getTableMock('books'));
 
         $this->assertInstanceOf('Propel\Generator\Model\Table', $column->getTable());
@@ -1018,7 +1018,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetDomain()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setDomain($this->getDomainMock());
 
         $this->assertInstanceOf('Propel\Generator\Model\Domain', $column->getDomain());
@@ -1029,7 +1029,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetDescription()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setDescription('Some description');
 
         $this->assertSame('Some description', $column->getDescription());
@@ -1040,7 +1040,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetNestedSetLeftKey()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setNestedSetLeftKey(true);
         $column->setNodeKeySep(',');
         $column->setNodeKey(true);
@@ -1055,7 +1055,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetNestedSetRightKey()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setNestedSetRightKey(true);
 
         $this->assertTrue($column->isNestedSetRightKey());
@@ -1066,7 +1066,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetTreeScopeKey()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setTreeScopeKey(true);
 
         $this->assertTrue($column->isTreeScopeKey());
@@ -1077,7 +1077,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetAutoIncrement()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setAutoIncrement(true);
 
         $this->assertTrue($column->isAutoIncrement());
@@ -1088,7 +1088,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetPrimaryString()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setPrimaryString(true);
 
         $this->assertTrue($column->isPrimaryString());
@@ -1099,7 +1099,7 @@ class ColumnTest extends ModelTestCase
      */
     public function testSetNotNull()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setNotNull(true);
 
         $this->assertTrue($column->isNotNull());
@@ -1110,13 +1110,13 @@ class ColumnTest extends ModelTestCase
      */
     public function testPhpSingularName()
     {
-        $column = new Column();
+        $column = new Column('');
         $column->setPhpName('Aliases');
 
         $this->assertEquals($column->getPhpName(), 'Aliases');
         $this->assertEquals($column->getPhpSingularName(), 'Aliase');
 
-        $column = new Column();
+        $column = new Column('');
         $column->setPhpName('Aliases');
         $column->setPhpSingularName('Alias');
 

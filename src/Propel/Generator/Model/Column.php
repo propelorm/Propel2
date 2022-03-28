@@ -52,7 +52,7 @@ class Column extends MappingModel
     ];
 
     /**
-     * @var string|null
+     * @var string
      */
     private $name;
 
@@ -226,15 +226,13 @@ class Column extends MappingModel
     /**
      * Creates a new column and set the name.
      *
-     * @param string|null $name The column's name
+     * @param string $name The column's name
      * @param string|null $type The column's type
      * @param string|int|null $size The column's size
      */
-    public function __construct(?string $name = null, ?string $type = null, $size = null)
+    public function __construct(string $name, ?string $type = null, $size = null)
     {
-        if ($name !== null) {
-            $this->setName($name);
-        }
+        $this->setName($name);
 
         if ($type !== null) {
             $this->setType($type);
@@ -470,29 +468,11 @@ class Column extends MappingModel
     /**
      * Returns the column name.
      *
-     * @return string|null
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the column name.
-     *
-     * @throws \Propel\Generator\Exception\LogicException
-     *
      * @return string
      */
-    public function getNameOrFail(): string
+    public function getName(): string
     {
-        $name = $this->getName();
-
-        if ($name === null) {
-            throw new LogicException('Name is not defined.');
-        }
-
-        return $name;
+        return $this->name;
     }
 
     /**

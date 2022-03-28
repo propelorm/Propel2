@@ -86,7 +86,7 @@ class BehaviorTest extends TestCase
     {
         $b = new Behavior();
         $this->assertNull($b->getTable(), 'Behavior Table is null by default');
-        $t = new Table();
+        $t = new Table('');
         $t->setCommonName('fooTable');
         $b->setTable($t);
         $this->assertEquals($b->getTable(), $t, 'setTable() sets the name, and getTable() gets it');

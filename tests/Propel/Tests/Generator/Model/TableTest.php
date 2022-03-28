@@ -49,7 +49,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetNamespace($namespace, $expected)
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setNamespace($namespace);
 
         $this->assertSame($expected, $table->getNamespace());
@@ -81,7 +81,7 @@ class TableTest extends ModelTestCase
             ->method('getGeneratorConfig')
             ->will($this->returnValue($config));
 
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase($database);
 
         $this->assertSame($config, $table->getGeneratorConfig());
@@ -92,7 +92,7 @@ class TableTest extends ModelTestCase
      */
     public function testGetBuildProperty()
     {
-        $table = new Table();
+        $table = new Table('');
         $this->assertEmpty($table->getBuildProperty('propel.foo.bar'));
 
         $database = $this->getDatabaseMock('bookstore');
@@ -131,7 +131,7 @@ class TableTest extends ModelTestCase
             ->method('setTableModified')
             ->with($this->equalTo(true));
 
-        $table = new Table();
+        $table = new Table('');
         $table->addBehavior($behavior);
         $table->applyBehaviors();
     }
@@ -151,7 +151,7 @@ class TableTest extends ModelTestCase
             'additional_builders' => $additionalBehaviors,
         ]);
 
-        $table = new Table();
+        $table = new Table('');
         $table->addBehavior($behavior);
 
         $this->assertCount(3, $table->getAdditionalBuilders());
@@ -163,7 +163,7 @@ class TableTest extends ModelTestCase
      */
     public function testHasNoAdditionalBuilders()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->addBehavior($this->getBehaviorMock('foo'));
 
         $this->assertCount(0, $table->getAdditionalBuilders());
@@ -181,7 +181,7 @@ class TableTest extends ModelTestCase
             $this->getColumnMock('baz'),
         ];
 
-        $table = new Table();
+        $table = new Table('');
 
         $this->assertSame('foo|bar|baz', $table->getColumnList($columns, '|'));
     }
@@ -256,7 +256,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetDescription()
     {
-        $table = new Table();
+        $table = new Table('');
 
         $this->assertFalse($table->hasDescription());
 
@@ -272,7 +272,7 @@ class TableTest extends ModelTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $table = new Table();
+        $table = new Table('');
         $table->setDefaultStringFormat('FOO');
     }
 
@@ -287,7 +287,7 @@ class TableTest extends ModelTestCase
             ->method('getDefaultStringFormat')
             ->will($this->returnValue('XML'));
 
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase($database);
 
         $this->assertSame('XML', $table->getDefaultStringFormat());
@@ -300,7 +300,7 @@ class TableTest extends ModelTestCase
      */
     public function testGetDefaultStringFormat($format)
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setDefaultStringFormat($format);
 
         $this->assertSame($format, $table->getDefaultStringFormat());
@@ -404,7 +404,7 @@ class TableTest extends ModelTestCase
         $behavior2 = $this->getBehaviorMock('Bar');
         $behavior3 = $this->getBehaviorMock('Baz');
 
-        $table = new Table();
+        $table = new Table('');
         $table->addBehavior($behavior1);
         $table->addBehavior($behavior2);
         $table->addBehavior($behavior3);
@@ -556,7 +556,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetAbstract()
     {
-        $table = new Table();
+        $table = new Table('');
         $this->assertFalse($table->isAbstract());
 
         $table->setAbstract(true);
@@ -568,7 +568,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetInterface()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setInterface('ActiveRecordInterface');
 
         $this->assertSame('ActiveRecordInterface', $table->getInterface());
@@ -579,7 +579,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddIndex()
     {
-        $table = new Table();
+        $table = new Table('');
         $index = new Index();
         $index->addColumn(['name' => 'bla']);
         $table->addIndex($index);
@@ -594,7 +594,7 @@ class TableTest extends ModelTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $table = new Table();
+        $table = new Table('');
         $table->addIndex(new Index());
 
         $this->assertCount(1, $table->getIndices());
@@ -605,7 +605,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddArrayIndex()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->addIndex(['name' => 'author_idx', 'columns' => [['name' => 'bla']]]);
 
         $this->assertCount(1, $table->getIndices());
@@ -616,7 +616,7 @@ class TableTest extends ModelTestCase
      */
     public function testIsIndex()
     {
-        $table = new Table();
+        $table = new Table('');
         $column1 = new Column('category_id');
         $column2 = new Column('type');
         $table->addColumn($column1);
@@ -637,7 +637,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddUniqueIndex()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->addUnique($this->getUniqueIndexMock('author_unq'));
 
         $this->assertCount(1, $table->getUnices());
@@ -648,7 +648,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddArrayUnique()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->addUnique(['name' => 'author_unq']);
 
         $this->assertCount(1, $table->getUnices());
@@ -663,7 +663,7 @@ class TableTest extends ModelTestCase
         $column2 = $this->getColumnMock('author_id', ['primary' => true]);
         $column3 = $this->getColumnMock('rank');
 
-        $table = new Table();
+        $table = new Table('');
         $table->setIdMethod('native');
         $table->addColumn($column1);
         $table->addColumn($column2);
@@ -686,7 +686,7 @@ class TableTest extends ModelTestCase
         $column2 = $this->getColumnMock('title');
         $column3 = $this->getColumnMock('isbn');
 
-        $table = new Table();
+        $table = new Table('');
         $table->setIdMethod('native');
         $table->addColumn($column1);
         $table->addColumn($column2);
@@ -709,7 +709,7 @@ class TableTest extends ModelTestCase
         $column2 = $this->getColumnMock('title');
         $column3 = $this->getColumnMock('isbn');
 
-        $table = new Table();
+        $table = new Table('');
         $table->setIdMethod('none');
         $table->addColumn($column1);
         $table->addColumn($column2);
@@ -736,7 +736,7 @@ class TableTest extends ModelTestCase
         $column2 = $this->getColumnMock('title');
         $column3 = $this->getColumnMock('isbn');
 
-        $table = new Table();
+        $table = new Table('');
         $table->setIdMethod('native');
         $table->addColumn($column1);
         $table->addColumn($column2);
@@ -761,7 +761,7 @@ class TableTest extends ModelTestCase
             ->expects($this->once())
             ->method('setTable');
 
-        $table = new Table();
+        $table = new Table('');
         $table->addIdMethodParameter($parameter);
 
         $this->assertCount(1, $table->getIdMethodParameters());
@@ -772,7 +772,7 @@ class TableTest extends ModelTestCase
      */
     public function testAddArrayIdMethodParameter()
     {
-        $table = new Table();
+        $table = new Table('');
         $table->addIdMethodParameter(['name' => 'foo', 'value' => 'bar']);
 
         $this->assertCount(1, $table->getIdMethodParameters());
@@ -838,7 +838,7 @@ class TableTest extends ModelTestCase
         $fk2 = $this->getForeignKeyMock('fk2', ['foreign_table_name' => 'categories']);
         $fk3 = $this->getForeignKeyMock('fk3', ['foreign_table_name' => 'authors']);
 
-        $table = new Table();
+        $table = new Table('');
         $table->addForeignKey($fk1);
         $table->addForeignKey($fk2);
         $table->addForeignKey($fk3);
@@ -855,7 +855,7 @@ class TableTest extends ModelTestCase
         $fk2 = $this->getForeignKeyMock('fk2', ['foreign_table_name' => 'categories']);
         $fk3 = $this->getForeignKeyMock('fk1', ['foreign_table_name' => 'authors']);
 
-        $table = new Table();
+        $table = new Table('');
         $table->addForeignKey($fk1);
         $table->addForeignKey($fk2);
 
@@ -877,7 +877,7 @@ class TableTest extends ModelTestCase
             'local_columns' => ['foo', 'bar'],
         ]);
 
-        $table = new Table();
+        $table = new Table('');
         $table->addForeignKey($fk1);
         $table->addForeignKey($fk2);
 
@@ -904,7 +904,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetBaseClass(string $className, string $expectedClassName, string $message)
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setBaseClass($className);
 
         $this->assertSame($expectedClassName, $table->getBaseClass(), $message);
@@ -917,7 +917,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetBaseQueryClass(string $className, string $expectedClassName, string $message)
     {
-        $table = new Table();
+        $table = new Table('');
         $table->setBaseQueryClass($className);
 
         $this->assertSame($expectedClassName, $table->getBaseQueryClass(), $message);
@@ -934,7 +934,7 @@ class TableTest extends ModelTestCase
             ->method('getBaseClass')
             ->will($this->returnValue('BaseObject'));
 
-        $table = new Table();
+        $table = new Table('');
         $table->setDatabase($database);
 
         $this->assertSame('BaseObject', $table->getBaseClass());
@@ -979,7 +979,7 @@ class TableTest extends ModelTestCase
             'defaultStringFormat' => 'XML',
         ]);
 
-        $table = new Table();
+        $table = new Table('');
         $database->addTable($table);
         $table->loadMapping([
            'name' => 'books',
@@ -993,7 +993,7 @@ class TableTest extends ModelTestCase
      */
     public function testSetContainsForeignPK()
     {
-        $table = new Table();
+        $table = new Table('');
 
         $table->setContainsForeignPK(true);
         $this->assertTrue($table->getContainsForeignPK());

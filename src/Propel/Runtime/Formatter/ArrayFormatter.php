@@ -18,7 +18,7 @@ use Propel\Runtime\Exception\LogicException;
  *
  * @author Francois Zaninotto
  */
-class ArrayFormatter extends AbstractFormatter
+class ArrayFormatter extends AbstractFormatterWithHydration
 {
     /**
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher

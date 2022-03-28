@@ -494,10 +494,8 @@ class TableMap
         ?string $fkTable = null,
         ?string $fkColumn = null
     ): ColumnMap {
-        $col = new ColumnMap($name, $this);
-        $col->setType($type);
+        $col = new ColumnMap($name, $this, $phpName, $type);
         $col->setSize($size);
-        $col->setPhpName($phpName);
         $col->setNotNull($isNotNull);
         $col->setDefaultValue($defaultValue);
 
@@ -787,6 +785,15 @@ class TableMap
         ?string $pluralName = null,
         bool $polymorphic = false
     ): RelationMap {
+        // determine tables
+        if ($type === RelationMap::MANY_TO_ONE) {
+            $localTable = $this;
+            $foreignTable = $this->dbMap->getTableByPhpName($tablePhpName);
+        } else {
+            $localTable = $this->dbMap->getTableByPhpName($tablePhpName);
+            $foreignTable = $this;
+        }
+
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
         $relation = new RelationMap($name);
@@ -798,14 +805,7 @@ class TableMap
         if ($pluralName !== null) {
             $relation->setPluralName($pluralName);
         }
-        // set tables
-        if ($type === RelationMap::MANY_TO_ONE) {
-            $relation->setLocalTable($this);
-            $relation->setForeignTable($this->dbMap->getTableByPhpName($tablePhpName));
-        } else {
-            $relation->setLocalTable($this->dbMap->getTableByPhpName($tablePhpName));
-            $relation->setForeignTable($this);
-        }
+
         // set columns
         foreach ($joinConditionMapping as $map) {
             [$local, $foreign] = $map;

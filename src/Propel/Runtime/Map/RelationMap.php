@@ -115,10 +115,14 @@ class RelationMap
 
     /**
      * @param string $name Name of the relation.
+     * @param \Propel\Runtime\Map\TableMap $localTable Local table map.
+     * @param \Propel\Runtime\Map\TableMap $foreignTable Foreign table map.
      */
-    public function __construct(string $name)
+    public function __construct(string $name, TableMap $localTable, TableMap $foreignTable)
     {
         $this->name = $name;
+        $this->localTable = $localTable;
+        $this->foreignTable = $foreignTable;
     }
 
     /**
@@ -206,9 +210,9 @@ class RelationMap
     /**
      * Get the local table
      *
-     * @return \Propel\Runtime\Map\TableMap|null The local table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The local table for this relationship
      */
-    public function getLocalTable(): ?TableMap
+    public function getLocalTable(): TableMap
     {
         return $this->localTable;
     }
@@ -228,9 +232,9 @@ class RelationMap
     /**
      * Get the foreign table
      *
-     * @return \Propel\Runtime\Map\TableMap|null The foreign table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The foreign table for this relationship
      */
-    public function getForeignTable(): ?TableMap
+    public function getForeignTable(): TableMap
     {
         return $this->foreignTable;
     }
@@ -238,9 +242,9 @@ class RelationMap
     /**
      * Get the left table of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap|null The left table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The left table for this relationship
      */
-    public function getLeftTable(): ?TableMap
+    public function getLeftTable(): TableMap
     {
         return $this->getType() === self::MANY_TO_ONE ? $this->getLocalTable() : $this->getForeignTable();
     }
@@ -248,9 +252,9 @@ class RelationMap
     /**
      * Get the right table of the relation
      *
-     * @return \Propel\Runtime\Map\TableMap|null The right table for this relationship
+     * @return \Propel\Runtime\Map\TableMap The right table for this relationship
      */
-    public function getRightTable(): ?TableMap
+    public function getRightTable(): TableMap
     {
         return $this->getType() === self::MANY_TO_ONE ? $this->getForeignTable() : $this->getLocalTable();
     }
