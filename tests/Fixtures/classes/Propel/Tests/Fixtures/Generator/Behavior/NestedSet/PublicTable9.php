@@ -6,13 +6,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Propel\Tests\Generator\Behavior\NestedSet\Fixtures;
+namespace Propel\Tests\Fixtures\Generator\Behavior\NestedSet;
 
-use NestedSetTable10;
+use NestedSetTable9;
 
-class PublicTable10 extends NestedSetTable10
+class PublicTable9 extends NestedSetTable9
 {
     public $hasParentNode;
 
     public $parentNode;
+
+    public $hasPrevSibling;
+
+    public $prevSibling;
+
+    public $hasNextSibling;
+
+    public $nextSibling;
 }

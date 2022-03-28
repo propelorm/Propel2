@@ -15,7 +15,7 @@ use MyNameSpace\Map\ComplexColumnTypeEntity2TableMap;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Propel;
-use Propel\Tests\Generator\Builder\Om\Fixtures\ComplexColumnTypeEntityWithConstructor;
+use Propel\Tests\Fixtures\Generator\Builder\Om\ComplexColumnTypeEntityWithConstructor;
 use Propel\Tests\TestCase;
 
 /**

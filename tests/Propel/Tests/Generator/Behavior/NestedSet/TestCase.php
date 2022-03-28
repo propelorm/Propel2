@@ -13,8 +13,8 @@ use Map\NestedSetTable9TableMap;
 use NestedSetTable10Query;
 use NestedSetTable9Query;
 use Propel\Generator\Util\QuickBuilder;
-use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
-use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable9;
+use Propel\Tests\Fixtures\Generator\Behavior\NestedSet\PublicTable10;
+use Propel\Tests\Fixtures\Generator\Behavior\NestedSet\PublicTable9;
 use Propel\Tests\TestCase as BaseTestCase;
 
 /**

@@ -12,7 +12,7 @@ use Map\NestedSetTable10TableMap;
 use NestedSetTable10;
 use NestedSetTable10Query;
 use Propel\Runtime\Exception\PropelException;
-use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable10;
+use Propel\Tests\Fixtures\Generator\Behavior\NestedSet\PublicTable10;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class
