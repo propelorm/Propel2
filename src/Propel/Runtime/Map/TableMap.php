@@ -796,7 +796,7 @@ class TableMap
 
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
-        $relation = new RelationMap($name);
+        $relation = new RelationMap($name, $localTable, $foreignTable);
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
         $relation->setOnDelete($onDelete);

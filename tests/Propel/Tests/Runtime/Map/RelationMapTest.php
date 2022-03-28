@@ -44,7 +44,7 @@ class RelationMapTest extends TestCase
         parent::setUp();
         $this->databaseMap = new DatabaseMap('foodb');
         $this->relationName = 'foo';
-        $this->rmap = new RelationMap($this->relationName);
+        $this->rmap = new RelationMap($this->relationName, new TableMap('local'), new TableMap('foreign'));
     }
 
     /**
