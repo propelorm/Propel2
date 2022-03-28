@@ -2097,11 +2097,7 @@ class ModelCriteria extends BaseModelCriteria
     protected function convertValueForColumn($value, ColumnMap $colMap)
     {
         if ($colMap->getType() === 'OBJECT' && is_object($value)) {
-            if (is_array($value)) {
-                $value = array_map('serialize', $value);
-            } else {
-                $value = serialize($value);
-            }
+            $value = serialize($value);
         } elseif ($colMap->getType() === 'ARRAY' && is_array($value)) {
             $value = '| ' . implode(' | ', $value) . ' |';
         } elseif ($colMap->getType() === PropelTypes::ENUM && $value !== null) {

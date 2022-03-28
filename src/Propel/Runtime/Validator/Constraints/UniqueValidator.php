@@ -16,7 +16,7 @@ class UniqueValidator extends ConstraintValidator
 {
     /**
      * @param mixed $value
-     * @param \Symfony\Component\Validator\Constraint $constraint
+     * @param Unique $constraint
      *
      * @return void
      */
