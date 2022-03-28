@@ -56,16 +56,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/DataModelBuilder.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/DataModelBuilder.php
-
-		-
 			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
