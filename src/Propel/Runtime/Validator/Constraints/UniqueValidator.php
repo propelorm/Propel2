@@ -16,7 +16,7 @@ class UniqueValidator extends ConstraintValidator
 {
     /**
      * @param mixed $value
-     * @param Unique $constraint
+     * @param \Propel\Runtime\Validator\Constraints\Unique $constraint
      *
      * @return void
      */
