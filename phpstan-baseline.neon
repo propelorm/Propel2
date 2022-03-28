@@ -41,11 +41,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/ConcreteInheritance/ConcreteInheritanceBehavior.php
 
 		-
-			message: "#^Ternary operator condition is always false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Sortable/SortableBehaviorObjectBuilderModifier.php
-
-		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
@@ -57,11 +52,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/DataModelBuilder.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
@@ -181,21 +171,6 @@ parameters:
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Om/TableMapBuilder.php
-
-		-
-			message: "#^Parameter \\#2 \\$shdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'startElement' given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Util/SchemaReader.php
-
-		-
-			message: "#^Parameter \\#3 \\$ehdl of function xml_set_element_handler expects callable\\(\\)\\: mixed, 'endElement' given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Builder/Util/SchemaReader.php
-
-		-
 			message: "#^Variable \\$migration might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Command/MigrationMigrateCommand.php
@@ -209,11 +184,6 @@ parameters:
 			message: "#^Variable \\$defaultDatasource might not be defined\\.$#"
 			count: 1
 			path: src/Propel/Generator/Config/ArrayToPhpConverter.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Config/GeneratorConfig.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
@@ -266,17 +236,7 @@ parameters:
 			path: src/Propel/Generator/Manager/templates/migration_template.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Column.php
-
-		-
 			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Database.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Database.php
 
@@ -296,34 +256,9 @@ parameters:
 			path: src/Propel/Generator/Model/ForeignKey.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Schema.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Model\\\\Behavior\\:\\:isEarly\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Table.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Table.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/DefaultPlatform.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
@@ -339,21 +274,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Platform/PgsqlPlatform.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 2
-			path: src/Propel/Generator/Platform/PgsqlPlatform.php
-
-		-
-			message: "#^Left side of \\|\\| is always false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/SqlitePlatform.php
-
-		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, Propel\\\\Generator\\\\Model\\\\ColumnDefaultValue\\|null given\\.$#"
-			count: 1
-			path: src/Propel/Generator/Platform/SqlitePlatform.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
@@ -372,11 +292,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
-
-		-
-			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
 
@@ -466,11 +381,6 @@ parameters:
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 1
-			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
-
-		-
 			message: "#^Parameter \\#1 \\$join of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\:\\:setPreviousJoin\\(\\) expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
@@ -529,26 +439,6 @@ parameters:
 			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
-
-		-
-			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:asort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:asort\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/CollectionIterator.php
-
-		-
-			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:ksort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:ksort\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/CollectionIterator.php
-
-		-
-			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:natcasesort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:natcasesort\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/CollectionIterator.php
-
-		-
-			message: "#^Return type \\(void\\) of method Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\:\\:natsort\\(\\) should be compatible with return type \\(bool\\) of method ArrayIterator\\<\\(int\\|string\\),mixed\\>\\:\\:natsort\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/CollectionIterator.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
@@ -621,11 +511,6 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
 
 		-
-			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\ArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
@@ -656,11 +541,6 @@ parameters:
 			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
 
 		-
-			message: "#^Return type \\(array\\) of method Propel\\\\Runtime\\\\Formatter\\\\SimpleArrayFormatter\\:\\:formatRecord\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\) of method Propel\\\\Runtime\\\\Formatter\\\\AbstractFormatter\\:\\:formatRecord\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Map/ColumnMap.php
@@ -674,3 +554,4 @@ parameters:
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
 			count: 2
 			path: src/Propel/Runtime/Validator/Constraints/UniqueValidator.php
+

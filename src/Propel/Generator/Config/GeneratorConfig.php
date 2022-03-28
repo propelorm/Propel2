@@ -269,7 +269,7 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      */
     public function getBehaviorLocator(): BehaviorLocator
     {
-        if (!$this->behaviorLocator) {
+        if ($this->behaviorLocator === null) {
             $this->behaviorLocator = new BehaviorLocator($this);
         }
 
