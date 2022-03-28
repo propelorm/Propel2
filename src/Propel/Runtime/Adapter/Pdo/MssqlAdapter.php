@@ -14,7 +14,6 @@ use Propel\Runtime\Adapter\Exception\ColumnNotFoundException;
 use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\DatabaseMap;
 
 /**
@@ -137,7 +136,6 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param int $limit
      * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
-     * @throws \Propel\Runtime\Exception\InvalidArgumentException
      * @throws \Propel\Runtime\Adapter\Exception\ColumnNotFoundException
      * @throws \Propel\Runtime\Adapter\Exception\MalformedClauseException
      *
