@@ -8,8 +8,6 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Runtime\Exception\LogicException;
-
 /**
  * RelationMap is used to model a database relationship.
  *

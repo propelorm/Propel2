@@ -8,7 +8,6 @@
 
 namespace Propel\Runtime\Map;
 
-use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Map\Exception\ForeignKeyNotFoundException;

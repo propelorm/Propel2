@@ -14,7 +14,6 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
-use ReflectionClass;
 
 /**
  * Abstract class for query formatter

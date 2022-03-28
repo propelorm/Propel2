@@ -10,7 +10,6 @@ namespace Propel\Generator\Model;
 
 use Exception;
 use Propel\Generator\Exception\EngineException;
-use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
