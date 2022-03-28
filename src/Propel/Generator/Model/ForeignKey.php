@@ -178,7 +178,7 @@ class ForeignKey extends MappingModel
 
             $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
 
-            if ($this->parentTable) {
+            if ($this->parentTable !== null) {
                 $newName = $this->parentTable->getCommonName() . '_' . $newName;
             }
 
