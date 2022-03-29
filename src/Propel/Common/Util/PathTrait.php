@@ -13,11 +13,6 @@ use RuntimeException;
 trait PathTrait
 {
     /**
-     * @var string|null
-     */
-    protected ?string $path = null;
-
-    /**
      * Template paths are by convention in
      * - templates/
      * - besides src/ folder (which is required to detect root path)
@@ -39,10 +34,6 @@ trait PathTrait
      */
     protected function getTemplatePath(string $path): string
     {
-        if ($this->path) {
-            return $this->path;
-        }
-
         $srcPos = strpos($path, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
         if ($srcPos === false) {
             throw new RuntimeException('Cannot find root of repository. Please manually set a template path to file.');
@@ -71,8 +62,6 @@ trait PathTrait
             array_shift($elements);
         }
 
-        $this->path = $root . 'templates' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $elements) . DIRECTORY_SEPARATOR;
-
-        return $this->path;
+        return $root . 'templates' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $elements) . DIRECTORY_SEPARATOR;
     }
 }
