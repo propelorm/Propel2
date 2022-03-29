@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Table;
@@ -18,6 +19,8 @@ use SplFileInfo;
  */
 class TableMapLoaderScriptBuilder
 {
+    use PathTrait;
+
     /**
      * @var string
      */
@@ -95,7 +98,9 @@ class TableMapLoaderScriptBuilder
      */
     protected function renderTemplate(array $vars): string
     {
-        $filePath = implode(DIRECTORY_SEPARATOR, [__DIR__, 'templates', 'tableMapLoaderScript.php']);
+        $templatePath = $this->getTemplatePath(__DIR__);
+
+        $filePath = $templatePath . 'tableMapLoaderScript.php';
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
 

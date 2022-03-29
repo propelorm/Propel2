@@ -7,17 +7,6 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     paths:
         - '%rootDir%/../../../src/'
-    excludePaths:
-        - '%rootDir%/../../../src/Propel/Generator/Command/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/AggregateColumn/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/AggregateMultipleColumns/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/I18n/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Builder/Om/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/Validate/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/Archivable/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/Delegate/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/Sortable/templates/*'
-        - '%rootDir%/../../../src/Propel/Generator/Behavior/NestedSet/templates/*'
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'
         -

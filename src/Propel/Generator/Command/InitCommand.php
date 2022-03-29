@@ -13,6 +13,7 @@ use Propel\Generator\Command\Helper\ConsoleHelper;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\Exception\ConnectionException;
+use RuntimeException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -269,18 +270,25 @@ class InitCommand extends AbstractCommand
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param array<string, mixed> $options
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     private function generateProject(OutputInterface $output, array $options): void
     {
+        $templatesPath = dirname(__FILE__, 5) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR;
+        if (!is_dir($templatesPath)) {
+            throw new RuntimeException(sprintf('Cannot find templates path `%s`', $templatesPath));
+        }
+
         $schema = new PropelTemplate();
-        $schema->setTemplateFile(__DIR__ . '/templates/schema.xml.php');
+        $schema->setTemplateFile($templatesPath . 'Command/schema.xml.php');
 
         $config = new PropelTemplate();
-        $config->setTemplateFile(__DIR__ . '/templates/propel.' . $options['format'] . '.php');
+        $config->setTemplateFile($templatesPath . 'Command/propel.' . $options['format'] . '.php');
 
         $distConfig = new PropelTemplate();
-        $distConfig->setTemplateFile(__DIR__ . '/templates/propel.' . $options['format'] . '.dist.php');
+        $distConfig->setTemplateFile($templatesPath . 'Command/propel.' . $options['format'] . '.dist.php');
 
         if (!isset($options['schema'])) {
             $options['schema'] = $schema->render($options);

@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Builder\Om;
 
+use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\DataModelBuilder;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
@@ -29,6 +30,8 @@ use Propel\Generator\Model\Table;
  */
 abstract class AbstractOMBuilder extends DataModelBuilder
 {
+    use PathTrait;
+
     /**
      * Declared fully qualified classnames, to build the 'namespace' statements
      * according to this table's namespace.
@@ -1054,20 +1057,24 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      *
      * @param string $filename
      * @param array $vars
-     * @param string $templateDir
+     * @param string|null $templatePath
      *
      * @throws \Propel\Generator\Exception\InvalidArgumentException
      *
      * @return string
      */
-    public function renderTemplate(string $filename, array $vars = [], string $templateDir = '/templates/'): string
+    public function renderTemplate(string $filename, array $vars = [], ?string $templatePath = null): string
     {
-        $filePath = __DIR__ . $templateDir . $filename;
+        if ($templatePath === null) {
+            $templatePath = $this->getTemplatePath(__DIR__);
+        }
+
+        $filePath = $templatePath . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
-                throw new InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory', $filename, __DIR__ . $templateDir));
+                throw new InvalidArgumentException(sprintf('Template `%s` not found in `%s` directory', $filename, $templatePath));
             }
         }
         $template = new PropelTemplate();

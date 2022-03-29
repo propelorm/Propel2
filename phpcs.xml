@@ -12,8 +12,6 @@
 
     <file>src/</file>
 
-    <exclude-pattern>*/templates/*</exclude-pattern>
-
     <rule ref="Spryker"/>
 
     <rule ref="vendor/spryker/code-sniffer/SprykerStrict/ruleset.xml">
