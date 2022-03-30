@@ -1231,7 +1231,6 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * @return void
      */
-
     public function setPhpName(string $phpName): void
     {
         $this->phpName = $phpName;
