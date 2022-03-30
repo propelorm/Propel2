@@ -1201,7 +1201,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets the table description.
      *
-     * @param string|null $description
+     * @param string $description
      *
      * @return void
      */
@@ -1213,7 +1213,7 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the name to use in PHP sources.
      *
-     * @return string|null
+     * @return string
      */
     public function getPhpName(): string
     {
@@ -1227,11 +1227,11 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Sets the name to use in PHP sources.
      *
-     * @param string|null $phpName
+     * @param string $phpName
      *
      * @return void
      */
-  
+
     public function setPhpName(string $phpName): void
     {
         $this->phpName = $phpName;
