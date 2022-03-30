@@ -234,6 +234,8 @@ EOF;
     }
 
     /**
+     * @group testGetVersionExists
+     *
      * @return void
      */
     public function testGetVersionExists()

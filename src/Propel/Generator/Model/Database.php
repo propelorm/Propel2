@@ -573,7 +573,7 @@ class Database extends ScopedMappingModel
     public function addTable($table): Table
     {
         if (!$table instanceof Table) {
-            $tbl = new Table();
+            $tbl = new Table($table['name']);
             $tbl->setDatabase($this);
             $tbl->loadMapping($table);
 

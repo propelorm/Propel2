@@ -114,11 +114,15 @@ class ColumnMap
     /**
      * @param string $name The name of the column.
      * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
+     * @param string $phpName The php name of the column.
+     * @param string $type A string specifying the Propel type.
      */
-    public function __construct(string $name, TableMap $containingTable)
+    public function __construct(string $name, TableMap $containingTable, string $phpName, string $type)
     {
         $this->columnName = $name;
         $this->table = $containingTable;
+        $this->phpName = $phpName;
+        $this->type = $type;
     }
 
     /**
@@ -176,9 +180,9 @@ class ColumnMap
     /**
      * Get the name of a column.
      *
-     * @return string|null A String with the column name.
+     * @return string A String with the column name.
      */
-    public function getPhpName(): ?string
+    public function getPhpName(): string
     {
         return $this->phpName;
     }
@@ -198,9 +202,9 @@ class ColumnMap
     /**
      * Get the Propel type of this column.
      *
-     * @return string|null A string representing the Propel type (e.g. PropelTypes::DATE).
+     * @return string A string representing the Propel type (e.g. PropelTypes::DATE).
      */
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }

@@ -37,6 +37,16 @@ class RelationMapTest extends TestCase
     protected $rmap;
 
     /**
+     * @var \Propel\Runtime\Map\RelationMap
+     */
+    protected $defaultLocalTable;
+
+    /**
+     * @var \Propel\Runtime\Map\RelationMap
+     */
+    protected $defaultForeignTable;
+
+    /**
      * @return void
      */
     protected function setUp(): void
@@ -44,7 +54,9 @@ class RelationMapTest extends TestCase
         parent::setUp();
         $this->databaseMap = new DatabaseMap('foodb');
         $this->relationName = 'foo';
-        $this->rmap = new RelationMap($this->relationName);
+        $this->defaultLocalTable = new TableMap('local');
+        $this->defaultForeignTable = new TableMap('foreign');
+        $this->rmap = new RelationMap($this->relationName, $this->defaultLocalTable, $this->defaultForeignTable);
     }
 
     /**
@@ -60,7 +72,7 @@ class RelationMapTest extends TestCase
      */
     public function testLocalTable()
     {
-        $this->assertNull($this->rmap->getLocalTable(), 'A new relation has no local table');
+        $this->assertSame($this->defaultLocalTable, $this->rmap->getLocalTable(), 'constructor sets the local table');
         $tmap1 = new TableMap('foo', $this->databaseMap);
         $this->rmap->setLocalTable($tmap1);
         $this->assertEquals($tmap1, $this->rmap->getLocalTable(), 'The local table is set by setLocalTable()');
@@ -71,7 +83,7 @@ class RelationMapTest extends TestCase
      */
     public function testForeignTable()
     {
-        $this->assertNull($this->rmap->getForeignTable(), 'A new relation has no foreign table');
+        $this->assertSame($this->defaultForeignTable, $this->rmap->getForeignTable(), 'constructor sets the foreign table');
         $tmap2 = new TableMap('bar', $this->databaseMap);
         $this->rmap->setForeignTable($tmap2);
         $this->assertEquals($tmap2, $this->rmap->getForeignTable(), 'The foreign table is set by setForeignTable()');

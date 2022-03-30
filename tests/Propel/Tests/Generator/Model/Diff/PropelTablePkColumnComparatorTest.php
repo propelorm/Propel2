@@ -34,12 +34,12 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareSamePks()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->setPrimaryKey(true);
@@ -53,11 +53,11 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareNotSamePks()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $t2->addColumn($c2);
 
@@ -70,8 +70,8 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareAddedPkColumn()
     {
-        $t1 = new Table();
-        $t2 = new Table();
+        $t1 = new Table('');
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c2->setPrimaryKey(true);
@@ -95,7 +95,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareRemovedPkColumn()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c1->setPrimaryKey(true);
@@ -103,7 +103,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c2 = new Column('Bar');
         $c2->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
         $t1->addColumn($c2);
-        $t2 = new Table();
+        $t2 = new Table('');
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -120,7 +120,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareRenamedPkColumn()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -129,7 +129,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Bar');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -156,7 +156,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareSeveralPrimaryKeyDifferences()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('col1');
         $c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
         $c1->getDomain()->replaceSize(255);
@@ -173,7 +173,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c3->setPrimaryKey(true);
         $t1->addColumn($c3);
 
-        $t2 = new Table();
+        $t2 = new Table('');
         $c4 = new Column('col1');
         $c4->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c4->getDomain()->replaceScale(2);
@@ -209,7 +209,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
      */
     public function testCompareSeveralRenamedSamePrimaryKeys()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('col1');
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c1->setNotNull(true);
@@ -226,7 +226,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c3->setPrimaryKey(true);
         $t1->addColumn($c3);
 
-        $t2 = new Table();
+        $t2 = new Table('');
         $c4 = new Column('col4');
         $c4->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c4->setNotNull(true);

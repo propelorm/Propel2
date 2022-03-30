@@ -12,7 +12,15 @@ namespace Propel\Runtime\ActiveRecord;
  * This ActiveRecord interface helps to find Propel Object
  *
  * @author jaugustin
+ *
+ * @method array toArray(string $keyType = \Propel\Runtime\Map\TableMap::TYPE_FIELDNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = [], bool $includeForeignObjects = false): array
  */
 interface ActiveRecordInterface
 {
+    /**
+     * Returns true if the primary key for this object is null.
+     *
+     * @return bool
+     */
+    public function isPrimaryKeyNull(): bool;
 }

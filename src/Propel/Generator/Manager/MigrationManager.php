@@ -325,9 +325,9 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getFirstUpMigrationTimestamp(): int
+    public function getFirstUpMigrationTimestamp(): ?int
     {
         $validTimestamps = $this->getValidMigrationTimestamps();
 

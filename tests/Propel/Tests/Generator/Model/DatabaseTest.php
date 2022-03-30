@@ -606,7 +606,7 @@ EOF;
             $database->setNamespace($databaseNamespace);
         }
 
-        $table = new Table();
+        $table = new Table('');
         if ($tableNamespace !== null) {
             $table->setNamespace($tableNamespace);
         }

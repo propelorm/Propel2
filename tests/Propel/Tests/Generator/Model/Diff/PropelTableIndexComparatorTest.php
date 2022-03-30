@@ -36,7 +36,7 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareSameIndices()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -47,7 +47,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1 = new Index('Foo_Index');
         $i1->addColumn($c1);
         $t1->addIndex($i1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -67,7 +67,7 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareNotSameIndices()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -78,7 +78,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1 = new Index('Foo_Index');
         $i1->addColumn($c1);
         $t1->addIndex($i1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -99,7 +99,7 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareCaseInsensitive()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -111,7 +111,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1->addColumn($c1);
         $t1->addIndex($i1);
 
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('fOO');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -132,8 +132,8 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareAddedIndices()
     {
-        $t1 = new Table();
-        $t2 = new Table();
+        $t1 = new Table('');
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -160,7 +160,7 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareRemovedIndices()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Bar');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -171,7 +171,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1 = new Index('Bar_Index');
         $i1->addColumn($c1);
         $t1->addIndex($i1);
-        $t2 = new Table();
+        $t2 = new Table('');
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -188,7 +188,7 @@ class PropelTableIndexComparatorTest extends TestCase
      */
     public function testCompareModifiedIndices()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
         $c1->getDomain()->replaceSize(255);
@@ -197,7 +197,7 @@ class PropelTableIndexComparatorTest extends TestCase
         $i1 = new Index('Foo_Index');
         $i1->addColumn($c1);
         $t1->addIndex($i1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);

@@ -11,6 +11,7 @@ namespace Propel\Runtime\Map;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Map\Exception\ColumnNotFoundException;
 use Propel\Runtime\Map\Exception\RelationNotFoundException;
 
@@ -21,6 +22,9 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@finemaltcoding.com> (Torque)
  * @author William Durand <william.durand1@gmail.com>
+ *
+ * @method static string getOMClass(array $row, int $column, bool $withPrefix = true)
+ * @method static string|null getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM): ?string;getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM)
  */
 class TableMap
 {
@@ -253,6 +257,24 @@ class TableMap
     }
 
     /**
+     * Get the name of the Table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string A String with the name of the table.
+     */
+    public function getNameOrFail(): string
+    {
+        $name = $this->getName();
+
+        if ($name === null) {
+            throw new LogicException('Name is not defined.');
+        }
+
+        return $name;
+    }
+
+    /**
      * Set the PHP name of the Table.
      *
      * @param string $phpName The PHP Name for this table
@@ -272,6 +294,24 @@ class TableMap
     public function getPhpName(): ?string
     {
         return $this->phpName;
+    }
+
+    /**
+     * Get the PHP name of the Table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string A String with the name of the table.
+     */
+    public function getPhpNameOrFail(): string
+    {
+        $phpName = $this->getPhpName();
+
+        if ($phpName === null) {
+            throw new LogicException('PHP name is not defined.');
+        }
+
+        return $phpName;
     }
 
     /**
@@ -295,6 +335,24 @@ class TableMap
     public function getClassName(): ?string
     {
         return $this->classname;
+    }
+
+    /**
+     * Get the ClassName of the Propel Class belonging to this table.
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return string
+     */
+    public function getClassNameOrFail(): string
+    {
+        $className = $this->getClassName();
+
+        if ($className === null) {
+            throw new LogicException('Class name is not defined.');
+        }
+
+        return $className;
     }
 
     /**
@@ -436,10 +494,8 @@ class TableMap
         ?string $fkTable = null,
         ?string $fkColumn = null
     ): ColumnMap {
-        $col = new ColumnMap($name, $this);
-        $col->setType($type);
+        $col = new ColumnMap($name, $this, $phpName, $type);
         $col->setSize($size);
-        $col->setPhpName($phpName);
         $col->setNotNull($isNotNull);
         $col->setDefaultValue($defaultValue);
 
@@ -729,9 +785,18 @@ class TableMap
         ?string $pluralName = null,
         bool $polymorphic = false
     ): RelationMap {
+        // determine tables
+        if ($type === RelationMap::MANY_TO_ONE) {
+            $localTable = $this;
+            $foreignTable = $this->dbMap->getTableByPhpName($tablePhpName);
+        } else {
+            $localTable = $this->dbMap->getTableByPhpName($tablePhpName);
+            $foreignTable = $this;
+        }
+
         // note: using phpName for the second table allows the use of DatabaseMap::getTableByPhpName()
         // and this method autoloads the TableMap if the table isn't loaded yet
-        $relation = new RelationMap($name);
+        $relation = new RelationMap($name, $localTable, $foreignTable);
         $relation->setType($type);
         $relation->setOnUpdate($onUpdate);
         $relation->setOnDelete($onDelete);
@@ -740,14 +805,7 @@ class TableMap
         if ($pluralName !== null) {
             $relation->setPluralName($pluralName);
         }
-        // set tables
-        if ($type === RelationMap::MANY_TO_ONE) {
-            $relation->setLocalTable($this);
-            $relation->setForeignTable($this->dbMap->getTableByPhpName($tablePhpName));
-        } else {
-            $relation->setLocalTable($this->dbMap->getTableByPhpName($tablePhpName));
-            $relation->setForeignTable($this);
-        }
+
         // set columns
         foreach ($joinConditionMapping as $map) {
             [$local, $foreign] = $map;

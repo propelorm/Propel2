@@ -12,6 +12,7 @@ use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Exception\InvalidArgumentException;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
@@ -233,15 +234,13 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Constructs a table object with a name
      *
-     * @param string|null $name table name
+     * @param string $name table name
      */
-    public function __construct(?string $name = null)
+    public function __construct(string $name)
     {
         parent::__construct();
 
-        if ($name !== null) {
-            $this->setCommonName($name);
-        }
+        $this->setCommonName($name);
 
         $this->idMethod = IdMethod::NO_ID_METHOD;
         $this->defaultAccessorVisibility = static::VISIBILITY_PUBLIC;
@@ -254,9 +253,9 @@ class Table extends ScopedMappingModel implements IdMethod
      *
      * If autoPrefix is set. Otherwise get the common name.
      *
-     * @return string|null
+     * @return string
      */
-    private function getStdSeparatedName(): ?string
+    private function getStdSeparatedName(): string
     {
         if ($this->schema && $this->getBuildProperty('generator.schema.autoPrefix')) {
             return $this->schema . NameGeneratorInterface::STD_SEPARATOR_CHAR . $this->getCommonName();
@@ -661,7 +660,7 @@ class Table extends ScopedMappingModel implements IdMethod
             return $col;
         }
 
-        $column = new Column();
+        $column = new Column($col['name']);
         $column->setTable($this);
         $column->loadMapping($col);
 
@@ -1335,9 +1334,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Returns the common name (without schema name), but with table prefix if defined.
      *
-     * @return string|null
+     * @return string
      */
-    public function getCommonName(): ?string
+    public function getCommonName(): string
     {
         return $this->commonName;
     }
@@ -1932,6 +1931,24 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Get the database that contains this table.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Database
+     */
+    public function getDatabaseOrFail(): Database
+    {
+        $database = $this->getDatabase();
+
+        if ($database === null) {
+            throw new LogicException('Database is not defined.');
+        }
+
+        return $database;
+    }
+
+    /**
      * Returns the Database platform.
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
@@ -2088,6 +2105,24 @@ class Table extends ScopedMappingModel implements IdMethod
         }
 
         return null;
+    }
+
+    /**
+     * Returns the auto incremented primary key.
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    public function getAutoIncrementPrimaryKeyOrFail(): Column
+    {
+        $column = $this->getAutoIncrementPrimaryKey();
+
+        if ($column === null) {
+            throw new LogicException('Autoincrement primary key is not defined.');
+        }
+
+        return $column;
     }
 
     /**

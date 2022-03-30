@@ -173,6 +173,24 @@ class Behavior extends MappingModel
     }
 
     /**
+     * Returns the table this behavior is applied to
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Table
+     */
+    public function getTableOrFail(): Table
+    {
+        $table = $this->getTable();
+
+        if ($table === null) {
+            throw new LogicException('Table is not defined.');
+        }
+
+        return $table;
+    }
+
+    /**
      * Sets the database this behavior is applied to
      *
      * @param \Propel\Generator\Model\Database $database
