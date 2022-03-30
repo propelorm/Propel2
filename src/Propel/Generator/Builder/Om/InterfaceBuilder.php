@@ -35,7 +35,7 @@ class InterfaceBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -77,7 +77,7 @@ interface " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
         // there is no class body
     }
@@ -89,7 +89,7 @@ interface " . $this->getUnqualifiedClassName() . "
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }

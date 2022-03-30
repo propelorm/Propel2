@@ -30,13 +30,13 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addColumnAccessorMethods(&$script): void
+    protected function addColumnAccessorMethods(string &$script): void
     {
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
             $type = $col->getType();
-            // if they're not using the DateTime class than we will generate "compatibility" accessor method
+            // if they're not using the DateTime class then we will generate "compatibility" accessor method
             if (
                 $type === PropelTypes::DATE
                 || $type === PropelTypes::TIME
@@ -81,7 +81,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addColumnMutatorMethods(&$script): void
+    protected function addColumnMutatorMethods(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->getType() === PropelTypes::OBJECT) {
@@ -188,7 +188,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = ''): bool
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
          return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
     }
@@ -202,7 +202,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        '): void
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
     }
@@ -214,7 +214,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName): ?string
+    public function getBehaviorContent(string $contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'ObjectBuilderModifier');
     }

@@ -36,7 +36,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @return void
      */
-    public function setForceMasterConnection($isForceMasterConnection): void
+    public function setForceMasterConnection(bool $isForceMasterConnection): void
     {
         $this->setForcePrimaryConnection($isForceMasterConnection);
     }

@@ -125,7 +125,7 @@ abstract class AbstractFormatter
      *
      * @return void
      */
-    public function setDbName($dbName): void
+    public function setDbName(string $dbName): void
     {
         $this->dbName = $dbName;
     }
@@ -143,7 +143,7 @@ abstract class AbstractFormatter
      *
      * @return void
      */
-    public function setClass($class): void
+    public function setClass(string $class): void
     {
         $this->class = $class;
         $this->tableMap = $class::TABLE_MAP;
@@ -162,7 +162,7 @@ abstract class AbstractFormatter
      *
      * @return void
      */
-    public function setWith($withs = []): void
+    public function setWith(array $withs = []): void
     {
         $this->with = $withs;
     }
@@ -180,7 +180,7 @@ abstract class AbstractFormatter
      *
      * @return void
      */
-    public function setAsColumns($asColumns = []): void
+    public function setAsColumns(array $asColumns = []): void
     {
         $this->asColumns = $asColumns;
     }
@@ -198,7 +198,7 @@ abstract class AbstractFormatter
      *
      * @return void
      */
-    public function setHasLimit($hasLimit = false): void
+    public function setHasLimit(bool $hasLimit = false): void
     {
         $this->hasLimit = $hasLimit;
     }
@@ -246,7 +246,7 @@ abstract class AbstractFormatter
      *
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
-     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|array The original record
+     * @return mixed The original record
      */
     public function formatRecord(?ActiveRecordInterface $record = null)
     {
@@ -316,7 +316,7 @@ abstract class AbstractFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getSingleObjectFromRow($row, $class, &$col = 0): ActiveRecordInterface
+    public function getSingleObjectFromRow(array $row, string $class, int &$col = 0): ActiveRecordInterface
     {
         $obj = new $class();
         $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());

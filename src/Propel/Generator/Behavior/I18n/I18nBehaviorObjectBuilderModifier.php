@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 
@@ -37,7 +38,7 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\I18n\I18nBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(I18nBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -48,7 +49,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string|null
      */
-    public function postDelete($builder): ?string
+    public function postDelete(ObjectBuilder $builder): ?string
     {
         $this->builder = $builder;
         if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('generator.objectModel.emulateForeignKeyConstraints')) {
@@ -68,7 +69,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectAttributes($builder): string
+    public function objectAttributes(ObjectBuilder $builder): string
     {
         return $this->behavior->renderTemplate('objectAttributes', [
             'defaultLocale' => $this->behavior->getDefaultLocale(),
@@ -81,7 +82,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectClearReferences($builder): string
+    public function objectClearReferences(ObjectBuilder $builder): string
     {
         return $this->behavior->renderTemplate('objectClearReferences', [
             'defaultLocale' => $this->behavior->getDefaultLocale(),
@@ -93,7 +94,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $this->builder = $builder;
 
@@ -145,7 +146,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addSetLocaleAlias($alias): string
+    protected function addSetLocaleAlias(string $alias): string
     {
         return $this->behavior->renderTemplate('objectSetLocaleAlias', [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
@@ -160,7 +161,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addGetLocaleAlias($alias): string
+    protected function addGetLocaleAlias(string $alias): string
     {
         return $this->behavior->renderTemplate('objectGetLocaleAlias', [
             'alias' => ucfirst($alias),
@@ -286,7 +287,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return void
      */
-    public function objectFilter(&$script, $builder): void
+    public function objectFilter(string &$script, ObjectBuilder $builder): void
     {
         $i18nTable = $this->behavior->getI18nTable();
         $i18nTablePhpName = $this->builder->getNewStubObjectBuilder($i18nTable)->getUnprefixedClassName();
@@ -306,7 +307,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return bool
      */
-    protected function isDateType($columnType): bool
+    protected function isDateType(string $columnType): bool
     {
         return in_array($columnType, [
             PropelTypes::DATE,

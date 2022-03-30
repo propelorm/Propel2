@@ -39,7 +39,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setConnections($connections): void
+    public function setConnections(array $connections): void
     {
         $this->connections = $connections;
     }
@@ -59,7 +59,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function hasConnection($connection): bool
+    public function hasConnection(string $connection): bool
     {
         return isset($this->connections[$connection]);
     }
@@ -77,7 +77,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setOverwriteSqlMap($overwriteSqlMap): void
+    public function setOverwriteSqlMap(bool $overwriteSqlMap): void
     {
         $this->overwriteSqlMap = (bool)$overwriteSqlMap;
     }
@@ -89,7 +89,7 @@ class SqlManager extends AbstractManager
      *
      * @return array
      */
-    public function getConnection($datasource): array
+    public function getConnection(string $datasource): array
     {
         if (!$this->hasConnection($datasource)) {
             throw new InvalidArgumentException(sprintf('Unknown datasource "%s"', $datasource));
@@ -150,7 +150,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function insertSql($datasource = null): bool
+    public function insertSql(?string $datasource = null): bool
     {
         $statementsToInsert = [];
         foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
@@ -212,7 +212,7 @@ class SqlManager extends AbstractManager
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnectionInstance($datasource): ConnectionInterface
+    protected function getConnectionInstance(string $datasource): ConnectionInterface
     {
         $buildConnection = $this->getConnection($datasource);
 

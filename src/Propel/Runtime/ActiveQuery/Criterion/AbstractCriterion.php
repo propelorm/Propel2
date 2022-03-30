@@ -93,11 +93,11 @@ abstract class AbstractCriterion
      * Create a new instance.
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
-     * @param string $column TABLE.COLUMN format.
+     * @param \Propel\Runtime\Map\ColumnMap|string $column TABLE.COLUMN format.
      * @param mixed $value
      * @param string|null $comparison
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = null)
+    public function __construct(Criteria $outer, $column, $value, ?string $comparison = null)
     {
         $this->value = $value;
         $this->setColumn($column);
@@ -124,7 +124,7 @@ abstract class AbstractCriterion
         }
 
         // init $this->realtable
-        $realtable = $criteria->getTableForAlias($this->table);
+        $realtable = $criteria->getTableForAlias((string)$this->table);
         $this->realtable = $realtable ?: $this->table;
     }
 
@@ -170,7 +170,7 @@ abstract class AbstractCriterion
      *
      * @return void
      */
-    public function setTable($name): void
+    public function setTable(string $name): void
     {
         $this->table = $name;
     }
@@ -296,7 +296,7 @@ abstract class AbstractCriterion
      *
      *                                expression into proper SQL.
      */
-    public function appendPsTo(&$sb, array &$params): void
+    public function appendPsTo(string &$sb, array &$params): void
     {
         if (!$this->clauses) {
             $this->appendPsForUniqueClauseTo($sb, $params);
@@ -334,7 +334,7 @@ abstract class AbstractCriterion
      *
      * @return void
      */
-    abstract protected function appendPsForUniqueClauseTo(&$sb, array &$params): void;
+    abstract protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void;
 
     /**
      * This method checks another Criteria to see if they contain
@@ -344,7 +344,7 @@ abstract class AbstractCriterion
      *
      * @return bool
      */
-    public function equals($obj): bool
+    public function equals(?object $obj): bool
     {
         // TODO: optimize me with early outs
         if ($this === $obj) {

@@ -60,11 +60,11 @@ class PhpNameGenerator implements NameGeneratorInterface
 
                 break;
             case self::CONV_METHOD_PHPNAME:
-                $phpName = $this->phpnameMethod($schemaName);
+                $phpName = $this->phpNameMethod($schemaName);
 
                 break;
             case self::CONV_METHOD_NOCHANGE:
-                $phpName = $this->nochangeMethod($schemaName);
+                $phpName = $this->noChangeMethod($schemaName);
 
                 break;
             case self::CONV_METHOD_UNDERSCORE:
@@ -149,7 +149,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string Converted name.
      */
-    protected function phpnameMethod(string $schemaName): string
+    protected function phpNameMethod(string $schemaName): string
     {
         $name = '';
         $tok = strtok($schemaName, self::STD_SEPARATOR_CHAR);
@@ -169,7 +169,7 @@ class PhpNameGenerator implements NameGeneratorInterface
      *
      * @return string
      */
-    protected function nochangeMethod(string $name): string
+    protected function noChangeMethod(string $name): string
     {
         return $name;
     }

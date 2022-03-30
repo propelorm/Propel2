@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Map\RelationMap;
 
@@ -50,8 +51,12 @@ class ExistsCriterion extends AbstractCriterion
      * @param string|null $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
      * @param \Propel\Runtime\Map\RelationMap|null $relationMap where outer query is on the left side
      */
-    public function __construct($outerQuery, $existsQuery, ?string $typeOfExists = null, ?RelationMap $relationMap = null)
-    {
+    public function __construct(
+        $outerQuery,
+        ModelCriteria $existsQuery,
+        ?string $typeOfExists = null,
+        ?RelationMap $relationMap = null
+    ) {
         parent::__construct($outerQuery, '', null, null);
         $this->existsQuery = $existsQuery;
         $this->typeOfExists = ($typeOfExists === self::TYPE_NOT_EXISTS) ? self::TYPE_NOT_EXISTS : self::TYPE_EXISTS;
@@ -70,7 +75,7 @@ class ExistsCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params): void
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         $existsQuery = $this->existsQuery
             ->clearSelectColumns()

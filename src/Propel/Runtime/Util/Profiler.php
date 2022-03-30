@@ -66,7 +66,7 @@ class Profiler
      * @param string $innerGlue
      * @param string $outerGlue
      */
-    public function __construct($slowThreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
+    public function __construct(float $slowThreshold = 0.1, string $innerGlue = ': ', string $outerGlue = ' | ')
     {
         $this->slowThreshold = $slowThreshold;
         $this->innerGlue = $innerGlue;
@@ -80,7 +80,7 @@ class Profiler
      *
      * @return void
      */
-    public function setSlowThreshold($slowThreshold): void
+    public function setSlowThreshold(int $slowThreshold): void
     {
         $this->slowThreshold = $slowThreshold;
     }
@@ -92,7 +92,7 @@ class Profiler
      *
      * @return void
      */
-    public function setDetails($details): void
+    public function setDetails(array $details): void
     {
         $this->details = $details;
     }
@@ -104,7 +104,7 @@ class Profiler
      *
      * @return void
      */
-    public function setInnerGlue($innerGlue): void
+    public function setInnerGlue(string $innerGlue): void
     {
         $this->innerGlue = $innerGlue;
     }
@@ -116,7 +116,7 @@ class Profiler
      *
      * @return void
      */
-    public function setOuterGlue($outerGlue): void
+    public function setOuterGlue(string $outerGlue): void
     {
         $this->outerGlue = $outerGlue;
     }
@@ -159,7 +159,7 @@ class Profiler
      *
      * @return void
      */
-    public function setConfiguration($profilerConfiguration): void
+    public function setConfiguration(array $profilerConfiguration): void
     {
         if (isset($profilerConfiguration['slowThreshold'])) {
             $this->setSlowThreshold($profilerConfiguration['slowThreshold']);
@@ -236,7 +236,7 @@ class Profiler
      *
      * @return string
      */
-    public function getProfileBetween($startSnapshot, $endSnapshot): string
+    public function getProfileBetween(array $startSnapshot, array $endSnapshot): string
     {
         $profile = '';
 
@@ -299,7 +299,7 @@ class Profiler
      *
      * @return string
      */
-    public static function formatMemory($bytes, $precision = 3): string
+    public static function formatMemory($bytes, int $precision = 3): string
     {
         $absBytes = abs($bytes);
         $sign = ($bytes == $absBytes) ? 1 : -1;
@@ -321,7 +321,7 @@ class Profiler
      *
      * @return string
      */
-    public static function formatDuration($duration, $precision = 3): string
+    public static function formatDuration(float $duration, int $precision = 3): string
     {
         if ($duration < 1) {
             $duration *= 1000;
@@ -341,7 +341,7 @@ class Profiler
      *
      * @return string
      */
-    public static function toPrecision($number, $significantFigures = 3): string
+    public static function toPrecision($number, int $significantFigures = 3): string
     {
         if ((float)$number === 0.0) {
             return '0';

@@ -132,7 +132,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -170,7 +170,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    protected function setNestedTransactionCount($v): void
+    protected function setNestedTransactionCount(int $v): void
     {
         $this->nestedTransactionCount = $v;
     }
@@ -433,7 +433,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function query($statement, ...$args): DataFetcherInterface
+    public function query(string $statement, ...$args): DataFetcherInterface
     {
         $statementWrapper = $this->createStatementWrapper($statement);
 
@@ -495,7 +495,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameterType = 2): string
+    public function quote(string $string, int $parameterType = 2): string
     {
         return $this->connection->quote($string, $parameterType);
     }
@@ -523,7 +523,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return \Propel\Runtime\Connection\StatementWrapper
      */
-    protected function createStatementWrapper($sql): StatementWrapper
+    protected function createStatementWrapper(string $sql): StatementWrapper
     {
         return new StatementWrapper($sql, $this);
     }
@@ -545,7 +545,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null)
+    public function lastInsertId(?string $name = null)
     {
         return $this->connection->lastInsertId($name);
     }
@@ -602,7 +602,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function setLastExecutedQuery($query): void
+    public function setLastExecutedQuery(string $query): void
     {
         $this->lastExecutedQuery = $query;
     }
@@ -614,7 +614,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function useDebug($value = true): void
+    public function useDebug(bool $value = true): void
     {
         if (!$value) {
             // reset query logging
@@ -630,7 +630,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function setLogMethods($logMethods): void
+    public function setLogMethods(array $logMethods): void
     {
         $this->logMethods = $logMethods;
     }
@@ -648,7 +648,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return bool
      */
-    protected function isLogEnabledForMethod($methodName): bool
+    protected function isLogEnabledForMethod(string $methodName): bool
     {
         return in_array($methodName, $this->getLogMethods());
     }
@@ -685,7 +685,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function log($msg): void
+    public function log(string $msg): void
     {
         $backtrace = debug_backtrace();
         if (!isset($backtrace[1]['function'])) {

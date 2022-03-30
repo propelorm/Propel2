@@ -134,7 +134,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return int
      */
-    public function lastInsertId($name = null): int
+    public function lastInsertId(?string $name = null): int
     {
         $result = $this->query('SELECT SCOPE_IDENTITY()');
 
@@ -146,7 +146,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return string
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         return '[' . $text . ']';
     }

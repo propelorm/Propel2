@@ -52,7 +52,7 @@ class DatabaseMap
     /**
      * @param string $name Name of the database.
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -74,7 +74,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap The newly created TableMap.
      */
-    public function addTable($tableName): TableMap
+    public function addTable(string $tableName): TableMap
     {
         $this->tables[$tableName] = new TableMap($tableName, $this);
 
@@ -111,8 +111,9 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap The TableMap object
      */
-    public function addTableFromMapClass($tableMapClass): TableMap
+    public function addTableFromMapClass(string $tableMapClass): TableMap
     {
+        /** @var \Propel\Runtime\Map\TableMap $table */
         $table = new $tableMapClass();
         $this->addTableObject($table);
 
@@ -144,7 +145,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap A TableMap
      */
-    public function getTable($name): TableMap
+    public function getTable(string $name): TableMap
     {
         if (!isset($this->tables[$name])) {
             throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
@@ -171,7 +172,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\ColumnMap A TableMap
      */
-    public function getColumn($qualifiedColumnName): ColumnMap
+    public function getColumn(string $qualifiedColumnName): ColumnMap
     {
         [$tableName, $columnName] = explode('.', $qualifiedColumnName);
 
@@ -185,7 +186,7 @@ class DatabaseMap
      *
      * @return \Propel\Runtime\Map\TableMap
      */
-    public function getTableByPhpName($phpName): TableMap
+    public function getTableByPhpName(string $phpName): TableMap
     {
         if ($phpName[0] !== '\\') {
             $phpName = '\\' . $phpName;

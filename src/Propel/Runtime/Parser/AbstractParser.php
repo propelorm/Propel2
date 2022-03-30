@@ -28,19 +28,19 @@ abstract class AbstractParser
      *
      * @return mixed Converted data, depending on the parser format
      */
-    abstract public function fromArray($array, $rootKey = 'data');
+    abstract public function fromArray(array $array, string $rootKey = 'data');
 
     /**
      * Converts data from the parser format to an associative array.
      *
      * Override in the parser driver.
      *
-     * @param mixed $data Source data to convert, depending on the parser format
+     * @param string $data Source data to convert, depending on the parser format
      * @param string $rootKey The parser might use this name for converting from parser format
      *
      * @return array Converted data
      */
-    abstract public function toArray($data, $rootKey = 'data'): array;
+    abstract public function toArray(string $data, string $rootKey = 'data'): array;
 
     /**
      * @param array $array
@@ -48,7 +48,7 @@ abstract class AbstractParser
      *
      * @return string
      */
-    public function listFromArray($array, $rootKey = 'data'): string
+    public function listFromArray(array $array, ?string $rootKey = 'data'): string
     {
         return $this->fromArray($array, $rootKey);
     }
@@ -59,7 +59,7 @@ abstract class AbstractParser
      *
      * @return array
      */
-    public function listToArray($data, $rootKey = 'data'): array
+    public function listToArray(string $data, string $rootKey = 'data'): array
     {
         return $this->toArray($data, $rootKey);
     }
@@ -73,7 +73,7 @@ abstract class AbstractParser
      *
      * @return string The file content processed by PHP
      */
-    public function load($path): string
+    public function load(string $path): string
     {
         if (!file_exists($path)) {
             throw new FileNotFoundException(sprintf('File "%s" does not exist or is unreadable', $path));
@@ -112,8 +112,9 @@ abstract class AbstractParser
      *
      * @return self A PropelParser subclass instance
      */
-    public static function getParser($type = 'XML'): self
+    public static function getParser(string $type = 'XML'): self
     {
+        /** @phpstan-var class-string<\Propel\Runtime\Parser\AbstractParser> $class */
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
 
         if (!class_exists($class)) {

@@ -51,7 +51,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return int
      */
-    public function setStyle($style): int
+    public function setStyle(int $style): int
     {
         $old_style = $this->style;
         $this->style = $style;
@@ -80,7 +80,10 @@ class PDODataFetcher extends AbstractDataFetcher
             $style = $this->style;
         }
 
-        return $this->getDataObject()->fetch($style);
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+
+        return $dataObject->fetch($style);
     }
 
     /**
@@ -88,17 +91,20 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @param int|null $style
      * @param object|string|int|null $fetch_argument
-     * @param array|null $ctor_args
+     * @param array $ctor_args
      *
      * @return array
      */
-    public function fetchAll(?int $style = null, $fetch_argument = null, ?array $ctor_args = null): array
+    public function fetchAll(?int $style = null, $fetch_argument = null, array $ctor_args = []): array
     {
         if ($style === null) {
             $style = $this->style;
         }
 
-        return $this->getDataObject()->fetchAll($style, $fetch_argument, $ctor_args);
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+
+        return $dataObject->fetchAll($style, $fetch_argument, $ctor_args);
     }
 
     /**
@@ -163,7 +169,9 @@ class PDODataFetcher extends AbstractDataFetcher
      */
     public function close(): void
     {
-        $this->getDataObject()->closeCursor();
+        /** @var \Propel\Runtime\Connection\StatementInterface $dataObject */
+        $dataObject = $this->getDataObject();
+        $dataObject->closeCursor();
         $this->setDataObject(null); //so the connection can be garbage collected
         $this->current = null;
         $this->index = -1;
@@ -215,7 +223,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): void
+    public function bindColumn($column, &$param, ?int $type = null, ?int $maxlen = null, $driverdata = null): void
     {
         if ($this->dataObject) {
             $this->dataObject->bindColumn($column, $param, $type, $maxlen, $driverdata);

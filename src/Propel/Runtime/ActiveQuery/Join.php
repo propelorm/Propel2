@@ -9,6 +9,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Join as ActiveQueryJoin;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Exception\LogicException;
 
@@ -133,7 +134,7 @@ class Join
      * @param string|null $joinType The type of the join. Valid join types are null (implicit join),
      *                            Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
      */
-    public function __construct($leftColumn = null, $rightColumn = null, $joinType = null)
+    public function __construct($leftColumn = null, $rightColumn = null, ?string $joinType = null)
     {
         if ($leftColumn !== null) {
             if (is_array($leftColumn)) {
@@ -162,7 +163,7 @@ class Join
      *
      * @return void
      */
-    public function addCondition($left, $right, $operator = self::EQUAL): void
+    public function addCondition(string $left, string $right, string $operator = self::EQUAL): void
     {
         if (strrpos($left, '.')) {
             [$this->leftTableName, $this->left[]] = explode('.', $left);
@@ -193,7 +194,7 @@ class Join
      *
      * @return void
      */
-    public function addConditions($lefts, $rights, $operators = []): void
+    public function addConditions(array $lefts, array $rights, array $operators = []): void
     {
         if (count($lefts) != count($rights)) {
             throw new LogicException("Unable to create join because the left column count isn't equal to the right column count");
@@ -227,13 +228,13 @@ class Join
      * @return void
      */
     public function addExplicitCondition(
-        $leftTableName,
-        $leftColumnName,
-        $leftTableAlias = null,
-        $rightTableName = null,
-        $rightColumnName = null,
-        $rightTableAlias = null,
-        $operator = self::EQUAL
+        string $leftTableName,
+        string $leftColumnName,
+        ?string $leftTableAlias = null,
+        ?string $rightTableName = null,
+        ?string $rightColumnName = null,
+        ?string $rightTableAlias = null,
+        string $operator = self::EQUAL
     ): void {
         $this->leftTableName = $leftTableName;
         $this->leftTableAlias = $leftTableAlias;
@@ -256,8 +257,13 @@ class Join
      *
      * @return void
      */
-    public function addLocalValueCondition($leftTableName, $leftColumnName, $leftTableAlias, $leftColumnValue, $operator = self::EQUAL): void
-    {
+    public function addLocalValueCondition(
+        string $leftTableName,
+        string $leftColumnName,
+        ?string $leftTableAlias,
+        $leftColumnValue,
+        string $operator = self::EQUAL
+    ): void {
         $this->leftTableName = $leftTableName;
         $this->leftTableAlias = $leftTableAlias;
         $this->left[] = $leftColumnName;
@@ -277,8 +283,13 @@ class Join
      *
      * @return void
      */
-    public function addForeignValueCondition($rightTableName, $rightColumnName, $rightTableAlias, $rightColumnValue, $operator = self::EQUAL): void
-    {
+    public function addForeignValueCondition(
+        string $rightTableName,
+        string $rightColumnName,
+        ?string $rightTableAlias,
+        $rightColumnValue,
+        string $operator = self::EQUAL
+    ): void {
         $this->rightTableName = $rightTableName;
         $this->rightTableAlias = $rightTableAlias;
         $this->right[] = $rightColumnName;
@@ -323,7 +334,7 @@ class Join
      *
      * @return void
      */
-    public function addOperator($operator): void
+    public function addOperator(string $operator): void
     {
         $this->operators[] = $operator;
     }
@@ -333,7 +344,7 @@ class Join
      *
      * @return string the comparison operator for the join condition
      */
-    public function getOperator($index = 0): string
+    public function getOperator(int $index = 0): string
     {
         return $this->operators[$index];
     }
@@ -355,7 +366,7 @@ class Join
      *
      * @return void
      */
-    public function setJoinType($joinType = null): void
+    public function setJoinType(?string $joinType): void
     {
         $this->joinType = $joinType;
     }
@@ -384,7 +395,7 @@ class Join
      *
      * @return void
      */
-    public function addLeftColumnName($left): void
+    public function addLeftColumnName(string $left): void
     {
         $this->left[] = $left;
     }
@@ -414,7 +425,7 @@ class Join
      *
      * @return string
      */
-    public function getLeftColumn($index = 0): string
+    public function getLeftColumn(int $index = 0): string
     {
         $tableName = $this->getLeftTableAliasOrName();
 
@@ -434,7 +445,7 @@ class Join
      *
      * @return string
      */
-    public function getLeftColumnName($index = 0): string
+    public function getLeftColumnName(int $index = 0): string
     {
         return $this->left[$index];
     }
@@ -459,7 +470,7 @@ class Join
      *
      * @return $this
      */
-    public function setLeftTableName($leftTableName)
+    public function setLeftTableName(string $leftTableName)
     {
         $this->leftTableName = $leftTableName;
 
@@ -479,7 +490,7 @@ class Join
      *
      * @return $this
      */
-    public function setLeftTableAlias($leftTableAlias)
+    public function setLeftTableAlias(string $leftTableAlias)
     {
         $this->leftTableAlias = $leftTableAlias;
 
@@ -531,7 +542,7 @@ class Join
      *
      * @return void
      */
-    public function addRightColumnName($right): void
+    public function addRightColumnName(string $right): void
     {
         $this->right[] = $right;
     }
@@ -549,7 +560,7 @@ class Join
      *
      * @return string
      */
-    public function getRightColumn($index = 0): string
+    public function getRightColumn(int $index = 0): string
     {
         $tableName = $this->getRightTableAliasOrName();
 
@@ -569,7 +580,7 @@ class Join
      *
      * @return string
      */
-    public function getRightColumnName($index = 0): string
+    public function getRightColumnName(int $index = 0): string
     {
         return $this->right[$index];
     }
@@ -592,7 +603,7 @@ class Join
      *
      * @return $this
      */
-    public function setRightTableName($rightTableName)
+    public function setRightTableName(string $rightTableName)
     {
         $this->rightTableName = $rightTableName;
 
@@ -612,7 +623,7 @@ class Join
      *
      * @return $this
      */
-    public function setRightTableAlias($rightTableAlias)
+    public function setRightTableAlias(string $rightTableAlias)
     {
         $this->rightTableAlias = $rightTableAlias;
 
@@ -749,7 +760,7 @@ class Join
      * <code>
      * $join = new Join();
      * $join->addExplicitCondition('book', 'AUTHOR_ID', null, 'author', 'ID');
-     * $params = array();
+     * $params = [];
      * echo $j->getClause($params);
      * // 'LEFT JOIN author ON (book.AUTHOR_ID=author.ID)'
      * </code>
@@ -758,7 +769,7 @@ class Join
      *
      * @return string SQL join clause with join condition
      */
-    public function getClause(&$params): string
+    public function getClause(array &$params): string
     {
         if ($this->joinCondition === null) {
             $conditions = [];
@@ -792,17 +803,16 @@ class Join
     }
 
     /**
-     * @param \Propel\Runtime\ActiveQuery\Join|null $join
+     * @param \Propel\Runtime\ActiveQuery\Join $join
      *
      * @return bool
      */
-    public function equals($join): bool
+    public function equals(ActiveQueryJoin $join): bool
     {
         $parametersOfThisClauses = [];
         $parametersOfJoinClauses = [];
 
-        return $join !== null
-            && $join instanceof Join
+        return $join instanceof Join
             && $this->getJoinType() === $join->getJoinType()
             && $this->getConditions() == $join->getConditions()
             && $this->getClause($parametersOfThisClauses) == $join->getClause($parametersOfJoinClauses);
@@ -841,7 +851,7 @@ class Join
      *
      * @return void
      */
-    public function setIdentifierQuoting($identifierQuoting): void
+    public function setIdentifierQuoting(bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }

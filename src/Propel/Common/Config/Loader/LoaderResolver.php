@@ -18,7 +18,7 @@ use Symfony\Component\Config\Loader\LoaderResolver as BaseLoaderResolver;
 class LoaderResolver extends BaseLoaderResolver
 {
     /**
-     * @param array|null $loaders
+     * @param array<\Symfony\Component\Config\Loader\LoaderInterface>|null $loaders
      */
     public function __construct(?array $loaders = null)
     {

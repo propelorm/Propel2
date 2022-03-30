@@ -117,7 +117,7 @@ class Schema
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -213,7 +213,7 @@ class Schema
      *
      * @return bool
      */
-    public function hasDatabase($name): bool
+    public function hasDatabase(string $name): bool
     {
         foreach ($this->databases as $database) {
             if ($database->getName() === $name) {

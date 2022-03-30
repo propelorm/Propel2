@@ -47,7 +47,7 @@ class NestedSetBehaviorObjectBuilderModifier
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -57,7 +57,7 @@ class NestedSetBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function getColumnAttribute($name): string
+    protected function getColumnAttribute(string $name): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -67,7 +67,7 @@ class NestedSetBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function getColumnPhpName($name): string
+    protected function getColumnPhpName(string $name): string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
@@ -275,21 +275,22 @@ if (\$this->isInTree()) {
      *
      * @return void
      */
-    protected function addProcessNestedSetQueries(&$script): void
+    protected function addProcessNestedSetQueries(string &$script): void
     {
         $script .= "
 /**
  * Execute queries that were saved to be run inside the save transaction
  *
- * @param  ConnectionInterface \$con Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return void
  */
-protected function processNestedSetQueries(ConnectionInterface \$con)
+protected function processNestedSetQueries(ConnectionInterface \$con): void
 {
     foreach (\$this->nestedSetQueries as ['callable' => \$callable, 'arguments' => \$arguments]) {
         \$arguments[] = \$con;
         \$callable(...\$arguments);
     }
-    \$this->nestedSetQueries = array();
+    \$this->nestedSetQueries = [];
 }
 ";
     }
@@ -299,18 +300,18 @@ protected function processNestedSetQueries(ConnectionInterface \$con)
      *
      * @return void
      */
-    protected function addGetLeft(&$script): void
+    protected function addGetLeft(string &$script): void
     {
         $script .= "
 /**
  * Proxy getter method for the left value of the nested set model.
  * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int The nested set left value
+ * @return int The nested set left value
  */
-public function getLeftValue()
+public function getLeftValue(): int
 {
-    return \$this->{$this->getColumnAttribute('left_column')};
+    return \$this->{$this->getColumnAttribute('left_column')} ?: 0;
 }
 ";
     }
@@ -320,18 +321,18 @@ public function getLeftValue()
      *
      * @return void
      */
-    protected function addGetRight(&$script): void
+    protected function addGetRight(string &$script): void
     {
         $script .= "
 /**
  * Proxy getter method for the right value of the nested set model.
  * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int The nested set right value
+ * @return int The nested set right value
  */
-public function getRightValue()
+public function getRightValue(): int
 {
-    return \$this->{$this->getColumnAttribute('right_column')};
+    return \$this->{$this->getColumnAttribute('right_column')} ?: 0;
 }
 ";
     }
@@ -341,18 +342,18 @@ public function getRightValue()
      *
      * @return void
      */
-    protected function addGetLevel(&$script): void
+    protected function addGetLevel(string &$script): void
     {
         $script .= "
 /**
  * Proxy getter method for the level value of the nested set model.
  * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int The nested set level value
+ * @return int The nested set level value
  */
-public function getLevel()
+public function getLevel(): int
 {
-    return \$this->{$this->getColumnAttribute('level_column')};
+    return \$this->{$this->getColumnAttribute('level_column')} ?: 0;
 }
 ";
     }
@@ -362,16 +363,16 @@ public function getLevel()
      *
      * @return void
      */
-    protected function addGetScope(&$script): void
+    protected function addGetScope(string &$script): void
     {
         $script .= "
 /**
  * Proxy getter method for the scope value of the nested set model.
  * It provides a generic way to get the value, whatever the actual column name is.
  *
- * @return     int The nested set scope value
+ * @return int The nested set scope value
  */
-public function getScopeValue()
+public function getScopeValue(): int
 {
     return \$this->{$this->getColumnAttribute('scope_column')};
 }
@@ -394,7 +395,7 @@ public function getScopeValue()
      *
      * @return void
      */
-    protected function addSetRight(&$script): void
+    protected function addSetRight(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -404,11 +405,13 @@ public function getScopeValue()
  * It provides a generic way to set the value, whatever the actual column name is.
  *
  * @param      int \$v The nested set right value
- * @return     \$this|{$objectClassName} The current object (for fluent API support)
+ * @return     \$this The current object (for fluent API support)
  */
-public function setRightValue(\$v)
+public function setRightValue(int \$v)
 {
-    return \$this->set{$this->getColumnPhpName('right_column')}(\$v);
+    \$this->set{$this->getColumnPhpName('right_column')}(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -418,7 +421,7 @@ public function setRightValue(\$v)
      *
      * @return void
      */
-    protected function addSetLevel(&$script): void
+    protected function addSetLevel(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -428,11 +431,13 @@ public function setRightValue(\$v)
  * It provides a generic way to set the value, whatever the actual column name is.
  *
  * @param      int \$v The nested set level value
- * @return     \$this|{$objectClassName} The current object (for fluent API support)
+ * @return     \$this The current object (for fluent API support)
  */
-public function setLevel(\$v)
+public function setLevel(int \$v)
 {
-    return \$this->set{$this->getColumnPhpName('level_column')}(\$v);
+    \$this->set{$this->getColumnPhpName('level_column')}(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -442,7 +447,7 @@ public function setLevel(\$v)
      *
      * @return void
      */
-    protected function addSetScope(&$script): void
+    protected function addSetScope(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -452,11 +457,13 @@ public function setLevel(\$v)
  * It provides a generic way to set the value, whatever the actual column name is.
  *
  * @param      int \$v The nested set scope value
- * @return     \$this|{$objectClassName} The current object (for fluent API support)
+ * @return     \$this The current object (for fluent API support)
  */
-public function setScopeValue(\$v)
+public function setScopeValue(int \$v)
 {
-    return \$this->set{$this->getColumnPhpName('scope_column')}(\$v);
+    \$this->set{$this->getColumnPhpName('scope_column')}(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -466,7 +473,7 @@ public function setScopeValue(\$v)
      *
      * @return void
      */
-    protected function addMakeRoot(&$script): void
+    protected function addMakeRoot(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -474,7 +481,7 @@ public function setScopeValue(\$v)
 /**
  * Creates the supplied node as the root node.
  *
- * @return     \$this|{$objectClassName} The current object (for fluent API support)
+ * @return     \$this The current object (for fluent API support)
  * @throws     PropelException
  */
 public function makeRoot()
@@ -497,7 +504,7 @@ public function makeRoot()
      *
      * @return void
      */
-    protected function addIsInTree(&$script): void
+    protected function addIsInTree(string &$script): void
     {
         $script .= "
 /**
@@ -505,7 +512,7 @@ public function makeRoot()
  *
  * @return     bool
  */
-public function isInTree()
+public function isInTree(): bool
 {
     return \$this->getLeftValue() > 0 && \$this->getRightValue() > \$this->getLeftValue();
 }
@@ -517,15 +524,15 @@ public function isInTree()
      *
      * @return void
      */
-    protected function addIsRoot(&$script): void
+    protected function addIsRoot(string &$script): void
     {
         $script .= "
 /**
  * Tests if node is a root
  *
- * @return     bool
+ * @return bool
  */
-public function isRoot()
+public function isRoot(): bool
 {
     return \$this->isInTree() && \$this->getLeftValue() == 1;
 }
@@ -537,7 +544,7 @@ public function isRoot()
      *
      * @return void
      */
-    protected function addIsLeaf(&$script): void
+    protected function addIsLeaf(string &$script): void
     {
         $script .= "
 /**
@@ -545,7 +552,7 @@ public function isRoot()
  *
  * @return     bool
  */
-public function isLeaf()
+public function isLeaf(): bool
 {
     return \$this->isInTree() &&  (\$this->getRightValue() - \$this->getLeftValue()) == 1;
 }
@@ -557,7 +564,7 @@ public function isLeaf()
      *
      * @return void
      */
-    protected function addIsDescendantOf(&$script): void
+    protected function addIsDescendantOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -568,7 +575,7 @@ public function isLeaf()
  * @param      $objectClassName \$parent Propel node object
  * @return     bool
  */
-public function isDescendantOf($objectClassName \$parent)
+public function isDescendantOf($objectClassName \$parent): bool
 {";
         if ($this->behavior->useScope()) {
             $script .= "
@@ -588,7 +595,7 @@ public function isDescendantOf($objectClassName \$parent)
      *
      * @return void
      */
-    protected function addIsAncestorOf(&$script): void
+    protected function addIsAncestorOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -599,7 +606,7 @@ public function isDescendantOf($objectClassName \$parent)
  * @param      $objectClassName \$child Propel node object
  * @return     bool
  */
-public function isAncestorOf($objectClassName \$child)
+public function isAncestorOf($objectClassName \$child): bool
 {
     return \$child->isDescendantOf(\$this);
 }
@@ -611,7 +618,7 @@ public function isAncestorOf($objectClassName \$child)
      *
      * @return void
      */
-    protected function addHasParent(&$script): void
+    protected function addHasParent(string &$script): void
     {
         $script .= "
 /**
@@ -631,7 +638,7 @@ public function hasParent(): bool
      *
      * @return void
      */
-    protected function addSetParent(&$script): void
+    protected function addSetParent(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -642,7 +649,7 @@ public function hasParent(): bool
  * Use moveTofirstChildOf() or moveToLastChildOf() for that purpose
  *
  * @param      $objectClassName \$parent
- * @return     \$this|{$objectClassName} The current object, for fluid interface
+ * @return     \$this The current object, for fluid interface
  */
 public function setParent($objectClassName \$parent = null)
 {
@@ -658,7 +665,7 @@ public function setParent($objectClassName \$parent = null)
      *
      * @return void
      */
-    protected function addGetParent(&$script): void
+    protected function addGetParent(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -671,7 +678,7 @@ public function setParent($objectClassName \$parent = null)
  * @param  ConnectionInterface \$con Connection to use.
  * @return $objectClassName|null Propel object if exists else null
  */
-public function getParent(ConnectionInterface \$con = null)
+public function getParent(?ConnectionInterface \$con = null)
 {
     if (null === \$this->aNestedSetParent && \$this->hasParent()) {
         \$this->aNestedSetParent = {$queryClassName}::create()
@@ -690,7 +697,7 @@ public function getParent(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addHasPrevSibling(&$script): void
+    protected function addHasPrevSibling(string &$script): void
     {
         $queryClassName = $this->builder->getQueryClassName();
 
@@ -701,7 +708,7 @@ public function getParent(ConnectionInterface \$con = null)
  * @param      ConnectionInterface \$con Connection to use.
  * @return     bool
  */
-public function hasPrevSibling(ConnectionInterface \$con = null): bool
+public function hasPrevSibling(?ConnectionInterface \$con = null): bool
 {
     if (!{$queryClassName}::isValid(\$this)) {
         return false;
@@ -724,7 +731,7 @@ public function hasPrevSibling(ConnectionInterface \$con = null): bool
      *
      * @return void
      */
-    protected function addGetPrevSibling(&$script): void
+    protected function addGetPrevSibling(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -736,7 +743,7 @@ public function hasPrevSibling(ConnectionInterface \$con = null): bool
  * @param      ConnectionInterface \$con Connection to use.
  * @return     $objectClassName|null         Propel object if exists else null
  */
-public function getPrevSibling(ConnectionInterface \$con = null)
+public function getPrevSibling(?ConnectionInterface \$con = null)
 {
     return $queryClassName::create()
         ->filterBy" . $this->getColumnPhpName('right_column') . '($this->getLeftValue() - 1)';
@@ -755,7 +762,7 @@ public function getPrevSibling(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addHasNextSibling(&$script): void
+    protected function addHasNextSibling(string &$script): void
     {
         $queryClassName = $this->builder->getQueryClassName();
 
@@ -766,7 +773,7 @@ public function getPrevSibling(ConnectionInterface \$con = null)
  * @param      ConnectionInterface \$con Connection to use.
  * @return     bool
  */
-public function hasNextSibling(ConnectionInterface \$con = null): bool
+public function hasNextSibling(?ConnectionInterface \$con = null): bool
 {
     if (!{$queryClassName}::isValid(\$this)) {
         return false;
@@ -789,7 +796,7 @@ public function hasNextSibling(ConnectionInterface \$con = null): bool
      *
      * @return void
      */
-    protected function addGetNextSibling(&$script): void
+    protected function addGetNextSibling(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -801,7 +808,7 @@ public function hasNextSibling(ConnectionInterface \$con = null): bool
  * @param      ConnectionInterface \$con Connection to use.
  * @return     $objectClassName|null         Propel object if exists else null
  */
-public function getNextSibling(ConnectionInterface \$con = null)
+public function getNextSibling(?ConnectionInterface \$con = null)
 {
     return $queryClassName::create()
         ->filterBy" . $this->getColumnPhpName('left_column') . '($this->getRightValue() + 1)';
@@ -820,7 +827,7 @@ public function getNextSibling(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addNestedSetChildrenClear(&$script): void
+    protected function addNestedSetChildrenClear(string &$script): void
     {
         $script .= "
 /**
@@ -831,7 +838,7 @@ public function getNextSibling(ConnectionInterface \$con = null)
  *
  * @return     void
  */
-public function clearNestedSetChildren()
+public function clearNestedSetChildren(): void
 {
     \$this->collNestedSetChildren = null;
 }
@@ -843,7 +850,7 @@ public function clearNestedSetChildren()
      *
      * @return void
      */
-    protected function addNestedSetChildrenInit(&$script): void
+    protected function addNestedSetChildrenInit(string &$script): void
     {
         $script .= "
 /**
@@ -851,7 +858,7 @@ public function clearNestedSetChildren()
  *
  * @return     void
  */
-public function initNestedSetChildren()
+public function initNestedSetChildren(): void
 {
     \$collectionClassName = " . $this->builder->getNewTableMapBuilder($this->table)->getFullyQualifiedClassName() . "::getTableMap()->getCollectionClassName();
 
@@ -866,7 +873,7 @@ public function initNestedSetChildren()
      *
      * @return void
      */
-    protected function addNestedSetChildAdd(&$script): void
+    protected function addNestedSetChildAdd(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $objectName = '$' . $this->table->getCamelCaseName();
@@ -881,7 +888,7 @@ public function initNestedSetChildren()
  *
  * @return     void
  */
-public function addNestedSetChild($objectClassName $objectName)
+public function addNestedSetChild($objectClassName $objectName): void
 {
     if (null === \$this->collNestedSetChildren) {
         \$this->initNestedSetChildren();
@@ -899,7 +906,7 @@ public function addNestedSetChild($objectClassName $objectName)
      *
      * @return void
      */
-    protected function addHasChildren(&$script): void
+    protected function addHasChildren(string &$script): void
     {
         $script .= "
 /**
@@ -919,7 +926,7 @@ public function hasChildren(): bool
      *
      * @return void
      */
-    protected function addGetChildren(&$script): void
+    protected function addGetChildren(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -932,7 +939,7 @@ public function hasChildren(): bool
  * @param      ConnectionInterface \$con Connection to use.
  * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
-public function getChildren(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getChildren(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
@@ -960,7 +967,7 @@ public function getChildren(Criteria \$criteria = null, ConnectionInterface \$co
      *
      * @return void
      */
-    protected function addCountChildren(&$script): void
+    protected function addCountChildren(string &$script): void
     {
         $queryClassName = $this->builder->getQueryClassName();
 
@@ -972,7 +979,7 @@ public function getChildren(Criteria \$criteria = null, ConnectionInterface \$co
  * @param      ConnectionInterface \$con Connection to use.
  * @return     int       Number of children
  */
-public function countChildren(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function countChildren(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (null === \$this->collNestedSetChildren || null !== \$criteria) {
         if (\$this->isLeaf() || (\$this->isNew() && null === \$this->collNestedSetChildren)) {
@@ -994,7 +1001,7 @@ public function countChildren(Criteria \$criteria = null, ConnectionInterface \$
      *
      * @return void
      */
-    protected function addGetFirstChild(&$script): void
+    protected function addGetFirstChild(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1006,7 +1013,7 @@ public function countChildren(Criteria \$criteria = null, ConnectionInterface \$
  * @param      ConnectionInterface \$con Connection to use.
  * @return     $objectClassName|null First child or null if this is a leaf
  */
-public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getFirstChild(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return null;
@@ -1025,7 +1032,7 @@ public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$
      *
      * @return void
      */
-    protected function addGetLastChild(&$script): void
+    protected function addGetLastChild(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1038,7 +1045,7 @@ public function getFirstChild(Criteria \$criteria = null, ConnectionInterface \$
  * @param      ConnectionInterface \$con Connection to use.
  * @return     $objectClassName|null Last child or null if this is a leaf
  */
-public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getLastChild(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return null;
@@ -1057,7 +1064,7 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
      *
      * @return void
      */
-    protected function addGetSiblings(&$script): void
+    protected function addGetSiblings(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1072,7 +1079,7 @@ public function getLastChild(Criteria \$criteria = null, ConnectionInterface \$c
  *
  * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
-public function getSiblings(\$includeNode = false, Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getSiblings(\$includeNode = false, ?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isRoot()) {
         return array();
@@ -1095,7 +1102,7 @@ public function getSiblings(\$includeNode = false, Criteria \$criteria = null, C
      *
      * @return void
      */
-    protected function addGetDescendants(&$script): void
+    protected function addGetDescendants(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1108,7 +1115,7 @@ public function getSiblings(\$includeNode = false, Criteria \$criteria = null, C
  * @param      ConnectionInterface \$con Connection to use.
  * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
-public function getDescendants(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         return array();
@@ -1127,7 +1134,7 @@ public function getDescendants(Criteria \$criteria = null, ConnectionInterface \
      *
      * @return void
      */
-    protected function addCountDescendants(&$script): void
+    protected function addCountDescendants(string &$script): void
     {
         $queryClassName = $this->builder->getQueryClassName();
 
@@ -1139,7 +1146,7 @@ public function getDescendants(Criteria \$criteria = null, ConnectionInterface \
  * @param      ConnectionInterface \$con Connection to use.
  * @return     int         Number of descendants
  */
-public function countDescendants(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function countDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         // save one query
@@ -1158,7 +1165,7 @@ public function countDescendants(Criteria \$criteria = null, ConnectionInterface
      *
      * @return void
      */
-    protected function addGetBranch(&$script): void
+    protected function addGetBranch(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1171,7 +1178,7 @@ public function countDescendants(Criteria \$criteria = null, ConnectionInterface
  * @param      ConnectionInterface \$con Connection to use.
  * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
-public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getBranch(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     return $queryClassName::create(null, \$criteria)
         ->branchOf(\$this)
@@ -1186,7 +1193,7 @@ public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con 
      *
      * @return void
      */
-    protected function addGetAncestors(&$script): void
+    protected function addGetAncestors(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1200,7 +1207,7 @@ public function getBranch(Criteria \$criteria = null, ConnectionInterface \$con 
  * @param      ConnectionInterface \$con Connection to use.
  * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
-public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$con = null)
+public function getAncestors(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isRoot()) {
         // save one query
@@ -1220,7 +1227,7 @@ public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$c
      *
      * @return void
      */
-    protected function addAddChild(&$script): void
+    protected function addAddChild(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -1232,7 +1239,7 @@ public function getAncestors(Criteria \$criteria = null, ConnectionInterface \$c
  *
  * @param      $objectClassName \$child    Propel object for child node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
 public function addChild($objectClassName \$child)
 {
@@ -1251,7 +1258,7 @@ public function addChild($objectClassName \$child)
      *
      * @return void
      */
-    protected function addInsertAsFirstChildOf(&$script): void
+    protected function addInsertAsFirstChildOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName(true);
@@ -1265,7 +1272,7 @@ public function addChild($objectClassName \$child)
  *
  * @param      $objectClassName \$parent    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
 public function insertAsFirstChildOf($objectClassName \$parent)
 {
@@ -1289,10 +1296,10 @@ public function insertAsFirstChildOf($objectClassName \$parent)
     \$parent->addNestedSetChild(\$this);
 
     // Keep the tree modification query for the save() transaction
-    \$this->nestedSetQueries[] = array(
+    \$this->nestedSetQueries[] = [
         'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ', $scope' : '') . ", \$this->isNew() ? null : \$this)
-    );
+    ];
 
     return \$this;
 }
@@ -1316,7 +1323,7 @@ public function insertAsFirstChildOf($objectClassName \$parent)
      *
      * @return void
      */
-    protected function addInsertAsPrevSiblingOf(&$script): void
+    protected function addInsertAsPrevSiblingOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName(true);
@@ -1330,7 +1337,7 @@ public function insertAsFirstChildOf($objectClassName \$parent)
  *
  * @param      $objectClassName \$sibling    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
 public function insertAsPrevSiblingOf($objectClassName \$sibling)
 {
@@ -1349,10 +1356,10 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
         }
         $script .= "
     // Keep the tree modification query for the save() transaction
-    \$this->nestedSetQueries []= array(
+    \$this->nestedSetQueries []= [
         'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
         'arguments' => array(\$left" . ($useScope ? ', $scope' : '') . ", \$this->isNew() ? null : \$this)
-    );
+    ];
 
     return \$this;
 }
@@ -1364,7 +1371,7 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
      *
      * @return void
      */
-    protected function addInsertAsNextSiblingOf(&$script): void
+    protected function addInsertAsNextSiblingOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName(true);
@@ -1378,7 +1385,7 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
  *
  * @param      $objectClassName \$sibling    Propel object for parent node
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
 public function insertAsNextSiblingOf($objectClassName \$sibling)
 {
@@ -1397,10 +1404,10 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
         }
         $script .= "
     // Keep the tree modification query for the save() transaction
-    \$this->nestedSetQueries []= array(
-        'callable'  => array('$queryClassName', 'makeRoomForLeaf'),
-        'arguments' => array(\$left" . ($useScope ? ', $scope' : '') . ", \$this->isNew() ? null : \$this)
-    );
+    \$this->nestedSetQueries []= [
+        'callable'  => ['$queryClassName', 'makeRoomForLeaf'],
+        'arguments' => [\$left" . ($useScope ? ', $scope' : '') . ", \$this->isNew() ? null : \$this],
+    ];
 
     return \$this;
 }
@@ -1412,7 +1419,7 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
      *
      * @return void
      */
-    protected function addMoveToFirstChildOf(&$script): void
+    protected function addMoveToFirstChildOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $script .= "
@@ -1423,9 +1430,9 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
  * @param      $objectClassName \$parent    Propel object for parent node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
-public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterface \$con = null)
+public function moveToFirstChildOf($objectClassName \$parent, ?ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsFirstChildOf() instead.');
@@ -1448,7 +1455,7 @@ public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterfac
      *
      * @return void
      */
-    protected function addMoveToLastChildOf(&$script): void
+    protected function addMoveToLastChildOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -1460,9 +1467,9 @@ public function moveToFirstChildOf($objectClassName \$parent, ConnectionInterfac
  * @param      $objectClassName \$parent    Propel object for parent node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
-public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface \$con = null)
+public function moveToLastChildOf($objectClassName \$parent, ?ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsLastChildOf() instead.');
@@ -1485,7 +1492,7 @@ public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface
      *
      * @return void
      */
-    protected function addMoveToPrevSiblingOf(&$script): void
+    protected function addMoveToPrevSiblingOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -1497,9 +1504,9 @@ public function moveToLastChildOf($objectClassName \$parent, ConnectionInterface
  * @param      $objectClassName \$sibling    Propel object for sibling node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
-public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterface \$con = null)
+public function moveToPrevSiblingOf($objectClassName \$sibling, ?ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsPrevSiblingOf() instead.');
@@ -1525,7 +1532,7 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterf
      *
      * @return void
      */
-    protected function addMoveToNextSiblingOf(&$script): void
+    protected function addMoveToNextSiblingOf(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
 
@@ -1537,9 +1544,9 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ConnectionInterf
  * @param      $objectClassName \$sibling    Propel object for sibling node
  * @param      ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this|{$objectClassName} The current Propel object
+ * @return     \$this The current Propel object
  */
-public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterface \$con = null)
+public function moveToNextSiblingOf($objectClassName \$sibling, ?ConnectionInterface \$con = null)
 {
     if (!\$this->isInTree()) {
         throw new PropelException('A $objectClassName object must be already in the tree to be moved. Use the insertAsNextSiblingOf() instead.');
@@ -1565,7 +1572,7 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
      *
      * @return void
      */
-    protected function addMoveSubtreeTo(&$script): void
+    protected function addMoveSubtreeTo(string &$script): void
     {
         $queryClassName = $this->builder->getQueryClassName();
         $tableMapClass = $this->builder->getTableMapClass();
@@ -1579,7 +1586,7 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ConnectionInterf
  * @param      int    \$levelDelta Delta to add to the levels
  * @param      ConnectionInterface \$con        Connection to use.
  */
-protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ', $targetScope = null' : '') . ", ConnectionInterface \$con = null)
+protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ', $targetScope = null' : '') . ", ?ConnectionInterface \$con = null)
 {
     \$left  = \$this->getLeftValue();
     \$right = \$this->getRightValue();";
@@ -1663,7 +1670,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
      *
      * @return void
      */
-    protected function addDeleteDescendants(&$script): void
+    protected function addDeleteDescendants(string &$script): void
     {
         $objectClassName = $this->builder->getObjectClassName();
         $queryClassName = $this->builder->getQueryClassName();
@@ -1680,7 +1687,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
  *
  * @return     int         number of deleted nodes
  */
-public function deleteDescendants(ConnectionInterface \$con = null)
+public function deleteDescendants(?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
         // save one query
@@ -1730,7 +1737,7 @@ public function deleteDescendants(ConnectionInterface \$con = null)
  * Queries to be executed in the save transaction
  * @var        array
  */
-protected \$nestedSetQueries = array();
+protected \$nestedSetQueries = [];
 
 /**
  * Internal cache for children nodes

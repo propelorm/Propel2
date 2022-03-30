@@ -26,7 +26,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The upper case string.
      */
-    public function toUpperCase($in): string;
+    public function toUpperCase(string $in): string;
 
     /**
      * This method is used to ignore case.
@@ -35,7 +35,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCase($in): string;
+    public function ignoreCase(string $in): string;
 
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
@@ -47,7 +47,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void;
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void;
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
@@ -59,7 +59,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void;
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void;
 
     /**
      * Modifies the passed-in SQL to add locking capabilities
@@ -69,16 +69,16 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void;
+    public function applyLock(string &$sql, Lock $lock): void;
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
      *
-     * @param mixed $seed (optional) seed value for databases that support this
+     * @param string|null $seed (optional) seed value for databases that support this
      *
      * @return string
      */
-    public function random($seed = null): string;
+    public function random(?string $seed = null): string;
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -90,7 +90,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false): string;
+    public function createSelectSqlPart(Criteria $criteria, array &$fromClause, bool $aliasAll = false): string;
 
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
@@ -115,7 +115,7 @@ interface SqlAdapterInterface extends AdapterInterface
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
-     * $params = array();
+     * $params = [];
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));
      * $stmt->execute();
      * </code>
@@ -140,7 +140,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool;
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool;
 
     /**
      * Indicates if the database system can process DELETE statements with

@@ -81,7 +81,7 @@
         if (null !== $col) {
             unset($this->modifiedColumns[$col]);
         } else {
-            $this->modifiedColumns = array();
+            $this->modifiedColumns = [];
         }
     }
 
@@ -137,7 +137,7 @@
      * @param  string $name The virtual column name
      * @return mixed
      *
-     * @throws PropelException
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function getVirtualColumn($name)
     {
@@ -183,12 +183,12 @@
      *  => {"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}');
      * </code>
      *
-     * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param  \Propel\Runtime\Parser\AbstractParser|string $parser An AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param  bool    $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
      * @param  string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
      * @return string  The exported data
      */
-    public function exportTo($parser, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME)
+    public function exportTo($parser, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME)
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);

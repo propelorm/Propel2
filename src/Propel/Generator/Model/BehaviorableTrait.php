@@ -125,7 +125,7 @@ trait BehaviorableTrait
      *
      * @return bool True if the behavior exists
      */
-    public function hasBehavior($id): bool
+    public function hasBehavior(string $id): bool
     {
         return isset($this->behaviors[$id]);
     }
@@ -137,7 +137,7 @@ trait BehaviorableTrait
      *
      * @return \Propel\Generator\Model\Behavior|null A behavior object or null if the behavior doesn't exist
      */
-    public function getBehavior($id): ?Behavior
+    public function getBehavior(string $id): ?Behavior
     {
         if ($this->hasBehavior($id)) {
             return $this->behaviors[$id];

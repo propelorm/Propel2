@@ -40,7 +40,7 @@ class PhpNameGeneratorTest extends TestCase
     public function testPhpnameMethod($input, $output)
     {
         $generator = new TestablePhpNameGenerator();
-        $this->assertEquals($output, $generator->phpnameMethod($input));
+        $this->assertEquals($output, $generator->phpNameMethod($input));
     }
 
     public static function underscoreMethodDataProvider()
@@ -71,12 +71,12 @@ class PhpNameGeneratorTest extends TestCase
 
 class TestablePhpNameGenerator extends PhpNameGenerator
 {
-    public function phpnameMethod($schemaName): string
+    public function phpNameMethod(string $schemaName): string
     {
-        return parent::phpnameMethod($schemaName);
+        return parent::phpNameMethod($schemaName);
     }
 
-    public function underscoreMethod($schemaName): string
+    public function underscoreMethod(string $schemaName): string
     {
         return parent::underscoreMethod($schemaName);
     }

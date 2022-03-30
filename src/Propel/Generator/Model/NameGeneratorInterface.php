@@ -55,7 +55,7 @@ interface NameGeneratorInterface
      * Similar to {@link #CONV_METHOD_UNDERSCORE} except nothing is
      * converted to lowercase.
      *
-     * @see PhpNameGenerator::phpnameMethod()
+     * @see PhpNameGenerator::phpNameMethod()
      *
      * @var string
      */

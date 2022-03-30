@@ -29,7 +29,7 @@ class SetColumnConverterException extends InvalidArgumentException
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct($message, $value, $code = 0, ?Exception $previous = null)
+    public function __construct(string $message, $value, int $code = 0, ?Exception $previous = null)
     {
         $this->value = $value;
         parent::__construct($message, $code, $previous);

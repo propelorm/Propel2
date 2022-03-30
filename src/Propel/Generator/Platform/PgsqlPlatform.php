@@ -319,12 +319,10 @@ SET search_path TO public;
         $script = parent::getForeignKeyDDL($fk);
 
         $pgVendorInfo = $fk->getVendorInfoForType('pgsql');
-        if ($pgVendorInfo) {
-            if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
-                $script .= ' DEFERRABLE';
-                if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
-                    $script .= ' INITIALLY DEFERRED';
-                }
+        if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
+            $script .= ' DEFERRABLE';
+            if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
+                $script .= ' INITIALLY DEFERRED';
             }
         }
 
@@ -549,7 +547,7 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @return string
      */
-    public function getRenameTableDDL($fromTableName, $toTableName): string
+    public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
         if (($pos = strpos($toTableName, '.')) !== false) {
             $toTableName = substr($toTableName, $pos + 1);
@@ -581,7 +579,7 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @return bool
      */
-    public function hasSize($sqlType): bool
+    public function hasSize(string $sqlType): bool
     {
         return !in_array($sqlType, ['BYTEA', 'TEXT', 'DOUBLE PRECISION']);
     }
@@ -736,7 +734,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
-    public function isString($type): bool
+    public function isString(string $type): bool
     {
         $strings = ['VARCHAR'];
 
@@ -748,7 +746,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
-    public function isNumber($type): bool
+    public function isNumber(string $type): bool
     {
         $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
 
@@ -809,7 +807,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return string
      */
-    public function getModifyColumnsDDL($columnDiffs): string
+    public function getModifyColumnsDDL(array $columnDiffs): string
     {
         $ret = '';
         foreach ($columnDiffs as $columnDiff) {
@@ -830,7 +828,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns): string
+    public function getAddColumnsDDL(array $columns): string
     {
         $ret = '';
         foreach ($columns as $column) {
@@ -883,8 +881,13 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @return array<string>|string|null
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
-    {
+    public function getIdentifierPhp(
+        string $columnValueMutator,
+        string $connectionVariableName = '$con',
+        string $sequenceName = '',
+        string $tab = '            ',
+        ?string $phpType = null
+    ) {
         if (!$sequenceName) {
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }

@@ -50,7 +50,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     ];
 
     /**
-     * @var array The values that have been bound
+     * @var array<string, mixed> The values that have been bound
      */
     protected $boundValues = [];
 
@@ -65,7 +65,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * @param string $sql The SQL query for this statement
      * @param \Propel\Runtime\Connection\ConnectionWrapper $connection The parent connection
      */
-    public function __construct($sql, ConnectionWrapper $connection)
+    public function __construct(string $sql, ConnectionWrapper $connection)
     {
         $this->connection = $connection;
         $this->sql = $sql;
@@ -76,7 +76,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return $this
      */
-    public function prepare($options)
+    public function prepare(array $options)
     {
         /** @var \PDOStatement $statement */
         $statement = $this->connection->getWrappedConnection()->prepare($this->sql, $options);
@@ -107,20 +107,20 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param int $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $variable The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
-     * @param int $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
+     * @param int|null $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
      * @param mixed $driverOptions
      *
      * @return bool
      */
-    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = 0, $driverOptions = null): bool
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
     {
-        $return = $this->statement->bindParam($parameter, $variable, $dataType, $length, $driverOptions);
+        $return = $this->statement->bindParam($parameter, $variable, $dataType, (int)$length, $driverOptions);
         if ($this->connection->useDebug) {
             $typestr = self::$typeMap[$dataType] ?? '(default)';
-            $valuestr = $length > 100 ? '[Large value]' : var_export($variable, true);
+            $valuestr = (int)$length > 100 ? '[Large value]' : var_export($variable, true);
             $this->boundValues[$parameter] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
@@ -133,13 +133,13 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param int $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
      * @param mixed $value The value to bind to the parameter.
      * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
      * @return bool
      */
-    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR): bool
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool
     {
         $return = $this->statement->bindValue($parameter, $value, $dataType);
         if ($this->connection->useDebug) {
@@ -204,7 +204,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function execute($inputParameters = null): bool
+    public function execute(?array $inputParameters = null): bool
     {
         if ($this->connection->useDebug) {
             $sql = $this->getExecutedQueryString($inputParameters);
@@ -244,7 +244,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return mixed
      */
-    public function fetch($fetchStyle = PDO::FETCH_BOTH, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
+    public function fetch(int $fetchStyle = PDO::FETCH_BOTH, int $cursorOrientation = PDO::FETCH_ORI_NEXT, int $cursorOffset = 0)
     {
         return $this->statement->fetch($fetchStyle);
     }
@@ -258,7 +258,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return array
      */
-    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, $ctorArgs = []): array
+    public function fetchAll(?int $fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []): array
     {
         return $this->statement->fetchAll($fetchStyle);
     }
@@ -272,7 +272,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @return string|null A single column in the next row of a result set.
      */
-    public function fetchColumn($columnIndex = 0): ?string
+    public function fetchColumn(int $columnIndex = 0): ?string
     {
         $output = $this->statement->fetchColumn($columnIndex);
 

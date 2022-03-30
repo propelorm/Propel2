@@ -86,7 +86,7 @@ class QueryBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script): void
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -192,8 +192,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::findOne() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass|null findOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query
- * @method     $modelClass findOneOrCreate(ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
+ * @method     $modelClass|null findOne(?ConnectionInterface \$con = null) Return the first $modelClass matching the query
+ * @method     $modelClass findOneOrCreate(?ConnectionInterface \$con = null) Return the first $modelClass matching the query, or a new $modelClass object populated from the query conditions when no match is found
  *";
 
         // magic findBy() methods, for IDE completion
@@ -206,8 +206,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         // override the signature of ModelCriteria::require*() to specify the class of the returned object, for IDE completion
         $script .= "
- * @method     $modelClass requirePk(\$key, ConnectionInterface \$con = null) Return the $modelClass by primary key and throws {$this->getEntityNotFoundExceptionClass()} when not found
- * @method     $modelClass requireOne(ConnectionInterface \$con = null) Return the first $modelClass matching the query and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ * @method     $modelClass requirePk(\$key, ?ConnectionInterface \$con = null) Return the $modelClass by primary key and throws {$this->getEntityNotFoundExceptionClass()} when not found
+ * @method     $modelClass requireOne(?ConnectionInterface \$con = null) Return the first $modelClass matching the query and throws {$this->getEntityNotFoundExceptionClass()} when not found
  *";
 
         // magic requireOneBy() methods, for IDE completion
@@ -218,8 +218,8 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= "
  *
- * @method     {$modelClass}[]|ObjectCollection find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
- * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
+ * @method     {$modelClass}[]|ObjectCollection find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
+ * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
  * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column' . "
@@ -227,8 +227,8 @@ class QueryBuilder extends AbstractOMBuilder
         }
 
         $script .= "
- * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
- * @psalm-method \\Propel\\Runtime\\Util\\PropelModelPager&\Traversable<{$modelClass}> paginate(\$page = 1, \$maxPerPage = 10, ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     {$modelClass}[]|\\Propel\\Runtime\\Util\\PropelModelPager paginate(\$page = 1, \$maxPerPage = 10, ?ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @psalm-method \\Propel\\Runtime\\Util\\PropelModelPager&\Traversable<{$modelClass}> paginate(\$page = 1, \$maxPerPage = 10, ?ConnectionInterface \$con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
 abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass . "
@@ -248,7 +248,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addClassBody(&$script): void
+    protected function addClassBody(string &$script): void
     {
         $table = $this->getTable();
 
@@ -325,7 +325,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addEntityNotFoundExceptionClass(&$script): void
+    protected function addEntityNotFoundExceptionClass(string &$script): void
     {
         $script .= "protected \$entityNotFoundExceptionClass = '" . addslashes($this->getEntityNotFoundExceptionClass()) . "';\n";
     }
@@ -345,7 +345,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addDeleteMethods(&$script): void
+    protected function addDeleteMethods(string &$script): void
     {
         $this->addDoDeleteAll($script);
         $this->addDelete($script);
@@ -404,7 +404,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addClassClose(&$script): void
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }
@@ -421,7 +421,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addConstructor(&$script): void
+    protected function addConstructor(string &$script): void
     {
         $this->addConstructorComment($script);
         $this->addConstructorOpen($script);
@@ -436,7 +436,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addConstructorComment(&$script): void
+    protected function addConstructorComment(string &$script): void
     {
         $script .= "
     /**
@@ -455,7 +455,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addConstructorOpen(&$script): void
+    protected function addConstructorOpen(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -470,7 +470,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addConstructorBody(&$script): void
+    protected function addConstructorBody(string &$script): void
     {
         $script .= "
         parent::__construct(\$dbName, \$modelName, \$modelAlias);";
@@ -483,7 +483,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addConstructorClose(&$script): void
+    protected function addConstructorClose(string &$script): void
     {
         $script .= "
     }
@@ -497,7 +497,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFactory(&$script): void
+    protected function addFactory(string &$script): void
     {
         $this->addFactoryComment($script);
         $this->addFactoryOpen($script);
@@ -512,7 +512,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFactoryComment(&$script): void
+    protected function addFactoryComment(string &$script): void
     {
         $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
         $script .= "
@@ -533,10 +533,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFactoryOpen(&$script): void
+    protected function addFactoryOpen(string &$script): void
     {
         $script .= "
-    public static function create(\$modelAlias = null, Criteria \$criteria = null)
+    public static function create(?string \$modelAlias = null, ?Criteria \$criteria = null): Criteria
     {";
     }
 
@@ -547,7 +547,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFactoryBody(&$script): void
+    protected function addFactoryBody(string &$script): void
     {
         $classname = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($this->getTable()));
         $script .= "
@@ -572,7 +572,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFactoryClose(&$script): void
+    protected function addFactoryClose(string &$script): void
     {
         $script .= "
     }
@@ -584,7 +584,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFindPk(&$script): void
+    protected function addFindPk(string &$script): void
     {
         $class = $this->getObjectClassName();
         $tableMapClassName = $this->getTableMapClassName();
@@ -621,7 +621,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return $class|array|mixed the result, formatted by the current formatter
      */
-    public function findPk(\$key, ConnectionInterface \$con = null)
+    public function findPk(\$key, ?ConnectionInterface \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
             $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
@@ -676,7 +676,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFindPkSimple(&$script): void
+    protected function addFindPkSimple(string &$script): void
     {
         $table = $this->getTable();
 
@@ -792,7 +792,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFindPkComplex(&$script): void
+    protected function addFindPkComplex(string &$script): void
     {
         $class = $this->getObjectClassName();
         $table = $this->getTable();
@@ -832,7 +832,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFindPks(&$script): void
+    protected function addFindPks(string &$script): void
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
@@ -860,7 +860,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
-    public function findPks(\$keys, ConnectionInterface \$con = null)
+    public function findPks(\$keys, ?ConnectionInterface \$con = null)
     {";
         if (!$table->hasPrimaryKey()) {
             $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
@@ -894,7 +894,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByPrimaryKey(&$script): void
+    protected function addFilterByPrimaryKey(string &$script): void
     {
         $script .= "
     /**
@@ -951,7 +951,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByPrimaryKeys(&$script): void
+    protected function addFilterByPrimaryKeys(string &$script): void
     {
         $script .= "
     /**
@@ -1021,7 +1021,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByCol(&$script, Column $col): void
+    protected function addFilterByCol(string &$script, Column $col): void
     {
         $colPhpName = $col->getPhpName();
         $colName = $col->getName();
@@ -1206,7 +1206,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             }
             \$$variableName = array_search(\$$variableName, \$valueSet);
         } elseif (is_array(\$$variableName)) {
-            \$convertedValues = array();
+            \$convertedValues = [];
             foreach (\$$variableName as \$value) {
                 if (!in_array(\$value, \$valueSet)) {
                     throw new PropelException(sprintf('Value \"%s\" is not accepted in this enumerated column', \$value));
@@ -1246,7 +1246,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByArrayCol(&$script, Column $col): void
+    protected function addFilterByArrayCol(string &$script, Column $col): void
     {
         $singularPhpName = $col->getPhpSingularName();
         $colName = $col->getName();
@@ -1294,7 +1294,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterBySetCol(&$script, Column $col): void
+    protected function addFilterBySetCol(string &$script, Column $col): void
     {
         $colPhpName = $col->getPhpName();
         $singularPhpName = $col->getPhpSingularName();
@@ -1323,7 +1323,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByFk(&$script, $fk): void
+    protected function addFilterByFk(string &$script, ForeignKey $fk): void
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
@@ -1408,7 +1408,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addFilterByRefFk(&$script, ForeignKey $fk): void
+    protected function addFilterByRefFk(string &$script, ForeignKey $fk): void
     {
         $this->declareClasses(
             '\Propel\Runtime\Collection\ObjectCollection',
@@ -1481,7 +1481,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addJoinFk(&$script, $fk): void
+    protected function addJoinFk(string &$script, ForeignKey $fk): void
     {
         $queryClass = $this->getQueryClassName();
         $fkTable = $fk->getForeignTable();
@@ -1498,7 +1498,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addJoinRefFk(&$script, ForeignKey $fk): void
+    protected function addJoinRefFk(string &$script, ForeignKey $fk): void
     {
         $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
@@ -1511,15 +1511,20 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Adds a joinRelated method for this object.
      *
      * @param string $script The script will be modified in this method.
-     * @param \Propel\Generator\Model\Table|null $fkTable
+     * @param \Propel\Generator\Model\Table $fkTable
      * @param string $queryClass
      * @param string $relationName
      * @param string $joinType
      *
      * @return void
      */
-    protected function addJoinRelated(&$script, $fkTable, $queryClass, $relationName, $joinType): void
-    {
+    protected function addJoinRelated(
+        string &$script,
+        Table $fkTable,
+        string $queryClass,
+        string $relationName,
+        string $joinType
+    ): void {
         $script .= "
     /**
      * Adds a JOIN clause to the query using the " . $relationName . " relation
@@ -1563,7 +1568,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addUseFkQuery(&$script, $fk): void
+    protected function addUseFkQuery(string &$script, ForeignKey $fk): void
     {
         $fkTable = $fk->getForeignTable();
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
@@ -1584,7 +1589,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addUseRefFkQuery(&$script, ForeignKey $fk): void
+    protected function addUseRefFkQuery(string &$script, ForeignKey $fk): void
     {
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fkTable);
@@ -1608,7 +1613,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addUseRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType): void
+    protected function addUseRelatedQuery(string &$script, Table $fkTable, string $queryClass, string $relationName, string $joinType): void
     {
         $script .= "
     /**
@@ -1641,7 +1646,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return void
      */
-    protected function addUseRelatedExistsQuery(&$script, Table $fkTable, $queryClass, $relationName): void
+    protected function addUseRelatedExistsQuery(string &$script, Table $fkTable, string $queryClass, string $relationName): void
     {
         $relationDescription = ($relationName === $fkTable->getPhpName()) ?
             "relation to $relationName table" :
@@ -1695,7 +1700,7 @@ EOT;
      *
      * @return void
      */
-    protected function addWithRelatedQuery(&$script, Table $fkTable, $queryClass, $relationName, $joinType): void
+    protected function addWithRelatedQuery(string &$script, Table $fkTable, string $queryClass, string $relationName, string $joinType): void
     {
         $script .= "
     /**
@@ -1732,7 +1737,7 @@ EOT;
      *
      * @return void
      */
-    protected function addFilterByCrossFK(&$script, CrossForeignKeys $crossFKs): void
+    protected function addFilterByCrossFK(string &$script, CrossForeignKeys $crossFKs): void
     {
         $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
 
@@ -1772,7 +1777,7 @@ EOT;
      *
      * @return void
      */
-    protected function addPrune(&$script): void
+    protected function addPrune(string &$script): void
     {
         $table = $this->getTable();
         $class = $this->getObjectClassName();
@@ -1830,7 +1835,7 @@ EOT;
      *
      * @return void
      */
-    protected function addBasePreSelect(&$script): void
+    protected function addBasePreSelect(string &$script): void
     {
         $behaviorCode = '';
         $this->applyBehaviorModifier('preSelectQuery', $behaviorCode, '        ');
@@ -1858,7 +1863,7 @@ EOT;
      *
      * @return void
      */
-    protected function addBasePreDelete(&$script): void
+    protected function addBasePreDelete(string &$script): void
     {
         $behaviorCode = '';
         $this->applyBehaviorModifier('preDeleteQuery', $behaviorCode, '        ');
@@ -1887,7 +1892,7 @@ EOT;
      *
      * @return void
      */
-    protected function addBasePostDelete(&$script): void
+    protected function addBasePostDelete(string &$script): void
     {
         $behaviorCode = '';
         $this->applyBehaviorModifier('postDeleteQuery', $behaviorCode, '        ');
@@ -1902,7 +1907,7 @@ EOT;
      * @param     ConnectionInterface \$con The connection object used by the query
      * @return int|null
      */
-    protected function basePostDelete(\$affectedRows, ConnectionInterface \$con): ?int
+    protected function basePostDelete(int \$affectedRows, ConnectionInterface \$con): ?int
     {" . $behaviorCode . "
 
         return \$this->postDelete(\$affectedRows, \$con);
@@ -1917,7 +1922,7 @@ EOT;
      *
      * @return void
      */
-    protected function addBasePreUpdate(&$script): void
+    protected function addBasePreUpdate(string &$script): void
     {
         $behaviorCode = '';
         $this->applyBehaviorModifier('preUpdateQuery', $behaviorCode, '        ');
@@ -1949,7 +1954,7 @@ EOT;
      *
      * @return void
      */
-    protected function addBasePostUpdate(&$script): void
+    protected function addBasePostUpdate(string &$script): void
     {
         $behaviorCode = '';
         $this->applyBehaviorModifier('postUpdateQuery', $behaviorCode, '        ');
@@ -1981,7 +1986,7 @@ EOT;
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = ''): bool
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
         return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }
@@ -1995,7 +2000,7 @@ EOT;
      *
      * @return string
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        '): string
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): string
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
 
@@ -2009,7 +2014,7 @@ EOT;
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName): ?string
+    public function getBehaviorContent(string $contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }
@@ -2021,7 +2026,7 @@ EOT;
      *
      * @return void
      */
-    protected function addDelete(&$script): void
+    protected function addDelete(string &$script): void
     {
         $script .= "
     /**
@@ -2030,10 +2035,10 @@ EOT;
      * @param ConnectionInterface \$con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                         if supported by native driver or if emulated using Propel.
-     * @throws PropelException Any exceptions caught during processing will be
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public function delete(ConnectionInterface \$con = null): int
+    public function delete(?ConnectionInterface \$con = null): int
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
@@ -2087,7 +2092,7 @@ EOT;
      *
      * @return void
      */
-    protected function addDoOnDeleteCascade(&$script): void
+    protected function addDoOnDeleteCascade(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -2169,7 +2174,7 @@ EOT;
      *
      * @return void
      */
-    protected function addDoOnDeleteSetNull(&$script): void
+    protected function addDoOnDeleteSetNull(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -2247,7 +2252,7 @@ EOT;
      *
      * @return void
      */
-    protected function addDoDeleteAll(&$script): void
+    protected function addDoDeleteAll(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -2257,7 +2262,7 @@ EOT;
      * @param ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
-    public function doDeleteAll(ConnectionInterface \$con = null): int
+    public function doDeleteAll(?ConnectionInterface \$con = null): int
     {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);

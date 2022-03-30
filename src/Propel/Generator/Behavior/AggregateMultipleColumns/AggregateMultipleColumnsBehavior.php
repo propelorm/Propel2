@@ -357,7 +357,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      *
      * @return void
      */
-    private function throwInvalidArgumentExceptionWithLocation($format, ...$args): void
+    private function throwInvalidArgumentExceptionWithLocation(string $format, ...$args): void
     {
         $format .= ' in the \'aggregate_multiple_columns\' behavior definition in the \'%s\' table definition';
         $args[] = $this->getTable()->getName();

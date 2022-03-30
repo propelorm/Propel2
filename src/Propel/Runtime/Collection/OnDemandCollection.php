@@ -73,11 +73,11 @@ class OnDemandCollection extends Collection
      * @return array
      */
     public function toArray(
-        $keyColumn = null,
-        $usePrefix = false,
-        $keyType = TableMap::TYPE_PHPNAME,
-        $includeLazyLoadColumns = true,
-        $alreadyDumpedObjects = []
+        ?string $keyColumn = null,
+        bool $usePrefix = false,
+        string $keyType = TableMap::TYPE_PHPNAME,
+        bool $includeLazyLoadColumns = true,
+        array $alreadyDumpedObjects = []
     ): array {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
@@ -103,7 +103,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr): void
+    public function fromArray(array $arr): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -243,7 +243,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function exchangeArray($input): void
+    public function exchangeArray(array $input): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -263,7 +263,7 @@ class OnDemandCollection extends Collection
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true, $keyType = TableMap::TYPE_PHPNAME): string
+    public function exportTo($parser, bool $usePrefix = true, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME): string
     {
         throw new PropelException('A OnDemandCollection cannot be exported.');
     }

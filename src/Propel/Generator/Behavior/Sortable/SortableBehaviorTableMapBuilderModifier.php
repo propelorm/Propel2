@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Behavior\Sortable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
+
 /**
  * Behavior to add sortable methods
  *
@@ -28,7 +30,7 @@ class SortableBehaviorTableMapBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(SortableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -39,7 +41,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    public function staticAttributes($builder): string
+    public function staticAttributes(AbstractOMBuilder $builder): string
     {
         $tableName = $this->table->getName();
         $col = '';
@@ -72,7 +74,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    protected function getColumnConstant($name): string
+    protected function getColumnConstant(string $name): string
     {
         return $this->behavior->getColumnForParameter($name)->getName();
     }

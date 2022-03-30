@@ -9,8 +9,10 @@
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 
@@ -32,7 +34,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string
+    public function concatString(string $s1, string $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
@@ -46,7 +48,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string
+    public function subString(string $s, int $pos, int $len): string
     {
         return "SUBSTRING($s, $pos, $len)";
     }
@@ -58,7 +60,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string
+    public function strLength(string $s): string
     {
         return "CHAR_LENGTH($s)";
     }
@@ -71,7 +73,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function lockTable($con, $table): void
+    public function lockTable(ConnectionInterface $con, string $table): void
     {
         $con->exec("LOCK TABLE $table WRITE");
     }
@@ -84,7 +86,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function unlockTable($con, $table): void
+    public function unlockTable(ConnectionInterface $con, string $table): void
     {
         $con->exec('UNLOCK TABLES');
     }
@@ -96,7 +98,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifier($text): string
+    public function quoteIdentifier(string $text): string
     {
         return '`' . $text . '`';
     }
@@ -108,7 +110,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table): string
+    public function quoteIdentifierTable(string $table): string
     {
         // e.g. 'database.table alias' should be escaped as '`database`.`table` `alias`'
         return '`' . strtr($table, ['.' => '`.`', ' ' => '` `']) . '`';
@@ -124,7 +126,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         $offset = (int)$offset;
         $limit = (int)$limit;
@@ -143,7 +145,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null): string
+    public function random(?string $seed = null): string
     {
         return 'rand(' . ((int)$seed) . ')';
     }
@@ -159,7 +161,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
@@ -192,7 +194,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return array the modified parameters
      */
-    protected function prepareParams($params): array
+    protected function prepareParams(array $params): array
     {
         if (isset($params['settings']['charset'])) {
             if (strpos($params['dsn'], ';charset=') === false) {
@@ -212,7 +214,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void
+    public function applyLock(string &$sql, Lock $lock): void
     {
         $type = $lock->getType();
 

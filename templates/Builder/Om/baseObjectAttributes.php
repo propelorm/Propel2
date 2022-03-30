@@ -16,11 +16,11 @@
      * Tracking modified columns allows us to only update modified columns.
      * @var array
      */
-    protected $modifiedColumns = array();
+    protected $modifiedColumns = [];
 
     /**
      * The (virtual) columns that are added at runtime
      * The formatters can add supplementary columns based on a resultset
      * @var array
      */
-    protected $virtualColumns = array();
+    protected $virtualColumns = [];

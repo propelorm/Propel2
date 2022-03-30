@@ -296,7 +296,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @return string
      */
-    protected function cleanDelimitedIdentifiers($identifier): string
+    protected function cleanDelimitedIdentifiers(string $identifier): string
     {
         return preg_replace('/^\'(.*)\'$/U', '$1', $identifier);
     }

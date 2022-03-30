@@ -67,8 +67,6 @@ abstract class AbstractManager
     /**
      * The XSD schema file to use for validation.
      *
-     * @deprecated Not in use and not working due to missing class.
-     *
      * @var mixed
      */
     protected $xsd;
@@ -130,7 +128,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setSchemas($schemas): void
+    public function setSchemas(array $schemas): void
     {
         $this->schemas = $schemas;
     }
@@ -142,7 +140,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setWorkingDirectory($workingDirectory): void
+    public function setWorkingDirectory(string $workingDirectory): void
     {
         $this->workingDirectory = $workingDirectory;
     }
@@ -219,7 +217,7 @@ abstract class AbstractManager
      *
      * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase($name): ?Database
+    public function getDatabase(string $name): ?Database
     {
         $dbs = $this->getDatabases();
 
@@ -233,7 +231,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setValidate($validate): void
+    public function setValidate(bool $validate): void
     {
         $this->validate = (bool)$validate;
     }
@@ -246,7 +244,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setXsd($xsd): void
+    public function setXsd(string $xsd): void
     {
         $this->xsd = $xsd;
     }
@@ -271,7 +269,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    public function setDbEncoding($encoding): void
+    public function setDbEncoding(string $encoding): void
     {
         $this->dbEncoding = $encoding;
     }
@@ -390,7 +388,7 @@ abstract class AbstractManager
      *
      * @return int number of included external schemas
      */
-    protected function includeExternalSchemas(DOMDocument $dom, $srcDir): int
+    protected function includeExternalSchemas(DOMDocument $dom, string $srcDir): int
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
@@ -487,7 +485,7 @@ abstract class AbstractManager
      *
      * @return void
      */
-    protected function log($message): void
+    protected function log(string $message): void
     {
         if ($this->loggerClosure !== null) {
             $closure = $this->loggerClosure;
@@ -504,7 +502,7 @@ abstract class AbstractManager
      *
      * @return array<string>
      */
-    protected function getProperties($file): array
+    protected function getProperties(string $file): array
     {
         $properties = [];
 

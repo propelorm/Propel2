@@ -39,7 +39,7 @@ interface AdapterInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($params): ConnectionInterface;
+    public function getConnection(array $params): ConnectionInterface;
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -54,7 +54,7 @@ interface AdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset): void;
+    public function setCharset(ConnectionInterface $con, string $charset): void;
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -66,7 +66,7 @@ interface AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in): string;
+    public function ignoreCaseInOrderBy(string $in): string;
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -85,7 +85,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string;
+    public function concatString(string $s1, string $s2): string;
 
     /**
      * Returns SQL which extracts a substring.
@@ -96,7 +96,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string;
+    public function subString(string $s, int $pos, int $len): string;
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
@@ -105,7 +105,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string;
+    public function strLength(string $s): string;
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
@@ -114,7 +114,7 @@ interface AdapterInterface
      *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text): string;
+    public function quoteIdentifier(string $text): string;
 
     /**
      * Quotes a database table which could have space separating it from an alias,
@@ -126,7 +126,7 @@ interface AdapterInterface
      *
      * @return string The quoted table name
      */
-    public function quoteIdentifierTable($table): string;
+    public function quoteIdentifierTable(string $table): string;
 
     /**
      * Quotes full qualified column names and table names.
@@ -138,7 +138,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function quote($text): string;
+    public function quote(string $text): string;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
@@ -162,7 +162,7 @@ interface AdapterInterface
      *
      * @return string|int|null
      */
-    public function getId(ConnectionInterface $con, $name = null);
+    public function getId(ConnectionInterface $con, ?string $name = null);
 
     /**
      * Formats a temporal value before binding, given a ColumnMap object

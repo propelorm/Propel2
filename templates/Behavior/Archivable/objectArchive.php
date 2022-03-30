@@ -6,7 +6,7 @@
  *
  * @param ConnectionInterface $con Optional connection object
  *
- * @throws PropelException If the object is new
+ * @throws \Propel\Runtime\Exception\PropelException If the object is new
  *
  * @return     <?php echo $archiveTablePhpName ?> The archive object based on this object
  */

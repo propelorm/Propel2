@@ -39,7 +39,7 @@ class JoinTest extends BaseTestCase
         parent::setUp();
 
         $this->savedAdapter = Propel::getServiceContainer()->getAdapter(null);
-        Propel::getServiceContainer()->setAdapter(null, new SqliteAdapter());
+        Propel::getServiceContainer()->setAdapter('', new SqliteAdapter());
     }
 
     /**
@@ -47,7 +47,7 @@ class JoinTest extends BaseTestCase
      */
     protected function tearDown(): void
     {
-        Propel::getServiceContainer()->setAdapter(null, $this->savedAdapter);
+        Propel::getServiceContainer()->setAdapter('', $this->savedAdapter);
         parent::tearDown();
     }
 
@@ -256,8 +256,6 @@ class JoinTest extends BaseTestCase
     public function testEquality()
     {
         $j1 = new Join('foo', 'bar', 'INNER JOIN');
-        $this->assertFalse($j1->equals(null), 'Join and null is not equal');
-
         $j2 = new Join('foo', 'bar', 'LEFT JOIN');
         $this->assertFalse($j1->equals($j2), 'INNER JOIN and LEFT JOIN are not equal');
 

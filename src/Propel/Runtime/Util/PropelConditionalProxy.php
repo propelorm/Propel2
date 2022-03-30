@@ -85,7 +85,7 @@ class PropelConditionalProxy
      *
      * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
-    public function _if($cond)
+    public function _if(bool $cond)
     {
         return $this->criteria->_if($cond);
     }
@@ -97,7 +97,7 @@ class PropelConditionalProxy
      *
      * @return $this|\Propel\Runtime\ActiveQuery\Criteria
      */
-    public function _elseif($cond)
+    public function _elseif(bool $cond)
     {
         return $this->setConditionalState(!$this->wasTrue && $cond);
     }
@@ -172,7 +172,7 @@ class PropelConditionalProxy
      *
      * @return $this
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         return $this;
     }

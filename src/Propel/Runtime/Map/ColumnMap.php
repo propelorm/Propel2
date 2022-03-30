@@ -115,7 +115,7 @@ class ColumnMap
      * @param string $name The name of the column.
      * @param \Propel\Runtime\Map\TableMap $containingTable TableMap of the table this column is in.
      */
-    public function __construct($name, TableMap $containingTable)
+    public function __construct(string $name, TableMap $containingTable)
     {
         $this->columnName = $name;
         $this->table = $containingTable;
@@ -168,7 +168,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setPhpName($phpName): void
+    public function setPhpName(string $phpName): void
     {
         $this->phpName = $phpName;
     }
@@ -190,7 +190,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setType($type): void
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -292,13 +292,13 @@ class ColumnMap
     /**
      * Set the size of this column.
      *
-     * @param int $size An int specifying the size.
+     * @param int|null $size An int specifying the size.
      *
      * @return void
      */
-    public function setSize($size): void
+    public function setSize(?int $size): void
     {
-        $this->size = $size;
+        $this->size = (int)$size;
     }
 
     /**
@@ -318,7 +318,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setPrimaryKey($pk): void
+    public function setPrimaryKey(bool $pk): void
     {
         $this->pk = (bool)$pk;
     }
@@ -340,7 +340,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setNotNull($nn): void
+    public function setNotNull(bool $nn): void
     {
         $this->notNull = (bool)$nn;
     }
@@ -385,7 +385,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setForeignKey($tableName, $columnName): void
+    public function setForeignKey(string $tableName, string $columnName): void
     {
         if ($tableName && $columnName) {
             $this->relatedTableName = $tableName;
@@ -495,7 +495,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setValueSet($values): void
+    public function setValueSet(array $values): void
     {
         $this->valueSet = $values;
     }
@@ -538,7 +538,7 @@ class ColumnMap
      *
      * @return string
      */
-    public function ignoreCase($str, AdapterInterface $db): string
+    public function ignoreCase(string $str, AdapterInterface $db): string
     {
         if ($this->isText()) {
             return $db->ignoreCase($str);
@@ -556,7 +556,7 @@ class ColumnMap
      *
      * @return string Normalized column name.
      */
-    public static function normalizeName($name): string
+    public static function normalizeName(string $name): string
     {
         if (($pos = strrpos($name, '.')) !== false) {
             $name = substr($name, $pos + 1);
@@ -573,7 +573,7 @@ class ColumnMap
      *
      * @return void
      */
-    public function setPrimaryString($pkString): void
+    public function setPrimaryString(bool $pkString): void
     {
         $this->isPkString = (bool)$pkString;
     }

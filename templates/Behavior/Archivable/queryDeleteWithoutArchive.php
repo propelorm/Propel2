@@ -4,7 +4,7 @@
  *
  * @param      ConnectionInterface $con    Connection to use.
  *
- * @return integer the number of deleted rows
+ * @return int The number of deleted rows
  */
 public function deleteWithoutArchive($con = null): int
 {
@@ -18,7 +18,7 @@ public function deleteWithoutArchive($con = null): int
  *
  * @param      ConnectionInterface $con    Connection to use.
  *
- * @return integer the number of deleted rows
+ * @return int The number of deleted rows
  */
 public function deleteAllWithoutArchive($con = null): int
 {

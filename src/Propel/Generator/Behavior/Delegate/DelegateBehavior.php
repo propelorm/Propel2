@@ -9,6 +9,7 @@
 namespace Propel\Generator\Behavior\Delegate;
 
 use InvalidArgumentException;
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
@@ -16,6 +17,7 @@ use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\NameGeneratorInterface;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Util\PhpParser;
+use RuntimeException;
 
 /**
  * Gives a model class the ability to delegate methods to a relationship.
@@ -51,7 +53,7 @@ class DelegateBehavior extends Behavior
     /**
      * @var array|null
      */
-    protected $double_defined;
+    protected $doubleDefined;
 
     /**
      * Lists the delegates and checks that the behavior can use them,
@@ -108,7 +110,7 @@ class DelegateBehavior extends Behavior
      *
      * @return void
      */
-    protected function relateDelegateToMainTable($delegateTable, $mainTable): void
+    protected function relateDelegateToMainTable(Table $delegateTable, Table $mainTable): void
     {
         $pks = $mainTable->getPrimaryKey();
         foreach ($pks as $column) {
@@ -137,7 +139,7 @@ class DelegateBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Table|null
      */
-    protected function getDelegateTable($delegateTableName): ?Table
+    protected function getDelegateTable(string $delegateTableName): ?Table
     {
         return $this->getTable()->getDatabase()->getTable($delegateTableName);
     }
@@ -147,7 +149,7 @@ class DelegateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectCall($builder): string
+    public function objectCall(ObjectBuilder $builder): string
     {
         $plural = false;
         $script = '';
@@ -184,14 +186,20 @@ if (method_exists({$ARFQCN}::class, \$name)) {
     /**
      * @param string $script
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
-    public function objectFilter(&$script): void
+    public function objectFilter(string &$script): void
     {
         $p = new PhpParser($script, true);
         $text = $p->findMethod('toArray');
         $matches = [];
-        preg_match('/(\$result = array\(([^;]+)\);)/U', $text, $matches);
+        preg_match('/(\$result = \[([^;]+)\];)/U', $text, $matches);
+        if (!$matches) {
+            throw new RuntimeException('Cannot find toArray() method in code snippet: ' . $script);
+        }
+
         $values = rtrim($matches[2]) . "\n";
         $newResult = '';
         $indent = '        ';
@@ -211,7 +219,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
             }
         }
 
-        $newResult .= "{$indent}\$result = array({$values}\n{$indent});";
+        $newResult .= "{$indent}\$result = [{$values}\n{$indent}];";
         $text = str_replace($matches[1], ltrim($newResult), $text);
         $p->replaceMethod('toArray', $text);
         $script = $p->getCode();
@@ -228,22 +236,22 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         $table = $this->getTable();
         $fks = [];
 
-        if ($this->double_defined === null) {
-            $this->double_defined = [];
+        if ($this->doubleDefined === null) {
+            $this->doubleDefined = [];
 
             foreach ($this->delegates + [$table->getName() => 1] as $key => $value) {
                 $delegateTable = $this->getDelegateTable($key);
                 foreach ($delegateTable->getColumns() as $columnDelegated) {
-                    if (isset($this->double_defined[$columnDelegated->getName()])) {
-                        $this->double_defined[$columnDelegated->getName()]++;
+                    if (isset($this->doubleDefined[$columnDelegated->getName()])) {
+                        $this->doubleDefined[$columnDelegated->getName()]++;
                     } else {
-                        $this->double_defined[$columnDelegated->getName()] = 1;
+                        $this->doubleDefined[$columnDelegated->getName()] = 1;
                     }
                 }
             }
         }
 
-        if (1 < $this->double_defined[$column->getName()]) {
+        if (1 < $this->doubleDefined[$column->getName()]) {
             return true;
         }
 

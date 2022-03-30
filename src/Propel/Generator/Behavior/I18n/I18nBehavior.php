@@ -9,6 +9,7 @@
 namespace Propel\Generator\Behavior\I18n;
 
 use Propel\Generator\Behavior\Validate\ValidateBehavior;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
@@ -156,7 +157,7 @@ class I18nBehavior extends Behavior
      *
      * @return string
      */
-    public function replaceTokens($string): string
+    public function replaceTokens(string $string): string
     {
         $table = $this->getTable();
 
@@ -191,11 +192,11 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
      *
      * @return string
      */
-    public function staticAttributes($builder): string
+    public function staticAttributes(AbstractOMBuilder $builder): string
     {
         return $this->renderTemplate('staticAttributes', [
             'defaultLocale' => $this->getDefaultLocale(),

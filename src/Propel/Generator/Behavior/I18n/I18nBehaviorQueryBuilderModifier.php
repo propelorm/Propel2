@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Builder\Om\QueryBuilder;
+
 /**
  * Allows translation of text columns through transparent one-to-many relationship.
  * Modifier for the query builder.
@@ -34,7 +36,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\I18n\I18nBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(I18nBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -45,7 +47,7 @@ class I18nBehaviorQueryBuilderModifier
      *
      * @return string
      */
-    public function queryMethods($builder): string
+    public function queryMethods(QueryBuilder $builder): string
     {
         $this->builder = $builder;
         $script = '';

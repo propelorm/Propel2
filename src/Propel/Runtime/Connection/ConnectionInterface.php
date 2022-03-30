@@ -26,7 +26,7 @@ interface ConnectionInterface
      *
      * @return void
      */
-    public function setName($name): void;
+    public function setName(string $name): void;
 
     /**
      * @return string|null The datasource name associated to this connection.
@@ -113,7 +113,7 @@ interface ConnectionInterface
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null);
+    public function lastInsertId(?string $name = null);
 
     /**
      * @param mixed $data
@@ -151,7 +151,7 @@ interface ConnectionInterface
      *
      * @return int The number of rows that were modified or deleted.
      */
-    public function exec($statement): int;
+    public function exec(string $statement): int;
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -200,5 +200,5 @@ interface ConnectionInterface
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameterType = PDO::PARAM_STR): string;
+    public function quote(string $string, int $parameterType = PDO::PARAM_STR): string;
 }

@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -61,7 +62,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $this->builder = $builder;
         $this->builder->declareClasses('Propel\Runtime\ActiveQuery\PropelQuery');
@@ -77,7 +78,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
      *
      * @return void
      */
-    protected function addHasChildObject(&$script): void
+    protected function addHasChildObject(string &$script): void
     {
         $script .= "
 /**
@@ -97,13 +98,13 @@ public function hasChildObject(): bool
      *
      * @return void
      */
-    protected function addGetChildObject(&$script): void
+    protected function addGetChildObject(string &$script): void
     {
         $script .= "
 /**
  * Get the child object of this object
  *
- * @return    mixed
+ * @return mixed
  */
 public function getChildObject()
 {

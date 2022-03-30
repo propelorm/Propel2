@@ -5,7 +5,7 @@
  *
  * @param ConnectionInterface $con Optional connection object
  *
- * @throws PropelException If the object has no corresponding archive.
+ * @throws \Propel\Runtime\Exception\PropelException If the object has no corresponding archive.
  *
  * @return $this The current object (for fluent API support)
  */

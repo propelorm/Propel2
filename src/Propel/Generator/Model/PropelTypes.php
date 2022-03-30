@@ -474,7 +474,7 @@ class PropelTypes
      *
      * @return string
      */
-    public static function getPhpNative($mappingType): string
+    public static function getPhpNative(string $mappingType): string
     {
         return self::$mappingToPHPNativeMap[$mappingType];
     }
@@ -486,7 +486,7 @@ class PropelTypes
      *
      * @return int
      */
-    public static function getPDOType($type): int
+    public static function getPDOType(string $type): int
     {
         return self::$mappingTypeToPDOTypeMap[$type];
     }
@@ -498,7 +498,7 @@ class PropelTypes
      *
      * @return string
      */
-    public static function getPdoTypeString($type): string
+    public static function getPdoTypeString(string $type): string
     {
         return self::$pdoTypeNames[self::$mappingTypeToPDOTypeMap[$type]];
     }
@@ -520,7 +520,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isTemporalType($type): bool
+    public static function isTemporalType(string $type): bool
     {
         return in_array($type, [
             self::DATE,
@@ -538,7 +538,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isTextType($mappingType): bool
+    public static function isTextType(string $mappingType): bool
     {
         return in_array($mappingType, [
             self::CHAR,
@@ -561,7 +561,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isNumericType($mappingType): bool
+    public static function isNumericType(string $mappingType): bool
     {
         return in_array($mappingType, [
             self::SMALLINT,
@@ -583,7 +583,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isBooleanType($mappingType): bool
+    public static function isBooleanType(string $mappingType): bool
     {
         return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU]);
     }
@@ -595,7 +595,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isLobType($mappingType): bool
+    public static function isLobType(string $mappingType): bool
     {
         return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY]);
     }
@@ -607,7 +607,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isPhpPrimitiveType($phpType): bool
+    public static function isPhpPrimitiveType(string $phpType): bool
     {
         return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string']);
     }
@@ -619,7 +619,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isPhpPrimitiveNumericType($phpType): bool
+    public static function isPhpPrimitiveNumericType(string $phpType): bool
     {
         return in_array($phpType, ['boolean', 'int', 'double', 'float']);
     }
@@ -631,7 +631,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isPhpObjectType($phpType): bool
+    public static function isPhpObjectType(string $phpType): bool
     {
         return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array']);
     }

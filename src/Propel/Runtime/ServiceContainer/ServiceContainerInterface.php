@@ -66,7 +66,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public function getAdapter($name = null): AdapterInterface;
+    public function getAdapter(?string $name = null): AdapterInterface;
 
     /**
      * Get the adapter class for a given datasource.
@@ -75,7 +75,7 @@ interface ServiceContainerInterface
      *
      * @return string
      */
-    public function getAdapterClass($name = null): string;
+    public function getAdapterClass(?string $name = null): string;
 
     /**
      * Get the database map for a given datasource.
@@ -86,21 +86,21 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public function getDatabaseMap($name = null): DatabaseMap;
+    public function getDatabaseMap(?string $name = null): DatabaseMap;
 
     /**
      * @param string $name The datasource name
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public function getConnectionManager($name): ConnectionManagerInterface;
+    public function getConnectionManager(string $name): ConnectionManagerInterface;
 
     /**
      * @param string $name
      *
      * @return bool true if a connectionManager with $name has been registered
      */
-    public function hasConnectionManager($name): bool;
+    public function hasConnectionManager(string $name): bool;
 
     /**
      * Close any associated resource handles.
@@ -123,7 +123,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getConnection($name = null, $mode = self::CONNECTION_WRITE): ConnectionInterface;
+    public function getConnection(?string $name = null, string $mode = self::CONNECTION_WRITE): ConnectionInterface;
 
     /**
      * Get a write connection for a given datasource.
@@ -138,7 +138,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getWriteConnection($name): ConnectionInterface;
+    public function getWriteConnection(string $name): ConnectionInterface;
 
     /**
      * Get a read connection for a given datasource.
@@ -152,7 +152,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getReadConnection($name): ConnectionInterface;
+    public function getReadConnection(string $name): ConnectionInterface;
 
     /**
      * Get a profiler instance.

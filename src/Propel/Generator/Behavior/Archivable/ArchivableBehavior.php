@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\Archivable;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
@@ -166,7 +167,7 @@ class ArchivableBehavior extends Behavior
      *
      * @return string
      */
-    public function getArchiveTablePhpName($builder): string
+    public function getArchiveTablePhpName(AbstractOMBuilder $builder): string
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class');
@@ -180,7 +181,7 @@ class ArchivableBehavior extends Behavior
      *
      * @return string
      */
-    public function getArchiveTableQueryName($builder): string
+    public function getArchiveTableQueryName(AbstractOMBuilder $builder): string
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class') . 'Query';

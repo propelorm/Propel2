@@ -62,7 +62,7 @@ interface SchemaParserInterface
      *
      * @return void
      */
-    public function setPlatform($platform): void;
+    public function setPlatform(PlatformInterface $platform): void;
 
     /**
      * Parse the schema and populate passed-in Database model object.

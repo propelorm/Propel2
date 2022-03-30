@@ -90,7 +90,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setSchemaName($schemaName): void
+    public function setSchemaName(string $schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -112,7 +112,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setNamespace($namespace): void
+    public function setNamespace(string $namespace): void
     {
         $this->namespace = $namespace;
     }
@@ -136,7 +136,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setDatabaseName($databaseName): void
+    public function setDatabaseName(string $databaseName): void
     {
         $this->databaseName = $databaseName;
     }
@@ -148,7 +148,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setSamePhpName($samePhpName): void
+    public function setSamePhpName(bool $samePhpName): void
     {
         $this->samePhpName = (bool)$samePhpName;
     }
@@ -160,7 +160,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setAddVendorInfo($addVendorInfo): void
+    public function setAddVendorInfo(bool $addVendorInfo): void
     {
         $this->addVendorInfo = (bool)$addVendorInfo;
     }

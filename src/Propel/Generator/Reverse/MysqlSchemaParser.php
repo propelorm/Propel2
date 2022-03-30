@@ -143,7 +143,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function parseTables(Database $database, $filterTable = null): void
+    protected function parseTables(Database $database, ?Table $filterTable = null): void
     {
         $sql = 'SHOW FULL TABLES';
 
@@ -204,7 +204,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @return \Propel\Generator\Model\Column
      */
-    public function getColumnFromRow($row, Table $table): Column
+    public function getColumnFromRow(array $row, Table $table): Column
     {
         $name = $row['Field'];
         $isNullable = ($row['Null'] === 'YES');

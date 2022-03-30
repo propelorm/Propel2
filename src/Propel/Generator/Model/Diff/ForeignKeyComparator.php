@@ -27,7 +27,7 @@ class ForeignKeyComparator
      *
      * @return bool false if the two fks are similar, true if they have differences
      */
-    public static function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, $caseInsensitive = false): bool
+    public static function computeDiff(ForeignKey $fromFk, ForeignKey $toFk, bool $caseInsensitive = false): bool
     {
         // Check for differences in local and remote table
         $test = $caseInsensitive ?

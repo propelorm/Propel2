@@ -57,7 +57,7 @@ class SortableBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(SortableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -68,7 +68,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return mixed
      */
-    protected function getParameter($key)
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
@@ -78,7 +78,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function getColumnAttribute($name): string
+    protected function getColumnAttribute(string $name): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -88,7 +88,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string|null
      */
-    protected function getColumnPhpName($name): ?string
+    protected function getColumnPhpName(string $name): ?string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
@@ -114,7 +114,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string The related getter, e.g. 'getRank'
      */
-    protected function getColumnGetter($columnName = 'rank_column'): string
+    protected function getColumnGetter(string $columnName = 'rank_column'): string
     {
         return 'get' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
@@ -126,7 +126,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string The related setter, e.g. 'setRank'
      */
-    protected function getColumnSetter($columnName = 'rank_column'): string
+    protected function getColumnSetter(string $columnName = 'rank_column'): string
     {
         return 'set' . $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }
@@ -136,7 +136,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preSave($builder): string
+    public function preSave(AbstractOMBuilder $builder): string
     {
         return '$this->processSortableQueries($con);';
     }
@@ -146,7 +146,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preInsert($builder): string
+    public function preInsert(AbstractOMBuilder $builder): string
     {
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
@@ -162,7 +162,7 @@ class SortableBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function preUpdate($builder): string
+    public function preUpdate(AbstractOMBuilder $builder): string
     {
         if ($this->behavior->useScope()) {
             $this->setBuilder($builder);
@@ -193,7 +193,7 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
      *
      * @return string
      */
-    public function preDelete($builder): string
+    public function preDelete(AbstractOMBuilder $builder): string
     {
         $useScope = $this->behavior->useScope();
         $this->setBuilder($builder);
@@ -209,14 +209,14 @@ if (($condition) && !\$this->isColumnModified({$this->tableMapClassName}::RANK_C
      *
      * @return string
      */
-    public function objectAttributes($builder): string
+    public function objectAttributes(AbstractOMBuilder $builder): string
     {
         $script = "
 /**
  * Queries to be executed in the save transaction
  * @var        array
  */
-protected \$sortableQueries = array();
+protected \$sortableQueries = [];
 ";
         if ($this->behavior->useScope()) {
             $script .= "
@@ -236,7 +236,7 @@ protected \$oldScope;
      *
      * @return string
      */
-    public function objectMethods($builder): string
+    public function objectMethods(AbstractOMBuilder $builder): string
     {
         $this->setBuilder($builder);
         $script = '';
@@ -274,7 +274,7 @@ protected \$oldScope;
      *
      * @return void
      */
-    public function objectFilter(&$script, $builder): void
+    public function objectFilter(string &$script, AbstractOMBuilder $builder): void
     {
         if ($this->behavior->useScope()) {
             if ($this->behavior->hasMultipleScopes()) {
@@ -309,7 +309,7 @@ protected \$oldScope;
      *
      * @return void
      */
-    protected function addRankAccessors(&$script): void
+    protected function addRankAccessors(string &$script): void
     {
         $script .= "
 /**
@@ -326,11 +326,13 @@ public function getRank()
  * Wrap the setter for rank value
  *
  * @param     int
- * @return    \$this|{$this->objectClassName}
+ * @return    \$this
  */
 public function setRank(\$v)
 {
-    return \$this->{$this->getColumnSetter()}(\$v);
+    \$this->{$this->getColumnSetter()}(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -342,7 +344,7 @@ public function setRank(\$v)
      *
      * @return void
      */
-    protected function addScopeAccessors(&$script): void
+    protected function addScopeAccessors(string &$script): void
     {
         $script .= "
 /**
@@ -357,7 +359,7 @@ public function getScopeValue(\$returnNulls = true)
 ";
         if ($this->behavior->hasMultipleScopes()) {
             $script .= "
-    \$result = array();
+    \$result = [];
     \$onlyNulls = true;
 ";
             foreach ($this->behavior->getScopes() as $scopeField) {
@@ -398,7 +400,7 @@ public function getScopeValue(\$returnNulls = true)
  * Wrap the setter for scope value
  *
  * @param     mixed A array or a native type
- * @return    \$this|{$this->objectClassName}
+ * @return    \$this
  */
 public function setScopeValue(\$v)
 {
@@ -413,7 +415,9 @@ public function setScopeValue(\$v)
         } else {
             $script .= "
 
-    return \$this->{$this->getColumnSetter('scope_column')}(\$v);
+    \$this->{$this->getColumnSetter('scope_column')}(\$v);
+
+    return \$this;
 ";
         }
         $script .= "
@@ -426,7 +430,7 @@ public function setScopeValue(\$v)
      *
      * @return void
      */
-    protected function addIsFirst(&$script): void
+    protected function addIsFirst(string &$script): void
     {
         $script .= "
 /**
@@ -446,7 +450,7 @@ public function isFirst()
      *
      * @return void
      */
-    protected function addIsLast(&$script): void
+    protected function addIsLast(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -457,7 +461,7 @@ public function isFirst()
  *
  * @return    bool
  */
-public function isLast(ConnectionInterface \$con = null)
+public function isLast(?ConnectionInterface \$con = null)
 {
     return \$this->{$this->getColumnGetter()}() == {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 }
@@ -469,7 +473,7 @@ public function isLast(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addGetNext(&$script): void
+    protected function addGetNext(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         // The generateScopePhp() method below contains the following list of variables:
@@ -484,7 +488,7 @@ public function isLast(ConnectionInterface \$con = null)
  *
  * @return    {$this->objectClassName}
  */
-public function getNext(ConnectionInterface \$con = null)
+public function getNext(?ConnectionInterface \$con = null)
 {";
         $script .= "
 
@@ -517,7 +521,7 @@ public function getNext(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addGetPrevious(&$script): void
+    protected function addGetPrevious(string &$script): void
     {
         $useScope = $this->behavior->useScope();
 
@@ -533,7 +537,7 @@ public function getNext(ConnectionInterface \$con = null)
  *
  * @return    {$this->objectClassName}
  */
-public function getPrevious(ConnectionInterface \$con = null)
+public function getPrevious(?ConnectionInterface \$con = null)
 {";
         $script .= "
 
@@ -566,7 +570,7 @@ public function getPrevious(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtRank(&$script): void
+    protected function addInsertAtRank(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $queryClassName = $this->queryFullClassName;
@@ -578,11 +582,11 @@ public function getPrevious(ConnectionInterface \$con = null)
  * @param     integer    \$rank rank value
  * @param     ConnectionInterface  \$con      optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this The current object
  *
  * @throws    PropelException
  */
-public function insertAtRank(\$rank, ConnectionInterface \$con = null)
+public function insertAtRank(\$rank, ?ConnectionInterface \$con = null)
 {";
         $script .= "
     \$maxRank = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
@@ -593,10 +597,10 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
     \$this->{$this->getColumnSetter()}(\$rank);
     if (\$rank != \$maxRank + 1) {
         // Keep the list modification query for the save() transaction
-        \$this->sortableQueries []= array(
+        \$this->sortableQueries []= [
             'callable'  => array('{$queryClassName}', 'sortableShiftRank'),
-            'arguments' => array(1, \$rank, null, " . ($useScope ? '$this->getScopeValue()' : '') . ")
-        );
+            'arguments' => array(1, \$rank, null, " . ($useScope ? '$this->getScopeValue()' : '') . "),
+        ];
     }
 
     return \$this;
@@ -609,7 +613,7 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtBottom(&$script): void
+    protected function addInsertAtBottom(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -619,11 +623,11 @@ public function insertAtRank(\$rank, ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws    PropelException
  */
-public function insertAtBottom(ConnectionInterface \$con = null)
+public function insertAtBottom(?ConnectionInterface \$con = null)
 {";
         $script .= "
     \$this->{$this->getColumnSetter()}({$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con) + 1);
@@ -638,18 +642,20 @@ public function insertAtBottom(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addInsertAtTop(&$script): void
+    protected function addInsertAtTop(string &$script): void
     {
         $script .= "
 /**
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
 public function insertAtTop()
 {
-    return \$this->insertAtRank(1);
+    \$this->insertAtRank(1);
+
+    return \$this;
 }
 ";
     }
@@ -659,7 +665,7 @@ public function insertAtTop()
      *
      * @return void
      */
-    protected function addMoveToRank(&$script): void
+    protected function addMoveToRank(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -670,11 +676,11 @@ public function insertAtTop()
  * @param     integer   \$newRank rank value
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws    PropelException
  */
-public function moveToRank(\$newRank, ConnectionInterface \$con = null)
+public function moveToRank(\$newRank, ?ConnectionInterface \$con = null)
 {
     if (\$this->isNew()) {
         throw new PropelException('New objects cannot be moved. Please use insertAtRank() instead');
@@ -711,7 +717,7 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addSwapWith(&$script): void
+    protected function addSwapWith(string &$script): void
     {
         $script .= "
 /**
@@ -720,11 +726,11 @@ public function moveToRank(\$newRank, ConnectionInterface \$con = null)
  * @param     {$this->objectClassName} \$object
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
-public function swapWith(\$object, ConnectionInterface \$con = null)
+public function swapWith(\$object, ?ConnectionInterface \$con = null)
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -761,7 +767,7 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveUp(&$script): void
+    protected function addMoveUp(string &$script): void
     {
         $script .= "
 /**
@@ -769,9 +775,9 @@ public function swapWith(\$object, ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveUp(ConnectionInterface \$con = null)
+public function moveUp(?ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
@@ -794,7 +800,7 @@ public function moveUp(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveDown(&$script): void
+    protected function addMoveDown(string &$script): void
     {
         $script .= "
 /**
@@ -802,9 +808,9 @@ public function moveUp(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveDown(ConnectionInterface \$con = null)
+public function moveDown(?ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return \$this;
@@ -827,7 +833,7 @@ public function moveDown(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveToTop(&$script): void
+    protected function addMoveToTop(string &$script): void
     {
         $script .= "
 /**
@@ -835,15 +841,17 @@ public function moveDown(ConnectionInterface \$con = null)
  *
  * @param     ConnectionInterface \$con optional connection
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
-public function moveToTop(ConnectionInterface \$con = null)
+public function moveToTop(?ConnectionInterface \$con = null)
 {
     if (\$this->isFirst()) {
         return \$this;
     }
 
-    return \$this->moveToRank(1, \$con);
+    \$this->moveToRank(1, \$con);
+
+    return \$this;
 }
 ";
     }
@@ -853,7 +861,7 @@ public function moveToTop(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addMoveToBottom(&$script): void
+    protected function addMoveToBottom(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -864,7 +872,7 @@ public function moveToTop(ConnectionInterface \$con = null)
  *
  * @return \$this|{$this->objectClassName}|null The old object's rank or null if already last
  */
-public function moveToBottom(ConnectionInterface \$con = null)
+public function moveToBottom(?ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
         return null;
@@ -887,7 +895,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addRemoveFromList(&$script): void
+    protected function addRemoveFromList(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
@@ -895,7 +903,7 @@ public function moveToBottom(ConnectionInterface \$con = null)
  * Removes the current object from the list" . ($useScope ? ' (moves it to the null scope)' : '') . ".
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this|{$this->objectClassName} the current object
+ * @return    \$this the current object
  */
 public function removeFromList()
 {";
@@ -912,10 +920,10 @@ public function removeFromList()
         } else {
             $script .= "
     // Keep the list modification query for the save() transaction
-    \$this->sortableQueries[] = array(
-        'callable'  => array('{$this->queryFullClassName}', 'sortableShiftRank'),
-        'arguments' => array(-1, \$this->{$this->getColumnGetter()}() + 1, null" . ($useScope ? ', $this->getScopeValue()' : '') . ")
-    );
+    \$this->sortableQueries[] = [
+        'callable'  => ['{$this->queryFullClassName}', 'sortableShiftRank'],
+        'arguments' => [-1, \$this->{$this->getColumnGetter()}() + 1, null]
+    ];
     // remove the object from the list
     \$this->{$this->getColumnSetter('rank_column')}(null);
     ";
@@ -932,7 +940,7 @@ public function removeFromList()
      *
      * @return void
      */
-    protected function addProcessSortableQueries(&$script): void
+    protected function addProcessSortableQueries(string &$script): void
     {
         $script .= "
 /**
@@ -944,7 +952,7 @@ protected function processSortableQueries(\$con)
         \$arguments[] = \$con;
         \$callable(...\$arguments);
     }
-    \$this->sortableQueries = array();
+    \$this->sortableQueries = [];
 }
 ";
     }

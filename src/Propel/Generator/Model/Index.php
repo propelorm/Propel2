@@ -18,7 +18,7 @@ namespace Propel\Generator\Model;
 class Index extends MappingModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -54,7 +54,7 @@ class Index extends MappingModel
      *
      * @param string|null $name Name of the index
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         if ($name !== null) {
             $this->setName($name);
@@ -74,11 +74,11 @@ class Index extends MappingModel
     /**
      * Sets the index name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return void
      */
-    public function setName($name): void
+    public function setName(?string $name): void
     {
         $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
@@ -210,7 +210,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumn($name): bool
+    public function hasColumn(string $name): bool
     {
         return in_array($name, $this->columns);
     }
@@ -238,7 +238,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumnSize($name): bool
+    public function hasColumnSize(string $name): bool
     {
         return isset($this->columnsSize[$name]);
     }
@@ -251,7 +251,7 @@ class Index extends MappingModel
      *
      * @return int|null
      */
-    public function getColumnSize($name, $caseInsensitive = false): ?int
+    public function getColumnSize(string $name, bool $caseInsensitive = false): ?int
     {
         if ($caseInsensitive) {
             foreach ($this->columnsSize as $forName => $size) {
@@ -288,7 +288,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false): bool
+    public function hasColumnAtPosition(int $pos, string $name, ?int $size = null, bool $caseInsensitive = false): bool
     {
         if (!isset($this->columns[$pos])) {
             return false;
@@ -354,7 +354,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setColumnObjects($columnObjects): void
+    public function setColumnObjects(array $columnObjects): void
     {
         $this->columnObjects = $columnObjects;
     }

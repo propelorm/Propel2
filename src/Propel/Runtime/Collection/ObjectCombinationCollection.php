@@ -24,7 +24,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true): array
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
 
@@ -55,7 +55,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array
      */
-    public function getObjectsFromPosition($position = 1): array
+    public function getObjectsFromPosition(int $position = 1): array
     {
         $result = [];
         foreach ($this as $array) {

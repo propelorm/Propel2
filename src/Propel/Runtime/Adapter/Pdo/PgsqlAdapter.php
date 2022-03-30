@@ -39,7 +39,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2): string
+    public function concatString(string $s1, string $s2): string
     {
         return "($s1 || $s2)";
     }
@@ -61,7 +61,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len): string
+    public function subString(string $s, int $pos, int $len): string
     {
         return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
@@ -73,7 +73,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s): string
+    public function strLength(string $s): string
     {
         return "char_length($s)";
     }
@@ -98,7 +98,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null): int
+    public function getId(ConnectionInterface $con, ?string $name = null): int
     {
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
@@ -138,7 +138,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
@@ -190,7 +190,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null): string
+    public function random(?string $seed = null): string
     {
         return 'random()';
     }
@@ -202,7 +202,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table): string
+    public function quoteIdentifierTable(string $table): string
     {
         // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
         return '"' . strtr($table, ['.' => '"."', ' ' => '" "']) . '"';
@@ -244,7 +244,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getExplainPlanQuery($query): string
+    public function getExplainPlanQuery(string $query): string
     {
         return 'EXPLAIN ' . $query;
     }
@@ -257,7 +257,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLock(&$sql, Lock $lock): void
+    public function applyLock(string &$sql, Lock $lock): void
     {
         $type = $lock->getType();
 
