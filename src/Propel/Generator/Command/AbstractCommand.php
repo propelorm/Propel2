@@ -64,7 +64,7 @@ abstract class AbstractCommand extends Command
      *
      * @return \Propel\Generator\Config\GeneratorConfig
      */
-    protected function getGeneratorConfig(?array $properties = null, ?InputInterface $input = null)
+    protected function getGeneratorConfig(?array $properties = null, ?InputInterface $input = null): GeneratorConfig
     {
         if ($input === null) {
             return new GeneratorConfig(null, $properties);
@@ -89,7 +89,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array List of schema files
      */
-    protected function getSchemas($directory, $recursive = false)
+    protected function getSchemas($directory, $recursive = false): array
     {
         $finder = new Finder();
         $finder
@@ -108,7 +108,7 @@ abstract class AbstractCommand extends Command
      *
      * @return \Symfony\Component\Filesystem\Filesystem
      */
-    protected function getFilesystem()
+    protected function getFilesystem(): Filesystem
     {
         if ($this->filesystem === null) {
             $this->filesystem = new Filesystem();
@@ -124,7 +124,7 @@ abstract class AbstractCommand extends Command
      *
      * @return void
      */
-    protected function createDirectory($directory)
+    protected function createDirectory($directory): void
     {
         $filesystem = $this->getFilesystem();
 
@@ -142,7 +142,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array
      */
-    protected function parseConnection($connection)
+    protected function parseConnection($connection): array
     {
         $pos = strpos($connection, '=');
         $name = substr($connection, 0, $pos);
@@ -174,7 +174,7 @@ abstract class AbstractCommand extends Command
      *
      * @return array
      */
-    protected function connectionToProperties($connection, $section = null)
+    protected function connectionToProperties($connection, $section = null): array
     {
         [$name, $dsn, $infos] = $this->parseConnection($connection);
         $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
@@ -204,7 +204,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputOption($option, $input)
+    protected function hasInputOption($option, $input): bool
     {
         return $input->hasOption($option) && $input->getOption($option) !== null;
     }
@@ -217,7 +217,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputArgument($argument, $input)
+    protected function hasInputArgument($argument, $input): bool
     {
         return $input->hasArgument($argument) && $input->getArgument($argument) !== null;
     }

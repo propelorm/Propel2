@@ -39,7 +39,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    public function staticAttributes($builder)
+    public function staticAttributes($builder): string
     {
         $tableName = $this->table->getName();
         $col = '';
@@ -72,7 +72,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    protected function getColumnConstant($name)
+    protected function getColumnConstant($name): string
     {
         return $this->behavior->getColumnForParameter($name)->getName();
     }

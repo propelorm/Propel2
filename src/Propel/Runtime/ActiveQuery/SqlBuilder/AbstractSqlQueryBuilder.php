@@ -73,7 +73,7 @@ abstract class AbstractSqlQueryBuilder
      *
      * @return string
      */
-    public function quoteIdentifierTable(string $rawTableName)
+    public function quoteIdentifierTable(string $rawTableName): string
     {
         if ($this->criteria->isIdentifierQuotingEnabled()) {
             return $this->adapter->quoteIdentifierTable($rawTableName);
@@ -101,7 +101,7 @@ abstract class AbstractSqlQueryBuilder
      *
      * @return array
      */
-    public function buildParams($columnNames, ?Criteria $values = null)
+    public function buildParams($columnNames, ?Criteria $values = null): array
     {
         if (!$values) {
             $values = $this->criteria;

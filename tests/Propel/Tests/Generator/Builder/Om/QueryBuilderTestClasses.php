@@ -44,7 +44,7 @@ class MySecondBookQuery extends BookQuery
     /**
      * @return void
      */
-    public function preSelect(ConnectionInterface $con)
+    public function preSelect(ConnectionInterface $con): void
     {
         self::$preSelectWasCalled = true;
     }

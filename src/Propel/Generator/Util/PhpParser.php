@@ -65,7 +65,7 @@ class PhpParser
      *
      * @return string PHP code
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->isAddPhp ? $this->removePhp($this->code) : $this->code;
     }
@@ -75,7 +75,7 @@ class PhpParser
      *
      * @return string
      */
-    protected function addPhp($code)
+    protected function addPhp($code): string
     {
         return '<?php ' . $code;
     }
@@ -85,7 +85,7 @@ class PhpParser
      *
      * @return string
      */
-    protected function removePhp($code)
+    protected function removePhp($code): string
     {
         return substr($code, 6);
     }

@@ -39,7 +39,7 @@ interface AdapterInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($params);
+    public function getConnection($params): ConnectionInterface;
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -54,7 +54,7 @@ interface AdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset);
+    public function setCharset(ConnectionInterface $con, $charset): void;
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -66,7 +66,7 @@ interface AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in);
+    public function ignoreCaseInOrderBy($in): string;
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -75,7 +75,7 @@ interface AdapterInterface
      *
      * @return string The text delimiter.
      */
-    public function getStringDelimiter();
+    public function getStringDelimiter(): string;
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -85,7 +85,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2);
+    public function concatString($s1, $s2): string;
 
     /**
      * Returns SQL which extracts a substring.
@@ -96,7 +96,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len);
+    public function subString($s, $pos, $len): string;
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
@@ -105,7 +105,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function strLength($s);
+    public function strLength($s): string;
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
@@ -114,7 +114,7 @@ interface AdapterInterface
      *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text);
+    public function quoteIdentifier($text): string;
 
     /**
      * Quotes a database table which could have space separating it from an alias,
@@ -126,7 +126,7 @@ interface AdapterInterface
      *
      * @return string The quoted table name
      */
-    public function quoteIdentifierTable($table);
+    public function quoteIdentifierTable($table): string;
 
     /**
      * Quotes full qualified column names and table names.
@@ -138,21 +138,21 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function quote($text);
+    public function quote($text): string;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return bool
      */
-    public function isGetIdBeforeInsert();
+    public function isGetIdBeforeInsert(): bool;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return bool
      */
-    public function isGetIdAfterInsert();
+    public function isGetIdAfterInsert(): bool;
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
@@ -172,33 +172,33 @@ interface AdapterInterface
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, ColumnMap $cMap): string;
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimestampFormatter();
+    public function getTimestampFormatter(): string;
 
     /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
      */
-    public function getDateFormatter();
+    public function getDateFormatter(): string;
 
     /**
      * Returns time formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimeFormatter();
+    public function getTimeFormatter(): string;
 
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria);
+    public function getGroupBy(Criteria $criteria): string;
 }

@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Formatter;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
 
@@ -70,7 +71,7 @@ class ObjectFormatter extends AbstractFormatter
     /**
      * @return string|null
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): ?string
     {
         return $this->getTableMap()->getCollectionClassName();
     }
@@ -82,7 +83,7 @@ class ObjectFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null
      */
-    public function formatOne(?DataFetcherInterface $dataFetcher = null)
+    public function formatOne(?DataFetcherInterface $dataFetcher = null): ?ActiveRecordInterface
     {
         $this->checkInit();
         $result = null;
@@ -107,7 +108,7 @@ class ObjectFormatter extends AbstractFormatter
     /**
      * @return bool
      */
-    public function isObjectFormatter()
+    public function isObjectFormatter(): bool
     {
         return true;
     }
@@ -122,7 +123,7 @@ class ObjectFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row)
+    public function getAllObjectsFromRow($row): ActiveRecordInterface
     {
         // main object
         [$obj, $col] = $this->getTableMap()->populateObject($row, 0, $this->getDataFetcher()->getIndexType());

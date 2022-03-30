@@ -33,10 +33,18 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
 
     /**
      * @param string $name The datasource name associated to this connection
+     */
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $name The datasource name associated to this connection
      *
      * @return void
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -44,7 +52,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     /**
      * @return string The datasource name associated to this connection
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -52,7 +60,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     /**
      * @return array
      */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }
@@ -62,7 +70,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function setConnection(ConnectionInterface $connection): void
     {
         $this->setConfiguration(null);
         $this->connection = $connection;
@@ -73,7 +81,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return void
      */
-    public function setConfiguration($configuration)
+    public function setConfiguration($configuration): void
     {
         $this->configuration = (array)$configuration;
         $this->closeConnections();
@@ -86,7 +94,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(?AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
         if ($this->connection === null) {
             if ($adapter === null) {
@@ -105,7 +113,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(?AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
         return $this->getWriteConnection($adapter);
     }
@@ -113,7 +121,7 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     /**
      * @return void
      */
-    public function closeConnections()
+    public function closeConnections(): void
     {
         $this->connection = null;
     }

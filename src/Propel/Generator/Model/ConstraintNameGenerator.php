@@ -43,7 +43,7 @@ class ConstraintNameGenerator implements NameGeneratorInterface
      *
      * @return string
      */
-    public function generateName($inputs)
+    public function generateName(array $inputs): string
     {
         $db = $inputs[0];
         $name = $inputs[1];

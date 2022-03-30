@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Connection;
 
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Util\Profiler;
 
@@ -40,7 +41,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * @return void
      */
-    public function setProfiler(Profiler $profiler)
+    public function setProfiler(Profiler $profiler): void
     {
         $this->profiler = $profiler;
     }
@@ -48,7 +49,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @return \Propel\Runtime\Util\Profiler
      */
-    public function getProfiler()
+    public function getProfiler(): Profiler
     {
         if ($this->profiler === null) {
             $this->profiler = Propel::getServiceContainer()->getProfiler();
@@ -65,7 +66,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
      *
      * @return bool
      */
-    public function setAttribute($attribute, $value)
+    public function setAttribute($attribute, $value): bool
     {
         switch ($attribute) {
             case 'isSlowOnly':
@@ -92,7 +93,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    public function exec($statement)
+    public function exec($statement): int
     {
         $this->getProfiler()->start();
 
@@ -102,7 +103,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    public function query($statement = '', ...$args)
+    public function query($statement = '', ...$args): DataFetcherInterface
     {
         $this->getProfiler()->start();
 
@@ -112,7 +113,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    protected function createStatementWrapper($sql)
+    protected function createStatementWrapper($sql): StatementWrapper
     {
         return new ProfilerStatementWrapper($sql, $this);
     }
@@ -120,7 +121,7 @@ class ProfilerConnectionWrapper extends ConnectionWrapper
     /**
      * @inheritDoc
      */
-    public function log($msg)
+    public function log($msg): void
     {
         if ($this->isSlowOnly && !$this->getProfiler()->isSlow()) {
             return;

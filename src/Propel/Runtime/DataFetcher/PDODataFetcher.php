@@ -51,7 +51,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return int
      */
-    public function setStyle($style)
+    public function setStyle($style): int
     {
         $old_style = $this->style;
         $this->style = $style;
@@ -64,7 +64,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return int
      */
-    public function getStyle()
+    public function getStyle(): int
     {
         return $this->style;
     }
@@ -72,9 +72,9 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @param int|null $style
      *
-     * @return array|null
+     * @return array|bool|null
      */
-    public function fetch($style = null)
+    public function fetch(?int $style = null)
     {
         if ($style === null) {
             $style = $this->style;
@@ -161,7 +161,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function close()
+    public function close(): void
     {
         $this->getDataObject()->closeCursor();
         $this->setDataObject(null); //so the connection can be garbage collected
@@ -197,7 +197,7 @@ class PDODataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return TableMap::TYPE_NUM;
     }
@@ -215,7 +215,7 @@ class PDODataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): void
     {
         if ($this->dataObject) {
             $this->dataObject->bindColumn($column, $param, $type, $maxlen, $driverdata);

@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Util\Profiler;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -109,7 +110,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @return string
      */
-    public function getDefaultDatasource()
+    public function getDefaultDatasource(): string
     {
         return $this->defaultDatasource;
     }
@@ -119,7 +120,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setDefaultDatasource($defaultDatasource)
+    public function setDefaultDatasource($defaultDatasource): void
     {
         $this->defaultDatasource = $defaultDatasource;
     }
@@ -131,7 +132,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return string
      */
-    public function getAdapterClass($name = null)
+    public function getAdapterClass($name = null): string
     {
         if ($name === null) {
             $name = $this->getDefaultDatasource();
@@ -150,7 +151,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setAdapterClass($name, $adapterClass)
+    public function setAdapterClass($name, $adapterClass): void
     {
         $this->adapterClasses[$name] = $adapterClass;
         unset($this->adapters[$name]);
@@ -163,7 +164,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setAdapterClasses($adapterClasses)
+    public function setAdapterClasses($adapterClasses): void
     {
         $this->adapterClasses = $adapterClasses;
         $this->adapters = [];
@@ -180,7 +181,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public function getAdapter($name = null)
+    public function getAdapter($name = null): AdapterInterface
     {
         if ($name === null) {
             $name = $this->getDefaultDatasource();
@@ -203,7 +204,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setAdapter($name, AdapterInterface $adapter)
+    public function setAdapter($name, AdapterInterface $adapter): void
     {
         $this->adapters[$name] = $adapter;
         $this->adapterClasses[$name] = get_class($adapter);
@@ -216,7 +217,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setAdapters($adapters)
+    public function setAdapters($adapters): void
     {
         $this->adapterClasses = [];
         $this->adapters = [];
@@ -234,7 +235,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function checkVersion($generatorVersion)
+    public function checkVersion($generatorVersion): void
     {
         if ($generatorVersion === static::CONFIGURATION_VERSION) {
             return;
@@ -272,7 +273,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setDatabaseMapClass($databaseMapClass)
+    public function setDatabaseMapClass($databaseMapClass): void
     {
         $this->databaseMapClass = $databaseMapClass;
     }
@@ -288,7 +289,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public function getDatabaseMap($name = null)
+    public function getDatabaseMap($name = null): DatabaseMap
     {
         if (!$name) {
             $name = $this->getDefaultDatasource();
@@ -316,26 +317,23 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setDatabaseMap($name, DatabaseMap $databaseMap)
+    public function setDatabaseMap($name, DatabaseMap $databaseMap): void
     {
         $this->databaseMaps[$name] = $databaseMap;
     }
 
     /**
-     * @param string $name The datasource name
      * @param \Propel\Runtime\Connection\ConnectionManagerInterface $manager
      *
      * @return void
      */
-    public function setConnectionManager($name, ConnectionManagerInterface $manager)
+    public function setConnectionManager(ConnectionManagerInterface $manager): void
     {
-        if (isset($this->connectionManagers[$name])) {
-            $this->connectionManagers[$name]->closeConnections();
+        if (isset($this->connectionManagers[$manager->getName()])) {
+            $this->connectionManagers[$manager->getName()]->closeConnections();
         }
-        if (!$manager->getName()) {
-            $manager->setName($name);
-        }
-        $this->connectionManagers[$name] = $manager;
+
+        $this->connectionManagers[$manager->getName()] = $manager;
     }
 
     /**
@@ -345,7 +343,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public function getConnectionManager($name)
+    public function getConnectionManager($name): ConnectionManagerInterface
     {
         if (!isset($this->connectionManagers[$name])) {
             throw new RuntimeException(sprintf('No connection defined for database "%s". Did you forget to define a connection or is it wrong written?', $name));
@@ -359,7 +357,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return bool true if a connectionManager with $name has been registered
      */
-    public function hasConnectionManager($name)
+    public function hasConnectionManager($name): bool
     {
         return isset($this->connectionManagers[$name]);
     }
@@ -367,7 +365,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @return array<\Propel\Runtime\Connection\ConnectionManagerInterface>
      */
-    public function getConnectionManagers()
+    public function getConnectionManagers(): array
     {
         return $this->connectionManagers;
     }
@@ -380,7 +378,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function closeConnections()
+    public function closeConnections(): void
     {
         foreach ($this->connectionManagers as $manager) {
             $manager->closeConnections();
@@ -398,7 +396,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    public function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE): ConnectionInterface
     {
         if ($name === null) {
             $name = $this->getDefaultDatasource();
@@ -422,7 +420,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getWriteConnection($name)
+    public function getWriteConnection($name): ConnectionInterface
     {
         return $this->getConnectionManager($name)->getWriteConnection($this->getAdapter($name));
     }
@@ -439,7 +437,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getReadConnection($name)
+    public function getReadConnection($name): ConnectionInterface
     {
         return $this->getConnectionManager($name)->getReadConnection($this->getAdapter($name));
     }
@@ -452,11 +450,11 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setConnection($name, ConnectionInterface $connection)
+    public function setConnection(string $name, ConnectionInterface $connection): void
     {
-        $manager = new ConnectionManagerSingle();
+        $manager = new ConnectionManagerSingle($name);
         $manager->setConnection($connection);
-        $this->setConnectionManager($name, $manager);
+        $this->setConnectionManager($manager);
     }
 
     /**
@@ -471,7 +469,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setProfilerClass($profilerClass)
+    public function setProfilerClass($profilerClass): void
     {
         $this->profilerClass = $profilerClass;
         $this->profiler = null;
@@ -486,7 +484,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setProfilerConfiguration($profilerConfiguration)
+    public function setProfilerConfiguration($profilerConfiguration): void
     {
         $this->profilerConfiguration = $profilerConfiguration;
         $this->profiler = null;
@@ -499,7 +497,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setProfiler($profiler)
+    public function setProfiler($profiler): void
     {
         $this->profiler = $profiler;
     }
@@ -511,7 +509,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Propel\Runtime\Util\Profiler
      */
-    public function getProfiler()
+    public function getProfiler(): Profiler
     {
         if ($this->profiler === null) {
             $class = $this->profilerClass;
@@ -529,12 +527,16 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Get a logger instance
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger($name = 'defaultLogger')
+    public function getLogger(?string $name = null): LoggerInterface
     {
+        if ($name === null) {
+            $name = 'defaultLogger';
+        }
+
         if (!isset($this->loggers[$name])) {
             $this->loggers[$name] = $this->buildLogger($name);
         }
@@ -548,7 +550,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setLogger($name, LoggerInterface $logger)
+    public function setLogger($name, LoggerInterface $logger): void
     {
         $this->loggers[$name] = $logger;
     }
@@ -560,7 +562,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return \Psr\Log\LoggerInterface
      */
-    protected function buildLogger($name = 'defaultLogger')
+    protected function buildLogger(string $name = 'defaultLogger'): LoggerInterface
     {
         if (!isset($this->loggerConfigurations[$name])) {
             return $name !== 'defaultLogger' ? $this->getLogger() : new NullLogger();
@@ -572,7 +574,7 @@ class StandardServiceContainer implements ServiceContainerInterface
             case 'stream':
                 $handler = new StreamHandler(
                     $configuration['path'],
-                    $configuration['level'] ?? null,
+                    $configuration['level'] ?? 500,
                     $configuration['bubble'] ?? true,
                 );
 
@@ -597,7 +599,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                 break;
             default:
                 throw new UnexpectedValueException(sprintf(
-                    'Handler type "%s" not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
+                    'Handler type `%s` not supported by StandardServiceContainer. Try setting the Logger manually, or use another ServiceContainer.',
                     $configuration['type'],
                 ));
         }
@@ -626,7 +628,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setLoggerConfiguration($name, $loggerConfiguration)
+    public function setLoggerConfiguration($name, $loggerConfiguration): void
     {
         $this->loggerConfigurations[$name] = $loggerConfiguration;
     }

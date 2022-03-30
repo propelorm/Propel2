@@ -34,7 +34,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         parent::initialize();
 
@@ -61,7 +61,7 @@ class MssqlPlatform extends DefaultPlatform
     /**
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 128;
     }
@@ -71,7 +71,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getNullString($notNull)
+    public function getNullString(bool $notNull): string
     {
         return $notNull ? 'NOT NULL' : 'NULL';
     }
@@ -79,7 +79,7 @@ class MssqlPlatform extends DefaultPlatform
     /**
      * @return bool
      */
-    public function supportsNativeDeleteTrigger()
+    public function supportsNativeDeleteTrigger(): bool
     {
         return true;
     }
@@ -87,7 +87,7 @@ class MssqlPlatform extends DefaultPlatform
     /**
      * @return bool
      */
-    public function supportsInsertNullPk()
+    public function supportsInsertNullPk(): bool
     {
         return false;
     }
@@ -102,7 +102,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddTablesDDL(Database $database): string
     {
         $ret = $this->getBeginDDL();
         foreach ($database->getTablesForSql() as $table) {
@@ -127,7 +127,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getDropTableDDL(Table $table)
+    public function getDropTableDDL(Table $table): string
     {
         $ret = '';
         foreach ($table->getForeignKeys() as $fk) {
@@ -174,7 +174,7 @@ END
      *
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Table $table): string
     {
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
@@ -194,7 +194,7 @@ END
      *
      * @return string
      */
-    public function getAddForeignKeyDDL(ForeignKey $fk)
+    public function getAddForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return '';
@@ -221,7 +221,7 @@ END
      *
      * @return string
      */
-    public function getUniqueDDL(Unique $unique)
+    public function getUniqueDDL(Unique $unique): string
     {
         $pattern = 'CONSTRAINT %s UNIQUE NONCLUSTERED (%s) ON [PRIMARY]';
 
@@ -237,7 +237,7 @@ END
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return '';
@@ -266,7 +266,7 @@ END
      *
      * @return bool
      */
-    public function supportsSchemas()
+    public function supportsSchemas(): bool
     {
         return true;
     }
@@ -276,7 +276,7 @@ END
      *
      * @return bool
      */
-    public function hasSize($sqlType)
+    public function hasSize(string $sqlType): bool
     {
         $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
 
@@ -286,7 +286,7 @@ END
     /**
      * @inheritDoc
      */
-    public function doQuoting($text)
+    public function doQuoting(string $text): string
     {
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
@@ -294,7 +294,7 @@ END
     /**
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s';
     }

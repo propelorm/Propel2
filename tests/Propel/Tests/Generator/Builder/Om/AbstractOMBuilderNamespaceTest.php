@@ -209,41 +209,42 @@ class AbstractOMBuilderNamespaceTest extends TestCase
 
 class TestableOMBuilder2 extends AbstractOMBuilder
 {
-    public static function getRelatedBySuffix(ForeignKey $fk)
+    public static function getRelatedBySuffix(ForeignKey $fk): string
     {
         return parent::getRelatedBySuffix($fk);
     }
 
-    public static function getRefRelatedBySuffix(ForeignKey $fk)
+    public static function getRefRelatedBySuffix(ForeignKey $fk): string
     {
         return parent::getRefRelatedBySuffix($fk);
     }
 
     /**
+     * @return string
+     */
+    public function getUnprefixedClassName(): string
+    {
+        return '';
+    }
+
+    /**
      * @return void
      */
-    public function getUnprefixedClassName()
+    protected function addClassOpen(&$script): void
     {
     }
 
     /**
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassBody(&$script): void
     {
     }
 
     /**
      * @return void
      */
-    protected function addClassBody(&$script)
-    {
-    }
-
-    /**
-     * @return void
-     */
-    protected function addClassClose(&$script)
+    protected function addClassClose(&$script): void
     {
     }
 }

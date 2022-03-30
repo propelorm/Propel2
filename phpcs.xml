@@ -16,6 +16,11 @@
 
     <rule ref="Spryker"/>
 
+    <rule ref="vendor/spryker/code-sniffer/SprykerStrict/ruleset.xml">
+        <exclude name="SprykerStrict.TypeHints.ParameterTypeHint"/>
+        <exclude name="SprykerStrict.TypeHints.PropertyTypeHint"/>
+    </rule>
+
     <!-- exclude for now -->
     <rule ref="Spryker.ControlStructures.NoInlineAssignment">
         <severity>0</severity>

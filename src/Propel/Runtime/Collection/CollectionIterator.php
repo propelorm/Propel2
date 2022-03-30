@@ -43,7 +43,7 @@ class CollectionIterator extends ArrayIterator
      *
      * @return \Propel\Runtime\Collection\Collection
      */
-    public function getCollection()
+    public function getCollection(): Collection
     {
         return $this->collection;
     }

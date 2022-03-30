@@ -10,7 +10,9 @@ namespace Propel\Generator\Behavior\Archivable;
 
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
+use Propel\Generator\Model\Table;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -22,7 +24,7 @@ class ArchivableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'archive_table' => '',
@@ -53,7 +55,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getDatabase()->getTables() as $table) {
             if ($table->hasBehavior($this->getId())) {
@@ -74,7 +76,7 @@ class ArchivableBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         if ($this->getParameter('archive_class') && $this->getParameter('archive_table')) {
             throw new InvalidArgumentException('Please set only one of the two parameters "archive_class" and "archive_table".');
@@ -87,7 +89,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return void
      */
-    protected function addArchiveTable()
+    protected function addArchiveTable(): void
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
@@ -154,7 +156,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Table|null
      */
-    public function getArchiveTable()
+    public function getArchiveTable(): ?Table
     {
         return $this->archiveTable;
     }
@@ -164,7 +166,7 @@ class ArchivableBehavior extends Behavior
      *
      * @return string
      */
-    public function getArchiveTablePhpName($builder)
+    public function getArchiveTablePhpName($builder): string
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class');
@@ -178,7 +180,7 @@ class ArchivableBehavior extends Behavior
      *
      * @return string
      */
-    public function getArchiveTableQueryName($builder)
+    public function getArchiveTableQueryName($builder): string
     {
         if ($this->hasArchiveClass()) {
             return $this->getParameter('archive_class') . 'Query';
@@ -190,7 +192,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function hasArchiveClass()
+    public function hasArchiveClass(): bool
     {
         return $this->getParameter('archive_class') ? true : false;
     }
@@ -198,7 +200,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getArchivedAtColumn()
+    public function getArchivedAtColumn(): ?Column
     {
         if ($this->getArchiveTable() && $this->getParameter('log_archived_at') === 'true') {
             return $this->getArchiveTable()->getColumn($this->getParameter('archived_at_column'));
@@ -210,7 +212,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function isArchiveOnInsert()
+    public function isArchiveOnInsert(): bool
     {
         return $this->getParameter('archive_on_insert') === 'true';
     }
@@ -218,7 +220,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function isArchiveOnUpdate()
+    public function isArchiveOnUpdate(): bool
     {
         return $this->getParameter('archive_on_update') === 'true';
     }
@@ -226,7 +228,7 @@ class ArchivableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function isArchiveOnDelete()
+    public function isArchiveOnDelete(): bool
     {
         return $this->getParameter('archive_on_delete') === 'true';
     }

@@ -22,7 +22,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @return bool
      */
-    public function isForceMasterConnection()
+    public function isForceMasterConnection(): bool
     {
         return $this->isForcePrimaryConnection();
     }
@@ -36,7 +36,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @return void
      */
-    public function setForceMasterConnection($isForceMasterConnection)
+    public function setForceMasterConnection($isForceMasterConnection): void
     {
         $this->setForcePrimaryConnection($isForceMasterConnection);
     }

@@ -128,7 +128,7 @@ class PropelConditionalProxy
      *
      * @return bool
      */
-    protected function getConditionalState()
+    protected function getConditionalState(): bool
     {
         return $this->state && $this->parentState;
     }
@@ -149,7 +149,7 @@ class PropelConditionalProxy
     /**
      * @return self|null
      */
-    public function getParentProxy()
+    public function getParentProxy(): ?self
     {
         return $this->parent;
     }

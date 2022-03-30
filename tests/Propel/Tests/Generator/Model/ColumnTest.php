@@ -32,7 +32,7 @@ class ColumnTest extends ModelTestCase
         $this->assertSame('COL_TITLE', $column->getConstantName());
         $this->assertSame('public', $column->getMutatorVisibility());
         $this->assertSame('public', $column->getAccessorVisibility());
-        $this->assertFalse($column->getSize());
+        $this->assertNull($column->getSize());
         $this->assertFalse($column->hasPlatform());
         $this->assertFalse($column->hasReferrers());
         $this->assertFalse($column->isAutoIncrement());
@@ -233,7 +233,7 @@ class ColumnTest extends ModelTestCase
         $defaultValue
             ->expects($this->any())
             ->method('getValue')
-            ->will($this->returnValue($value));
+            ->will($this->returnValue((string)$value));
 
         $domain = $this->getDomainMock();
         $domain

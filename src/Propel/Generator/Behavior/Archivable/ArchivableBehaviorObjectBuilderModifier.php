@@ -54,7 +54,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function objectAttributes($builder)
+    public function objectAttributes($builder): string
     {
         $script = '';
         if ($this->behavior->isArchiveOnInsert()) {
@@ -78,7 +78,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string|null the PHP code to be added to the builder
      */
-    public function postInsert($builder)
+    public function postInsert($builder): ?string
     {
         if ($this->behavior->isArchiveOnInsert()) {
             return "if (\$this->archiveOnInsert) {
@@ -96,7 +96,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string|null the PHP code to be added to the builder
      */
-    public function postUpdate($builder)
+    public function postUpdate($builder): ?string
     {
         if ($this->behavior->isArchiveOnUpdate()) {
             return "if (\$this->archiveOnUpdate) {
@@ -120,7 +120,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string|null the PHP code to be added to the builder
      */
-    public function preDelete($builder)
+    public function preDelete($builder): ?string
     {
         if ($this->behavior->isArchiveOnDelete()) {
             return $this->behavior->renderTemplate('objectPreDelete', [
@@ -137,7 +137,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function objectMethods($builder)
+    public function objectMethods($builder): string
     {
         $this->builder = $builder;
         $script = '';
@@ -160,7 +160,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addGetArchive($builder)
+    public function addGetArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectGetArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
@@ -173,7 +173,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addArchive($builder)
+    public function addArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
@@ -188,7 +188,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addRestoreFromArchive($builder)
+    public function addRestoreFromArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectRestoreFromArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),
@@ -204,7 +204,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addPopulateFromArchive($builder)
+    public function addPopulateFromArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectPopulateFromArchive', [
             'archiveTablePhpName' => $this->behavior->getArchiveTablePhpName($builder),
@@ -219,7 +219,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addSaveWithoutArchive($builder)
+    public function addSaveWithoutArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectSaveWithoutArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),
@@ -233,7 +233,7 @@ class ArchivableBehaviorObjectBuilderModifier
      *
      * @return string the PHP code to be added to the builder
      */
-    public function addDeleteWithoutArchive($builder)
+    public function addDeleteWithoutArchive($builder): string
     {
         return $this->behavior->renderTemplate('objectDeleteWithoutArchive', [
             'objectClassName' => $this->builder->getObjectClassName(),

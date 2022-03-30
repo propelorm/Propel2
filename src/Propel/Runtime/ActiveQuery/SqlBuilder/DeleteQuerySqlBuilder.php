@@ -55,7 +55,8 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
     protected function buildDeleteFromClause(string $tableName): string
     {
         $sql = ['DELETE'];
-        if ($queryComment = $this->criteria->getComment()) {
+        $queryComment = $this->criteria->getComment();
+        if ($queryComment) {
             $sql[] = '/* ' . $queryComment . ' */';
         }
 

@@ -13,7 +13,12 @@ use Propel\Tests\Bookstore\Author;
 
 class TestAuthor extends Author
 {
-    public function preInsert(?ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return bool
+     */
+    public function preInsert(?ConnectionInterface $con = null): bool
     {
         parent::preInsert($con);
         $this->setFirstName('PreInsertedFirstname');
@@ -22,15 +27,22 @@ class TestAuthor extends Author
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
      * @return void
      */
-    public function postInsert(?ConnectionInterface $con = null)
+    public function postInsert(?ConnectionInterface $con = null): void
     {
         parent::postInsert($con);
         $this->setLastName('PostInsertedLastName');
     }
 
-    public function preUpdate(?ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return bool
+     */
+    public function preUpdate(?ConnectionInterface $con = null): bool
     {
         parent::preUpdate($con);
         $this->setFirstName('PreUpdatedFirstname');
@@ -39,15 +51,22 @@ class TestAuthor extends Author
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
      * @return void
      */
-    public function postUpdate(?ConnectionInterface $con = null)
+    public function postUpdate(?ConnectionInterface $con = null): void
     {
         parent::postUpdate($con);
         $this->setLastName('PostUpdatedLastName');
     }
 
-    public function preSave(?ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return bool
+     */
+    public function preSave(?ConnectionInterface $con = null): bool
     {
         parent::preSave($con);
         $this->setEmail('pre@save.com');
@@ -56,15 +75,22 @@ class TestAuthor extends Author
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
      * @return void
      */
-    public function postSave(?ConnectionInterface $con = null)
+    public function postSave(?ConnectionInterface $con = null): void
     {
         parent::postSave($con);
         $this->setAge(115);
     }
 
-    public function preDelete(?ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return int|null
+     */
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         parent::preDelete($con);
         $this->setFirstName('Pre-Deleted');
@@ -73,9 +99,11 @@ class TestAuthor extends Author
     }
 
     /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
      * @return void
      */
-    public function postDelete(?ConnectionInterface $con = null)
+    public function postDelete(?ConnectionInterface $con = null): void
     {
         parent::postDelete($con);
         $this->setLastName('Post-Deleted');

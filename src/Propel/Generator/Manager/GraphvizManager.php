@@ -20,7 +20,7 @@ class GraphvizManager extends AbstractManager
     /**
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         foreach ($this->getDatabases() as $database) {
             $dotSyntax = "digraph G {\n";
@@ -80,7 +80,7 @@ class GraphvizManager extends AbstractManager
      *
      * @return void
      */
-    protected function writeDot($dotSyntax, $baseFilename)
+    protected function writeDot($dotSyntax, $baseFilename): void
     {
         $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $baseFilename . '.schema.dot';
 

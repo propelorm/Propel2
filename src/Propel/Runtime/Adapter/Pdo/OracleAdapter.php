@@ -42,7 +42,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function initConnection(ConnectionInterface $con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings): void
     {
         $con->exec("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD'");
         $con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
@@ -63,7 +63,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString($s1, $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
@@ -71,7 +71,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @inheritDoc
      */
-    public function compareRegex($left, $right)
+    public function compareRegex($left, $right): string
     {
         return sprintf('REGEXP_LIKE(%s, %s)', $left, $right);
     }
@@ -85,7 +85,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString($s, $pos, $len): string
     {
         return "SUBSTR($s, $pos, $len)";
     }
@@ -97,7 +97,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s)
+    public function strLength($s): string
     {
         return "LENGTH($s)";
     }
@@ -112,7 +112,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
+    public function applyLimit(&$sql, $offset, $limit, $criteria = null): void
     {
         $params = [];
         if ($criteria && $criteria->needsSelectAliases()) {
@@ -137,7 +137,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @return int
      */
-    protected function getIdMethod()
+    protected function getIdMethod(): int
     {
         return AdapterInterface::ID_METHOD_SEQUENCE;
     }
@@ -150,7 +150,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null)
+    public function getId(ConnectionInterface $con, $name = null): int
     {
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
@@ -166,7 +166,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null)
+    public function random($seed = null): string
     {
         return 'dbms_random.value';
     }
@@ -181,7 +181,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria)
+    public function turnSelectColumnsToAliases(Criteria $criteria): Criteria
     {
         $selectColumns = $criteria->getSelectColumns();
         // clearSelectColumns also clears the aliases, so get them too
@@ -222,7 +222,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, $parameter, $value, ColumnMap $cMap, $position = null): bool
     {
         if ($cMap->getType() === PropelTypes::CLOB_EMU) {
             return $stmt->bindParam(':p' . $position, $value, $cMap->getPdoType(), strlen($value));
@@ -246,7 +246,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return array
      */
-    protected function prepareParams($params)
+    protected function prepareParams($params): array
     {
         if (isset($params['dsn'])) {
             $params['dsn'] = str_replace('oracle:', 'oci:', $params['dsn']);

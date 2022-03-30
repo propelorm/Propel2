@@ -79,7 +79,7 @@ class ObjectBuilderTest extends TestCase
 
 class TestableObjectBuilder extends ObjectBuilder
 {
-    public function getDefaultValueString(Column $col)
+    public function getDefaultValueString(Column $col): string
     {
         return parent::getDefaultValueString($col);
     }

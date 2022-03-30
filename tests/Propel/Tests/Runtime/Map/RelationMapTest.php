@@ -87,8 +87,8 @@ class RelationMapTest extends TestCase
             $getter = 'get' . ucfirst($property);
             $setter = 'set' . ucfirst($property);
             $this->assertNull($this->rmap->$getter(), "A new relation has no $property");
-            $this->rmap->$setter('foo_value');
-            $this->assertEquals('foo_value', $this->rmap->$getter(), "The $property is set by setType()");
+            $this->rmap->$setter(RelationMap::MANY_TO_MANY);
+            $this->assertEquals(RelationMap::MANY_TO_MANY, $this->rmap->$getter(), "The $property is set by setType()");
         }
     }
 

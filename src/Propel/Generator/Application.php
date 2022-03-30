@@ -20,7 +20,7 @@ class Application extends SymfonyApplication
      *
      * @return int
      */
-    public function doRun(InputInterface $input, OutputInterface $output)
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         if (extension_loaded('xdebug')) {
             $output->writeln(

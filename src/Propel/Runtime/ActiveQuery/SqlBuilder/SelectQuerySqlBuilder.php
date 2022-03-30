@@ -204,7 +204,9 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     {
         $joinTables = [];
         foreach ($this->criteria->getJoins() as $join) {
-            $joinTables[] = $join->getRightTableWithAlias();
+            /** @var string $table */
+            $table = $join->getRightTableWithAlias();
+            $joinTables[] = $table;
         }
 
         return $joinTables;

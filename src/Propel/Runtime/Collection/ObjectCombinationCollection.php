@@ -24,7 +24,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true)
+    public function getPrimaryKeys($usePrefix = true): array
     {
         $ret = [];
 
@@ -43,7 +43,7 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function push($value)
+    public function push($value): void
     {
         parent::push(func_get_args());
     }
@@ -55,7 +55,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array
      */
-    public function getObjectsFromPosition($position = 1)
+    public function getObjectsFromPosition($position = 1): array
     {
         $result = [];
         foreach ($this as $array) {
@@ -107,7 +107,7 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function removeObject($element)
+    public function removeObject($element): void
     {
         $pos = $this->search(...func_get_args());
         if ($pos !== false) {
@@ -118,7 +118,7 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function contains($element)
+    public function contains($element): bool
     {
         return $this->search(...func_get_args()) !== false;
     }

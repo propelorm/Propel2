@@ -14,6 +14,7 @@ use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\NameGeneratorInterface;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Util\PhpParser;
 
 /**
@@ -36,7 +37,7 @@ class DelegateBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array<string>
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'to' => '',
@@ -60,7 +61,7 @@ class DelegateBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
@@ -107,7 +108,7 @@ class DelegateBehavior extends Behavior
      *
      * @return void
      */
-    protected function relateDelegateToMainTable($delegateTable, $mainTable)
+    protected function relateDelegateToMainTable($delegateTable, $mainTable): void
     {
         $pks = $mainTable->getPrimaryKey();
         foreach ($pks as $column) {
@@ -136,7 +137,7 @@ class DelegateBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Table|null
      */
-    protected function getDelegateTable($delegateTableName)
+    protected function getDelegateTable($delegateTableName): ?Table
     {
         return $this->getTable()->getDatabase()->getTable($delegateTableName);
     }
@@ -146,7 +147,7 @@ class DelegateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectCall($builder)
+    public function objectCall($builder): string
     {
         $plural = false;
         $script = '';
@@ -185,7 +186,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
      *
      * @return void
      */
-    public function objectFilter(&$script)
+    public function objectFilter(&$script): void
     {
         $p = new PhpParser($script, true);
         $text = $p->findMethod('toArray');
@@ -221,7 +222,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
      *
      * @return bool
      */
-    protected function isColumnForeignKeyOrDuplicated(Column $column)
+    protected function isColumnForeignKeyOrDuplicated(Column $column): bool
     {
         $delegateTable = $column->getTable();
         $table = $this->getTable();
@@ -265,7 +266,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
     /**
      * @return string
      */
-    public function queryAttributes()
+    public function queryAttributes(): string
     {
         $script = '';
         $collations = '';
@@ -298,7 +299,7 @@ protected \$delegatedFields = [
      *
      * @return string
      */
-    public function queryMethods(QueryBuilder $builder)
+    public function queryMethods(QueryBuilder $builder): string
     {
         $script = '';
 

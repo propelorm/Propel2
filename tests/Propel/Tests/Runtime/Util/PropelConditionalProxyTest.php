@@ -82,7 +82,7 @@ class TestPropelConditionalProxy extends PropelConditionalProxy
         return new TestPropelConditionalProxy($this->criteria, $cond, $this);
     }
 
-    public function getParentProxy()
+    public function getParentProxy(): ?self
     {
         return $this->parent;
     }

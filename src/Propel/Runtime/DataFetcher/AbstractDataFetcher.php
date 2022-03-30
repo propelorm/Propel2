@@ -31,7 +31,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
      *
      * @return void
      */
-    public function setDataObject($dataObject)
+    public function setDataObject($dataObject): void
     {
         $this->dataObject = $dataObject;
     }

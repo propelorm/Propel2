@@ -32,8 +32,11 @@ class ConnectionFactory
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public static function create(array $configuration, AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
-    {
+    public static function create(
+        array $configuration,
+        AdapterInterface $adapter,
+        $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS
+    ): ConnectionInterface {
         if (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];
         } else {

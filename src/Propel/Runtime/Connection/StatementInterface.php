@@ -27,7 +27,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function execute($inputParameters = null);
+    public function execute($inputParameters = null): bool;
 
     /**
      * Fetches the next row from a result set.
@@ -51,7 +51,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = null, $driverOptions = null);
+    public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $length = null, $driverOptions = null): bool;
 
     /**
      * Bind a column to a PHP variable.
@@ -64,7 +64,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null);
+    public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null): bool;
 
     /**
      * Binds a value to a parameter
@@ -75,14 +75,14 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR);
+    public function bindValue($parameter, $value, $dataType = PDO::PARAM_STR): bool;
 
     /**
      * Returns the number of rows affected by the last SQL statement.
      *
      * @return int the number of rows.
      */
-    public function rowCount();
+    public function rowCount(): int;
 
     /**
      * Returns a single column from the next row of a result set.
@@ -91,7 +91,7 @@ interface StatementInterface
      *
      * @return string|null Returns a single column from the next row of a result set or FALSE if there are no more rows.
      */
-    public function fetchColumn($columnIndex = 0);
+    public function fetchColumn($columnIndex = 0): ?string;
 
     /**
      * Returns an array containing all of the result set rows.
@@ -102,7 +102,7 @@ interface StatementInterface
      *
      * @return array returns an array containing all of the remaining rows in the result set.
      */
-    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []);
+    public function fetchAll($fetchStyle = PDO::FETCH_BOTH, $fetchArgument = null, array $ctorArgs = []): array;
 
     /**
      * Fetches the next row and returns it as an object.
@@ -119,14 +119,14 @@ interface StatementInterface
      *
      * @return string
      */
-    public function errorCode();
+    public function errorCode(): string;
 
     /**
      * Fetch extended error information associated with the last operation on the statement handle.
      *
      * @return array returns an array of error information about the last operation performed by this statement handle.
      */
-    public function errorInfo();
+    public function errorInfo(): array;
 
     /**
      * Set a statement attribute.
@@ -136,7 +136,7 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value);
+    public function setAttribute($attribute, $value): bool;
 
     /**
      * Retrieve a statement attribute.
@@ -152,7 +152,7 @@ interface StatementInterface
      *
      * @return int the number of columns in the result set represented by the StatementInterface object.
      */
-    public function columnCount();
+    public function columnCount(): int;
 
     /**
      * Returns metadata for a column in a result set.
@@ -172,26 +172,26 @@ interface StatementInterface
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = []);
+    public function setFetchMode($mode, $classNameObject = null, array $ctorarfg = []): bool;
 
     /**
      * Advances to the next rowset in a multi-rowset statement handle.
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function nextRowset();
+    public function nextRowset(): bool;
 
     /**
      * Closes the cursor, enabling the statement to be executed again.
      *
      * @return bool TRUE on success or FALSE on failure.
      */
-    public function closeCursor();
+    public function closeCursor(): bool;
 
     /**
      * Dump an SQL prepared command.
      *
      * @return void No value is returned.
      */
-    public function debugDumpParams();
+    public function debugDumpParams(): void;
 }

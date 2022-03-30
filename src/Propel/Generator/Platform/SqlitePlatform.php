@@ -51,7 +51,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         parent::initialize();
 
@@ -78,7 +78,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getSchemaDelimiter()
+    public function getSchemaDelimiter(): string
     {
         return '§';
     }
@@ -86,7 +86,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * @return array<int>
      */
-    public function getDefaultTypeSizes()
+    public function getDefaultTypeSizes(): array
     {
         return [
             'char' => 1,
@@ -101,7 +101,7 @@ class SqlitePlatform extends DefaultPlatform
     /**
      * @inheritDoc
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         parent::setGeneratorConfig($generatorConfig);
 
@@ -120,7 +120,7 @@ class SqlitePlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns)
+    public function getAddColumnsDDL($columns): string
     {
         $ret = '';
         $pattern = "
@@ -141,7 +141,7 @@ ALTER TABLE %s ADD %s;
     /**
      * @inheritDoc
      */
-    public function getModifyTableDDL(TableDiff $tableDiff)
+    public function getModifyTableDDL(TableDiff $tableDiff): string
     {
         $changedNotEditableThroughDirectDDL = $this->tableAlteringWorkaround && (
             $tableDiff->hasModifiedFks()
@@ -161,18 +161,18 @@ ALTER TABLE %s ADD %s;
         if ($this->tableAlteringWorkaround && !$changedNotEditableThroughDirectDDL && $tableDiff->hasAddedColumns()) {
             $addedCols = $tableDiff->getAddedColumns();
             foreach ($addedCols as $column) {
-                $sqlChangeNotSupported = false
-
+                $sqlChangeNotSupported =
                     //The column may not have a PRIMARY KEY or UNIQUE constraint.
-                    || $column->isPrimaryKey()
+                    $column->isPrimaryKey()
                     || $column->isUnique()
 
                     //The column may not have a default value of CURRENT_TIME, CURRENT_DATE, CURRENT_TIMESTAMP,
                     //or an expression in parentheses.
-                    || array_search(
-                        $column->getDefaultValue(),
+                    || ($column->getDefaultValue() && in_array(
+                        $column->getDefaultValue()->getValue(),
                         ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'],
-                    ) !== false
+                        true,
+                    ))
                     || substr(trim($column->getDefaultValue() ? $column->getDefaultValue()->getValue() : ''), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
@@ -201,7 +201,7 @@ ALTER TABLE %s ADD %s;
      *
      * @return string
      */
-    public function getMigrationTableDDL(TableDiff $tableDiff)
+    public function getMigrationTableDDL(TableDiff $tableDiff): string
     {
         $pattern = "
 CREATE TEMPORARY TABLE %s AS SELECT %s FROM %s;
@@ -261,7 +261,7 @@ DROP TABLE %s;
     /**
      * @return string
      */
-    public function getBeginDDL()
+    public function getBeginDDL(): string
     {
         return '
 PRAGMA foreign_keys = OFF;
@@ -271,7 +271,7 @@ PRAGMA foreign_keys = OFF;
     /**
      * @return string
      */
-    public function getEndDDL()
+    public function getEndDDL(): string
     {
         return '
 PRAGMA foreign_keys = ON;
@@ -283,7 +283,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddTablesDDL(Database $database): string
     {
         $ret = '';
         foreach ($database->getTablesForSql() as $table) {
@@ -308,7 +308,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return void
      */
-    public function normalizeTable(Table $table)
+    public function normalizeTable(Table $table): void
     {
         if ($table->getPrimaryKey()) {
             //search if there is already a UNIQUE constraint over the primary keys
@@ -362,7 +362,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Table $table): string
     {
         if ($table->hasPrimaryKey() && !$table->hasAutoIncrementPrimaryKey()) {
             return 'PRIMARY KEY (' . $this->getColumnListDDL($table->getPrimaryKey()) . ')';
@@ -374,7 +374,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getRemoveColumnDDL(Column $column)
+    public function getRemoveColumnDDL(Column $column): string
     {
         //not supported
         return '';
@@ -383,7 +383,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn)
+    public function getRenameColumnDDL(Column $fromColumn, Column $toColumn): string
     {
         //not supported
         return '';
@@ -392,7 +392,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    public function getModifyColumnDDL(ColumnDiff $columnDiff): string
     {
         //not supported
         return '';
@@ -401,7 +401,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getModifyColumnsDDL($columnDiffs)
+    public function getModifyColumnsDDL($columnDiffs): string
     {
         //not supported
         return '';
@@ -410,7 +410,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getDropPrimaryKeyDDL(Table $table)
+    public function getDropPrimaryKeyDDL(Table $table): string
     {
         //not supported
         return '';
@@ -419,7 +419,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getAddPrimaryKeyDDL(Table $table)
+    public function getAddPrimaryKeyDDL(Table $table): string
     {
         //not supported
         return '';
@@ -428,7 +428,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getAddForeignKeyDDL(ForeignKey $fk)
+    public function getAddForeignKeyDDL(ForeignKey $fk): string
     {
         //not supported
         return '';
@@ -437,7 +437,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function getDropForeignKeyDDL(ForeignKey $fk)
+    public function getDropForeignKeyDDL(ForeignKey $fk): string
     {
         //not supported
         return '';
@@ -448,7 +448,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getAutoIncrement()
+    public function getAutoIncrement(): string
     {
         return 'PRIMARY KEY AUTOINCREMENT';
     }
@@ -456,7 +456,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 1024;
     }
@@ -466,7 +466,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getColumnDDL(Column $col)
+    public function getColumnDDL(Column $col): string
     {
         if ($col->isAutoIncrement()) {
             $col->setType('INTEGER');
@@ -493,7 +493,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getAddTableDDL(Table $table)
+    public function getAddTableDDL(Table $table): string
     {
         $table = clone $table;
         $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
@@ -546,7 +546,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || !$this->foreignKeySupport || $fk->isPolymorphic()) {
             return '';
@@ -578,7 +578,7 @@ PRAGMA foreign_keys = ON;
      *
      * @return bool
      */
-    public function hasSize($sqlType)
+    public function hasSize($sqlType): bool
     {
         return !in_array($sqlType, [
             'MEDIUMTEXT',
@@ -592,7 +592,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @inheritDoc
      */
-    public function doQuoting($text)
+    public function doQuoting(string $text): string
     {
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
@@ -600,7 +600,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @return bool
      */
-    public function supportsSchemas()
+    public function supportsSchemas(): bool
     {
         return true;
     }
@@ -608,7 +608,7 @@ PRAGMA foreign_keys = ON;
     /**
      * @return bool
      */
-    public function supportsNativeDeleteTrigger()
+    public function supportsNativeDeleteTrigger(): bool
     {
         return true;
     }

@@ -17,29 +17,29 @@ interface ConnectionManagerInterface
      *
      * @return void
      */
-    public function setName($name);
+    public function setName($name): void;
 
     /**
      * @return string The datasource name associated to this connection
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(?AdapterInterface $adapter = null);
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface;
 
     /**
      * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(?AdapterInterface $adapter = null);
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface;
 
     /**
      * @return void
      */
-    public function closeConnections();
+    public function closeConnections(): void;
 }

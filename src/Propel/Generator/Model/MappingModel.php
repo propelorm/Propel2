@@ -38,7 +38,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return void
      */
-    public function loadMapping(array $attributes)
+    public function loadMapping(array $attributes): void
     {
         $this->attributes = array_change_key_case($attributes, CASE_LOWER);
         $this->setupObject();
@@ -51,7 +51,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return void
      */
-    abstract protected function setupObject();
+    abstract protected function setupObject(): void;
 
     /**
      * Returns all definition attributes.
@@ -60,7 +60,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -87,7 +87,7 @@ abstract class MappingModel implements MappingModelInterface
     }
 
     /**
-     * Converts a value (Boolean, string or numeric) into a Boolean value.
+     * Converts a value (Boolean, string or numeric) into a boolean value.
      *
      * This is to support the default value when used with a boolean column.
      *
@@ -95,7 +95,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return bool
      */
-    protected function booleanValue($value)
+    protected function booleanValue($value): bool
     {
         if (is_bool($value)) {
             return $value;
@@ -117,7 +117,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return string|null
      */
-    protected function getDefaultValueForArray(string $stringValue)
+    protected function getDefaultValueForArray(string $stringValue): ?string
     {
         $stringValue = trim($stringValue);
 
@@ -145,7 +145,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return array|null
      */
-    protected function getDefaultValueForSet($stringValue)
+    protected function getDefaultValueForSet($stringValue): ?array
     {
         $stringValue = trim($stringValue);
 
@@ -168,7 +168,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return \Propel\Generator\Model\VendorInfo
      */
-    public function addVendorInfo($vendor)
+    public function addVendorInfo($vendor): VendorInfo
     {
         if ($vendor instanceof VendorInfo) {
             $this->vendorInfos[$vendor->getType()] = $vendor;
@@ -189,7 +189,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return \Propel\Generator\Model\VendorInfo
      */
-    public function getVendorInfoForType($type)
+    public function getVendorInfoForType($type): VendorInfo
     {
         if (isset($this->vendorInfos[$type])) {
             return $this->vendorInfos[$type];
@@ -203,7 +203,7 @@ abstract class MappingModel implements MappingModelInterface
      *
      * @return array<\Propel\Generator\Model\VendorInfo>
      */
-    public function getVendorInformation()
+    public function getVendorInformation(): array
     {
         return $this->vendorInfos;
     }

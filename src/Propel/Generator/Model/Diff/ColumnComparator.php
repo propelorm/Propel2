@@ -49,7 +49,7 @@ class ColumnComparator
      *
      * @return array
      */
-    public static function compareColumns(Column $fromColumn, Column $toColumn)
+    public static function compareColumns(Column $fromColumn, Column $toColumn): array
     {
         $changedProperties = [];
 

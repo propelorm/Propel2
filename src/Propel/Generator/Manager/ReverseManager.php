@@ -13,6 +13,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Schema\Dumper\DumperInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * @author William Durand <william.durand1@gmail.com>
@@ -75,9 +76,9 @@ class ReverseManager extends AbstractManager
     /**
      * Gets the (optional) schema name to use.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchemaName()
+    public function getSchemaName(): ?string
     {
         return $this->schemaName;
     }
@@ -89,7 +90,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName($schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -111,7 +112,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setNamespace($namespace)
+    public function setNamespace($namespace): void
     {
         $this->namespace = $namespace;
     }
@@ -121,7 +122,7 @@ class ReverseManager extends AbstractManager
      *
      * @return string
      */
-    public function getDatabaseName()
+    public function getDatabaseName(): string
     {
         return $this->databaseName;
     }
@@ -135,7 +136,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setDatabaseName($databaseName)
+    public function setDatabaseName($databaseName): void
     {
         $this->databaseName = $databaseName;
     }
@@ -147,7 +148,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setSamePhpName($samePhpName)
+    public function setSamePhpName($samePhpName): void
     {
         $this->samePhpName = (bool)$samePhpName;
     }
@@ -159,7 +160,7 @@ class ReverseManager extends AbstractManager
      *
      * @return void
      */
-    public function setAddVendorInfo($addVendorInfo)
+    public function setAddVendorInfo($addVendorInfo): void
     {
         $this->addVendorInfo = (bool)$addVendorInfo;
     }
@@ -170,7 +171,7 @@ class ReverseManager extends AbstractManager
      *
      * @return bool
      */
-    public function isSamePhpName()
+    public function isSamePhpName(): bool
     {
         return $this->samePhpName;
     }
@@ -180,7 +181,7 @@ class ReverseManager extends AbstractManager
      *
      * @return bool
      */
-    public function reverse()
+    public function reverse(): bool
     {
         if (!$this->getDatabaseName()) {
             throw new BuildException('The databaseName attribute is required for schema reverse engineering');
@@ -208,7 +209,7 @@ class ReverseManager extends AbstractManager
      *
      * @return \Propel\Generator\Model\Database The built-out Database (with all tables, etc.)
      */
-    protected function buildModel()
+    protected function buildModel(): Database
     {
         /** @var \Propel\Generator\Config\GeneratorConfig $config */
         $config = $this->getGeneratorConfig();
@@ -270,7 +271,7 @@ class ReverseManager extends AbstractManager
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnection()
+    protected function getConnection(): ConnectionInterface
     {
         /** @var \Propel\Generator\Config\GeneratorConfig $generatorConfig */
         $generatorConfig = $this->getGeneratorConfig();

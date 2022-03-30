@@ -25,14 +25,17 @@ class ConnectionWrapperTest extends BookstoreTestBase
     public function testQueriesAreLoggedAfterExecution()
     {
         $wrapper = new class ($this->con) extends ConnectionWrapper{
+            /**
+             * @var array<string>
+             */
             public $orderStack = [];
 
-            public function pushToOrderStack(string $op)
+            public function pushToOrderStack(string $op): void
             {
                 $this->orderStack[] = $op;
             }
 
-            public function log($msg)
+            public function log($msg): void
             {
                 $this->pushToOrderStack('log');
             }

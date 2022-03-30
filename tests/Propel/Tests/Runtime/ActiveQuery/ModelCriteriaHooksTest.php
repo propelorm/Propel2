@@ -170,7 +170,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
     /**
      * @return void
      */
-    public function preSelect(ConnectionInterface $con)
+    public function preSelect(ConnectionInterface $con): void
     {
         $this->where($this->getModelAliasOrName() . '.Title = ?', 'Don Juan');
     }
@@ -178,7 +178,7 @@ class ModelCriteriaWithPreSelectHook extends ModelCriteria
 
 class ModelCriteriaWithPreDeleteHook extends ModelCriteria
 {
-    public function preDelete(ConnectionInterface $con)
+    public function preDelete(ConnectionInterface $con): ?int
     {
         return 12;
     }
@@ -189,15 +189,17 @@ class ModelCriteriaWithPostDeleteHook extends ModelCriteria
     /**
      * @return void
      */
-    public function postDelete($affectedRows, ConnectionInterface $con)
+    public function postDelete($affectedRows, ConnectionInterface $con): ?int
     {
         $con->lastAffectedRows = $affectedRows;
+
+        return $affectedRows;
     }
 }
 
 class ModelCriteriaWithPreAndPostDeleteHook extends ModelCriteriaWithPostDeleteHook
 {
-    public function preDelete(ConnectionInterface $con)
+    public function preDelete(ConnectionInterface $con): ?int
     {
         return 12;
     }
@@ -208,26 +210,30 @@ class ModelCriteriaWithPreUpdateHook extends ModelCriteria
     /**
      * @return void
      */
-    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
+    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false): ?int
     {
         $values['ISBN'] = '1234';
+
+        return null;
     }
 }
 
 class ModelCriteriaWithPostUpdateHook extends ModelCriteria
 {
     /**
-     * @return void
+     * @return int|null
      */
-    public function postUpdate($affectedRows, ConnectionInterface $con)
+    public function postUpdate($affectedRows, ConnectionInterface $con): ?int
     {
         $con->lastAffectedRows = $affectedRows;
+
+        return $affectedRows;
     }
 }
 
 class ModelCriteriaWithPreAndPostUpdateHook extends ModelCriteriaWithPostUpdateHook
 {
-    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false)
+    public function preUpdate(&$values, ConnectionInterface $con, $forceIndividualSaves = false): ?int
     {
         return 52;
     }

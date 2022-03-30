@@ -52,7 +52,7 @@ class VersionableBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    public function queryAttributes()
+    public function queryAttributes(): string
     {
         return "
 /**
@@ -77,7 +77,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    protected function getColumnAttribute($name = 'version_column')
+    protected function getColumnAttribute($name = 'version_column'): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
@@ -87,7 +87,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    protected function getColumnPhpName($name = 'version_column')
+    protected function getColumnPhpName($name = 'version_column'): string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
@@ -95,7 +95,7 @@ static \$isVersioningEnabled = true;
     /**
      * @return string
      */
-    protected function getVersionQueryClassName()
+    protected function getVersionQueryClassName(): string
     {
         return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
@@ -105,7 +105,7 @@ static \$isVersioningEnabled = true;
      *
      * @return void
      */
-    protected function setBuilder($builder)
+    protected function setBuilder($builder): void
     {
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
@@ -119,7 +119,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string The related getter, e.g. 'getVersion'
      */
-    protected function getColumnGetter($name = 'version_column')
+    protected function getColumnGetter($name = 'version_column'): string
     {
         return 'get' . $this->getColumnPhpName($name);
     }
@@ -131,7 +131,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string The related setter, e.g. 'setVersion'
      */
-    protected function getColumnSetter($name = 'version_column')
+    protected function getColumnSetter($name = 'version_column'): string
     {
         return 'set' . $this->getColumnPhpName($name);
     }
@@ -141,7 +141,7 @@ static \$isVersioningEnabled = true;
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods($builder): string
     {
         $this->setBuilder($builder);
         $script = '';
@@ -162,7 +162,7 @@ static \$isVersioningEnabled = true;
      *
      * @return void
      */
-    protected function addFilterByVersion(&$script)
+    protected function addFilterByVersion(&$script): void
     {
         $script .= "
 /**
@@ -184,7 +184,7 @@ public function filterByVersion(\$version = null, \$comparison = null)
      *
      * @return void
      */
-    protected function addOrderByVersion(&$script)
+    protected function addOrderByVersion(&$script): void
     {
         $script .= "
 /**
@@ -203,15 +203,15 @@ public function orderByVersion(\$order = Criteria::ASC)
     /**
      * @return string
      */
-    protected function addIsVersioningEnabled()
+    protected function addIsVersioningEnabled(): string
     {
         return "
 /**
  * Checks whether versioning is enabled
  *
- * @return boolean
+ * @return bool
  */
-static public function isVersioningEnabled()
+static public function isVersioningEnabled(): bool
 {
     return self::\$isVersioningEnabled;
 }
@@ -221,13 +221,13 @@ static public function isVersioningEnabled()
     /**
      * @return string
      */
-    protected function addEnableVersioning()
+    protected function addEnableVersioning(): string
     {
         return "
 /**
  * Enables versioning
  */
-static public function enableVersioning()
+static public function enableVersioning(): void
 {
     self::\$isVersioningEnabled = true;
 }
@@ -237,13 +237,13 @@ static public function enableVersioning()
     /**
      * @return string
      */
-    protected function addDisableVersioning()
+    protected function addDisableVersioning(): string
     {
         return "
 /**
  * Disables versioning
  */
-static public function disableVersioning()
+static public function disableVersioning(): void
 {
     self::\$isVersioningEnabled = false;
 }

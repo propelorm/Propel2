@@ -62,7 +62,7 @@ class ColumnDiff
      *
      * @return void
      */
-    public function setChangedProperties($properties)
+    public function setChangedProperties($properties): void
     {
         $this->changedProperties = $properties;
     }
@@ -72,7 +72,7 @@ class ColumnDiff
      *
      * @return array
      */
-    public function getChangedProperties()
+    public function getChangedProperties(): array
     {
         return $this->changedProperties;
     }
@@ -84,7 +84,7 @@ class ColumnDiff
      *
      * @return void
      */
-    public function setFromColumn(Column $fromColumn)
+    public function setFromColumn(Column $fromColumn): void
     {
         $this->fromColumn = $fromColumn;
     }
@@ -94,7 +94,7 @@ class ColumnDiff
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getFromColumn()
+    public function getFromColumn(): ?Column
     {
         return $this->fromColumn;
     }
@@ -106,7 +106,7 @@ class ColumnDiff
      *
      * @return void
      */
-    public function setToColumn(Column $toColumn)
+    public function setToColumn(Column $toColumn): void
     {
         $this->toColumn = $toColumn;
     }
@@ -116,7 +116,7 @@ class ColumnDiff
      *
      * @return \Propel\Generator\Model\Column|null
      */
-    public function getToColumn()
+    public function getToColumn(): ?Column
     {
         return $this->toColumn;
     }
@@ -124,9 +124,9 @@ class ColumnDiff
     /**
      * Returns the reverse diff for this diff.
      *
-     * @return \Propel\Generator\Model\Diff\ColumnDiff
+     * @return self
      */
-    public function getReverseDiff()
+    public function getReverseDiff(): self
     {
         $diff = new self();
 
@@ -149,7 +149,7 @@ class ColumnDiff
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $ret = '';
         $ret .= sprintf("      %s:\n", $this->fromColumn->getFullyQualifiedName());
