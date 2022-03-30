@@ -18,7 +18,7 @@ use Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
-use Propel\Tests\Generator\Behavior\NestedSet\Fixtures\PublicTable9;
+use Propel\Tests\Fixtures\Generator\Behavior\NestedSet\PublicTable9;
 
 /**
  * Tests for NestedSetBehaviorObjectBuilderModifier class

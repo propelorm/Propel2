@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Propel\Tests\Generator\Builder\Om\Fixtures;
+namespace Propel\Tests\Fixtures\Generator\Builder\Om;
 
 use MyNameSpace\Base\ComplexColumnTypeEntityWithConstructor as MyNameSpaceComplexColumnTypeEntityWithConstructor;
 
