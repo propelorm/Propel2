@@ -319,12 +319,10 @@ SET search_path TO public;
         $script = parent::getForeignKeyDDL($fk);
 
         $pgVendorInfo = $fk->getVendorInfoForType('pgsql');
-        if ($pgVendorInfo) {
-            if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
-                $script .= ' DEFERRABLE';
-                if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
-                    $script .= ' INITIALLY DEFERRED';
-                }
+        if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
+            $script .= ' DEFERRABLE';
+            if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
+                $script .= ' INITIALLY DEFERRED';
             }
         }
 

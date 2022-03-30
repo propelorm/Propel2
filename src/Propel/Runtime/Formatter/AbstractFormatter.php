@@ -246,7 +246,7 @@ abstract class AbstractFormatter
      *
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
-     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|array The original record
+     * @return mixed The original record
      */
     public function formatRecord(?ActiveRecordInterface $record = null)
     {

@@ -99,7 +99,7 @@ class Database extends ScopedMappingModel
     private $identifierQuoting = false;
 
     /**
-     * @var \Propel\Generator\Model\Schema
+     * @var \Propel\Generator\Model\Schema|null
      */
     private $parentSchema;
 
@@ -802,7 +802,7 @@ class Database extends ScopedMappingModel
      */
     public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
-        if ($this->parentSchema) {
+        if ($this->parentSchema !== null) {
             return $this->parentSchema->getGeneratorConfig();
         }
 

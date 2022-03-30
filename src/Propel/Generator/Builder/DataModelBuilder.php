@@ -467,7 +467,8 @@ abstract class DataModelBuilder
         if ($this->platform === null) {
             // try to load the platform from the table
             $table = $this->table;
-            if ($table && $database = $table->getDatabase()) {
+            $database = $table->getDatabase();
+            if ($database) {
                 $this->setPlatform($database->getPlatform());
             }
         }
