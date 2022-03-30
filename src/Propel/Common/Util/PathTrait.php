@@ -15,10 +15,10 @@ trait PathTrait
     /**
      * Template paths are by convention in
      * - templates/
-     * - besides src/ folder (which is required to detect root path)
+     * - same level as src/ folder (which is required to auto-detect root path)
      *
      * Note:
-     * - Propel/Generator/ prefix is removed from the path
+     * - Propel/Generator/ namespace prefix is removed from the path
      *
      * Examples:
      * - Behavior/BehaviorName/
@@ -36,7 +36,15 @@ trait PathTrait
     {
         $srcPos = strpos($path, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
         if ($srcPos === false) {
-            throw new RuntimeException('Cannot find root of repository. Please manually set a template path to file.');
+            // BC shim for old template paths
+            $path .= 'templates' . DIRECTORY_SEPARATOR;
+            if (is_dir($path)) {
+                trigger_error(sprintf('Deprecated template path `%s`, use `ROOT/templates/` instead.', $path), E_USER_DEPRECATED);
+
+                return $path;
+            }
+
+            throw new RuntimeException('Cannot find root of repository. Please manually set a template path to file or use `ROOT/src/` and `ROOT/templates/` folders.');
         }
 
         $root = substr($path, 0, $srcPos) . DIRECTORY_SEPARATOR;
@@ -62,6 +70,18 @@ trait PathTrait
             array_shift($elements);
         }
 
-        return $root . 'templates' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $elements) . DIRECTORY_SEPARATOR;
+        $templatePath = $root . 'templates' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $elements) . DIRECTORY_SEPARATOR;
+
+        // BC shim for old template paths
+        if (!is_dir($templatePath)) {
+            $path .= 'templates' . DIRECTORY_SEPARATOR;
+            if (is_dir($path)) {
+                trigger_error(sprintf('Deprecated template path `%s`, use `%s` instead.', $path, $templatePath), E_USER_DEPRECATED);
+
+                return $path;
+            }
+        }
+
+        return $templatePath;
     }
 }
