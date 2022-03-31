@@ -103,7 +103,7 @@ class ArchivableBehavior extends Behavior
                 'package' => $table->getPackage(),
                 'schema' => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-                'identifierQuoting' => $table->getIdentifierQuoting(),
+                'identifierQuoting' => $table->isIdentifierQuotingEnabled(),
             ]);
             $archiveTable->isArchiveTable = true;
             // copy all the columns

@@ -171,7 +171,11 @@ class Database extends ScopedMappingModel
         $this->defaultIdMethod = $this->getAttribute('defaultIdMethod', IdMethod::NATIVE);
         $this->defaultPhpNamingMethod = $this->getAttribute('defaultPhpNamingMethod', NameGeneratorInterface::CONV_METHOD_UNDERSCORE);
         $this->heavyIndexing = $this->booleanValue($this->getAttribute('heavyIndexing'));
-        $this->identifierQuoting = $this->getAttribute('identifierQuoting') ? $this->booleanValue($this->getAttribute('identifierQuoting')) : false;
+
+        if ($this->getAttribute('identifierQuoting')) {
+            $this->identifierQuoting = $this->booleanValue($this->getAttribute('identifierQuoting'));
+        }
+
         $this->tablePrefix = $this->getAttribute('tablePrefix', $this->getBuildProperty('generator.tablePrefix'));
         $this->defaultStringFormat = $this->getAttribute('defaultStringFormat', static::DEFAULT_STRING_FORMAT);
     }

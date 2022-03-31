@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
@@ -36,200 +38,126 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * @var array<\Propel\Generator\Model\Column>
      */
-    private $columns = [];
+    private array $columns = [];
 
     /**
      * @var array<\Propel\Generator\Model\ForeignKey>
      */
-    private $foreignKeys = [];
+    private array $foreignKeys = [];
 
     /**
      * @var array<\Propel\Generator\Model\ForeignKey>
      */
-    private $foreignKeysByName = [];
+    private array $foreignKeysByName = [];
 
     /**
      * @var array<string>
      */
-    private $foreignTableNames = [];
+    private array $foreignTableNames = [];
 
     /**
      * @var array<\Propel\Generator\Model\Index>
      */
-    private $indices = [];
+    private array $indices = [];
 
     /**
      * @var array<\Propel\Generator\Model\Unique>
      */
-    private $unices = [];
+    private array $unices = [];
 
     /**
      * @var array<\Propel\Generator\Model\IdMethodParameter>
      */
-    private $idMethodParameters = [];
+    private array $idMethodParameters = [];
 
-    /**
-     * @var string
-     */
-    private $commonName;
+    private ?string $commonName = null;
 
-    /**
-     * @var string
-     */
-    private $originCommonName;
+    private string $originCommonName;
 
-    /**
-     * @var string|null
-     */
-    private $description;
+    private ?string $description = null;
 
-    /**
-     * @var string|null
-     */
-    private $phpName;
+    private ?string $phpName = null;
 
-    /**
-     * @var string
-     */
-    private $idMethod;
+    private string $idMethod;
 
-    /**
-     * @var bool
-     */
-    private $allowPkInsert = false;
+    private bool $allowPkInsert = false;
 
-    /**
-     * @var string|null
-     */
-    private $phpNamingMethod;
+    private ?string $phpNamingMethod = null;
 
-    /**
-     * @var \Propel\Generator\Model\Database|null
-     */
-    private $database;
+    private ?Database $database = null;
 
     /**
      * @var array<\Propel\Generator\Model\ForeignKey>
      */
-    private $referrers = [];
+    private array $referrers = [];
 
-    /**
-     * @var bool
-     */
-    private $containsForeignPK = false;
+    private bool $containsForeignPK = false;
 
-    /**
-     * @var \Propel\Generator\Model\Column|null
-     */
-    private $inheritanceColumn;
+    private ?Column $inheritanceColumn = null;
 
-    /**
-     * @var bool
-     */
-    private $skipSql = false;
+    private bool $skipSql = false;
 
-    /**
-     * @var bool
-     */
-    private $readOnly = false;
+    private bool $readOnly = false;
 
-    /**
-     * @var bool
-     */
-    private $isAbstract = false;
+    private bool $isAbstract = false;
 
-    /**
-     * @var string|null
-     */
-    private $alias;
+    private ?string $alias = null;
 
-    /**
-     * @var string|null
-     */
-    private $interface;
+    private ?string $interface = null;
 
-    /**
-     * @var string|null
-     */
-    private $baseClass;
+    private ?string $baseClass = null;
 
-    /**
-     * @var string|null
-     */
-    private $baseQueryClass;
+    private ?string $baseQueryClass = null;
 
     /**
      * @var array<string, \Propel\Generator\Model\Column>
      */
-    private $columnsByName = [];
+    private array $columnsByName = [];
 
     /**
      * @var array<string, \Propel\Generator\Model\Column>
      */
-    private $columnsByLowercaseName = [];
+    private array $columnsByLowercaseName = [];
 
     /**
      * @var array<string, \Propel\Generator\Model\Column>
      */
-    private $columnsByPhpName = [];
+    private array $columnsByPhpName = [];
+
+    private bool $needsTransactionInPostgres = false;
+
+    private bool $heavyIndexing = false;
 
     /**
-     * @var bool
-     */
-    private $needsTransactionInPostgres = false;
-
-    /**
-     * @var bool
-     */
-    private $heavyIndexing = false;
-
-    /**
+     * It's important that this remains nullable so we can determine the intent. If it is explicitly set to false, we'll ignore identifier quoting, otherwise it'll take the value specified at the database level.
+     *
      * @var bool|null
      */
-    private $identifierQuoting;
+    private ?bool $identifierQuoting = null;
 
-    /**
-     * @var bool|null
-     */
-    private $forReferenceOnly;
+    private ?bool $forReferenceOnly = null;
 
-    /**
-     * @var bool
-     */
-    private $reloadOnInsert = false;
+    private bool $reloadOnInsert = false;
 
-    /**
-     * @var bool
-     */
-    private $reloadOnUpdate = false;
+    private bool $reloadOnUpdate = false;
 
     /**
      * The default accessor visibility.
      *
      * It may be one of public, private and protected.
-     *
-     * @var string
      */
-    private $defaultAccessorVisibility;
+    private string $defaultAccessorVisibility;
 
     /**
      * The default mutator visibility.
      *
      * It may be one of public, private and protected.
-     *
-     * @var string
      */
-    private $defaultMutatorVisibility;
+    private string $defaultMutatorVisibility;
 
-    /**
-     * @var bool
-     */
-    protected $isCrossRef = false;
+    protected bool $isCrossRef = false;
 
-    /**
-     * @var string|null
-     */
-    protected $defaultStringFormat;
+    protected ?string $defaultStringFormat = null;
 
     /**
      * Constructs a table object with a name
@@ -2260,29 +2188,20 @@ class Table extends ScopedMappingModel implements IdMethod
      * Checks if identifierQuoting is enabled. Looks up to its database->isIdentifierQuotingEnabled
      * if identifierQuoting is null hence undefined.
      *
-     * Use getIdentifierQuoting() if you need the raw value.
-     *
      * @return bool
      */
     public function isIdentifierQuotingEnabled(): bool
     {
-        return ($this->identifierQuoting !== null || !$this->database) ? (bool)$this->identifierQuoting : $this->database->isIdentifierQuotingEnabled();
+        return $this->identifierQuoting
+            ?? $this->getDatabase() && $this->getDatabase()->isIdentifierQuotingEnabled();
     }
 
     /**
-     * @return bool|null
-     */
-    public function getIdentifierQuoting(): ?bool
-    {
-        return $this->identifierQuoting;
-    }
-
-    /**
-     * @param bool $identifierQuoting
+     * @param bool|null $identifierQuoting Setting to null will use the database default
      *
      * @return void
      */
-    public function setIdentifierQuoting(bool $identifierQuoting): void
+    public function setIdentifierQuoting(?bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
     }

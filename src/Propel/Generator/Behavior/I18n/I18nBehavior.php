@@ -233,7 +233,7 @@ class I18nBehavior extends Behavior
                 'schema' => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
                 'skipSql' => $table->isSkipSql(),
-                'identifierQuoting' => $table->getIdentifierQuoting(),
+                'identifierQuoting' => $table->isIdentifierQuotingEnabled(),
             ]);
 
             // every behavior adding a table should re-execute database behaviors
