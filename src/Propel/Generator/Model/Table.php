@@ -411,7 +411,7 @@ class Table extends ScopedMappingModel implements IdMethod
             // MySQL needs indices on any columns that serve as foreign keys.
             // These are not auto-created prior to 4.1.2.
 
-            $name = substr_replace($foreignKey->getName(), 'fi_', strrpos($foreignKey->getName(), 'fk_'), 3);
+            $name = substr_replace($foreignKey->getName(), 'fi_', (int)strrpos($foreignKey->getName(), 'fk_'), 3);
             if ($this->hasIndex($name)) {
                 // if we already have an index with this name, then it looks like the columns of this index have just
                 // been changed, so remove it and inject it again. This is the case if a referenced table is handled
