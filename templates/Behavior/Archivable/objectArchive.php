@@ -8,7 +8,7 @@
  *
  * @throws \Propel\Runtime\Exception\PropelException If the object is new
  *
- * @return     <?php echo $archiveTablePhpName ?> The archive object based on this object
+ * @return <?php echo $archiveTablePhpName ?> The archive object based on this object
  */
 public function archive(ConnectionInterface $con = null)
 {

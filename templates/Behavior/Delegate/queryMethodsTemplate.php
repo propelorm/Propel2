@@ -8,11 +8,11 @@
     * $query->filterBy<?=$phpName?>(array('min' => 12)); // WHERE <?=$fieldName?> >= 12
     * </code>
 *
-* @param     mixed $value The value to use as filter.
+* @param mixed $value The value to use as filter.
 *              Use scalar values for equality.
 *              Use array values for in_array() equivalent.
 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-* @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+* @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 *
 * @return $this|<?=$childClassName?> The current query, for fluid interface
 */

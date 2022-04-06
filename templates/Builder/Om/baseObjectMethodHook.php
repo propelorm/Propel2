@@ -2,7 +2,7 @@
 <?php if ($preSave) :?>
     /**
      * Code to be run before persisting the object
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return bool
      */
     public function preSave(ConnectionInterface $con = null)
@@ -35,7 +35,7 @@
 <?php if ($preInsert) :?>
     /**
      * Code to be run before inserting to database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return bool
      */
     public function preInsert(ConnectionInterface $con = null)
@@ -68,7 +68,7 @@
 <?php if ($preUpdate) :?>
     /**
      * Code to be run before updating the object in database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return bool
      */
     public function preUpdate(ConnectionInterface $con = null)
@@ -101,7 +101,7 @@
 <?php if ($preDelete) :?>
     /**
      * Code to be run before deleting the object in database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface $con
      * @return bool
      */
     public function preDelete(ConnectionInterface $con = null)

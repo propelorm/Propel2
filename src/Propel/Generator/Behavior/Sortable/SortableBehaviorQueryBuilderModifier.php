@@ -150,12 +150,12 @@ class SortableBehaviorQueryBuilderModifier
 /**
  * Applies all scope fields to the given criteria.
  *
- * @param  Criteria \$criteria Applies the values directly to this criteria.
- * @param  mixed    \$scope    The scope value as scalar type or array(\$value1, ...).
- * @param  string   \$method   The method we use to apply the values.
+ * @param Criteria \$criteria Applies the values directly to this criteria.
+ * @param mixed    \$scope    The scope value as scalar type or array(\$value1, ...).
+ * @param string   \$method   The method we use to apply the values.
  *
  */
-static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, \$method = 'add')
+static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, string \$method = 'add')
 {
 ";
         if ($this->behavior->hasMultipleScopes()) {
@@ -189,7 +189,7 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
  *
 $paramsDoc
  *
- * @return    \$this The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function inList($methodSignature)
 {
@@ -217,7 +217,7 @@ public function inList($methodSignature)
 /**
  * Filter the query based on a rank in the list
  *
- * @param     integer   \$rank rank";
+ * @param int   \$rank rank";
         if ($useScope) {
             $script .= "
 $paramsDoc
@@ -225,7 +225,7 @@ $paramsDoc
         }
         $script .= "
  *
- * @return    " . $this->queryClassName . " The current query, for fluid interface
+ * @return " . $this->queryClassName . " The current query, for fluid interface
  */
 public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') . ")
 {";
@@ -259,20 +259,22 @@ public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') .
  * Order the query based on the rank in the list.
  * Using the default \$order, returns the item with the lowest rank first
  *
- * @param     string \$order either Criteria::ASC (default) or Criteria::DESC
+ * @param string \$order either Criteria::ASC (default) or Criteria::DESC
  *
- * @return    \$this|" . $this->queryClassName . " The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
-public function orderByRank(\$order = Criteria::ASC)
+public function orderByRank(string \$order = Criteria::ASC)
 {
     \$order = strtoupper(\$order);
     switch (\$order) {
         case Criteria::ASC:
-            return \$this->addAscendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
-            break;
+            \$this->addAscendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
+
+            return \$this;
         case Criteria::DESC:
-            return \$this->addDescendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
-            break;
+            \$this->addDescendingOrderByColumn(\$this->getAliasedColName({$this->tableMapClassName}::RANK_COL));
+
+            return \$this;
         default:
             throw new \Propel\Runtime\Exception\PropelException('{$this->queryClassName}::orderBy() only accepts \"asc\" or \"desc\" as argument');
     }
@@ -296,17 +298,17 @@ public function orderByRank(\$order = Criteria::ASC)
 /**
  * Get an item from the list based on its rank
  *
- * @param     integer   \$rank rank";
+ * @param int   \$rank rank";
         if ($useScope) {
             $script .= "
 $paramsDoc";
         }
         $script .= "
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    {$this->objectClassName}
+ * @return {$this->objectClassName}
  */
-public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : '') . "ConnectionInterface \$con = null)
+public function findOneByRank(\$rank, " . ($useScope ? "$methodSignature, " : '') . "?ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $methodSignature = str_replace(' = null', '', $methodSignature);
@@ -344,9 +346,9 @@ $paramsDoc
         }
 
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con    Connection to use.
  *
- * @return     mixed the list of results, formatted by the current formatter
+ * @return mixed the list of results, formatted by the current formatter
  */
 public function findList(" . ($useScope ? "$methodSignature, " : '') . "\$con = null)
 {";
@@ -391,9 +393,9 @@ public function findList(" . ($useScope ? "$methodSignature, " : '') . "\$con = 
 $paramsDoc";
         }
         $script .= "
- * @param     ConnectionInterface optional connection
+ * @param ConnectionInterface optional connection
  *
- * @return    integer highest position
+ * @return integer highest position
  */
 public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "ConnectionInterface \$con = null)
 {
@@ -430,13 +432,13 @@ public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "Connec
  * ";
         if ($useScope) {
             $script .= "
- * @param     mixed \$scope      The scope value as scalar type or array(\$value1, ...).
+ * @param mixed \$scope      The scope value as scalar type or array(\$value1, ...).
 ";
         }
         $script .= "
- * @param     ConnectionInterface optional connection
+ * @param ConnectionInterface optional connection
  *
- * @return    integer highest position
+ * @return integer highest position
  */
 public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionInterface \$con = null)
 {
@@ -472,10 +474,10 @@ public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionI
  * Beware that there is no check made on the positions passed
  * So incoherent positions will result in an incoherent list
  *
- * @param     mixed               \$order id => rank pairs
- * @param     ConnectionInterface \$con   optional connection
+ * @param mixed               \$order id => rank pairs
+ * @param ConnectionInterface \$con   optional connection
  *
- * @return    bool true if the reordering took place, false if a database problem prevented it
+ * @return bool true if the reordering took place, false if a database problem prevented it
  */
 public function reorder(\$order, ?ConnectionInterface \$con = null)
 {
@@ -512,13 +514,13 @@ public function reorder(\$order, ?ConnectionInterface \$con = null)
 /**
  * Get an item from the list based on its rank
  *
- * @param     integer   \$rank rank";
+ * @param int   \$rank rank";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which suite to consider";
+ * @param int \$scope        Scope to determine which suite to consider";
         }
         $script .= "
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
  * @return {$this->objectClassName}
  */
@@ -553,11 +555,11 @@ static public function retrieveByRank(\$rank, " . ($useScope ? '$scope = null, '
 /**
  * Return an array of sortable objects ordered by position
  *
- * @param     Criteria  \$criteria  optional criteria object
- * @param     string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
- * @param     ConnectionInterface \$con       optional connection
+ * @param Criteria  \$criteria  optional criteria object
+ * @param string    \$order     sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param ConnectionInterface \$con       optional connection
  *
- * @return    array list of sortable objects
+ * @return array list of sortable objects
  */
 static public function doSelectOrderByRank(?Criteria \$criteria = null, \$order = Criteria::ASC, ?ConnectionInterface \$con = null)
 {
@@ -595,11 +597,11 @@ static public function doSelectOrderByRank(?Criteria \$criteria = null, \$order 
 /**
  * Return an array of sortable objects in the given scope ordered by position
  *
- * @param     int       \$scope  the scope of the list
- * @param     string    \$order  sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
- * @param     ConnectionInterface \$con    optional connection
+ * @param int       \$scope  the scope of the list
+ * @param string    \$order  sorting order, to be chosen between Criteria::ASC (default) and Criteria::DESC
+ * @param ConnectionInterface \$con    optional connection
  *
- * @return    \Propel\Runtime\Collection\ObjectCollection List of sortable objects
+ * @return \Propel\Runtime\Collection\ObjectCollection List of sortable objects
  */
 static public function retrieveList(\$scope, \$order = Criteria::ASC, ?ConnectionInterface \$con = null)
 {
@@ -622,10 +624,10 @@ static public function retrieveList(\$scope, \$order = Criteria::ASC, ?Connectio
 /**
  * Return the number of sortable objects in the given scope
  *
- * @param     int       \$scope  the scope of the list
- * @param     ConnectionInterface \$con    optional connection
+ * @param int       \$scope  the scope of the list
+ * @param ConnectionInterface \$con    optional connection
  *
- * @return    int Count.
+ * @return int Count.
  */
 static public function countList(\$scope, ?ConnectionInterface \$con = null): int
 {
@@ -648,10 +650,10 @@ static public function countList(\$scope, ?ConnectionInterface \$con = null): in
 /**
  * Deletes the sortable objects in the given scope
  *
- * @param     int       \$scope  the scope of the list
- * @param     ConnectionInterface \$con    optional connection
+ * @param int       \$scope  the scope of the list
+ * @param ConnectionInterface \$con    optional connection
  *
- * @return    int number of deleted objects
+ * @return int number of deleted objects
  */
 static public function deleteList(\$scope, ?ConnectionInterface \$con = null): int
 {
@@ -676,15 +678,15 @@ static public function deleteList(\$scope, ?ConnectionInterface \$con = null): i
  * Adds \$delta to all Rank values that are >= \$first and <= \$last.
  * '\$delta' can also be negative.
  *
- * @param      int \$delta Value to be shifted by, can be negative
- * @param      int \$first First node to be shifted
- * @param      int \$last  Last node to be shifted";
+ * @param int \$delta Value to be shifted by, can be negative
+ * @param int \$first First node to be shifted
+ * @param int \$last  Last node to be shifted";
         if ($useScope) {
             $script .= "
- * @param      int \$scope Scope to use for the shift";
+ * @param int \$scope Scope to use for the shift";
         }
         $script .= "
- * @param      ConnectionInterface \$con Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  */
 static public function sortableShiftRank(\$delta, \$first, \$last = null, " . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {

@@ -442,9 +442,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Initializes internal state of " . $this->getClassName() . " object.
      *
-     * @param     string \$dbName The database name
-     * @param     string \$modelName The phpName of a model, e.g. 'Book'
-     * @param     string \$modelAlias The alias for the model in this query, e.g. 'b'
+     * @param string \$dbName The database name
+     * @param string \$modelName The phpName of a model, e.g. 'Book'
+     * @param string \$modelAlias The alias for the model in this query, e.g. 'b'
      */";
     }
 
@@ -519,8 +519,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Returns a new " . $classname . " object.
      *
-     * @param     string \$modelAlias The alias of a model in the query
-     * @param     Criteria \$criteria Optional Criteria to build the query from
+     * @param string \$modelAlias The alias of a model in the query
+     * @param Criteria \$criteria Optional Criteria to build the query from
      *
      * @return " . $classname . "
      */";
@@ -734,8 +734,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Find object by primary key using raw SQL to go fast.
      * Bypass doSelect() and the object formatter by using generated code.
      *
-     * @param     mixed \$key Primary key to use for the query
-     * @param     ConnectionInterface \$con A connection object
+     * @param mixed \$key Primary key to use for the query
+     * @param ConnectionInterface \$con A connection object
      *
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      *
@@ -807,8 +807,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Find object by primary key.
      *
-     * @param     mixed \$key Primary key to use for the query
-     * @param     ConnectionInterface \$con A connection object
+     * @param mixed \$key Primary key to use for the query
+     * @param ConnectionInterface \$con A connection object
      *
      * @return " . $class . "|array|mixed the result, formatted by the current formatter
      */
@@ -855,8 +855,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         }
         $script .= "
      * </code>
-     * @param     array \$keys Primary keys to use for the query
-     * @param     ConnectionInterface \$con an optional connection object
+     * @param array \$keys Primary keys to use for the query
+     * @param ConnectionInterface \$con an optional connection object
      *
      * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
      */
@@ -900,9 +900,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Filter the query by primary key
      *
-     * @param     mixed \$key Primary key to use for the query
+     * @param mixed \$key Primary key to use for the query
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
     public function filterByPrimaryKey(\$key)
     {";
@@ -925,7 +925,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             $const = $this->getColumnConstant($col);
             $script .= "
 
-        return \$this->addUsingAlias($const, \$key, Criteria::EQUAL);";
+        \$this->addUsingAlias($const, \$key, Criteria::EQUAL);
+
+        return \$this;";
         } else {
             // composite primary key
             $i = 0;
@@ -957,11 +959,11 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Filter the query by a list of primary keys
      *
-     * @param     array \$keys The list of primary key to use for the query
+     * @param array \$keys The list of primary key to use for the query
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterByPrimaryKeys(\$keys)
+    public function filterByPrimaryKeys(array \$keys)
     {";
         $table = $this->getTable();
 
@@ -982,12 +984,16 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             $const = $this->getColumnConstant($col);
             $script .= "
 
-        return \$this->addUsingAlias($const, \$keys, Criteria::IN);";
+        \$this->addUsingAlias($const, \$keys, Criteria::IN);
+
+        return \$this;";
         } else {
             // composite primary key
             $script .= "
         if (empty(\$keys)) {
-            return \$this->add(null, '1<>1', Criteria::CUSTOM);
+            \$this->add(null, '1<>1', Criteria::CUSTOM);
+
+            return \$this;
         }
         foreach (\$keys as \$key) {";
             $i = 0;
@@ -1048,7 +1054,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             }
             $script .= "
      *
-     * @param     mixed \$$variableName The value to use as filter.
+     * @param mixed \$$variableName The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => \$minValue, 'max' => \$maxValue) for intervals.";
@@ -1061,7 +1067,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName(array('max' => 'yesterday')); // WHERE $colName > '2011-03-13'
      * </code>
      *
-     * @param     mixed \$$variableName The value to use as filter.
+     * @param mixed \$$variableName The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -1069,7 +1075,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *              Use associative array('min' => \$minValue, 'max' => \$maxValue) for intervals.";
         } elseif ($col->getType() == PropelTypes::PHP_ARRAY) {
             $script .= "
-     * @param     array \$$variableName The values to use as filter.";
+     * @param array \$$variableName The values to use as filter.";
         } elseif ($col->isTextType()) {
             $script .= "
      * Example usage:
@@ -1079,7 +1085,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName(['foo', 'bar']); // WHERE $colName IN ('foo', 'bar')
      * </code>
      *
-     * @param     string|string[] \$$variableName The value to use as filter.";
+     * @param string|string[] \$$variableName The value to use as filter.";
         } elseif ($col->isBooleanType()) {
             $script .= "
      * Example usage:
@@ -1088,17 +1094,17 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * \$query->filterBy$colPhpName('yes'); // WHERE $colName = true
      * </code>
      *
-     * @param     bool|string \$$variableName The value to use as filter.
+     * @param bool|string \$$variableName The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
      *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').";
         } else {
             $script .= "
-     * @param     mixed \$$variableName The value to use as filter";
+     * @param mixed \$$variableName The value to use as filter";
         }
         $script .= "
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
@@ -1255,10 +1261,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         $script .= "
     /**
      * Filter the query on the $colName column
-     * @param     mixed \$$variableName The value to use as filter
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     * @param mixed \$$variableName The value to use as filter
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
     public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
     {
@@ -1281,7 +1287,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             return \$this;
         }
 
-        return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+        \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+
+        return \$this;
     }
 ";
     }
@@ -1303,8 +1311,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         $script .= "
     /**
      * Filter the query on the $colName column
-     * @param     mixed \$$variableName The value to use as filter
-     * @param     string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     * @param mixed \$$variableName The value to use as filter
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
      * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
      */
@@ -1529,10 +1537,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Adds a JOIN clause to the query using the " . $relationName . " relation
      *
-     * @param     string \$relationAlias optional alias for the relation
-     * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string \$relationAlias optional alias for the relation
+     * @param string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \$this|" . $queryClass . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
     public function join" . $relationName . '($relationAlias = null, $joinType = ' . $joinType . ")
     {
@@ -1621,9 +1629,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @see useQuery()
      *
-     * @param     string \$relationAlias optional alias for the relation,
+     * @param string \$relationAlias optional alias for the relation,
      *                                   to be used as main alias in the secondary query
-     * @param     string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $queryClass A secondary query class using the current class as primary query
      */
@@ -1787,9 +1795,9 @@ EOT;
     /**
      * Exclude object from result
      *
-     * @param   $class $objectName Object to remove from the list of results
+     * @param $class $objectName Object to remove from the list of results
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
     public function prune($objectName = null)
     {
@@ -1846,7 +1854,7 @@ EOT;
     /**
      * Code to execute before every SELECT statement
      *
-     * @param     ConnectionInterface \$con The connection object used by the query
+     * @param ConnectionInterface \$con The connection object used by the query
      */
     protected function basePreSelect(ConnectionInterface \$con): void
     {" . $behaviorCode . "
@@ -1874,7 +1882,7 @@ EOT;
     /**
      * Code to execute before every DELETE statement
      *
-     * @param     ConnectionInterface \$con The connection object used by the query
+     * @param ConnectionInterface \$con The connection object used by the query
      * @return int|null
      */
     protected function basePreDelete(ConnectionInterface \$con): ?int
@@ -1903,8 +1911,8 @@ EOT;
     /**
      * Code to execute after every DELETE statement
      *
-     * @param     int \$affectedRows the number of deleted rows
-     * @param     ConnectionInterface \$con The connection object used by the query
+     * @param int \$affectedRows the number of deleted rows
+     * @param ConnectionInterface \$con The connection object used by the query
      * @return int|null
      */
     protected function basePostDelete(int \$affectedRows, ConnectionInterface \$con): ?int
@@ -1933,9 +1941,9 @@ EOT;
     /**
      * Code to execute before every UPDATE statement
      *
-     * @param     array \$values The associative array of columns and values for the update
-     * @param     ConnectionInterface \$con The connection object used by the query
-     * @param     bool \$forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
+     * @param array \$values The associative array of columns and values for the update
+     * @param ConnectionInterface \$con The connection object used by the query
+     * @param bool \$forceIndividualSaves If false (default), the resulting call is a Criteria::doUpdate(), otherwise it is a series of save() calls on all the found objects
      *
      * @return int|null
      */
@@ -1965,8 +1973,8 @@ EOT;
     /**
      * Code to execute after every UPDATE statement
      *
-     * @param     int \$affectedRows the number of updated rows
-     * @param     ConnectionInterface \$con The connection object used by the query
+     * @param int \$affectedRows the number of updated rows
+     * @param ConnectionInterface \$con The connection object used by the query
      *
      * @return int|null
      */

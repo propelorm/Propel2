@@ -338,21 +338,23 @@ protected \$delegatedFields = [
  *
  * @see Criteria::add()
  *
- * @param string \$column     A string representing thecolumn phpName, e.g. 'AuthorId'
- * @param mixed  \$value      A value for the condition
+ * @param string \$column     A string representing the column phpName, e.g. 'AuthorId'
+ * @param mixed \$value      A value for the condition
  * @param string \$comparison What to use for the column comparison, defaults to Criteria::EQUAL
  *
- * @return \$this|ModelCriteria The current object, for fluid interface
+ * @return \$this The current object, for fluid interface
  */
 public function filterBy(\$column, \$value, \$comparison = Criteria::EQUAL)
 {
     if (isset(\$this->delegatedFields[\$column])) {
         \$methodUse = \"use{\$this->delegatedFields[\$column]}Query\";
 
-        return \$this->{\$methodUse}()->filterBy(\$column, \$value, \$comparison)->endUse();
+        \$this->{\$methodUse}()->filterBy(\$column, \$value, \$comparison)->endUse();
     } else {
-        return \$this->add(\$this->getRealColumnName(\$column), \$value, \$comparison);
+        \$this->add(\$this->getRealColumnName(\$column), \$value, \$comparison);
     }
+
+    return \$this;
 }
 ";
         }

@@ -404,8 +404,8 @@ public function getScopeValue(): int
  * Proxy setter method for the right value of the nested set model.
  * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v The nested set right value
- * @return     \$this The current object (for fluent API support)
+ * @param int \$v The nested set right value
+ * @return \$this The current object (for fluent API support)
  */
 public function setRightValue(int \$v)
 {
@@ -430,8 +430,8 @@ public function setRightValue(int \$v)
  * Proxy setter method for the level value of the nested set model.
  * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v The nested set level value
- * @return     \$this The current object (for fluent API support)
+ * @param int \$v The nested set level value
+ * @return \$this The current object (for fluent API support)
  */
 public function setLevel(int \$v)
 {
@@ -456,8 +456,8 @@ public function setLevel(int \$v)
  * Proxy setter method for the scope value of the nested set model.
  * It provides a generic way to set the value, whatever the actual column name is.
  *
- * @param      int \$v The nested set scope value
- * @return     \$this The current object (for fluent API support)
+ * @param int \$v The nested set scope value
+ * @return \$this The current object (for fluent API support)
  */
 public function setScopeValue(int \$v)
 {
@@ -481,7 +481,7 @@ public function setScopeValue(int \$v)
 /**
  * Creates the supplied node as the root node.
  *
- * @return     \$this The current object (for fluent API support)
+ * @return \$this The current object (for fluent API support)
  * @throws     PropelException
  */
 public function makeRoot()
@@ -510,7 +510,7 @@ public function makeRoot()
 /**
  * Tests if object is a node, i.e. if it is inserted in the tree
  *
- * @return     bool
+ * @return bool
  */
 public function isInTree(): bool
 {
@@ -550,7 +550,7 @@ public function isRoot(): bool
 /**
  * Tests if node is a leaf
  *
- * @return     bool
+ * @return bool
  */
 public function isLeaf(): bool
 {
@@ -572,8 +572,8 @@ public function isLeaf(): bool
 /**
  * Tests if node is a descendant of another node
  *
- * @param      $objectClassName \$parent Propel node object
- * @return     bool
+ * @param $objectClassName \$parent Propel node object
+ * @return bool
  */
 public function isDescendantOf($objectClassName \$parent): bool
 {";
@@ -603,8 +603,8 @@ public function isDescendantOf($objectClassName \$parent): bool
 /**
  * Tests if node is a ancestor of another node
  *
- * @param      $objectClassName \$child Propel node object
- * @return     bool
+ * @param $objectClassName \$child Propel node object
+ * @return bool
  */
 public function isAncestorOf($objectClassName \$child): bool
 {
@@ -648,8 +648,8 @@ public function hasParent(): bool
  * Warning: this does not move the current object in the tree.
  * Use moveTofirstChildOf() or moveToLastChildOf() for that purpose
  *
- * @param      $objectClassName \$parent
- * @return     \$this The current object, for fluid interface
+ * @param $objectClassName \$parent
+ * @return \$this The current object, for fluid interface
  */
 public function setParent($objectClassName \$parent = null)
 {
@@ -675,7 +675,7 @@ public function setParent($objectClassName \$parent = null)
  * Gets parent node for the current object if it exists
  * The result is cached so further calls to the same method don't issue any queries
  *
- * @param  ConnectionInterface \$con Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  * @return $objectClassName|null Propel object if exists else null
  */
 public function getParent(?ConnectionInterface \$con = null)
@@ -705,8 +705,8 @@ public function getParent(?ConnectionInterface \$con = null)
 /**
  * Determines if the node has previous sibling
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     bool
+ * @param ConnectionInterface \$con Connection to use.
+ * @return bool
  */
 public function hasPrevSibling(?ConnectionInterface \$con = null): bool
 {
@@ -740,8 +740,8 @@ public function hasPrevSibling(?ConnectionInterface \$con = null): bool
 /**
  * Gets previous sibling for the given node if it exists
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null         Propel object if exists else null
+ * @param ConnectionInterface \$con Connection to use.
+ * @return $objectClassName|null         Propel object if exists else null
  */
 public function getPrevSibling(?ConnectionInterface \$con = null)
 {
@@ -770,8 +770,8 @@ public function getPrevSibling(?ConnectionInterface \$con = null)
 /**
  * Determines if the node has next sibling
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     bool
+ * @param ConnectionInterface \$con Connection to use.
+ * @return bool
  */
 public function hasNextSibling(?ConnectionInterface \$con = null): bool
 {
@@ -805,8 +805,8 @@ public function hasNextSibling(?ConnectionInterface \$con = null): bool
 /**
  * Gets next sibling for the given node if it exists
  *
- * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null         Propel object if exists else null
+ * @param ConnectionInterface \$con Connection to use.
+ * @return $objectClassName|null         Propel object if exists else null
  */
 public function getNextSibling(?ConnectionInterface \$con = null)
 {
@@ -836,7 +836,7 @@ public function getNextSibling(?ConnectionInterface \$con = null)
  * This does not modify the database; however, it will remove any associated objects, causing
  * them to be refetched by subsequent calls to accessor method.
  *
- * @return     void
+ * @return void
  */
 public function clearNestedSetChildren(): void
 {
@@ -856,7 +856,7 @@ public function clearNestedSetChildren(): void
 /**
  * Initializes the \$collNestedSetChildren collection.
  *
- * @return     void
+ * @return void
  */
 public function initNestedSetChildren(): void
 {
@@ -884,9 +884,9 @@ public function initNestedSetChildren(): void
  * Beware that this doesn't insert a node in the tree.
  * This method is only used to facilitate children hydration.
  *
- * @param      $objectClassName $objectName
+ * @param $objectClassName $objectName
  *
- * @return     void
+ * @return void
  */
 public function addNestedSetChild($objectClassName $objectName): void
 {
@@ -912,7 +912,7 @@ public function addNestedSetChild($objectClassName $objectName): void
 /**
  * Tests if node has children
  *
- * @return     bool
+ * @return bool
  */
 public function hasChildren(): bool
 {
@@ -935,9 +935,9 @@ public function hasChildren(): bool
 /**
  * Gets the children of the given node
  *
- * @param      Criteria  \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @param Criteria  \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
 public function getChildren(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -975,9 +975,9 @@ public function getChildren(?Criteria \$criteria = null, ?ConnectionInterface \$
 /**
  * Gets number of children for the given node
  *
- * @param      Criteria  \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     int       Number of children
+ * @param Criteria  \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return int       Number of children
  */
 public function countChildren(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1009,9 +1009,9 @@ public function countChildren(?Criteria \$criteria = null, ?ConnectionInterface 
 /**
  * Gets the first child of the given node
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null First child or null if this is a leaf
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return $objectClassName|null First child or null if this is a leaf
  */
 public function getFirstChild(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1041,9 +1041,9 @@ public function getFirstChild(?Criteria \$criteria = null, ?ConnectionInterface 
 /**
  * Gets the last child of the given node
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     $objectClassName|null Last child or null if this is a leaf
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return $objectClassName|null Last child or null if this is a leaf
  */
 public function getLastChild(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1111,9 +1111,9 @@ public function getSiblings(\$includeNode = false, ?Criteria \$criteria = null, 
 /**
  * Gets descendants for the given node
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
 public function getDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1142,9 +1142,9 @@ public function getDescendants(?Criteria \$criteria = null, ?ConnectionInterface
 /**
  * Gets number of descendants for the given node
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     int         Number of descendants
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return int         Number of descendants
  */
 public function countDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1174,9 +1174,9 @@ public function countDescendants(?Criteria \$criteria = null, ?ConnectionInterfa
 /**
  * Gets descendants for the given node, plus the current node
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
 public function getBranch(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1203,9 +1203,9 @@ public function getBranch(?Criteria \$criteria = null, ?ConnectionInterface \$co
  * Gets ancestors for the given node, starting with the root node
  * Use it for breadcrumb paths for instance
  *
- * @param      Criteria \$criteria Criteria to filter results.
- * @param      ConnectionInterface \$con Connection to use.
- * @return     ObjectCollection|{$objectClassName}[] List of $objectClassName objects
+ * @param Criteria \$criteria Criteria to filter results.
+ * @param ConnectionInterface \$con Connection to use.
+ * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
 public function getAncestors(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1237,9 +1237,9 @@ public function getAncestors(?Criteria \$criteria = null, ?ConnectionInterface \
  * The modifications in the current object and the tree
  * are not persisted until the child object is saved.
  *
- * @param      $objectClassName \$child    Propel object for child node
+ * @param $objectClassName \$child    Propel object for child node
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function addChild($objectClassName \$child)
 {
@@ -1270,9 +1270,9 @@ public function addChild($objectClassName \$child)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$parent    Propel object for parent node
+ * @param $objectClassName \$parent    Propel object for parent node
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function insertAsFirstChildOf($objectClassName \$parent)
 {
@@ -1335,9 +1335,9 @@ public function insertAsFirstChildOf($objectClassName \$parent)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$sibling    Propel object for parent node
+ * @param $objectClassName \$sibling    Propel object for parent node
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function insertAsPrevSiblingOf($objectClassName \$sibling)
 {
@@ -1383,9 +1383,9 @@ public function insertAsPrevSiblingOf($objectClassName \$sibling)
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param      $objectClassName \$sibling    Propel object for parent node
+ * @param $objectClassName \$sibling    Propel object for parent node
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function insertAsNextSiblingOf($objectClassName \$sibling)
 {
@@ -1427,10 +1427,10 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
  * Moves current node and its subtree to be the first child of \$parent
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$parent    Propel object for parent node
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param $objectClassName \$parent    Propel object for parent node
+ * @param ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function moveToFirstChildOf($objectClassName \$parent, ?ConnectionInterface \$con = null)
 {
@@ -1464,10 +1464,10 @@ public function moveToFirstChildOf($objectClassName \$parent, ?ConnectionInterfa
  * Moves current node and its subtree to be the last child of \$parent
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$parent    Propel object for parent node
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param $objectClassName \$parent    Propel object for parent node
+ * @param ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function moveToLastChildOf($objectClassName \$parent, ?ConnectionInterface \$con = null)
 {
@@ -1501,10 +1501,10 @@ public function moveToLastChildOf($objectClassName \$parent, ?ConnectionInterfac
  * Moves current node and its subtree to be the previous sibling of \$sibling
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$sibling    Propel object for sibling node
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param $objectClassName \$sibling    Propel object for sibling node
+ * @param ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function moveToPrevSiblingOf($objectClassName \$sibling, ?ConnectionInterface \$con = null)
 {
@@ -1541,10 +1541,10 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ?ConnectionInter
  * Moves current node and its subtree to be the next sibling of \$sibling
  * The modifications in the current object and the tree are immediate
  *
- * @param      $objectClassName \$sibling    Propel object for sibling node
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param $objectClassName \$sibling    Propel object for sibling node
+ * @param ConnectionInterface \$con    Connection to use.
  *
- * @return     \$this The current Propel object
+ * @return \$this The current Propel object
  */
 public function moveToNextSiblingOf($objectClassName \$sibling, ?ConnectionInterface \$con = null)
 {
@@ -1582,9 +1582,9 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ?ConnectionInter
 /**
  * Move current node and its children to location \$destLeft and updates rest of tree
  *
- * @param      int    \$destLeft Destination left value
- * @param      int    \$levelDelta Delta to add to the levels
- * @param      ConnectionInterface \$con        Connection to use.
+ * @param int    \$destLeft Destination left value
+ * @param int    \$levelDelta Delta to add to the levels
+ * @param ConnectionInterface \$con        Connection to use.
  */
 protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ', $targetScope = null' : '') . ", ?ConnectionInterface \$con = null)
 {
@@ -1683,9 +1683,9 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
  * Instance pooling is wiped out by this command,
  * so existing $objectClassName instances are probably invalid (except for the current one)
  *
- * @param      ConnectionInterface \$con Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return     int         number of deleted nodes
+ * @return int         number of deleted nodes
  */
 public function deleteDescendants(?ConnectionInterface \$con = null)
 {
