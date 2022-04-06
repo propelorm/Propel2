@@ -263,6 +263,8 @@ class ArrayCollectionTest extends BookstoreEmptyTestBase
 
 class TestableArrayCollection extends ArrayCollection
 {
+    protected $model = '';
+
     public function getWorkerObject(): ActiveRecordInterface
     {
         return parent::getWorkerObject();

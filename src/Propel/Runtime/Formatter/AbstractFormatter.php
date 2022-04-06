@@ -19,6 +19,10 @@ use Propel\Runtime\Propel;
  * Abstract class for query formatter
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
  */
 abstract class AbstractFormatter
 {
@@ -28,11 +32,15 @@ abstract class AbstractFormatter
     protected $dbName;
 
     /**
+     * @phpstan-var class-string<T>|null
+     *
      * @var string|null
      */
     protected $class;
 
     /**
+     * @phpstan-var \Propel\Runtime\Map\TableMap<T>|null
+     *
      * @var \Propel\Runtime\Map\TableMap|null
      */
     protected $tableMap;
@@ -63,6 +71,8 @@ abstract class AbstractFormatter
     protected $dataFetcher;
 
     /**
+     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T, TColl, TReturn> $criteria
+     *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      */
@@ -98,6 +108,13 @@ abstract class AbstractFormatter
     /**
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
+     *
+     * @phpstan-template AColl of \Propel\Runtime\Collection\Collection
+     * @phpstan-template AReturn
+     *
+     * @phpstan-param \Propel\Runtime\ActiveQuery\BaseModelCriteria<T, AColl, AReturn> $criteria
+     *
+     * @phpstan-return $this<T, AColl, AReturn>
      *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
@@ -139,6 +156,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-param class-string<T> $class
+     *
      * @param string $class
      *
      * @return void
@@ -150,6 +169,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-return class-string<T>|null
+     *
      * @return string|null
      */
     public function getClass(): ?string
@@ -214,6 +235,8 @@ abstract class AbstractFormatter
     /**
      * Returns a Collection object or a simple array.
      *
+     * @phpstan-return TColl<TReturn>|array
+     *
      * @return \Propel\Runtime\Collection\Collection|array
      */
     protected function getCollection()
@@ -234,6 +257,8 @@ abstract class AbstractFormatter
     /**
      * @psalm-return class-string<\Propel\Runtime\Collection\Collection>|null
      *
+     * @phpstan-return class-string<TColl<TReturn>>|null
+     *
      * @return string|null
      */
     public function getCollectionClassName(): ?string
@@ -243,6 +268,10 @@ abstract class AbstractFormatter
 
     /**
      * Formats an ActiveRecord object
+     *
+     * @phpstan-param T|null $record
+     *
+     * @phpstan-return T|array|null
      *
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
@@ -285,6 +314,8 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @phpstan-return \Propel\Runtime\Map\TableMap<T>
+     *
      * @return \Propel\Runtime\Map\TableMap
      */
     public function getTableMap(): TableMap
@@ -308,6 +339,10 @@ abstract class AbstractFormatter
 
     /**
      * Gets a Propel object hydrated from a selection of columns in statement row
+     *
+     * @phpstan-param class-string<T> $class
+     *
+     * @phpstan-return T
      *
      * @param array $row associative array indexed by column number,
      *                      as returned by DataFetcher::fetch()

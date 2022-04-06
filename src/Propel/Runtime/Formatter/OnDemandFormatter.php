@@ -21,6 +21,11 @@ use ReflectionClass;
  * This formatter consumes less memory than the ObjectFormatter, but doesn't use Instance Pool
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\OnDemandCollection
+ * @phpstan-template TReturn of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends \Propel\Runtime\Formatter\ObjectFormatter<T, TColl, TReturn>
  */
 class OnDemandFormatter extends ObjectFormatter
 {
@@ -30,6 +35,8 @@ class OnDemandFormatter extends ObjectFormatter
     protected $isSingleTableInheritance = false;
 
     /**
+     * @phpstan-return $this<T, TColl, TReturn>
+     *
      * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
@@ -45,6 +52,8 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
+     * @phpstan-return TColl<T, TReturn>
+     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -73,21 +82,24 @@ class OnDemandFormatter extends ObjectFormatter
     /**
      * @psalm-return class-string<\Propel\Runtime\Collection\OnDemandCollection>
      *
+     * @phpstan-return class-string<\Propel\Runtime\Collection\OnDemandCollection>
+     *
      * @return string
      */
     public function getCollectionClassName(): string
     {
-        return '\Propel\Runtime\Collection\OnDemandCollection';
+        return OnDemandCollection::class;
     }
 
     /**
+     * @phpstan-return \Propel\Runtime\Collection\OnDemandCollection<T, TReturn>
+     *
      * @return \Propel\Runtime\Collection\OnDemandCollection
      */
     public function getCollection(): OnDemandCollection
     {
         $class = $this->getCollectionClassName();
 
-        /** @var \Propel\Runtime\Collection\OnDemandCollection $collection */
         $collection = new $class();
         $collection->setModel($this->class);
 
@@ -98,6 +110,8 @@ class OnDemandFormatter extends ObjectFormatter
      * Hydrates a series of objects from a result row
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
+     *
+     * @phpstan-return T
      *
      * @param array $row associative array with data
      *

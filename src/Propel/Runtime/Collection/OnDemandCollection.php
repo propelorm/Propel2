@@ -19,15 +19,23 @@ use Traversable;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, T>
  */
 class OnDemandCollection extends Collection
 {
     /**
+     * @phpstan-var \Propel\Runtime\Collection\OnDemandIterator<T>
+     *
      * @var \Propel\Runtime\Collection\OnDemandIterator
      */
     private $lastIterator;
 
     /**
+     * @phpstan-param \Propel\Runtime\Formatter\OnDemandFormatter<TType, \Propel\Runtime\Collection\OnDemandCollection, T> $formatter
+     *
      * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
      *
@@ -111,6 +119,8 @@ class OnDemandCollection extends Collection
     // IteratorAggregate Interface
 
     /**
+     * @phpstan-return \Propel\Runtime\Collection\OnDemandIterator<T>
+     *
      * @return \Propel\Runtime\Collection\OnDemandIterator
      */
     public function getIterator(): Traversable

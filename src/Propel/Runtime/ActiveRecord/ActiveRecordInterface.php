@@ -13,7 +13,11 @@ namespace Propel\Runtime\ActiveRecord;
  *
  * @author jaugustin
  *
- * @method array toArray(string $keyType = \Propel\Runtime\Map\TableMap::TYPE_FIELDNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = [], bool $includeForeignObjects = false): array
+ * @method array toArray(string $keyType = \Propel\Runtime\Map\TableMap::TYPE_FIELDNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = [], bool $includeForeignObjects = false)
+ * @method void initRelation(string $relationName)
+ * @method self setVirtualColumn(string $name, $value)
+ * @method int hydrate(array $row, int $startcol = 0, bool $rehydrate = false, string $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM)
+ * @method mixed getPrimaryKey()
  */
 interface ActiveRecordInterface
 {

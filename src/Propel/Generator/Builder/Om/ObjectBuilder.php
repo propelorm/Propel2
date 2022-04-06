@@ -4463,7 +4463,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param string \$relationName The name of the relation to initialize
      * @return void
      */
-    public function initRelation(\$relationName)
+    public function initRelation(string \$relationName): void
     {";
         foreach ($referrers as $refFK) {
             if (!$refFK->isLocalPrimaryKey()) {

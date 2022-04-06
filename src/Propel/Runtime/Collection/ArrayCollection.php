@@ -17,10 +17,15 @@ use Propel\Runtime\Exception\PropelException;
  * Class for iterating over a list of Propel objects stored as arrays
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, array>
  */
 class ArrayCollection extends Collection
 {
     /**
+     * @phpstan-var TType
+     *
      * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     protected $workerObject;

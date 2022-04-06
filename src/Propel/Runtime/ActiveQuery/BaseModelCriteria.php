@@ -10,6 +10,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use ArrayIterator;
 use IteratorAggregate;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -17,16 +18,24 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Traversable;
 
-class BaseModelCriteria extends Criteria implements IteratorAggregate
+/**
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
+ */
+abstract class BaseModelCriteria extends Criteria implements IteratorAggregate
 {
     /**
+     * @phpstan-var class-string<T>|null
+     *
      * @var string|null
      */
     protected $modelName;
 
     /**
-     * @var string|null
      * @phpstan-var class-string<\Propel\Runtime\Map\TableMap>|null
+     *
+     * @var string|null
      */
     protected $modelTableMapName;
 
@@ -41,7 +50,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     protected $modelAlias;
 
     /**
-     * @var \Propel\Runtime\Map\TableMap
+     * @var \Propel\Runtime\Map\TableMap|T[]
      */
     protected $tableMap;
 
@@ -65,6 +74,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
+     *
+     * @phpstan-param class-string<T> $modelName
      *
      * @param string|null $dbName The database name
      * @param string|null $modelName The phpName of a model, e.g. 'Book'
@@ -113,6 +124,13 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * $c->setFormatter(ModelCriteria::FORMAT_ARRAY);
      * </code>
      *
+     * @phpstan-template AColl of \Propel\Runtime\Collection\Collection
+     * @phpstan-template AReturn
+     *
+     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<T, AColl, AReturn>|class-string<\Propel\Runtime\Formatter\AbstractFormatter> $formatter
+     *
+     * @phpstan-return $this<T, AColl, AReturn>
+     *
      * @param \Propel\Runtime\Formatter\AbstractFormatter|string $formatter a formatter class name, or a formatter instance
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
@@ -153,6 +171,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the name of the class for this model criteria
      *
+     * @phpstan-return class-string<T>
+     *
      * @return string|null
      */
     public function getModelName(): ?string
@@ -182,6 +202,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      * Sets the model name.
      * This also sets `this->modelTableMapName` and `this->tableMap`.
      *
+     * @phpstan-param class-string<T>|null $modelName
+     *
      * @param string|null $modelName
      *
      * @return $this The current object, for fluid interface
@@ -194,6 +216,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
             return $this;
         }
         if (strpos($modelName, '\\') === 0) {
+            /** @phpstan-var class-string<T> $modelName */
             $modelName = substr($modelName, 1);
         }
 
@@ -209,6 +232,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     }
 
     /**
+     * @phpstan-return class-string<T>
+     *
      * @return string
      */
     public function getFullyQualifiedModelName(): string
@@ -283,6 +308,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the TableMap object for this Criteria
      *
+     * @phpstan-return \Propel\Runtime\Map\TableMap<T>
+     *
      * @return \Propel\Runtime\Map\TableMap|null
      */
     public function getTableMap(): ?TableMap
@@ -333,7 +360,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Traversable
+     * @return \Traversable<T>
      */
     public function getIterator(): Traversable
     {
@@ -350,4 +377,17 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
 
         throw new LogicException('The current formatter doesn\'t return an iterable result');
     }
+
+    /**
+     * Issue a SELECT query based on the current ModelCriteria
+     * and format the list of results with the current formatter
+     * By default, returns an array of model objects
+     *
+     * @phpstan-return T|mixed
+     *
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
+     *
+     * @return \Propel\Runtime\Collection\ObjectCollection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
+     */
+    abstract public function find(?ConnectionInterface $con = null);
 }

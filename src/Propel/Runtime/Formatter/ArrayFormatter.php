@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\ArrayCollection;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
 
@@ -17,6 +18,11 @@ use Propel\Runtime\Exception\LogicException;
  * format() returns a ArrayCollection of associative arrays
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\ArrayCollection
+ * @phpstan-template TReturn
+ * @phpstan-extends \Propel\Runtime\Formatter\AbstractFormatterWithHydration<T, TColl, TReturn>
  */
 class ArrayFormatter extends AbstractFormatterWithHydration
 {
@@ -67,7 +73,7 @@ class ArrayFormatter extends AbstractFormatterWithHydration
      */
     public function getCollectionClassName(): ?string
     {
-        return '\Propel\Runtime\Collection\ArrayCollection';
+        return ArrayCollection::class;
     }
 
     /**
@@ -107,6 +113,8 @@ class ArrayFormatter extends AbstractFormatterWithHydration
 
     /**
      * Formats an ActiveRecord object
+     *
+     * @phpstan-param T|null $record
      *
      * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *

@@ -166,9 +166,7 @@ class PropelModelPager implements IteratorAggregate, Countable
                 ->find($this->con);
         }
 
-        return is_array($this->results)
-            ? new Collection($this->results)
-            : $this->results;
+        return $this->results;
     }
 
     /**

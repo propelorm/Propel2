@@ -25,6 +25,10 @@ use Propel\Runtime\Map\Exception\RelationNotFoundException;
  *
  * @method static string getOMClass(array $row, int $column, bool $withPrefix = true)
  * @method static string|null getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM): ?string;getPrimaryKeyHashFromRow(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM)
+ * @method static static getPrimaryKeyFromRow($row, $offset = 0, $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM)
+ * @method array populateObject(array $row, int $offset = 0, string $indexType = \Propel\Runtime\Map\TableMap::TYPE_NUM)
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  */
 class TableMap
 {
@@ -110,6 +114,8 @@ class TableMap
 
     /**
      * The ClassName for this table
+     *
+     * @phpstan-var class-string<T>
      *
      * @var string
      */
@@ -318,6 +324,8 @@ class TableMap
      * Set the ClassName of the Table. Could be useful for calling
      * tableMap and Object methods dynamically.
      *
+     * @phpstan-param class-string<T> $classname
+     *
      * @param string $classname The ClassName
      *
      * @return void
@@ -357,6 +365,8 @@ class TableMap
 
     /**
      * Get the Collection ClassName to this table.
+     *
+     * @phpstan-return class-string<\Propel\Runtime\Collection\Collection>
      *
      * @return string
      */

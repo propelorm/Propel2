@@ -22,6 +22,10 @@ use Propel\Runtime\Propel;
  * Class for iterating over a list of Propel objects
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template T
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, T>
  */
 class ObjectCollection extends Collection
 {
@@ -36,7 +40,7 @@ class ObjectCollection extends Collection
     protected $indexSplHash = [];
 
     /**
-     * @param array $data
+     * @param array<TType> $data
      */
     public function __construct(array $data = [])
     {
@@ -457,6 +461,8 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * @phpstan-param TType $element
+     *
      * @param mixed $element
      *
      * @return void
@@ -469,6 +475,8 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * @phpstan-param TType $value
+     *
      * @param mixed $value
      *
      * @return void
@@ -491,6 +499,8 @@ class ObjectCollection extends Collection
     }
 
     /**
+     * @phpstan-param TType $value
+     *
      * @param mixed $offset
      * @param mixed $value
      *

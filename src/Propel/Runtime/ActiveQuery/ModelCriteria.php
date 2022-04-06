@@ -53,6 +53,11 @@ use Propel\Runtime\Util\PropelModelPager;
  * @method \Propel\Runtime\ActiveQuery\ModelCriteria rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method \Propel\Runtime\ActiveQuery\ModelCriteria innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
+ * @phpstan-extends \Propel\Runtime\ActiveQuery\BaseModelCriteria<T, TColl, TReturn>
+ *
  * @author François Zaninotto
  */
 class ModelCriteria extends BaseModelCriteria
@@ -78,6 +83,8 @@ class ModelCriteria extends BaseModelCriteria
     public const FORMAT_ON_DEMAND = '\Propel\Runtime\Formatter\OnDemandFormatter';
 
     /**
+     * @phpstan-var self<T, TColl, TReturn>|null
+     *
      * @var \Propel\Runtime\ActiveQuery\ModelCriteria|null
      */
     protected $primaryCriteria;
@@ -493,6 +500,8 @@ class ModelCriteria extends BaseModelCriteria
      *   ArticleQuery::create()->select(array('Id', 'Name'))->findOne();
      *   => array('Id' => 1, 'Name' => 'Foo')
      *
+     * @phpstan-return $this<T, \Propel\Runtime\Collection\ArrayCollection<T>, mixed[]>
+     *
      * @param mixed $columnArray A list of column names (e.g. array('Title', 'Category.Name', 'c.Content')) or a single column name (e.g. 'Name')
      *
      * @throws \Propel\Runtime\Exception\PropelException
@@ -861,6 +870,12 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @psalm-param class-string<self>|null $secondaryCriteriaClass
      *
+     * @phpstan-template TRel of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+     *
+     * @phpstan-param class-string<TRel> $secondaryCriteriaClass
+     *
+     * @phpstan-return \Propel\Runtime\ActiveQuery\ModelCriteria<TRel, TColl, TReturn>
+     *
      * @see ModelCriteria::endUse()
      *
      * @param string $relationName Relation name or alias
@@ -1014,6 +1029,8 @@ class ModelCriteria extends BaseModelCriteria
      * Clear the conditions to allow the reuse of the query object.
      * The ModelCriteria's Model and alias 'all the properties set by construct) will remain.
      *
+     * @phpstan-return $this<T, \Propel\Runtime\Collection\ObjectCollection<T>, T>
+     *
      * @return $this
      */
     public function clear()
@@ -1031,6 +1048,8 @@ class ModelCriteria extends BaseModelCriteria
 
     /**
      * Sets the primary Criteria for this secondary Criteria
+     *
+     * @phpstan-param \Propel\Runtime\ActiveQuery\ModelCriteria<T, TColl, TReturn> $criteria
      *
      * @param \Propel\Runtime\ActiveQuery\ModelCriteria $criteria The primary criteria
      * @param \Propel\Runtime\ActiveQuery\Join $previousJoin The previousJoin for this ModelCriteria
@@ -1279,6 +1298,8 @@ class ModelCriteria extends BaseModelCriteria
      * Issue a SELECT query based on the current ModelCriteria
      * and format the list of results with the current formatter
      * By default, returns an array of model objects
+     *
+     * @phpstan-return T|mixed
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
