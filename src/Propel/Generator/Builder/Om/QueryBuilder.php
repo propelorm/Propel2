@@ -959,11 +959,11 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Filter the query by a list of primary keys
      *
-     * @param array \$keys The list of primary key to use for the query
+     * @param array|int \$keys The list of primary key to use for the query
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterByPrimaryKeys(array \$keys)
+    public function filterByPrimaryKeys(\$keys)
     {";
         $table = $this->getTable();
 

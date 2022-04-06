@@ -207,7 +207,7 @@ public function getSlug()
  *
  * @return string The object slug
  */
-protected function createSlug()
+protected function createSlug(): string
 {
     \$slug = \$this->createRawSlug();
     \$slug = \$this->limitSlugSize(\$slug);
@@ -236,7 +236,7 @@ protected function createRawSlug(): string
 {
     ";
         if ($pattern) {
-            $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart($this->get', '()) . \''], $pattern) . "';";
+            $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart((string)$this->get', '()) . \''], $pattern) . "';";
         } else {
             $script .= 'return $this->cleanupSlugPart($this->__toString());';
         }

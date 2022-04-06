@@ -395,9 +395,9 @@ $paramsDoc";
         $script .= "
  * @param ConnectionInterface|null optional connection
  *
- * @return int Highest position
+ * @return int|null Highest position
  */
-public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "?ConnectionInterface \$con = null): int
+public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "?ConnectionInterface \$con = null): ?int
 {
     if (null === \$con) {
         \$con = Propel::getServiceContainer()->getReadConnection({$this->tableMapClassName}::DATABASE_NAME);
@@ -438,9 +438,9 @@ public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "?Conne
         $script .= "
  * @param ConnectionInterface optional connection
  *
- * @return int Highest position
+ * @return int|null Highest position
  */
-public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionInterface \$con = null)
+public function getMaxRankArray(" . ($useScope ? '$scope, ' : '') . "ConnectionInterface \$con = null): ?int
 {
     if (\$con === null) {
         \$con = Propel::getConnection({$this->tableMapClassName}::DATABASE_NAME);

@@ -151,7 +151,7 @@
     /**
      * Set the value of a virtual column in this object
      *
-     * @param string $name  The virtual column name
+     * @param string $name The virtual column name
      * @param mixed $value The value to give to the virtual column
      *
      * @return $this The current object, for fluid interface
