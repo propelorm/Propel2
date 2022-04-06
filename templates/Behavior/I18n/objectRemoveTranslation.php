@@ -2,12 +2,12 @@
 /**
  * Remove the translation for a given locale
  *
- * @param     string $locale Locale to use for the translation, e.g. 'fr_FR'
- * @param     ConnectionInterface $con an optional connection object
+ * @param string $locale Locale to use for the translation, e.g. 'fr_FR'
+ * @param ConnectionInterface|null $con an optional connection object
  *
- * @return    $this The current object (for fluent API support)
+ * @return $this The current object (for fluent API support)
  */
-public function removeTranslation($locale = '<?php echo $defaultLocale ?>', ConnectionInterface $con = null)
+public function removeTranslation(string $locale = '<?php echo $defaultLocale ?>', ?ConnectionInterface $con = null)
 {
     if (!$this->isNew()) {
         <?php echo $i18nQueryName ?>::create()

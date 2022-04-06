@@ -20,7 +20,7 @@ class YamlFileLoaderTest extends TestCase
 {
     use VfsTrait;
 
-    /** @var YamlFileLoader  */
+    /** @var YamlFileLoader */
     protected $loader;
 
     /**

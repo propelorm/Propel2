@@ -4,13 +4,13 @@
  * If the current object has already been archived, the archived object
  * is updated and not duplicated.
  *
- * @param ConnectionInterface $con Optional connection object
+ * @param ConnectionInterface|null $con Optional connection object
  *
  * @throws \Propel\Runtime\Exception\PropelException If the object is new
  *
- * @return     <?php echo $archiveTablePhpName ?> The archive object based on this object
+ * @return <?php echo $archiveTablePhpName ?> The archive object based on this object
  */
-public function archive(ConnectionInterface $con = null)
+public function archive(?ConnectionInterface $con = null)
 {
     if ($this->isNew()) {
         throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');

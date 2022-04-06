@@ -315,7 +315,7 @@ protected \$oldScope;
 /**
  * Wrap the getter for rank value
  *
- * @return    int
+ * @return int
  */
 public function getRank()
 {
@@ -325,8 +325,8 @@ public function getRank()
 /**
  * Wrap the setter for rank value
  *
- * @param     int
- * @return    \$this
+ * @param int
+ * @return \$this
  */
 public function setRank(\$v)
 {
@@ -399,8 +399,8 @@ public function getScopeValue(\$returnNulls = true)
 /**
  * Wrap the setter for scope value
  *
- * @param     mixed A array or a native type
- * @return    \$this
+ * @param mixed A array or a native type
+ * @return \$this
  */
 public function setScopeValue(\$v)
 {
@@ -457,9 +457,9 @@ public function isFirst()
 /**
  * Check if the object is last in the list, i.e. if its rank is the highest rank
  *
- * @param     ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
- * @return    bool
+ * @return bool
  */
 public function isLast(?ConnectionInterface \$con = null)
 {
@@ -484,9 +484,9 @@ public function isLast(?ConnectionInterface \$con = null)
 /**
  * Get the next item in the list, i.e. the one for which rank is immediately higher
  *
- * @param     ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
- * @return    {$this->objectClassName}
+ * @return {$this->objectClassName}
  */
 public function getNext(?ConnectionInterface \$con = null)
 {";
@@ -533,9 +533,9 @@ public function getNext(?ConnectionInterface \$con = null)
 /**
  * Get the previous item in the list, i.e. the one for which rank is immediately lower
  *
- * @param     ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
- * @return    {$this->objectClassName}
+ * @return {$this->objectClassName}
  */
 public function getPrevious(?ConnectionInterface \$con = null)
 {";
@@ -579,10 +579,10 @@ public function getPrevious(?ConnectionInterface \$con = null)
  * Insert at specified rank
  * The modifications are not persisted until the object is saved.
  *
- * @param     integer    \$rank rank value
- * @param     ConnectionInterface  \$con      optional connection
+ * @param int \$rank rank value
+ * @param ConnectionInterface \$con      optional connection
  *
- * @return    \$this The current object
+ * @return \$this The current object
  *
  * @throws    PropelException
  */
@@ -623,7 +623,7 @@ public function insertAtRank(\$rank, ?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  *
  * @throws    PropelException
  */
@@ -649,7 +649,7 @@ public function insertAtBottom(?ConnectionInterface \$con = null)
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this the current object
+ * @return \$this the current object
  */
 public function insertAtTop()
 {
@@ -673,10 +673,10 @@ public function insertAtTop()
  * Move the object to a new rank, and shifts the rank
  * Of the objects inbetween the old and new rank accordingly
  *
- * @param     integer   \$newRank rank value
- * @param     ConnectionInterface \$con optional connection
+ * @param int \$newRank rank value
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  *
  * @throws    PropelException
  */
@@ -723,10 +723,10 @@ public function moveToRank(\$newRank, ?ConnectionInterface \$con = null)
 /**
  * Exchange the rank of the object with the one passed as argument, and saves both objects
  *
- * @param     {$this->objectClassName} \$object
- * @param     ConnectionInterface \$con optional connection
+ * @param {$this->objectClassName} \$object
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
@@ -773,9 +773,9 @@ public function swapWith(\$object, ?ConnectionInterface \$con = null)
 /**
  * Move the object higher in the list, i.e. exchanges its rank with the one of the previous object
  *
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  */
 public function moveUp(?ConnectionInterface \$con = null)
 {
@@ -806,9 +806,9 @@ public function moveUp(?ConnectionInterface \$con = null)
 /**
  * Move the object higher in the list, i.e. exchanges its rank with the one of the next object
  *
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  */
 public function moveDown(?ConnectionInterface \$con = null)
 {
@@ -839,9 +839,9 @@ public function moveDown(?ConnectionInterface \$con = null)
 /**
  * Move the object to the top of the list
  *
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
- * @return    \$this the current object
+ * @return \$this the current object
  */
 public function moveToTop(?ConnectionInterface \$con = null)
 {
@@ -868,7 +868,7 @@ public function moveToTop(?ConnectionInterface \$con = null)
 /**
  * Move the object to the bottom of the list
  *
- * @param     ConnectionInterface \$con optional connection
+ * @param ConnectionInterface \$con optional connection
  *
  * @return \$this|{$this->objectClassName}|null The old object's rank or null if already last
  */
@@ -903,7 +903,7 @@ public function moveToBottom(?ConnectionInterface \$con = null)
  * Removes the current object from the list" . ($useScope ? ' (moves it to the null scope)' : '') . ".
  * The modifications are not persisted until the object is saved.
  *
- * @return    \$this the current object
+ * @return \$this the current object
  */
 public function removeFromList()
 {";

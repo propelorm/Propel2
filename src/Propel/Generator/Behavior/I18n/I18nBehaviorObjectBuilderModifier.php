@@ -269,7 +269,7 @@ class I18nBehaviorObjectBuilderModifier
             $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         }
         $comment = preg_replace('/^\t/m', '', $comment);
-        $comment = str_replace('@return     $this|' . $i18nTablePhpName, '@return     $this|' . $tablePhpName, $comment);
+        $comment = str_replace('@return $this|' . $i18nTablePhpName, '@return $this|' . $tablePhpName, $comment);
         $functionStatement = preg_replace('/^\t/m', '', $functionStatement);
         preg_match_all('/\$[a-z]+/i', $functionStatement, $params);
 

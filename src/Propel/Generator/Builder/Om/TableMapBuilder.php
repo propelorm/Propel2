@@ -353,19 +353,19 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
 
             $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_" . $child->getConstantSuffix() . " = '" . $child->getKey() . "';
+    public const CLASSKEY_" . $child->getConstantSuffix() . " = '" . $child->getKey() . "';
 ";
 
             if (strtoupper($child->getClassName()) != $child->getConstantSuffix()) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_" . strtoupper($child->getClassname()) . " = '" . $fqcn . "';
+    public const CLASSKEY_" . strtoupper($child->getClassname()) . " = '" . $fqcn . "';
 ";
             }
 
             $script .= "
     /** A class that can be returned by this tableMap. */
-    const CLASSNAME_" . $child->getConstantSuffix() . " = '" . $fqcn . "';
+    public const CLASSNAME_" . $child->getConstantSuffix() . " = '" . $fqcn . "';
 ";
         }
     }
@@ -885,8 +885,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
-     * @param array  \$row       resultset row.
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row       resultset row.
+     * @param int \$offset    The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
@@ -927,8 +927,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, an array of the primary key columns will be returned.
      *
-     * @param array  \$row       resultset row.
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row       resultset row.
+     * @param int \$offset    The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
@@ -1024,8 +1024,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * The returned Class will contain objects of the default type or
      * objects that inherit from the default.
      *
-     * @param array   \$row ConnectionInterface result row.
-     * @param int     \$colNum Column to examine for OM class information (first is 0).
+     * @param array \$row ConnectionInterface result row.
+     * @param int \$colNum Column to examine for OM class information (first is 0).
      * @param bool \$withPrefix Whether to return the path with the class name
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
@@ -1148,15 +1148,15 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Populates an object of the default type or an object that inherit from the default.
      *
-     * @param array  \$row       row returned by DataFetcher->fetch().
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row       row returned by DataFetcher->fetch().
+     * @param int \$offset    The 0-based offset for reading from the resultset row.
      * @param string \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (" . $this->getObjectClassName() . " object, last column rank)
+     * @return array (" . $this->getObjectClassName() . " object, last column rank)
      */
     public static function populateObject(array \$row, int \$offset = 0, string \$indexType = TableMap::TYPE_NUM): array
     {
@@ -1421,10 +1421,10 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Performs a DELETE on the database, given a " . $this->getObjectClassName() . " or Criteria object OR a primary key value.
      *
-     * @param mixed               \$values Criteria or " . $this->getObjectClassName() . " object or primary key or array of primary keys
+     * @param mixed \$values Criteria or " . $this->getObjectClassName() . " object or primary key or array of primary keys
      *              which is used to create the DELETE statement
-     * @param  ConnectionInterface \$con the connection to use
-     * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                         if supported by native driver or if emulated using Propel.
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
@@ -1528,9 +1528,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Performs an INSERT on the database, given a " . $this->getObjectClassName() . " or Criteria object.
      *
-     * @param mixed               \$criteria Criteria or " . $this->getObjectClassName() . " object containing data that is used to create the INSERT statement.
+     * @param mixed \$criteria Criteria or " . $this->getObjectClassName() . " object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface \$con the ConnectionInterface connection to use
-     * @return mixed           The new primary key.
+     * @return mixed The new primary key.
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */

@@ -4,7 +4,7 @@
  * The modifications in the current object and the tree
  * are not persisted until the current object is saved.
  *
- * @param  <?= $objectClassName ?> $parent Propel object for parent node
+ * @param <?= $objectClassName ?> $parent Propel object for parent node
  * @return $this|<?= $objectClassName ?> The current Propel object
  */
 public function insertAsLastChildOf(<?= $objectClassName ?> $parent)

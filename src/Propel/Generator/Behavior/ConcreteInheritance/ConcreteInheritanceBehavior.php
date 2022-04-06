@@ -330,7 +330,7 @@ public function syncParentToChild($parentClass \$parent): void
 /**
  * Get or Create the parent " . $parentClass . " object of the current object
  *
- * @return    " . $parentClass . " The parent object
+ * @return " . $parentClass . " The parent object
  */
 public function getParentOrCreate(?ConnectionInterface \$con = null)
 {
@@ -372,7 +372,7 @@ public function getParentOrCreate(?ConnectionInterface \$con = null)
  * Create or Update the parent " . $parentTable->getPhpName() . " object
  * And return its primary key
  *
- * @return    " . $cptype . " The primary key of the parent object
+ * @return " . $cptype . " The primary key of the parent object
  */
 public function getSyncParent(?ConnectionInterface \$con = null)
 {

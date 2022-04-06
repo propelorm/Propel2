@@ -4,7 +4,7 @@
  *
  * @param bool True if the query must archive deleted objects, false otherwise.
  */
-public function setArchiveOnDelete($archiveOnDelete)
+public function setArchiveOnDelete(bool $archiveOnDelete)
 {
     $this->archiveOnDelete = $archiveOnDelete;
 }

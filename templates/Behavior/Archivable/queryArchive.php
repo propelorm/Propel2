@@ -6,12 +6,12 @@
  * is updated and not duplicated.
  * Warning: This termination methods issues 2n+1 queries.
  *
- * @param      ConnectionInterface $con    Connection to use.
- * @param      bool $useLittleMemory    Whether to use OnDemandFormatter to retrieve objects.
+ * @param ConnectionInterface|null $con    Connection to use.
+ * @param bool $useLittleMemory Whether to use OnDemandFormatter to retrieve objects.
  *               Set to false if the identity map matters.
  *               Set to true (default) to use less memory.
  *
- * @return     int the number of archived objects
+ * @return int the number of archived objects
  */
 public function archive($con = null, $useLittleMemory = true)
 {

@@ -260,12 +260,14 @@ protected \$enforceVersion = false;
 /**
  * Wrap the setter for version value
  *
- * @param   string
- * @return  \$this|" . $this->table->getPhpName() . "
+ * @param string
+ * @return \$this
  */
 public function setVersion(\$v)
 {
-    return \$this->" . $this->getColumnSetter() . "(\$v);
+    \$this->" . $this->getColumnSetter() . "(\$v);
+
+    return \$this;
 }
 ";
     }
@@ -281,7 +283,7 @@ public function setVersion(\$v)
 /**
  * Wrap the getter for version value
  *
- * @return  string
+ * @return string
  */
 public function getVersion()
 {
@@ -326,8 +328,8 @@ public function enforceVersioning()
 /**
  * Checks whether the current state must be recorded as a version
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
- * @return  bool
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @return bool
  */
 public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
 {
@@ -412,9 +414,9 @@ public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
 /**
  * Creates a version of the current object and saves it.
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
  *
- * @return  {$versionARClassName} A version object
+ * @return {$versionARClassName} A version object
  */
 public function addVersion(?ConnectionInterface \$con = null)
 {
@@ -483,10 +485,10 @@ public function addVersion(?ConnectionInterface \$con = null)
 /**
  * Sets the properties of the current object to the value they had at a specific version
  *
- * @param   integer \$versionNumber The version number to read
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param int \$versionNumber The version number to read
+ * @param ConnectionInterface|null \$con The ConnectionInterface connection to use.
  *
- * @return  \$this The current object (for fluent API support)
+ * @return \$this The current object (for fluent API support)
  */
 public function toVersion(\$versionNumber, ?ConnectionInterface \$con = null)
 {
@@ -519,8 +521,8 @@ public function toVersion(\$versionNumber, ?ConnectionInterface \$con = null)
  * Sets the properties of the current object to the value they had at a specific version
  *
  * @param {$versionARClassName} \$version The version object to use
- * @param ConnectionInterface   \$con the connection to use
- * @param array                 \$loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
+ * @param ConnectionInterface \$con the connection to use
+ * @param array \$loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
  *
  * @return \$this The current object (for fluent API support)
  */
@@ -623,7 +625,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
 /**
  * Gets the latest persisted version number for the current object
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return int
  */
@@ -653,9 +655,9 @@ public function getLastVersionNumber(?ConnectionInterface \$con = null): int
 /**
  * Checks whether the current object is the latest one
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
  *
- * @return  bool
+ * @return bool
  */
 public function isLastVersion(?ConnectionInterface \$con = null)
 {
@@ -676,10 +678,10 @@ public function isLastVersion(?ConnectionInterface \$con = null)
 /**
  * Retrieves a version object for this entity and a version number
  *
- * @param   integer \$versionNumber The version number to read
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param int \$versionNumber The version number to read
+ * @param ConnectionInterface|null \$con The ConnectionInterface connection to use.
  *
- * @return  {$versionARClassName} A version object
+ * @return {$versionARClassName} A version object
  */
 public function getOneVersion(int \$versionNumber, ?ConnectionInterface \$con = null)
 {
@@ -709,9 +711,9 @@ public function getOneVersion(int \$versionNumber, ?ConnectionInterface \$con = 
 /**
  * Gets all the versions of this object, in incremental order
  *
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
  *
- * @return  ObjectCollection|{$versionARClassName}[] A list of {$versionARClassName} objects
+ * @return ObjectCollection|{$versionARClassName}[] A list of {$versionARClassName} objects
  */
 public function getAllVersions(?ConnectionInterface \$con = null)
 {
@@ -741,12 +743,12 @@ public function getAllVersions(?ConnectionInterface \$con = null)
  * );
  * </code>
  *
- * @param   array     \$fromVersion     An array representing the original version.
- * @param   array     \$toVersion       An array representing the destination version.
- * @param   string    \$keys            Main key used for the result diff (versions|columns).
- * @param   array     \$ignoredColumns  The columns to exclude from the diff.
+ * @param array \$fromVersion     An array representing the original version.
+ * @param array \$toVersion       An array representing the destination version.
+ * @param string \$keys            Main key used for the result diff (versions|columns).
+ * @param array \$ignoredColumns  The columns to exclude from the diff.
  *
- * @return  array A list of differences
+ * @return array A list of differences
  */
 protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \$ignoredColumns = [])
 {
@@ -812,14 +814,14 @@ protected function computeDiff(\$fromVersion, \$toVersion, \$keys = 'columns', \
  * );
  * </code>
  *
- * @param   integer             \$versionNumber
- * @param   string              \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
- * @param   array               \$ignoredColumns  The columns to exclude from the diff.
+ * @param int \$versionNumber
+ * @param string \$keys Main key used for the result diff (versions|columns)
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param array \$ignoredColumns  The columns to exclude from the diff.
  *
- * @return  array A list of differences
+ * @return array A list of differences
  */
-public function compareVersion(\$versionNumber, \$keys = 'columns', ?ConnectionInterface \$con = null, \$ignoredColumns = [])
+public function compareVersion(int \$versionNumber, string \$keys = 'columns', ?ConnectionInterface \$con = null, array \$ignoredColumns = []): array
 {
     \$fromVersion = \$this->toArray();
     \$toVersion = \$this->getOneVersion(\$versionNumber, \$con)->toArray();
@@ -847,13 +849,13 @@ public function compareVersion(\$versionNumber, \$keys = 'columns', ?ConnectionI
  * );
  * </code>
  *
- * @param   integer             \$fromVersionNumber
- * @param   integer             \$toVersionNumber
- * @param   string              \$keys Main key used for the result diff (versions|columns)
- * @param   ConnectionInterface \$con The ConnectionInterface connection to use.
- * @param   array               \$ignoredColumns  The columns to exclude from the diff.
+ * @param int \$fromVersionNumber
+ * @param int \$toVersionNumber
+ * @param string \$keys Main key used for the result diff (versions|columns)
+ * @param ConnectionInterface|null \$con The ConnectionInterface connection to use.
+ * @param array \$ignoredColumns  The columns to exclude from the diff.
  *
- * @return  array A list of differences
+ * @return array A list of differences
  */
 public function compareVersions(int \$fromVersionNumber, int \$toVersionNumber, string \$keys = 'columns', ?ConnectionInterface \$con = null, array \$ignoredColumns = []): array
 {
@@ -885,9 +887,9 @@ public function compareVersions(int \$fromVersionNumber, int \$toVersionNumber, 
 /**
  * retrieve the last \$number versions.
  *
- * @param  Integer             \$number The number of record to return.
- * @param  Criteria            \$criteria The Criteria object containing modified values.
- * @param  ConnectionInterface \$con The ConnectionInterface connection to use.
+ * @param Integer \$number The number of record to return.
+ * @param Criteria \$criteria The Criteria object containing modified values.
+ * @param ConnectionInterface \$con The ConnectionInterface connection to use.
  *
  * @return PropelCollection|{$versionARClassName}[] List of {$versionARClassName} objects
  */

@@ -84,7 +84,7 @@ class ConcreteInheritanceParentBehavior extends Behavior
 /**
  * Whether this object is the parent of a child object
  *
- * @return    bool
+ * @return bool
  */
 public function hasChildObject(): bool
 {

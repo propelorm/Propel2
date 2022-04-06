@@ -4,7 +4,7 @@
  *
  * @param bool True if the query must archive updated objects, false otherwise.
  */
-public function setArchiveOnUpdate($archiveOnUpdate)
+public function setArchiveOnUpdate(bool $archiveOnUpdate)
 {
     $this->archiveOnUpdate = $archiveOnUpdate;
 }

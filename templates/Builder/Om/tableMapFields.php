@@ -5,13 +5,13 @@
      * first dimension keys are the type constants
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
-    protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array(<?= $fieldNamesPhpName ?>),
-        self::TYPE_CAMELNAME     => array(<?= $fieldNamesCamelCaseName ?>),
-        self::TYPE_COLNAME       => array(<?= $fieldNamesColname ?>),
-        self::TYPE_FIELDNAME     => array(<?= $fieldNamesFieldName ?>),
-        self::TYPE_NUM           => array(<?= $fieldNamesNum ?>)
-    );
+    protected static $fieldNames = [
+        self::TYPE_PHPNAME       => [<?= $fieldNamesPhpName ?>],
+        self::TYPE_CAMELNAME     => [<?= $fieldNamesCamelCaseName ?>],
+        self::TYPE_COLNAME       => [<?= $fieldNamesColname ?>],
+        self::TYPE_FIELDNAME     => [<?= $fieldNamesFieldName ?>],
+        self::TYPE_NUM           => [<?= $fieldNamesNum ?>]
+    ];
 
     /**
      * holds an array of keys for quick access to the fieldnames array
@@ -19,10 +19,10 @@
      * first dimension keys are the type constants
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
-    protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array(<?= $fieldKeysPhpName ?>),
-        self::TYPE_CAMELNAME     => array(<?= $fieldKeysCamelCaseName ?>),
-        self::TYPE_COLNAME       => array(<?= $fieldKeysColname ?>),
-        self::TYPE_FIELDNAME     => array(<?= $fieldKeysFieldName ?>),
-        self::TYPE_NUM           => array(<?= $fieldKeysNum ?>)
-    );
+    protected static $fieldKeys = [
+        self::TYPE_PHPNAME       => [<?= $fieldKeysPhpName ?>],
+        self::TYPE_CAMELNAME     => [<?= $fieldKeysCamelCaseName ?>],
+        self::TYPE_COLNAME       => [<?= $fieldKeysColname ?>],
+        self::TYPE_FIELDNAME     => [<?= $fieldKeysFieldName ?>],
+        self::TYPE_NUM           => [<?= $fieldKeysNum ?>]
+    ];

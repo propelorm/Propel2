@@ -2,10 +2,10 @@
 <?php if ($preSave) :?>
     /**
      * Code to be run before persisting the object
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preSave(ConnectionInterface $con = null)
+    public function preSave(?ConnectionInterface $con = null)
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preSave')) {
@@ -19,10 +19,10 @@
 <?php if ($postSave) :?>
     /**
      * Code to be run after persisting the object
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return void
      */
-    public function postSave(ConnectionInterface $con = null): void
+    public function postSave(?ConnectionInterface $con = null): void
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postSave')) {
@@ -35,10 +35,10 @@
 <?php if ($preInsert) :?>
     /**
      * Code to be run before inserting to database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preInsert(ConnectionInterface $con = null)
+    public function preInsert(?ConnectionInterface $con = null)
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preInsert')) {
@@ -52,10 +52,10 @@
 <?php if ($postInsert) :?>
     /**
      * Code to be run after inserting to database
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return void
      */
-    public function postInsert(ConnectionInterface $con = null): void
+    public function postInsert(?ConnectionInterface $con = null): void
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postInsert')) {
@@ -68,10 +68,10 @@
 <?php if ($preUpdate) :?>
     /**
      * Code to be run before updating the object in database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preUpdate(ConnectionInterface $con = null)
+    public function preUpdate(?ConnectionInterface $con = null)
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preUpdate')) {
@@ -85,10 +85,10 @@
 <?php if ($postUpdate) :?>
     /**
      * Code to be run after updating the object in database
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return void
      */
-    public function postUpdate(ConnectionInterface $con = null): void
+    public function postUpdate(?ConnectionInterface $con = null): void
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postUpdate')) {
@@ -101,10 +101,10 @@
 <?php if ($preDelete) :?>
     /**
      * Code to be run before deleting the object in database
-     * @param  ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preDelete(ConnectionInterface $con = null)
+    public function preDelete(?ConnectionInterface $con = null)
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preDelete')) {
@@ -118,10 +118,10 @@
 <?php if ($postDelete) :?>
     /**
      * Code to be run after deleting the object in database
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      * @return void
      */
-    public function postDelete(ConnectionInterface $con = null): void
+    public function postDelete(?ConnectionInterface $con = null): void
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::postDelete')) {
