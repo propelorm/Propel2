@@ -2618,14 +2618,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * for results of JOIN queries where the resultset row includes columns from two or
      * more tables.
      *
-     * @param array   \$row       The row returned by DataFetcher->fetch().
-     * @param int     \$startcol  0-based offset column which indicates which restultset column to start with.
-     * @param bool    \$rehydrate Whether this object is being re-hydrated from the database.
-     * @param string  \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
+     * @param array \$row       The row returned by DataFetcher->fetch().
+     * @param int \$startcol  0-based offset column which indicates which restultset column to start with.
+     * @param bool \$rehydrate Whether this object is being re-hydrated from the database.
+     * @param string \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
                                   One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                            TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
-     * @return int             next starting column
+     * @return int next starting column
      * @throws \Propel\Runtime\Exception\PropelException - Any caught Exception will be rewrapped as a PropelException.
      */";
     }
@@ -2989,7 +2989,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * You can specify the key type of the array by passing one of the class
      * type constants.
      *
-     * @param string  \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
+     * @param string \$keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME,
      *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                    Defaults to TableMap::$defaultKeyType.
      * @param bool \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
@@ -3316,7 +3316,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Sets a field from the object by name passed in as a string.
      *
      * @param string \$name
-     * @param mixed  \$value field value
+     * @param mixed \$value field value
      * @param string \$type The type of fieldname the \$name is of:
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
@@ -3424,7 +3424,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      * The default key type is the column's TableMap::$defaultKeyType.
      *
-     * @param array  \$arr     An array to populate the object from.
+     * @param array \$arr     An array to populate the object from.
      * @param string \$keyType The type of keys the array uses.
      * @return \$this
      */
@@ -4627,7 +4627,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param Criteria \$criteria
      * @param bool \$distinct
      * @param ConnectionInterface \$con
-     * @return int             Count of related $className objects.
+     * @return int Count of related $className objects.
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function count{$relCol}(?Criteria \$criteria = null, bool \$distinct = false, ?ConnectionInterface \$con = null): int
@@ -6292,7 +6292,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param bool \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
-     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
      * @throws \Propel\Runtime\Exception\PropelException
      * @see save()
      */
@@ -6772,7 +6772,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param boolean \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
-     * @return int             The number of rows affected by this insert/update and any referring fk objects' save() operations.
+     * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
      * @throws \Propel\Runtime\Exception\PropelException
      * @see doSave()
      */";

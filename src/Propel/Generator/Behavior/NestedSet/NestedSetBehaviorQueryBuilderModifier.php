@@ -699,7 +699,7 @@ static public function isValid($objectClassName \$node = null)
         $script .= "
  * @param ConnectionInterface \$con    Connection to use.
  *
- * @return int  The number of deleted nodes
+ * @return int The number of deleted nodes
  */
 static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {";
@@ -1085,7 +1085,7 @@ static public function fixLevels(" . ($useScope ? '$scope, ' : '') . "?Connectio
 /**
  * Updates all scope values for items that has negative left (<=0) values.
  *
- * @param mixed     \$scope
+ * @param mixed \$scope
  * @param ConnectionInterface|null \$con  Connection to use.
  * @return void
  */

@@ -935,7 +935,7 @@ public function hasChildren(): bool
 /**
  * Gets the children of the given node
  *
- * @param Criteria  \$criteria Criteria to filter results.
+ * @param Criteria \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
  * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
  */
@@ -975,9 +975,9 @@ public function getChildren(?Criteria \$criteria = null, ?ConnectionInterface \$
 /**
  * Gets number of children for the given node
  *
- * @param Criteria  \$criteria Criteria to filter results.
+ * @param Criteria \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
- * @return int       Number of children
+ * @return int Number of children
  */
 public function countChildren(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1073,8 +1073,8 @@ public function getLastChild(?Criteria \$criteria = null, ?ConnectionInterface \
 /**
  * Gets the siblings of the given node
  *
- * @param bool                \$includeNode Whether to include the current node or not
- * @param Criteria            \$criteria Criteria to filter results.
+ * @param bool \$includeNode Whether to include the current node or not
+ * @param Criteria \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
  *
  * @return ObjectCollection|{$objectClassName}[] List of $objectClassName objects
@@ -1144,7 +1144,7 @@ public function getDescendants(?Criteria \$criteria = null, ?ConnectionInterface
  *
  * @param Criteria \$criteria Criteria to filter results.
  * @param ConnectionInterface \$con Connection to use.
- * @return int         Number of descendants
+ * @return int Number of descendants
  */
 public function countDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
@@ -1582,8 +1582,8 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ?ConnectionInter
 /**
  * Move current node and its children to location \$destLeft and updates rest of tree
  *
- * @param int    \$destLeft Destination left value
- * @param int    \$levelDelta Delta to add to the levels
+ * @param int \$destLeft Destination left value
+ * @param int \$levelDelta Delta to add to the levels
  * @param ConnectionInterface \$con        Connection to use.
  */
 protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ', $targetScope = null' : '') . ", ?ConnectionInterface \$con = null)
@@ -1685,7 +1685,7 @@ protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->u
  *
  * @param ConnectionInterface \$con Connection to use.
  *
- * @return int         number of deleted nodes
+ * @return int number of deleted nodes
  */
 public function deleteDescendants(?ConnectionInterface \$con = null)
 {

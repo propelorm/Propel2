@@ -259,7 +259,7 @@ protected function createRawSlug(): string
  *
  * @param string \$slug        the text to slugify
  * @param string \$replacement the separator used by slug
- * @return string               the slugified text
+ * @return string the slugified text
  */
 protected static function cleanupSlugPart(string \$slug, string \$replacement = '" . $this->getParameter('replacement') . "'): string
 {
@@ -343,8 +343,8 @@ protected static function limitSlugSize(string \$slug, int \$incrementReservedSp
  *
  * @param string \$slug            the slug to check
  * @param string \$separator       the separator used by slug
- * @param bool    \$alreadyExists   false for the first try, true for the second, and take the high count + 1
- * @return string                   the unique slug
+ * @param bool \$alreadyExists   false for the first try, true for the second, and take the high count + 1
+ * @return string the unique slug
  */
 protected function makeSlugUnique(string \$slug, string \$separator = '" . $this->getParameter('separator') . "', bool \$alreadyExists = false)
 {";

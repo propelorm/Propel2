@@ -8,7 +8,7 @@
      * and findPk*() calls.
      *
      * @param <?=    $objectClassName ?> $obj A <?= $objectClassName ?> object.
-     * @param string $key             (optional) key to use for instance map (for performance boost if key was already calculated externally).
+     * @param string|null $key Key (optional) to use for instance map (for performance boost if key was already calculated externally).
      */
     public static function addInstanceToPool($obj, $key = null)
     {

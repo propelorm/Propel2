@@ -457,7 +457,7 @@ public function isFirst()
 /**
  * Check if the object is last in the list, i.e. if its rank is the highest rank
  *
- * @param ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
  * @return bool
  */
@@ -484,7 +484,7 @@ public function isLast(?ConnectionInterface \$con = null)
 /**
  * Get the next item in the list, i.e. the one for which rank is immediately higher
  *
- * @param ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
  * @return {$this->objectClassName}
  */
@@ -533,7 +533,7 @@ public function getNext(?ConnectionInterface \$con = null)
 /**
  * Get the previous item in the list, i.e. the one for which rank is immediately lower
  *
- * @param ConnectionInterface  \$con      optional connection
+ * @param ConnectionInterface \$con      optional connection
  *
  * @return {$this->objectClassName}
  */
@@ -579,8 +579,8 @@ public function getPrevious(?ConnectionInterface \$con = null)
  * Insert at specified rank
  * The modifications are not persisted until the object is saved.
  *
- * @param int    \$rank rank value
- * @param ConnectionInterface  \$con      optional connection
+ * @param int \$rank rank value
+ * @param ConnectionInterface \$con      optional connection
  *
  * @return \$this The current object
  *
@@ -673,7 +673,7 @@ public function insertAtTop()
  * Move the object to a new rank, and shifts the rank
  * Of the objects inbetween the old and new rank accordingly
  *
- * @param int   \$newRank rank value
+ * @param int \$newRank rank value
  * @param ConnectionInterface \$con optional connection
  *
  * @return \$this the current object

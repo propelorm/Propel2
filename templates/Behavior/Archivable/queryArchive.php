@@ -6,7 +6,7 @@
  * is updated and not duplicated.
  * Warning: This termination methods issues 2n+1 queries.
  *
- * @param ConnectionInterface $con    Connection to use.
+ * @param ConnectionInterface|null $con    Connection to use.
  * @param bool $useLittleMemory    Whether to use OnDemandFormatter to retrieve objects.
  *               Set to false if the identity map matters.
  *               Set to true (default) to use less memory.

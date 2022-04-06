@@ -31,11 +31,11 @@ public function filterBy<?=$phpName?>($value = null, $comparison = null)
 *   $c->orderBy('Book.CategoryId', 'desc')
 *    => $c->addDescendingOrderByColumn(BookTableMap::CATEGORY_ID)
 *
-* @param string $order      The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
+* @param string $order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
 *
 * @return $this|ModelCriteria The current object, for fluid interface
 */
-public function orderBy<?=$phpName?>($order = Criteria::ASC)
+public function orderBy<?=$phpName?>(string $order = Criteria::ASC)
 {
     return $this->use<?=$tablePhpName?>Query()->orderBy<?=$phpName?>($order)->endUse();
 }

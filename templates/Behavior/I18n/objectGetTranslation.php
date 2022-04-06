@@ -3,11 +3,11 @@
  * Returns the current translation for a given locale
  *
  * @param string $locale Locale to use for the translation, e.g. 'fr_FR'
- * @param ConnectionInterface $con an optional connection object
+ * @param ConnectionInterface|null $con an optional connection object
  *
  * @return <?php echo $i18nTablePhpName ?>
  */
-public function getTranslation($locale = '<?php echo $defaultLocale ?>', ConnectionInterface $con = null)
+public function getTranslation(string $locale = '<?php echo $defaultLocale ?>', ?ConnectionInterface $con = null)
 {
     if (!isset($this->currentTranslations[$locale])) {
         if (null !== $this-><?php echo $i18nListVariable ?>) {

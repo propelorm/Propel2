@@ -11,7 +11,8 @@
  *
  * @return <?php echo $objectClassName ?> The current object (for fluent API support)
  */
-public function populateFromArchive($archive<?php if ($usesAutoIncrement): ?>, $populateAutoIncrementPrimaryKeys = false<?php endif; ?>) {
+public function populateFromArchive($archive<?php if ($usesAutoIncrement): ?>, bool $populateAutoIncrementPrimaryKeys = false<?php endif; ?>)
+{
 <?php if ($usesAutoIncrement): ?>
     if ($populateAutoIncrementPrimaryKeys) {
 <?php foreach ($columns as $col): ?>
