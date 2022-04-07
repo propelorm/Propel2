@@ -50,7 +50,9 @@ abstract class BaseModelCriteria extends Criteria implements IteratorAggregate
     protected $modelAlias;
 
     /**
-     * @var \Propel\Runtime\Map\TableMap|T[]
+     * @phpstan-var \Propel\Runtime\Map\TableMap<T>|null
+     *
+     * @var \Propel\Runtime\Map\TableMap|null
      */
     protected $tableMap;
 
@@ -308,7 +310,7 @@ abstract class BaseModelCriteria extends Criteria implements IteratorAggregate
     /**
      * Returns the TableMap object for this Criteria
      *
-     * @phpstan-return \Propel\Runtime\Map\TableMap<T>
+     * @phpstan-return \Propel\Runtime\Map\TableMap<T>|null
      *
      * @return \Propel\Runtime\Map\TableMap|null
      */

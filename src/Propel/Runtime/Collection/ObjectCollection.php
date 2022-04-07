@@ -23,9 +23,8 @@ use Propel\Runtime\Propel;
  *
  * @author Francois Zaninotto
  *
- * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  * @phpstan-template T
- * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, T>
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<T>
  */
 class ObjectCollection extends Collection
 {
@@ -40,7 +39,7 @@ class ObjectCollection extends Collection
     protected $indexSplHash = [];
 
     /**
-     * @param array<TType> $data
+     * @param array<\Propel\Runtime\ActiveRecord\ActiveRecordInterface> $data
      */
     public function __construct(array $data = [])
     {
@@ -461,7 +460,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * @phpstan-param TType $element
+     * @phpstan-param \Propel\Runtime\ActiveRecord\ActiveRecordInterface $element
      *
      * @param mixed $element
      *
@@ -475,7 +474,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * @phpstan-param TType $value
+     * @phpstan-param \Propel\Runtime\ActiveRecord\ActiveRecordInterface $value
      *
      * @param mixed $value
      *
@@ -499,7 +498,7 @@ class ObjectCollection extends Collection
     }
 
     /**
-     * @phpstan-param TType $value
+     * @phpstan-param \Propel\Runtime\ActiveRecord\ActiveRecordInterface $value
      *
      * @param mixed $offset
      * @param mixed $value

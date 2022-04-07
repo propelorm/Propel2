@@ -42,7 +42,6 @@ use Traversable;
  *
  * @author Francois Zaninotto
  *
- * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  * @phpstan-template T
  * @phpstan-implements \ArrayAccess<string|int, T>
  * @phpstan-implements \IteratorAggregate<T>
@@ -50,7 +49,7 @@ use Traversable;
 class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {
     /**
-     * @phpstan-var class-string<TType>
+     * @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
      *
      * @var string|null
      */
@@ -59,14 +58,14 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * The fully qualified classname of the model
      *
-     * @phpstan-var class-string<TType>
+     * @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
      *
      * @var string|null
      */
     protected $fullyQualifiedModel;
 
     /**
-     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<TType, \Propel\Runtime\Collection\Collection, T>
+     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, \Propel\Runtime\Collection\Collection, T>
      *
      * @var \Propel\Runtime\Formatter\AbstractFormatter
      */
@@ -453,7 +452,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
      *
-     * @phpstan-param \Propel\Runtime\Collection\Collection<TType, T> $collection
+     * @phpstan-param \Propel\Runtime\Collection\Collection<T> $collection
      *
      * @phpstan-return self
      *
@@ -511,7 +510,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Set the model of the elements in the collection
      *
-     * @phpstan-param class-string<TType> $model
+     * @phpstan-param class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface> $model
      *
      * @param string $model Name of the Propel object classes stored in the collection
      *
@@ -531,7 +530,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
-     * @phpstan-return class-string<TType>
+     * @phpstan-return class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
      *
      * @return string Name of the Propel object class stored in the collection
      */
@@ -543,7 +542,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
-     * @phpstan-return class-string<TType>
+     * @phpstan-return class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
      *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
@@ -571,7 +570,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<TType, self, T> $formatter
+     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, self, T> $formatter
      *
      * @param \Propel\Runtime\Formatter\AbstractFormatter $formatter
      *
@@ -583,7 +582,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<TType, \Propel\Runtime\Collection\Collection, T>
+     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, \Propel\Runtime\Collection\Collection, T>
      *
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */

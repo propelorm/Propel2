@@ -52,7 +52,7 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @phpstan-return TColl<T, TReturn>
+     * @phpstan-return TColl<TReturn>
      *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
@@ -92,7 +92,7 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @phpstan-return \Propel\Runtime\Collection\OnDemandCollection<T, TReturn>
+     * @phpstan-return \Propel\Runtime\Collection\OnDemandCollection<TReturn>
      *
      * @return \Propel\Runtime\Collection\OnDemandCollection
      */

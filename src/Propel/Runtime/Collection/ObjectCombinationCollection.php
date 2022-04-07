@@ -14,6 +14,9 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
  * Class for iterating over a list of Propel objects
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T array<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+ * @phpstan-extends \Propel\Runtime\Collection\ObjectCollection<T>
  */
 class ObjectCombinationCollection extends ObjectCollection
 {

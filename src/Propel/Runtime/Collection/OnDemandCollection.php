@@ -20,9 +20,8 @@ use Traversable;
  *
  * @author Francois Zaninotto
  *
- * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
  * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, T>
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<T>
  */
 class OnDemandCollection extends Collection
 {
@@ -34,7 +33,7 @@ class OnDemandCollection extends Collection
     private $lastIterator;
 
     /**
-     * @phpstan-param \Propel\Runtime\Formatter\OnDemandFormatter<TType, \Propel\Runtime\Collection\OnDemandCollection, T> $formatter
+     * @phpstan-param \Propel\Runtime\Formatter\OnDemandFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, \Propel\Runtime\Collection\OnDemandCollection, T> $formatter
      *
      * @param \Propel\Runtime\Formatter\ObjectFormatter $formatter
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher

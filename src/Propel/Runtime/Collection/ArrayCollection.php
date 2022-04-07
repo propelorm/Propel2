@@ -18,13 +18,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @author Francois Zaninotto
  *
- * @phpstan-template TType of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
- * @phpstan-extends \Propel\Runtime\Collection\Collection<TType, array>
+ * @phpstan-extends \Propel\Runtime\Collection\Collection<array>
  */
 class ArrayCollection extends Collection
 {
     /**
-     * @phpstan-var TType
+     * @phpstan-var \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      *
      * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
