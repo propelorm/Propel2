@@ -623,7 +623,7 @@ public function insertAtRank(\$rank, ?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  *
  * @throws    PropelException
  */
@@ -649,7 +649,7 @@ public function insertAtBottom(?ConnectionInterface \$con = null)
  * Insert in the first rank
  * The modifications are not persisted until the object is saved.
  *
- * @return \$this the current object
+ * @return \$this The current object
  */
 public function insertAtTop()
 {
@@ -676,7 +676,7 @@ public function insertAtTop()
  * @param int \$newRank rank value
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  *
  * @throws    PropelException
  */
@@ -726,7 +726,7 @@ public function moveToRank(\$newRank, ?ConnectionInterface \$con = null)
  * @param {$this->objectClassName} \$object
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  *
  * @throws Exception if the database cannot execute the two updates
  */
@@ -775,7 +775,7 @@ public function swapWith(\$object, ?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  */
 public function moveUp(?ConnectionInterface \$con = null)
 {
@@ -808,7 +808,7 @@ public function moveUp(?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  */
 public function moveDown(?ConnectionInterface \$con = null)
 {
@@ -841,7 +841,7 @@ public function moveDown(?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this the current object
+ * @return \$this The current object
  */
 public function moveToTop(?ConnectionInterface \$con = null)
 {
@@ -870,22 +870,25 @@ public function moveToTop(?ConnectionInterface \$con = null)
  *
  * @param ConnectionInterface \$con optional connection
  *
- * @return \$this|{$this->objectClassName}|null The old object's rank or null if already last
+ * @return \$this The current object
  */
 public function moveToBottom(?ConnectionInterface \$con = null)
 {
     if (\$this->isLast(\$con)) {
-        return null;
+        return \$this;
     }
-    if (null === \$con) {
+
+    if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection({$this->tableMapClassName}::DATABASE_NAME);
     }
 
-    return \$con->transaction(function () use (\$con) {
+    \$con->transaction(function () use (\$con) {
         \$bottom = {$this->queryClassName}::create()->getMaxRankArray(" . ($useScope ? '$this->getScopeValue(), ' : '') . "\$con);
 
-        return \$this->moveToRank(\$bottom, \$con);
+        \$this->moveToRank(\$bottom, \$con);
     });
+
+    return \$this;
 }
 ";
     }
@@ -903,7 +906,7 @@ public function moveToBottom(?ConnectionInterface \$con = null)
  * Removes the current object from the list" . ($useScope ? ' (moves it to the null scope)' : '') . ".
  * The modifications are not persisted until the object is saved.
  *
- * @return \$this the current object
+ * @return \$this The current object
  */
 public function removeFromList()
 {";
