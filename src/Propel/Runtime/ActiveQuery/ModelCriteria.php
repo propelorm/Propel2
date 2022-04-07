@@ -1103,7 +1103,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param bool $force To enforce adding columns for changed alias, set it to true (f.e. with sub selects)
      *
-     * @return $this|\Propel\Runtime\ActiveQuery\ModelCriteria
+     * @return $this
      */
     public function addSelfSelectColumns(bool $force = false)
     {
@@ -1115,7 +1115,9 @@ class ModelCriteria extends BaseModelCriteria
         $tableMapClassName = $this->modelTableMapName;
         $alias = ($this->useAliasInSQL) ? $this->modelAlias : null;
 
-        return $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
+        $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
+
+        return $this;
     }
 
     /**

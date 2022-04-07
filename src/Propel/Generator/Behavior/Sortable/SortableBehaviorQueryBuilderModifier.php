@@ -151,11 +151,12 @@ class SortableBehaviorQueryBuilderModifier
  * Applies all scope fields to the given criteria.
  *
  * @param Criteria \$criteria Applies the values directly to this criteria.
- * @param mixed \$scope    The scope value as scalar type or array(\$value1, ...).
- * @param string \$method   The method we use to apply the values.
+ * @param mixed \$scope The scope value as scalar type or array(\$value1, ...).
+ * @param string \$method The method we use to apply the values.
  *
+ * @return void
  */
-static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, string \$method = 'add')
+static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, string \$method = 'add'): void
 {
 ";
         if ($this->behavior->hasMultipleScopes()) {
@@ -225,7 +226,7 @@ $paramsDoc
         }
         $script .= "
  *
- * @return " . $this->queryClassName . " The current query, for fluid interface
+ * @return \$this The current object, for fluid interface
  */
 public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') . ")
 {";
@@ -236,13 +237,15 @@ public function filterByRank(\$rank" . ($useScope ? ", $methodSignature" : '') .
 
         $script .= "
 
-    return \$this";
+    \$this";
         if ($useScope) {
             $script .= "
         ->inList($methodSignature)";
         }
         $script .= "
         ->addUsingAlias({$this->tableMapClassName}::RANK_COL, \$rank, Criteria::EQUAL);
+
+    return \$this;
 }
 ";
     }
@@ -346,7 +349,7 @@ $paramsDoc
         }
 
         $script .= "
- * @param ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
  * @return mixed the list of results, formatted by the current formatter
  */

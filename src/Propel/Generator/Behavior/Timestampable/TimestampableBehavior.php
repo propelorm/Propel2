@@ -163,7 +163,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
 /**
  * Mark the current object so that the update date doesn't get updated during next save
  *
- * @return \$this|" . $builder->getObjectClassName() . " The current object (for fluent API support)
+ * @return \$this The current object (for fluent API support)
  */
 public function keepUpdateDateUnchanged()
 {
@@ -193,31 +193,37 @@ public function keepUpdateDateUnchanged()
  *
  * @param int \$nbDays Maximum age of the latest update in days
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function recentlyUpdated(\$nbDays = 7)
 {
-    return \$this->addUsingAlias($updateColumnConstant, time() - \$nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    \$this->addUsingAlias($updateColumnConstant, time() - \$nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+
+    return \$this;
 }
 
 /**
  * Order by update date desc
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function lastUpdatedFirst()
 {
-    return \$this->addDescendingOrderByColumn($updateColumnConstant);
+    \$this->addDescendingOrderByColumn($updateColumnConstant);
+
+    return \$this;
 }
 
 /**
  * Order by update date asc
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function firstUpdatedFirst()
 {
-    return \$this->addAscendingOrderByColumn($updateColumnConstant);
+    \$this->addAscendingOrderByColumn($updateColumnConstant);
+
+    return \$this;
 }
 ";
         }
@@ -228,11 +234,13 @@ public function firstUpdatedFirst()
 /**
  * Order by create date desc
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function lastCreatedFirst()
 {
-    return \$this->addDescendingOrderByColumn($createColumnConstant);
+    \$this->addDescendingOrderByColumn($createColumnConstant);
+
+    return \$this;
 }
 
 /**
@@ -240,21 +248,25 @@ public function lastCreatedFirst()
  *
  * @param int \$nbDays Maximum age of in days
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function recentlyCreated(\$nbDays = 7)
 {
-    return \$this->addUsingAlias($createColumnConstant, time() - \$nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    \$this->addUsingAlias($createColumnConstant, time() - \$nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+
+    return \$this;
 }
 
 /**
  * Order by create date asc
  *
- * @return \$this|$queryClassName The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function firstCreatedFirst()
 {
-    return \$this->addAscendingOrderByColumn($createColumnConstant);
+    \$this->addAscendingOrderByColumn($createColumnConstant);
+
+    return \$this;
 }
 ";
         }

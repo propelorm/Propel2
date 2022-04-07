@@ -457,7 +457,7 @@ public function isFirst()
 /**
  * Check if the object is last in the list, i.e. if its rank is the highest rank
  *
- * @param ConnectionInterface \$con      optional connection
+ * @param ConnectionInterface \$con Optional connection
  *
  * @return bool
  */
@@ -484,7 +484,7 @@ public function isLast(?ConnectionInterface \$con = null)
 /**
  * Get the next item in the list, i.e. the one for which rank is immediately higher
  *
- * @param ConnectionInterface \$con      optional connection
+ * @param ConnectionInterface \$con Optional connection
  *
  * @return {$this->objectClassName}
  */
@@ -580,7 +580,7 @@ public function getPrevious(?ConnectionInterface \$con = null)
  * The modifications are not persisted until the object is saved.
  *
  * @param int \$rank rank value
- * @param ConnectionInterface \$con      optional connection
+ * @param ConnectionInterface \$con Optional connection
  *
  * @return \$this The current object
  *

@@ -885,8 +885,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
-     * @param array \$row       resultset row.
-     * @param int \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Resultset row.
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
@@ -927,8 +927,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, an array of the primary key columns will be returned.
      *
-     * @param array \$row       resultset row.
-     * @param int \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Resultset row.
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
@@ -1148,8 +1148,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /**
      * Populates an object of the default type or an object that inherit from the default.
      *
-     * @param array \$row       row returned by DataFetcher->fetch().
-     * @param int \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Row returned by DataFetcher->fetch().
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
@@ -1279,8 +1279,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * XML schema will not be added to the select list and only loaded
      * on demand.
      *
-     * @param Criteria \$criteria object containing the columns to add.
-     * @param string|null   \$alias    optional table alias
+     * @param Criteria \$criteria Object containing the columns to add.
+     * @param string|null \$alias Optional table alias
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      * @return void
@@ -1327,8 +1327,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * Note: any columns that were marked with lazyLoad=\"true\" in the
      * XML schema will not be removed as they are only loaded on demand.
      *
-     * @param Criteria \$criteria object containing the columns to remove.
-     * @param string|null \$alias    optional table alias
+     * @param Criteria \$criteria Object containing the columns to remove.
+     * @param string|null \$alias Optional table alias
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      * @return void

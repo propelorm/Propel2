@@ -1428,7 +1428,7 @@ public function insertAsNextSiblingOf($objectClassName \$sibling)
  * The modifications in the current object and the tree are immediate
  *
  * @param $objectClassName \$parent    Propel object for parent node
- * @param ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
  * @return \$this The current Propel object
  */
@@ -1465,7 +1465,7 @@ public function moveToFirstChildOf($objectClassName \$parent, ?ConnectionInterfa
  * The modifications in the current object and the tree are immediate
  *
  * @param $objectClassName \$parent    Propel object for parent node
- * @param ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
  * @return \$this The current Propel object
  */
@@ -1502,7 +1502,7 @@ public function moveToLastChildOf($objectClassName \$parent, ?ConnectionInterfac
  * The modifications in the current object and the tree are immediate
  *
  * @param $objectClassName \$sibling    Propel object for sibling node
- * @param ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
  * @return \$this The current Propel object
  */
@@ -1542,7 +1542,7 @@ public function moveToPrevSiblingOf($objectClassName \$sibling, ?ConnectionInter
  * The modifications in the current object and the tree are immediate
  *
  * @param $objectClassName \$sibling    Propel object for sibling node
- * @param ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
  * @return \$this The current Propel object
  */
@@ -1584,7 +1584,7 @@ public function moveToNextSiblingOf($objectClassName \$sibling, ?ConnectionInter
  *
  * @param int \$destLeft Destination left value
  * @param int \$levelDelta Delta to add to the levels
- * @param ConnectionInterface \$con        Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  */
 protected function moveSubtreeTo(\$destLeft, \$levelDelta" . ($this->behavior->useScope() ? ', $targetScope = null' : '') . ", ?ConnectionInterface \$con = null)
 {
