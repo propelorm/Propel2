@@ -81,9 +81,9 @@ class CsvParser extends AbstractParser
         $rows = [];
         if ($isList) {
             if ($includeHeading) {
-                /** @var array $keys */
-                $keys = reset($array);
-                $rows[] = implode($this->delimiter, $this->formatRow(array_keys($keys)));
+                /** @var array $indexedRow */
+                $indexedRow = reset($array);
+                $rows[] = implode($this->delimiter, $this->formatRow(array_keys($indexedRow)));
             }
             foreach ($array as $row) {
                 $rows[] = implode($this->delimiter, $this->formatRow($row));
