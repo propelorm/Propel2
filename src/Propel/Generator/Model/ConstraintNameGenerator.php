@@ -45,6 +45,7 @@ class ConstraintNameGenerator implements NameGeneratorInterface
      */
     public function generateName(array $inputs): string
     {
+        /** @var \Propel\Generator\Model\Database $db */
         $db = $inputs[0];
         $name = $inputs[1];
         $namePostfix = $inputs[2];
@@ -52,7 +53,7 @@ class ConstraintNameGenerator implements NameGeneratorInterface
 
         // Calculate maximum RDBMS-specific column character limit.
         try {
-            $maxColumnNameLength = (int)$db->getMaxColumnNameLength();
+            $maxColumnNameLength = $db->getMaxColumnNameLength();
             $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
         } catch (EngineException $e) {
             throw $e;

@@ -1104,11 +1104,11 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * @param mixed \$$variableName The value to use as filter";
         }
         $script .= "
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string|null \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterBy$colPhpName(\$$variableName = null, \$comparison = null)
+    public function filterBy$colPhpName(\$$variableName = null, ?string \$comparison = null)
     {";
         if ($col->isNumericType() || $col->isTemporalType()) {
             $script .= "
@@ -1239,7 +1239,9 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
         }
         $script .= "
 
-        return \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+        \$this->addUsingAlias($qualifiedName, \$$variableName, \$comparison);
+
+        return \$this;
     }
 ";
     }
@@ -1262,11 +1264,11 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Filter the query on the $colName column
      * @param mixed \$$variableName The value to use as filter
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     * @param string|null \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
+    public function filterBy$singularPhpName(\$$variableName = null, ?string \$comparison = null)
     {
         if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
             if (is_scalar(\$$variableName)) {
@@ -1314,11 +1316,13 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * @param mixed \$$variableName The value to use as filter
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
-     * @return \$this|" . $this->getQueryClassName() . " The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterBy$singularPhpName(\$$variableName = null, \$comparison = null)
+    public function filterBy$singularPhpName(\$$variableName = null, ?string \$comparison = null)
     {
-        return \$this->filterBy$colPhpName(\$$variableName, \$comparison);
+        \$this->filterBy$colPhpName(\$$variableName, \$comparison);
+
+        return \$this;
     }
 ";
     }
@@ -1356,13 +1360,13 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * @param $fkPhpName|ObjectCollection $objectName The related object(s) to use as filter";
         }
         $script .= "
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string|null \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      *
-     * @return $queryClass The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterBy$relationName($objectName, \$comparison = null)
+    public function filterBy$relationName($objectName, ?string \$comparison = null)
     {
         if ($objectName instanceof $fkPhpName) {
             return \$this";
@@ -1390,8 +1394,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
                 \$comparison = Criteria::IN;
             }
 
-            return \$this
-                ->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('$keyColumn', '$foreignColumnName'), \$comparison);";
+            \$this
+                ->addUsingAlias($localColumnConstant, {$objectName}->toKeyValue('$keyColumn', '$foreignColumnName'), \$comparison);
+
+            return \$this;";
         }
         $script .= "
         } else {";
@@ -1434,14 +1440,14 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * Filter the query by a related $fkPhpName object
      *
      * @param $fkPhpName|ObjectCollection $objectName the related object to use as filter
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string|null \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $queryClass The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterBy$relationName($objectName, \$comparison = null)
+    public function filterBy$relationName($objectName, ?string \$comparison = null)
     {
         if ($objectName instanceof $fkPhpName) {
-            return \$this";
+            \$this";
         foreach ($fk->getInverseMapping() as $mapping) {
             /** @var \Propel\Generator\Model\Column $foreignColumn */
             [$localValueOrColumn, $foreignColumn] = $mapping;
@@ -1457,14 +1463,18 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
                 ->where(\"$leftValue = ?\", $rightValue, $bindingType)";
             }
         }
-        $script .= ';';
+        $script .= ';
+
+            return $this;';
         if (!$fk->isComposite()) {
             $script .= "
         } elseif ($objectName instanceof ObjectCollection) {
-            return \$this
+            \$this
                 ->use{$relationName}Query()
                 ->filterByPrimaryKeys({$objectName}->getPrimaryKeys())
-                ->endUse();";
+                ->endUse();
+
+            return \$this;";
         }
         $script .= "
         } else {";
@@ -1537,12 +1547,12 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Adds a JOIN clause to the query using the " . $relationName . " relation
      *
-     * @param string \$relationAlias optional alias for the relation
-     * @param string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     * @param string|null \$relationAlias Optional alias for the relation
+     * @param string|null \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return \$this The current query, for fluid interface
      */
-    public function join" . $relationName . '($relationAlias = null, $joinType = ' . $joinType . ")
+    public function join" . $relationName . '(?string $relationAlias = null, ?string $joinType = ' . $joinType . ")
     {
         \$tableMap = \$this->getTableMap();
         \$relationMap = \$tableMap->getRelation('" . $relationName . "');
@@ -1765,14 +1775,16 @@ EOT;
      * @param $fkPhpName $objectName the related object to use as filter
      * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $queryClass The current query, for fluid interface
+     * @return \$this The current query, for fluid interface
      */
-    public function filterBy{$relName}($objectName, \$comparison = Criteria::EQUAL)
+    public function filterBy{$relName}($objectName, string \$comparison = Criteria::EQUAL)
     {
-        return \$this
+        \$this
             ->use{$relationName}Query()
             ->filterBy{$relName}($objectName, \$comparison)
             ->endUse();
+
+        return \$this;
     }
 ";
         }

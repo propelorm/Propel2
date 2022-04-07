@@ -196,46 +196,6 @@ parameters:
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Variable \\$commentString might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$connectionToVariableName might not be defined\\.$#"
-			count: 2
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationAuthor might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationClassName might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationsDown might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$migrationsUp might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$timeInWords might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
-			message: "#^Variable \\$timestamp might not be defined\\.$#"
-			count: 1
-			path: src/Propel/Generator/Manager/templates/migration_template.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
 			count: 1
 			path: src/Propel/Generator/Model/Domain.php
@@ -376,11 +336,6 @@ parameters:
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/ArrayCollection.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
@@ -392,11 +347,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setNew\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/ArrayCollection.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
@@ -426,11 +376,6 @@ parameters:
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/ObjectCollection.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
@@ -439,11 +384,6 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:hashCode\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
 		-
 			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
@@ -456,26 +396,6 @@ parameters:
 			path: src/Propel/Runtime/Connection/ProfilerStatementWrapper.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
-			count: 3
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getOMClass\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyHashFromRow\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Runtime/Formatter/ArrayFormatter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
@@ -486,29 +406,9 @@ parameters:
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:isPrimaryKeyNull\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setVirtualColumn\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
-
-		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getOMClass\\(\\)\\.$#"
-			count: 2
-			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:toArray\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Formatter/SimpleArrayFormatter.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
-			count: 1
-			path: src/Propel/Runtime/Map/ColumnMap.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:setQueryKey\\(\\)\\.$#"

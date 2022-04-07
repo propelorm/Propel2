@@ -777,7 +777,7 @@ class Column extends MappingModel
      */
     public function setPosition(int $position): void
     {
-        $this->position = (int)$position;
+        $this->position = $position;
     }
 
     /**

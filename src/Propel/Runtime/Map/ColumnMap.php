@@ -545,6 +545,7 @@ class ColumnMap
     public function ignoreCase(string $str, AdapterInterface $db): string
     {
         if ($this->isText()) {
+            /** @phpstan-var \Propel\Runtime\Adapter\SqlAdapterInterface $db */
             return $db->ignoreCase($str);
         }
 

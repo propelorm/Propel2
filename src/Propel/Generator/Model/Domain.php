@@ -231,7 +231,7 @@ class Domain extends MappingModel
     public function replaceScale(?int $scale): void
     {
         if ($scale !== null) {
-            $this->scale = (int)$scale;
+            $this->scale = $scale;
         }
     }
 
@@ -267,7 +267,7 @@ class Domain extends MappingModel
     public function replaceSize(?int $size): void
     {
         if ($size !== null) {
-            $this->size = (int)$size;
+            $this->size = $size;
         }
     }
 
