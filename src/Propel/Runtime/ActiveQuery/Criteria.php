@@ -2473,13 +2473,13 @@ class Criteria
      * or a PropelConditionalProxy instance otherwise.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param mixed $cond  Casts to bool for variable evaluation
+     * @param mixed $cond Casts to bool for variable evaluation
      *
      * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
      */
     public function _if($cond)
     {
-        $cond = (bool) $cond; // Intentionally not typing the param to allow for evaluation inside this function
+        $cond = (bool)$cond; // Intentionally not typing the param to allow for evaluation inside this function
 
         $this->conditionalProxy = new PropelConditionalProxy($this, $cond, $this->conditionalProxy);
 
@@ -2490,7 +2490,7 @@ class Criteria
      * Returns a PropelConditionalProxy instance.
      * Allows for conditional statements in a fluid interface.
      *
-     * @param mixed $cond  Casts to bool for variable evaluation
+     * @param mixed $cond Casts to bool for variable evaluation
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
@@ -2498,7 +2498,7 @@ class Criteria
      */
     public function _elseif($cond)
     {
-        $cond = (bool) $cond; // Intentionally not typing the param to allow for evaluation inside this function
+        $cond = (bool)$cond; // Intentionally not typing the param to allow for evaluation inside this function
 
         if (!$this->conditionalProxy) {
             throw new LogicException(__METHOD__ . ' must be called after _if()');
