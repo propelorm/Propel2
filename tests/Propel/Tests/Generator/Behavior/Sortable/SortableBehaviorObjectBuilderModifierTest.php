@@ -318,7 +318,7 @@ class SortableBehaviorObjectBuilderModifierTest extends TestCase
         $expected = [1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2'];
         $this->assertEquals($expected, $this->getFixturesArray(), 'moveToBottom() moves to the bottom');
         $res = $t2->moveToBottom();
-        $this->assertNull($res, 'moveToBottom() returns null when called on the bottom node');
+        $this->assertEquals($t2, $res, 'moveToBottom() returns the current object');
         $expected = [1 => 'row1', 2 => 'row3', 3 => 'row4', 4 => 'row2'];
         $this->assertEquals($expected, $this->getFixturesArray(), 'moveToBottom() changes nothing when called on the bottom node');
     }
