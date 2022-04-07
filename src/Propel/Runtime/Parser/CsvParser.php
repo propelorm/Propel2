@@ -81,7 +81,9 @@ class CsvParser extends AbstractParser
         $rows = [];
         if ($isList) {
             if ($includeHeading) {
-                $rows[] = implode($this->delimiter, $this->formatRow(array_keys(reset($array))));
+                /** @var array $keys */
+                $keys = reset($array);
+                $rows[] = implode($this->delimiter, $this->formatRow(array_keys($keys)));
             }
             foreach ($array as $row) {
                 $rows[] = implode($this->delimiter, $this->formatRow($row));
@@ -125,19 +127,19 @@ class CsvParser extends AbstractParser
                     // do nothing... no quoting is happening here
                     break;
                 case self::QUOTE_ALL:
-                    $column = $this->quote($this->escape($column));
+                    $column = $this->quote($this->escape((string)$column));
 
                     break;
                 case self::QUOTE_NONNUMERIC:
-                    if (preg_match('/[^0-9]/', $column)) {
-                        $column = $this->quote($this->escape($column));
+                    if (preg_match('/[^0-9]/', (string)$column)) {
+                        $column = $this->quote($this->escape((string)$column));
                     }
 
                     break;
                 case self::QUOTE_MINIMAL:
                 default:
-                    if ($this->containsSpecialChars($column)) {
-                        $column = $this->quote($this->escape($column));
+                    if ($this->containsSpecialChars((string)$column)) {
+                        $column = $this->quote($this->escape((string)$column));
                     }
 
                     break;

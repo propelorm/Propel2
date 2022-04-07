@@ -247,7 +247,7 @@ class Criteria
     /**
      * Storage of select data. Collection of column names.
      *
-     * @var array
+     * @var array<string>
      */
     protected $selectColumns = [];
 
@@ -1642,7 +1642,7 @@ class Criteria
     /**
      * Get select columns.
      *
-     * @return array An array with the name of the select columns.
+     * @return array<string> An array with the name of the select columns.
      */
     public function getSelectColumns(): array
     {

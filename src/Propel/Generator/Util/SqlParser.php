@@ -185,7 +185,7 @@ class SqlParser
             return [];
         }
 
-        return self::parseString(file_get_contents($file));
+        return self::parseString((string)file_get_contents($file));
     }
 
     /**

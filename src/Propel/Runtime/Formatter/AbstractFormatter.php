@@ -321,6 +321,7 @@ abstract class AbstractFormatter
         $obj = new $class();
         $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
+        /** @phpstan-var \Propel\Runtime\ActiveRecord\ActiveRecordInterface */
         return $obj;
     }
 }

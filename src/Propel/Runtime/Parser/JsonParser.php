@@ -25,7 +25,7 @@ class JsonParser extends AbstractParser
      */
     public function fromArray(array $array, ?string $rootKey = null): string
     {
-        return json_encode($rootKey === null ? $array : [$rootKey => $array]);
+        return json_encode($rootKey === null ? $array : [$rootKey => $array], JSON_THROW_ON_ERROR);
     }
 
     /**

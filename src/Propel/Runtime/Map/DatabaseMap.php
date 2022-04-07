@@ -202,7 +202,7 @@ class DatabaseMap
         }
 
         if (
-            class_exists($tmClass = substr_replace($phpName, '\\Map\\', strrpos($phpName, '\\'), 1) . 'TableMap')
+            class_exists($tmClass = substr_replace($phpName, '\\Map\\', (int)strrpos($phpName, '\\'), 1) . 'TableMap')
             || class_exists($tmClass = '\\Map\\' . $phpName . 'TableMap')
         ) {
             $this->addTableFromMapClass($tmClass);

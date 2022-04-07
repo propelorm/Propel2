@@ -411,6 +411,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public function exec($statement): int
     {
         if ($this->useDebug) {
+            /** @var callable $callback */
             $callback = [$this->connection, 'exec'];
 
             return $this->callUserFunctionWithLogging($callback, [$statement], $statement);
