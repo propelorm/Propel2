@@ -393,7 +393,7 @@ public function findList(" . ($useScope ? "$methodSignature, " : '') . "\$con = 
 $paramsDoc";
         }
         $script .= "
- * @param ConnectionInterface|null optional connection
+ * @param ConnectionInterface \$con Optional connection
  *
  * @return int|null Highest position
  */
@@ -436,7 +436,7 @@ public function getMaxRank(" . ($useScope ? "$methodSignature, " : '') . "?Conne
 ";
         }
         $script .= "
- * @param ConnectionInterface optional connection
+ * @param ConnectionInterface \$con Optional connection
  *
  * @return int|null Highest position
  */
