@@ -464,7 +464,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         return $this->declareClassNamespacePrefix(
             $builder->getUnqualifiedClassName(),
             (string)$builder->getNamespace(),
-            $aliasPrefix
+            $aliasPrefix,
         );
     }
 
@@ -796,7 +796,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             $normalizedShortSignature[] = $crossObjectName;
             $phpDoc[] = "
      * @param $crossObjectClassName $crossObjectName";
-        }elseif ($crossFK == null) {
+        } elseif ($crossFK == null) {
             $crossFK = [];
         }
 

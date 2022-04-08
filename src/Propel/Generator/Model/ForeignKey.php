@@ -515,8 +515,6 @@ class ForeignKey extends MappingModel
     /**
      * Returns the resolved foreign Table model object.
      *
-     * @throws \Propel\Generator\Exception\LogicException
-     *
      * @return \Propel\Generator\Model\Table
      */
     public function getForeignTableOrFail(): Table

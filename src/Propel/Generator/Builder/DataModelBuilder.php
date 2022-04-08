@@ -522,8 +522,6 @@ abstract class DataModelBuilder
      * Convenience method to return the database for current table.
      *
      * @return \Propel\Generator\Model\Database
-     *
-     * @throws \Propel\Generator\Exception\LogicException
      */
     public function getDatabaseOrFail(): Database
     {
