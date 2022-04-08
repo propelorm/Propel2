@@ -1861,9 +1861,9 @@ class Table extends ScopedMappingModel implements IdMethod
     /**
      * Get the database that contains this table.
      *
-     * @return \Propel\Generator\Model\Database
-     *
      * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Database
      */
     public function getDatabaseOrFail(): Database
     {

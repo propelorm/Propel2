@@ -458,7 +458,7 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the Platform class for this table (database).
+     * Convenience method to return the Platform class for this table (database).
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
      */
@@ -509,7 +509,7 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the database for current table.
+     * Convenience method to return the database for current table.
      *
      * @return \Propel\Generator\Model\Database|null
      */
@@ -519,7 +519,7 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the database for current table.
+     * Convenience method to return the database for current table.
      *
      * @return \Propel\Generator\Model\Database
      *
