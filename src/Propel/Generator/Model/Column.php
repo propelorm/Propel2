@@ -556,9 +556,9 @@ class Column extends MappingModel
      * Returns the name to use in PHP sources. It will set & return
      * a self-generated phpName from its name if its not already set.
      *
-     * @return string|null
+     * @return string
      */
-    public function getPhpName(): ?string
+    public function getPhpName(): string
     {
         if ($this->phpName === null) {
             $this->setPhpName();

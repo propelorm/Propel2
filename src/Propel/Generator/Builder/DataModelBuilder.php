@@ -163,9 +163,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Object builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\AbstractObjectBuilder|null
+     * @return \Propel\Generator\Builder\Om\AbstractObjectBuilder
      */
-    public function getStubObjectBuilder(): ?AbstractObjectBuilder
+    public function getStubObjectBuilder(): AbstractObjectBuilder
     {
         if ($this->stubObjectBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -179,9 +179,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing Query builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getQueryBuilder(): ?AbstractOMBuilder
+    public function getQueryBuilder(): AbstractOMBuilder
     {
         if ($this->queryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -195,9 +195,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Query builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getStubQueryBuilder(): ?AbstractOMBuilder
+    public function getStubQueryBuilder(): AbstractOMBuilder
     {
         if ($this->stubQueryBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -458,7 +458,7 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the Platform class for this table (database).
+     * Convenience method to return the Platform class for this table (database).
      *
      * @return \Propel\Generator\Platform\PlatformInterface|null
      */
@@ -509,13 +509,23 @@ abstract class DataModelBuilder
     }
 
     /**
-     * Convenience method to returns the database for current table.
+     * Convenience method to return the database for current table.
      *
      * @return \Propel\Generator\Model\Database|null
      */
     public function getDatabase(): ?Database
     {
         return $this->getTable()->getDatabase();
+    }
+
+    /**
+     * Convenience method to return the database for current table.
+     *
+     * @return \Propel\Generator\Model\Database
+     */
+    public function getDatabaseOrFail(): Database
+    {
+        return $this->getTable()->getDatabaseOrFail();
     }
 
     /**

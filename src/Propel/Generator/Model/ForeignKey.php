@@ -513,6 +513,18 @@ class ForeignKey extends MappingModel
     }
 
     /**
+     * Returns the resolved foreign Table model object.
+     *
+     * @return \Propel\Generator\Model\Table
+     */
+    public function getForeignTableOrFail(): Table
+    {
+        $database = $this->parentTable->getDatabaseOrFail();
+
+        return $database->getTable($this->getForeignTableName());
+    }
+
+    /**
      * Returns the foreign schema name of the FK.
      *
      * @return string|null
