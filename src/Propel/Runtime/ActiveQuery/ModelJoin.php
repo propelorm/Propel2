@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 
@@ -119,6 +120,23 @@ class ModelJoin extends Join
         }
 
         return $this->tableMap;
+    }
+
+    /**
+     * Gets the right tableMap for this join
+     *
+     * @return \Propel\Runtime\Map\TableMap The table map
+     *
+     * @throws \Propel\Runtime\Exception\LogicException
+     */
+    public function getTableMapOrFail(): TableMap
+    {
+        $tableMap = $this->getTableMap();
+        if ($tableMap == null) {
+            throw new LogicException('TableMap is not defined');
+        }
+
+        return $tableMap;
     }
 
     /**

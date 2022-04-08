@@ -33,7 +33,7 @@ class JsonFileLoader extends FileLoader
 
         $content = [];
 
-        if ($json !== '') {
+        if ($json && $json !== '') {
             $content = json_decode($json, true);
             $error = json_last_error();
 
