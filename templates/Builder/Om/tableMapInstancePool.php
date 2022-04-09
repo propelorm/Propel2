@@ -9,8 +9,10 @@
      *
      * @param <?=    $objectClassName ?> $obj A <?= $objectClassName ?> object.
      * @param string|null $key Key (optional) to use for instance map (for performance boost if key was already calculated externally).
+     *
+     * @return void
      */
-    public static function addInstanceToPool($obj, $key = null)
+    public static function addInstanceToPool(<?= substr($objectClassName, strrpos( $objectClassName, '\\' ) + 1 ) ?> $obj, ?string $key = null): void
     {
         if (Propel::isInstancePoolingEnabled()) {
             if (null === $key) {
@@ -29,8 +31,10 @@
      * from the cache in order to prevent returning objects that no longer exist.
      *
      * @param mixed $value A <?= $objectClassName ?> object or a primary key value.
+     *
+     * @return void
      */
-    public static function removeInstanceFromPool($value)
+    public static function removeInstanceFromPool($value): void
     {
         if (Propel::isInstancePoolingEnabled() && null !== $value) {
             if (is_object($value) && $value instanceof <?= $objectClassName ?>) {

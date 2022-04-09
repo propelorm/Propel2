@@ -4,6 +4,8 @@
      *
      * first dimension keys are the type constants
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
+     *
+     * @var array<string, mixed>
      */
     protected static $fieldNames = [
         self::TYPE_PHPNAME       => [<?= $fieldNamesPhpName ?>],
@@ -18,6 +20,8 @@
      *
      * first dimension keys are the type constants
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
+     *
+     * @var array<string, mixed>
      */
     protected static $fieldKeys = [
         self::TYPE_PHPNAME       => [<?= $fieldKeysPhpName ?>],
