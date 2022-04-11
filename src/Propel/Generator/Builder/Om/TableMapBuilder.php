@@ -265,7 +265,11 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addValueSetColumnAttributes(string &$script): void
     {
         $script .= "
-    /** The enumerated values for this table */
+    /** 
+     * The enumerated values for this table 
+     * 
+     * @var array<string, array<string>>
+     */
     protected static \$enumValueSets = [";
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isValueSetType()) {
@@ -1376,7 +1380,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public static function getTableMap()
+    public static function getTableMap(): TableMap
     {
         return Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . '::DATABASE_NAME)->getTable(' . $this->getTableMapClass() . "::TABLE_NAME);
     }

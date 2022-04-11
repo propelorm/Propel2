@@ -1316,8 +1316,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $clo = $column->getLowercasedName();
 
-        $orNull = $column->isNotNull() ? '' : '|null';
-
         $script .= "
     /**
      * Get the [$clo] column value.
@@ -1327,7 +1325,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param ConnectionInterface An optional ConnectionInterface connection to use for fetching this lazy-loaded column.";
         }
         $script .= "
-     * @return string{$orNull}
+     * @return string|null
      * @throws \\Propel\\Runtime\\Exception\\PropelException
      */";
     }
@@ -3277,13 +3275,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= "
             case $i:
                 return \$this->get$cfc();
-                break;";
+                ";
             $i++;
         } /* foreach */
         $script .= "
             default:
                 return null;
-                break;
         } // switch()";
     }
 
@@ -3825,7 +3822,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Returns the primary key for this object (row).
-     * @return $cptype
+     * @return $cptype|null
      */
     public function getPrimaryKey()
     {
