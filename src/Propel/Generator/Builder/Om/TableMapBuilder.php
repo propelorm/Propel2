@@ -268,7 +268,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     /** 
      * The enumerated values for this table 
      * 
-     * @var array
+     * @var array<string, array<string>>
      */
     protected static \$enumValueSets = [";
         foreach ($this->getTable()->getColumns() as $col) {
