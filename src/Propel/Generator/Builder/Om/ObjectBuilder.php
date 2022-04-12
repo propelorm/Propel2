@@ -3822,7 +3822,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Returns the primary key for this object (row).
-     * @return $cptype|null
+     * @return $cptype
      */
     public function getPrimaryKey()
     {
