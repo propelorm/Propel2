@@ -143,16 +143,16 @@ class ObjectBuilder extends AbstractObjectBuilder
      */
     protected function getTemporalFormatter(Column $column): ?string
     {
-        $fmt = null;
-        if ($column->getType() === PropelTypes::DATE) {
-            $fmt = $this->getPlatform()->getDateFormatter();
-        } elseif ($column->getType() === PropelTypes::TIME) {
-            $fmt = $this->getPlatform()->getTimeFormatter();
-        } elseif ($column->getType() === PropelTypes::TIMESTAMP) {
-            $fmt = $this->getPlatform()->getTimestampFormatter();
+        switch ($column->getType()) {
+            case PropelTypes::DATE:
+                return $this->getPlatformOrFail()->getDateFormatter();
+            case PropelTypes::TIME:
+                return $this->getPlatformOrFail()->getTimeFormatter();
+            case PropelTypes::TIMESTAMP:
+                return $this->getPlatformOrFail()->getTimestampFormatter();
+            default:
+                return null;
         }
-
-        return $fmt;
     }
 
     /**
@@ -183,7 +183,7 @@ class ObjectBuilder extends AbstractObjectBuilder
                     // while technically this is not a default value of NULL,
                     // this seems to be closest in meaning.
                     $defDt = new DateTime($val);
-                    $defaultValue = var_export($defDt->format($fmt), true);
+                    $defaultValue = var_export($defDt->format((string)$fmt), true);
                 }
             } catch (Exception $exception) {
                 // prevent endless loop when timezone is undefined
@@ -744,15 +744,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $hooks = [];
         foreach (['pre', 'post'] as $hook) {
             foreach (['Insert', 'Update', 'Save', 'Delete'] as $action) {
-                $hooks[$hook . $action] = strpos($script, "function $hook.$action(") === false;
+                $hooks[$hook . $action] = strpos($script, 'function ' . $hook . $action . '(') === false;
             }
         }
 
-        if ($this->getParentClass() !== null) {
-            $hooks['hasBaseClass'] = true;
-        } else {
-            $hooks['hasBaseClass'] = false;
-        }
+        /** @var string|null $className */
+        $className = ClassTools::classname($this->getBaseClass());
+        $hooks['hasBaseClass'] = $this->getBehaviorContent('parentClass') !== null || $className !== null;
 
         $script .= $this->renderTemplate('baseObjectMethodHook', $hooks);
     }

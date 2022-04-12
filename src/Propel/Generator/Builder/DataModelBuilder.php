@@ -16,6 +16,7 @@ use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Builder\Om\TableMapBuilder;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Inheritance;
 use Propel\Generator\Model\Table;
@@ -227,9 +228,9 @@ abstract class DataModelBuilder
     /**
      * Returns new or existing stub Interface builder class for this table.
      *
-     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder|null
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getInterfaceBuilder(): ?AbstractOMBuilder
+    public function getInterfaceBuilder(): AbstractOMBuilder
     {
         if ($this->interfaceBuilder === null) {
             /** @var \Propel\Generator\Builder\Om\ObjectBuilder $builder */
@@ -478,6 +479,23 @@ abstract class DataModelBuilder
         }
 
         return $this->platform;
+    }
+
+    /**
+     * Convenience method to return the Platform class for this table (database).
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Platform\PlatformInterface
+     */
+    public function getPlatformOrFail(): PlatformInterface
+    {
+        $platform = $this->getPlatform();
+        if ($platform === null) {
+            throw new LogicException('Platform is not set');
+        }
+
+        return $platform;
     }
 
     /**
