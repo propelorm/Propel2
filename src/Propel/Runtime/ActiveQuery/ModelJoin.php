@@ -125,9 +125,9 @@ class ModelJoin extends Join
     /**
      * Gets the right tableMap for this join
      *
-     * @return \Propel\Runtime\Map\TableMap The table map
-     *
      * @throws \Propel\Runtime\Exception\LogicException
+     *
+     * @return \Propel\Runtime\Map\TableMap The table map
      */
     public function getTableMapOrFail(): TableMap
     {

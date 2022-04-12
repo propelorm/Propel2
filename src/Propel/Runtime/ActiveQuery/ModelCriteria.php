@@ -1982,7 +1982,7 @@ class ModelCriteria extends BaseModelCriteria
     {
         if ($forceIndividualSaves) {
             if ($updateValues instanceof Criteria) {
-                throw new LogicException("Parameter #1 \$updateValues must be an array while \$forceIndividualSaves = true.");
+                throw new LogicException('Parameter #1 $updateValues must be an array while $forceIndividualSaves = true.');
             }
             // Update rows one by one
             $objects = $this->setFormatter(self::FORMAT_OBJECT)->find($con);
