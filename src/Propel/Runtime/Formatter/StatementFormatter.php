@@ -17,6 +17,11 @@ use Propel\Runtime\Exception\PropelException;
  * format() returns a PDO statement
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\ObjectCollection
+ * @phpstan-template TReturn
+ * @phpstan-extends \Propel\Runtime\Formatter\AbstractFormatter<T, TColl, TReturn>
  */
 class StatementFormatter extends AbstractFormatter
 {

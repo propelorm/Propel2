@@ -37,30 +37,42 @@ use Traversable;
  * @method string toYAML(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a YAML string
  * @method string toJSON(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a JSON string
  * @method string toCSV(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a CSV string
+ * @method void fromArray(array $arr) Populates the collection from an array
+ * @method array toArray(?string $keyColumn = null, bool $usePrefix = false, string $keyType = \Propel\Runtime\Map\TableMap::TYPE_PHPNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = []) Get an array representation of the collection
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T
+ * @phpstan-implements \ArrayAccess<string|int, T>
+ * @phpstan-implements \IteratorAggregate<T>
  */
 class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {
     /**
-     * @var string
+     * @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+     *
+     * @var string|null
      */
-    protected $model = '';
+    protected $model;
 
     /**
      * The fully qualified classname of the model
      *
-     * @var string
+     * @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+     *
+     * @var string|null
      */
-    protected $fullyQualifiedModel = '';
+    protected $fullyQualifiedModel;
 
     /**
+     * @phpstan-var \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, \Propel\Runtime\Collection\Collection, T>
+     *
      * @var \Propel\Runtime\Formatter\AbstractFormatter
      */
     protected $formatter;
 
     /**
-     * @var array
+     * @var array<T>
      */
     protected $data = [];
 
@@ -70,7 +82,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     private $pluralizer;
 
     /**
-     * @param array $data
+     * @param array<T> $data
      */
     public function __construct(array $data = [])
     {
@@ -96,6 +108,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-param T $value
+     *
      * @param mixed $value
      *
      * @return void
@@ -118,6 +132,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * @psalm-suppress ReservedWord
      *
+     * @phpstan-return T|null
+     *
      * @param mixed $offset
      *
      * @return mixed
@@ -129,10 +145,14 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             return $this->data[$offset];
         }
 
-        return null;
+        $result = null;
+
+        return $result;
     }
 
     /**
+     * @phpstan-param T $value
+     *
      * @param mixed $offset
      * @param mixed $value
      *
@@ -158,7 +178,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @param array $input
+     * @param array<T> $input
      *
      * @return void
      */
@@ -170,7 +190,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the data in the collection
      *
-     * @return array
+     * @return array<T>
      */
     public function getData(): array
     {
@@ -178,7 +198,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @return array
+     * @return array<T>
      */
     public function getArrayCopy(): array
     {
@@ -188,7 +208,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Set the data in the collection
      *
-     * @param array $data
+     * @param array<T> $data
      *
      * @return void
      */
@@ -198,6 +218,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-return \Iterator<T>
+     *
      * @return \Propel\Runtime\Collection\CollectionIterator
      */
     public function getIterator(): Traversable
@@ -218,6 +240,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the first element in the collection
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     public function getFirst()
@@ -232,6 +256,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * Get the last element in the collection
+     *
+     * @phpstan-return T|null
      *
      * @return mixed
      */
@@ -260,6 +286,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * Get an element from its key
      * Alias for ArrayObject::offsetGet()
      *
+     * @phpstan-return T
+     *
      * @param mixed $key
      *
      * @throws \Propel\Runtime\Exception\UnexpectedValueException
@@ -277,6 +305,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * Pops an element off the end of the collection
+     *
+     * @phpstan-return T|null
      *
      * @return mixed The popped element
      */
@@ -296,6 +326,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Pops an element off the beginning of the collection
      *
+     * @phpstan-return T|null
+     *
      * @return mixed The popped element
      */
     public function shift()
@@ -312,6 +344,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Prepend one elements to the end of the collection
      *
+     * @phpstan-param T $value
+     *
      * @param mixed $value the element to prepend
      *
      * @return void
@@ -323,6 +357,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * Prepend one or more elements to the beginning of the collection
+     *
+     * @phpstan-param T $value
      *
      * @param mixed $value the element to prepend
      *
@@ -342,6 +378,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Add an element to the collection with the given key
      * Alias for ArrayObject::offsetSet()
+     *
+     * @phpstan-param T $value
      *
      * @param mixed $key
      * @param mixed $value
@@ -385,6 +423,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Whether this collection contains a specified element
      *
+     * @phpstan-param T $element
+     *
      * @param mixed $element
      *
      * @return bool
@@ -396,6 +436,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
 
     /**
      * Search an element in the collection
+     *
+     * @phpstan-param T $element
      *
      * @param mixed $element
      *
@@ -409,6 +451,10 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
+     *
+     * @phpstan-param \Propel\Runtime\Collection\Collection<T> $collection
+     *
+     * @phpstan-return self
      *
      * @param \Propel\Runtime\Collection\Collection $collection A Propel collection.
      *
@@ -464,6 +510,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Set the model of the elements in the collection
      *
+     * @phpstan-param class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface> $model
+     *
      * @param string $model Name of the Propel object classes stored in the collection
      *
      * @return void
@@ -482,6 +530,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
+     * @phpstan-return class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+     *
      * @return string Name of the Propel object class stored in the collection
      */
     public function getModel(): string
@@ -492,6 +542,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     /**
      * Get the model of the elements in the collection
      *
+     * @phpstan-return class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+     *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
     public function getFullyQualifiedModel(): string
@@ -500,7 +552,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
+     * @phpstan-return class-string<\Propel\Runtime\Map\TableMap>
      *
      * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
      *
@@ -518,6 +570,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-param \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, self, T> $formatter
+     *
      * @param \Propel\Runtime\Formatter\AbstractFormatter $formatter
      *
      * @return void
@@ -528,6 +582,8 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
+     * @phpstan-return \Propel\Runtime\Formatter\AbstractFormatter<\Propel\Runtime\ActiveRecord\ActiveRecordInterface, \Propel\Runtime\Collection\Collection, T>
+     *
      * @return \Propel\Runtime\Formatter\AbstractFormatter
      */
     public function getFormatter(): AbstractFormatter
@@ -566,7 +622,9 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), TableMap::TYPE_PHPNAME);
+        $this->fromArray($parser->listToArray($data, $this->getPluralModelName()));
+
+        return $this;
     }
 
     /**
@@ -653,6 +711,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function __clone()
     {
+        /** @phpstan-var T $obj */
         foreach ($this as $key => $obj) {
             if (is_object($obj)) {
                 $this[$key] = clone $obj;

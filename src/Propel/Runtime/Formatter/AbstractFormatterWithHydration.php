@@ -12,6 +12,12 @@ use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\ArrayCollection;
 use ReflectionClass;
 
+/**
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
+ * @phpstan-extends \Propel\Runtime\Formatter\AbstractFormatter<T, TColl, TReturn>
+ */
 abstract class AbstractFormatterWithHydration extends AbstractFormatter
 {
     /**

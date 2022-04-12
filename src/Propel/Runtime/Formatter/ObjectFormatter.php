@@ -17,15 +17,22 @@ use Propel\Runtime\Exception\LogicException;
  * format() returns a ObjectCollection of Propel model objects
  *
  * @author Francois Zaninotto
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-template TColl of \Propel\Runtime\Collection\Collection
+ * @phpstan-template TReturn
+ * @phpstan-extends \Propel\Runtime\Formatter\AbstractFormatter<T, TColl, TReturn>
  */
 class ObjectFormatter extends AbstractFormatter
 {
     /**
-     * @var array
+     * @var array<T>
      */
     protected $objects = [];
 
     /**
+     * @phpstan-return TColl<TReturn>|array<TReturn>
+     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -69,6 +76,8 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
+     * @phpstan-return class-string<TColl>
+     *
      * @return string|null
      */
     public function getCollectionClassName(): ?string
@@ -77,6 +86,8 @@ class ObjectFormatter extends AbstractFormatter
     }
 
     /**
+     * @phpstan-return T|null
+     *
      * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -117,6 +128,8 @@ class ObjectFormatter extends AbstractFormatter
      * Hydrates a series of objects from a result row
      * The first object to hydrate is the model of the Criteria
      * The following objects (the ones added by way of ModelCriteria::with()) are linked to the first one
+     *
+     * @phpstan-return T
      *
      * @param array $row associative array indexed by column number,
      *                   as returned by DataFetcher::fetch()

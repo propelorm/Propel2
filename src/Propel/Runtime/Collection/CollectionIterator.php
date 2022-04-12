@@ -12,10 +12,15 @@ use ArrayIterator;
 
 /**
  * Iterator class for iterating over Collection data
+ *
+ * @phpstan-template T of \Propel\Runtime\ActiveRecord\ActiveRecordInterface
+ * @phpstan-extends \ArrayIterator<string, T>
  */
 class CollectionIterator extends ArrayIterator
 {
     /**
+     * @phpstan-var \Propel\Runtime\Collection\Collection<T>
+     *
      * @var \Propel\Runtime\Collection\Collection
      */
     protected Collection $collection;
@@ -27,6 +32,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * Constructor
+     *
+     * @phpstan-param \Propel\Runtime\Collection\Collection<T> $collection
      *
      * @param \Propel\Runtime\Collection\Collection $collection
      */
@@ -40,6 +47,8 @@ class CollectionIterator extends ArrayIterator
 
     /**
      * Returns the collection instance
+     *
+     * @phpstan-return \Propel\Runtime\Collection\Collection<T>
      *
      * @return \Propel\Runtime\Collection\Collection
      */
@@ -79,6 +88,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @psalm-suppress ReservedWord
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     #[\ReturnTypeWillChange]
@@ -108,6 +119,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @psalm-suppress ReservedWord
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     #[\ReturnTypeWillChange]
@@ -127,6 +140,8 @@ class CollectionIterator extends ArrayIterator
      *
      * @psalm-suppress ReservedWord
      *
+     * @phpstan-return T|null
+     *
      * @return mixed
      */
     #[\ReturnTypeWillChange]
@@ -140,6 +155,8 @@ class CollectionIterator extends ArrayIterator
      * And get the next element in the collection
      *
      * @psalm-suppress ReservedWord
+     *
+     * @phpstan-return T|null
      *
      * @return mixed
      */
@@ -156,6 +173,8 @@ class CollectionIterator extends ArrayIterator
      * And get the last element in the collection
      *
      * @psalm-suppress ReservedWord
+     *
+     * @phpstan-return T|null
      *
      * @return mixed
      */
@@ -207,6 +226,8 @@ class CollectionIterator extends ArrayIterator
     }
 
     /**
+     * @phpstan-param T $value
+     *
      * @param string $index
      * @param string $value
      *
