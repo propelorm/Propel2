@@ -1684,9 +1684,10 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         $dataFetcher = $criteria->doCount($con);
+        /** @var array $row */
         $row = $dataFetcher->fetch();
         if ($row) {
-            $count = (int)current((array)$row);
+            $count = (int)current($row);
         } else {
             $count = 0; // no rows returned; we infer that means 0 matches.
         }
