@@ -35,12 +35,12 @@ class YamlFileLoader extends FileLoader
         $path = $this->locator->locate($resource);
 
         if (!is_readable($path)) {
-            throw new InputOutputException("You don't have permissions to access configuration file $resource.");
+            throw new InputOutputException(sprintf("You don't have permissions to access configuration file `%s`.", $resource));
         }
 
         $data = file_get_contents($path);
         if (!$data) {
-            throw new InputOutputException("Unable to read configuration file $resource.");
+            throw new InputOutputException(sprintf('Unable to read configuration file `%s`.', $resource));
         }
 
         $content = Yaml::parse($data);
