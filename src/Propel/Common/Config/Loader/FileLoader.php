@@ -117,7 +117,9 @@ abstract class FileLoader extends BaseFileLoader
             return false;
         }
 
-        ['extension' => $extension, 'filename' => $filename] = pathinfo($resource);
+        $pathParts = pathinfo($resource);
+        $extension = $pathParts['extension'] ?? '';
+        $filename = $pathParts['filename'];
 
         if ($extension === 'dist') {
             $extension = pathinfo($filename, PATHINFO_EXTENSION);

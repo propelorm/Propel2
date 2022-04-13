@@ -523,7 +523,7 @@ class ModelCriteria extends BaseModelCriteria
     protected function resolveSelectAll(): array
     {
         $columnArray = [];
-        foreach ($this->getTableMap()->getColumns() as $columnMap) {
+        foreach ($this->getTableMapOrFail()->getColumns() as $columnMap) {
             $columnArray[] = $this->modelName . '.' . $columnMap->getPhpName();
         }
 
@@ -798,10 +798,11 @@ class ModelCriteria extends BaseModelCriteria
 
         /** @var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         $join = $this->joins[$relation];
-        if ($join->getRelationMap()->getType() === RelationMap::MANY_TO_MANY) {
+        $relationMap = $join->getRelationMap();
+        if ($relationMap && $relationMap->getType() === RelationMap::MANY_TO_MANY) {
             throw new PropelException(__METHOD__ . ' does not allow hydration for many-to-many relationships');
         }
-        if ($join->getRelationMap()->getType() === RelationMap::ONE_TO_MANY) {
+        if ($relationMap && $relationMap->getType() === RelationMap::ONE_TO_MANY) {
             // For performance reasons, the formatters will use a special routine in this case
             $this->isWithOneToMany = true;
         }
@@ -878,7 +879,7 @@ class ModelCriteria extends BaseModelCriteria
 
         /** @var \Propel\Runtime\ActiveQuery\ModelJoin $modelJoin */
         $modelJoin = $this->joins[$relationName];
-        $className = $modelJoin->getTableMap()->getClassName();
+        $className = $modelJoin->getTableMap() ? (string)$modelJoin->getTableMap()->getClassName() : '';
         if ($secondaryCriteriaClass === null) {
             $secondaryCriteria = PropelQuery::from($className);
         } else {
@@ -886,10 +887,11 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if ($className !== $relationName) {
-            $secondaryCriteria->setModelAlias($relationName, $relationName == $this->joins[$relationName]->getRelationMap()->getName() ? false : true);
+            $modelName = $modelJoin->getRelationMap() ? $modelJoin->getRelationMap()->getName() : '';
+            $secondaryCriteria->setModelAlias($relationName, !($relationName == $modelName));
         }
 
-        $secondaryCriteria->setPrimaryCriteria($this, $this->joins[$relationName]);
+        $secondaryCriteria->setPrimaryCriteria($this, $modelJoin);
 
         return $secondaryCriteria;
     }
@@ -910,7 +912,7 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         if (isset($this->aliases[$this->modelAlias])) {
-            $this->removeAlias($this->modelAlias);
+            $this->removeAlias((string)$this->modelAlias);
         }
 
         $primaryCriteria = $this->getPrimaryCriteria();
@@ -941,8 +943,8 @@ class ModelCriteria extends BaseModelCriteria
         ?string $queryClass = null,
         string $type = ExistsCriterion::TYPE_EXISTS
     ) {
-        $relationMap = $this->getTableMap()->getRelation($relationName);
-        $className = $relationMap->getRightTable()->getClassName();
+        $relationMap = $this->getTableMapOrFail()->getRelation($relationName);
+        $className = (string)$relationMap->getRightTable()->getClassName();
 
         /** @var static $queryInExists */
         $queryInExists = ($queryClass === null) ? PropelQuery::from($className) : new $queryClass();
@@ -1081,7 +1083,7 @@ class ModelCriteria extends BaseModelCriteria
         if ($alias === null) {
             // get the default alias set in parent::addSelectQuery()
             end($this->selectQueries);
-            $alias = key($this->selectQueries);
+            $alias = (string)key($this->selectQueries);
         }
 
         if ($subQueryCriteria instanceof BaseModelCriteria) {
@@ -1090,7 +1092,7 @@ class ModelCriteria extends BaseModelCriteria
                 $this->setModelAlias($alias, true);
                 $this->addSelfSelectColumns(true);
             } else {
-                $tableMapClassName = $subQueryCriteria->modelTableMapName;
+                $tableMapClassName = (string)$subQueryCriteria->modelTableMapName;
                 $this->addSelfSelectColumnsFromTableMapClass($tableMapClassName, $alias);
             }
         }
@@ -1178,7 +1180,9 @@ class ModelCriteria extends BaseModelCriteria
     {
         /** @var \Propel\Runtime\ActiveQuery\ModelJoin $join */
         $join = $this->joins[$relation];
-        $join->getTableMap()->addSelectColumns($this, $join->getRelationAlias());
+        if ($join->getTableMap()) {
+            $join->getTableMap()->addSelectColumns($this, $join->getRelationAlias());
+        }
 
         return $this;
     }
@@ -1452,7 +1456,10 @@ class ModelCriteria extends BaseModelCriteria
             throw new PropelException('Please define a entityNotFoundExceptionClass property with the name of your NotFoundException-class in ' . static::class);
         }
 
-        return new $this->entityNotFoundExceptionClass("{$this->getModelShortName()} could not be found");
+        /** @phpstan-var \Exception $exception */
+        $exception = new $this->entityNotFoundExceptionClass("{$this->getModelShortName()} could not be found");
+
+        return $exception;
     }
 
     /**
@@ -1476,8 +1483,12 @@ class ModelCriteria extends BaseModelCriteria
         if (!$ret) {
             /** @var class-string $class */
             $class = $this->getModelName();
+            /** @phpstan-var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
             $obj = new $class();
             foreach ($this->keys() as $key) {
+                if (!method_exists($obj, 'setByName')) {
+                    continue;
+                }
                 $obj->setByName($key, $this->getValue($key), TableMap::TYPE_COLNAME);
             }
             $ret = $this->getFormatter()->formatRecord($obj);
@@ -1510,7 +1521,7 @@ class ModelCriteria extends BaseModelCriteria
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $pkCols = array_values($this->getTableMap()->getPrimaryKeys());
+        $pkCols = array_values($this->getTableMapOrFail()->getPrimaryKeys());
         if (count($pkCols) === 1) {
             // simple primary key
             $pkCol = $pkCols[0];
@@ -1552,7 +1563,7 @@ class ModelCriteria extends BaseModelCriteria
         // As the query uses a PK condition, no limit(1) is necessary.
         $this->basePreSelect($con);
         $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $pkCols = $this->getTableMap()->getPrimaryKeys();
+        $pkCols = $this->getTableMapOrFail()->getPrimaryKeys();
         if (count($pkCols) === 1) {
             // simple primary key
             $pkCol = array_shift($pkCols);
@@ -1673,6 +1684,7 @@ class ModelCriteria extends BaseModelCriteria
         $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 
         $dataFetcher = $criteria->doCount($con);
+        /** @var array $row */
         $row = $dataFetcher->fetch();
         if ($row) {
             $count = (int)current($row);
@@ -1970,6 +1982,9 @@ class ModelCriteria extends BaseModelCriteria
     public function doUpdate($updateValues, ConnectionInterface $con, bool $forceIndividualSaves = false): int
     {
         if ($forceIndividualSaves) {
+            if ($updateValues instanceof Criteria) {
+                throw new LogicException('Parameter #1 `$updateValues` must be an array while `$forceIndividualSaves = true`.');
+            }
             // Update rows one by one
             $objects = $this->setFormatter(self::FORMAT_OBJECT)->find($con);
             foreach ($objects as $object) {
@@ -1986,13 +2001,13 @@ class ModelCriteria extends BaseModelCriteria
             } else {
                 $set = new Criteria($this->getDbName());
                 foreach ($updateValues as $columnName => $value) {
-                    $realColumnName = $this->getTableMap()->getColumnByPhpName($columnName)->getFullyQualifiedName();
+                    $realColumnName = $this->getTableMapOrFail()->getColumnByPhpName($columnName)->getFullyQualifiedName();
                     $set->add($realColumnName, $value);
                 }
             }
 
             $affectedRows = parent::doUpdate($set, $con);
-            if ($this->getTableMap()->extractPrimaryKey($this)) {
+            if ($this->getTableMapOrFail()->extractPrimaryKey($this)) {
                 // this criteria updates only one object defined by a concrete primary key,
                 // therefore there's no need to remove anything from the pool
             } else {
@@ -2176,7 +2191,7 @@ class ModelCriteria extends BaseModelCriteria
     protected function getColumnFromName(string $columnName, bool $failSilently = true): array
     {
         if (strpos($columnName, '.') === false) {
-            $prefix = $this->getModelAliasOrName();
+            $prefix = (string)$this->getModelAliasOrName();
         } else {
             // $prefix could be either class name or table name
             [$prefix, $columnName] = explode('.', $columnName);
@@ -2238,7 +2253,7 @@ class ModelCriteria extends BaseModelCriteria
     public function getModelJoinByTableName(string $tableName): ?ModelJoin
     {
         foreach ($this->joins as $join) {
-            if ($join instanceof ModelJoin && $join->getTableMap()->getName() == $tableName) {
+            if ($join instanceof ModelJoin && $join->getTableMapOrFail()->getName() == $tableName) {
                 return $join;
             }
         }
@@ -2293,6 +2308,10 @@ class ModelCriteria extends BaseModelCriteria
             $this->setFormatter(SimpleArrayFormatter::class);
         }
         $this->selectColumns = [];
+
+        if (!is_array($this->select)) {
+            return;
+        }
 
         foreach ($this->select as $columnName) {
             if (array_key_exists($columnName, $this->asColumns)) {
@@ -2354,11 +2373,12 @@ class ModelCriteria extends BaseModelCriteria
      */
     protected function getRealColumnName(string $columnName): string
     {
-        if (!$this->getTableMap()->hasColumnByPhpName($columnName)) {
+        $tableMap = $this->getTableMapOrFail();
+        if (!$tableMap->hasColumnByPhpName($columnName)) {
             throw new UnknownColumnException('Unknown column ' . $columnName . ' in model ' . $this->modelName);
         }
         $tableName = $this->getTableNameInQuery();
-        $columnName = $this->getTableMap()->getColumnByPhpName($columnName)->getName();
+        $columnName = $tableMap->getColumnByPhpName($columnName)->getName();
 
         return "$tableName.$columnName";
     }
@@ -2375,7 +2395,7 @@ class ModelCriteria extends BaseModelCriteria
     public function getAliasedColName(string $colName): string
     {
         if ($this->useAliasInSQL) {
-            return $this->modelAlias . substr($colName, strrpos($colName, '.'));
+            return $this->modelAlias . substr($colName, (int)strrpos($colName, '.'));
         }
 
         return $colName;
@@ -2414,7 +2434,7 @@ class ModelCriteria extends BaseModelCriteria
         foreach ($this->getMap() as $criterion) {
             $table = null;
             foreach ($criterion->getAttachedCriterion() as $attachedCriterion) {
-                $tableName = $attachedCriterion->getTable();
+                $tableName = (string)$attachedCriterion->getTable();
 
                 $table = $this->getTableForAlias($tableName);
                 if ($table === null) {
@@ -2423,7 +2443,7 @@ class ModelCriteria extends BaseModelCriteria
 
                 if (
                     ($this->isIgnoreCase() || method_exists($attachedCriterion, 'setIgnoreCase'))
-                    && $dbMap->getTable($table)->getColumn($attachedCriterion->getColumn())->isText()
+                    && $dbMap->getTable($table)->getColumn((string)$attachedCriterion->getColumn())->isText()
                 ) {
                     $attachedCriterion->setIgnoreCase(true);
                 }

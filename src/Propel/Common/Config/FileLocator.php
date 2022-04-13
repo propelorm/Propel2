@@ -27,7 +27,7 @@ class FileLocator extends BaseFileLocator
     {
         if ($configDirectories === null) {
             $configDirectories = [
-                getcwd(),
+                (string)getcwd(),
                 'config',
                 'conf',
             ];
