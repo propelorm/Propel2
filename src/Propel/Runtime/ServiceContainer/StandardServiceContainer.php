@@ -18,6 +18,7 @@ use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
@@ -638,5 +639,24 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     private function __clone()
     {
+    }
+
+    /**
+     * Enable or disable debug output.
+     *
+     * Sets connections in debug mode. This only works when the default
+     * ConnectionWrapper is used, and it does not overrice instance-specific
+     * settings.
+     *
+     * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()
+     * @see \Propel\Runtime\Connection\ConnectionWrapper::isInDebugMode()
+     *
+     * @param bool $useDebug
+     *
+     * @return void
+     */
+    public function useDebugMode(bool $useDebug = true): void
+    {
+        ConnectionWrapper::$useDebugMode = $useDebug;
     }
 }

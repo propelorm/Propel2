@@ -31,7 +31,7 @@ class MssqlPropelPDO extends PropelPDO
         $opcount = $this->getNestedTransactionCount();
         if ($opcount === 0) {
             $return = (bool)$this->exec('BEGIN TRANSACTION');
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Begin transaction: ' . __METHOD__);
             }
             $this->isUncommitable = false;
@@ -62,7 +62,7 @@ class MssqlPropelPDO extends PropelPDO
                 }
 
                 $return = (bool)$this->exec('COMMIT TRANSACTION');
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Commit transaction: ' . __METHOD__);
                 }
             }
@@ -87,7 +87,7 @@ class MssqlPropelPDO extends PropelPDO
         if ($opcount > 0) {
             if ($opcount === 1) {
                 $return = (bool)$this->exec('ROLLBACK TRANSACTION');
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Rollback transaction: ' . __METHOD__);
                 }
             } else {
@@ -121,7 +121,7 @@ class MssqlPropelPDO extends PropelPDO
             // try to commit (or rollback) the transaction outside this scope.
             $this->nestedTransactionCount = 0;
 
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Rollback transaction: ' . __METHOD__);
             }
         }

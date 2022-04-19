@@ -143,6 +143,6 @@ abstract class AbstractQueryExecutor
      */
     protected function connectionIsInDebugMode(): bool
     {
-        return ($this->con instanceof ConnectionWrapper && $this->con->useDebug);
+        return ($this->con instanceof ConnectionWrapper && $this->con->isInDebugMode());
     }
 }

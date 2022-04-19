@@ -18,5 +18,5 @@ class DebugPDO extends ConnectionWrapper
     /**
      * @var bool
      */
-    public $useDebug = true;
+    protected $useDebugModeOnInstance = true;
 }
