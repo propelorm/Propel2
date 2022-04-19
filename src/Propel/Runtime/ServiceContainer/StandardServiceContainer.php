@@ -18,6 +18,7 @@ use Propel\Runtime\Adapter\Exception\AdapterException;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
+use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Exception\RuntimeException;
 use Propel\Runtime\Exception\UnexpectedValueException;
@@ -106,6 +107,11 @@ class StandardServiceContainer implements ServiceContainerInterface
      * @var array
      */
     protected $loggerConfigurations = [];
+
+    /**
+     * @var bool | null
+     */
+    protected $setWrappedConnetionToDebug;
 
     /**
      * @return string
@@ -422,7 +428,11 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getWriteConnection(string $name): ConnectionInterface
     {
-        return $this->getConnectionManager($name)->getWriteConnection($this->getAdapter($name));
+        $adapter = $this->getAdapter($name);
+        $connection = $this->getConnectionManager($name)->getWriteConnection($adapter);
+        $this->configureConnection($connection);
+
+        return $connection;
     }
 
     /**
@@ -439,7 +449,11 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function getReadConnection(string $name): ConnectionInterface
     {
-        return $this->getConnectionManager($name)->getReadConnection($this->getAdapter($name));
+        $adapter = $this->getAdapter($name);
+        $connection = $this->getConnectionManager($name)->getReadConnection($adapter);
+        $this->configureConnection($connection);
+
+        return $connection;
     }
 
     /**
@@ -455,6 +469,24 @@ class StandardServiceContainer implements ServiceContainerInterface
         $manager = new ConnectionManagerSingle($name);
         $manager->setConnection($connection);
         $this->setConnectionManager($manager);
+    }
+
+    /**
+     * Apply connection settings configured in this container.
+     *
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     *
+     * @return void
+     */
+    protected function configureConnection(ConnectionInterface $connection): void
+    {
+        if (
+            $connection instanceof ConnectionWrapper
+            && $this->setWrappedConnetionToDebug !== null
+            && $connection->useDebug !== $this->setWrappedConnetionToDebug
+        ) {
+            $connection->useDebug($this->setWrappedConnetionToDebug);
+        }
     }
 
     /**
@@ -638,5 +670,21 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     private function __clone()
     {
+    }
+
+    /**
+     * Create connections in debug mode.
+     *
+     * This only works with the default ConnectionWrapper.
+     *
+     * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()
+     *
+     * @param bool | null $useDebug
+     *
+     * @return void
+     */
+    public function setWrappedConnectionDebugMode(?bool $useDebug = true): void
+    {
+        $this->setWrappedConnetionToDebug = $useDebug;
     }
 }

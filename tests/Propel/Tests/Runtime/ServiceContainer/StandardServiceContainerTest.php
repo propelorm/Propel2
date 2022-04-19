@@ -24,6 +24,8 @@ use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Propel\Runtime\Util\Profiler;
 use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -671,6 +673,40 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceOf('\Monolog\Logger', $logger);
         $handler = $logger->popHandler();
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $handler);
+    }
+    
+    public function testGetDebugConnection()
+    {
+        $connectionName = 'sqlite::memory';
+        
+        $connectionManager = new ConnectionManagerSingle($connectionName);
+        $connectionManager->setConfiguration(['dsn' => 'sqlite::memory:']);
+        $this->sc->setConnectionManager($connectionManager);
+        
+        $this->sc->setAdapter($connectionName, new SqliteAdapter());
+
+        $this->assertConnectionDebugMode(false, $connectionName);
+        
+        $testModes = [true, false];
+        foreach($testModes as $mode){
+            $this->sc->setWrappedConnectionDebugMode($mode);
+            $this->assertConnectionDebugMode($mode, $connectionName);
+        }
+    }
+    
+    protected function assertConnectionDebugMode(bool $isDebugMode, string $connectionName): void
+    {
+        $readConnection = $this->sc->getReadConnection($connectionName);
+        $this->assertWrappedConnectionInDebugMode($isDebugMode, $readConnection);
+        
+        $writeConnection = $this->sc->getWriteConnection($connectionName);
+        $this->assertWrappedConnectionInDebugMode($isDebugMode, $writeConnection);
+    }
+    
+    protected function assertWrappedConnectionInDebugMode(bool $isDebugMode, ConnectionInterface $connection): void
+    {
+        $this->assertInstanceOf(ConnectionWrapper::class, $connection, 'Connection should be a ConnectionWrapper');
+        $this->assertEquals($isDebugMode, $connection->useDebug);
     }
 }
 
