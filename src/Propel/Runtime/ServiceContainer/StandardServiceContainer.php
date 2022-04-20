@@ -111,7 +111,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var bool|null
      */
-    protected $useDebugModeFlag;
+    protected $isInDebugMode;
 
     /**
      * @return string
@@ -482,10 +482,10 @@ class StandardServiceContainer implements ServiceContainerInterface
     {
         if (
             $connection instanceof ConnectionWrapper
-            && $this->useDebugModeFlag !== null
-            && $connection->useDebug !== $this->useDebugModeFlag
+            && $this->isInDebugMode !== null
+            && $connection->useDebug !== $this->isInDebugMode
         ) {
-            $connection->useDebug($this->useDebugModeFlag);
+            $connection->useDebug($this->isInDebugMode);
         }
     }
 
@@ -686,6 +686,6 @@ class StandardServiceContainer implements ServiceContainerInterface
      */
     public function useDebugMode(?bool $useDebug = true): void
     {
-        $this->useDebugModeFlag = $useDebug;
+        $this->isInDebugMode = $useDebug;
     }
 }
