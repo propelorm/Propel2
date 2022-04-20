@@ -131,7 +131,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function isInDebugMode(): bool
     {
-        return $this->useDebugModeOnInstance ?? static::$useDebugMode;
+        return $this->useDebugModeOnInstance ?? static::$useDebugMode ?? false;
     }
 
     /**
@@ -628,11 +628,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Enable or disable the query debug features
      *
-     * @param bool $value True to enable debug (default), false to disable it
+     * @param bool|null $value True to enable debug (default), false to disable it, null to use mode from class
      *
      * @return void
      */
-    public function useDebug(bool $value = true): void
+    public function useDebug(?bool $value = true): void
     {
         if (!$value) {
             // reset query logging
