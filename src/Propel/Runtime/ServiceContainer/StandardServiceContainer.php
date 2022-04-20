@@ -109,7 +109,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $loggerConfigurations = [];
 
     /**
-     * @var bool | null
+     * @var bool|null
      */
     protected $setWrappedConnetionToDebug;
 
@@ -679,7 +679,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()
      *
-     * @param bool | null $useDebug
+     * @param bool|null $useDebug
      *
      * @return void
      */
