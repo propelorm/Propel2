@@ -706,7 +706,7 @@ class StandardServiceContainerTest extends BaseTestCase
     protected function assertWrappedConnectionInDebugMode(bool $isDebugMode, ConnectionInterface $connection): void
     {
         $this->assertInstanceOf(ConnectionWrapper::class, $connection, 'Connection should be a ConnectionWrapper');
-        $this->assertEquals($isDebugMode, $connection->useDebug);
+        $this->assertSame($isDebugMode, $connection->useDebug, 'Debug state should match');
     }
 }
 
