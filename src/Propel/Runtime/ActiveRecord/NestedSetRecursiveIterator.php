@@ -114,7 +114,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     }
 
     /**
-     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator<int|string, mixed>|\RecursiveIterator<int|string, mixed>|null
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator<int|string, mixed>|null
      */
     public function getChildren(): ?RecursiveIterator
     {
