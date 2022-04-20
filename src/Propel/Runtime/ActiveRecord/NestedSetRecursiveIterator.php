@@ -14,6 +14,8 @@ use RecursiveIterator;
  * Pre-order node iterator for Node objects.
  *
  * @author Heltem <heltem@o2php.com>
+ *
+ * @implements \RecursiveIterator<(int|string), mixed>
  */
 class NestedSetRecursiveIterator implements RecursiveIterator
 {
@@ -112,7 +114,7 @@ class NestedSetRecursiveIterator implements RecursiveIterator
     }
 
     /**
-     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator|null
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator<int|string, mixed>|null
      */
     public function getChildren(): ?RecursiveIterator
     {

@@ -2,7 +2,6 @@ includes:
     - phpstan-baseline.neon
 parameters:
     level: 6
-    checkGenericClassInNonGenericObjectType: false
     checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: false
     paths:

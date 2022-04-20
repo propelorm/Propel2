@@ -13,6 +13,8 @@ use Iterator;
 
 /**
  * Interface class for DataFetcher.
+ *
+ * @extends \Iterator<int|string, mixed>
  */
 interface DataFetcherInterface extends Iterator, Countable
 {

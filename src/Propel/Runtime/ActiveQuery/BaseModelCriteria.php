@@ -17,6 +17,9 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Propel;
 use Traversable;
 
+/**
+ * @implements \IteratorAggregate<(int|string), mixed>
+ */
 class BaseModelCriteria extends Criteria implements IteratorAggregate
 {
     /**
@@ -194,6 +197,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
             return $this;
         }
         if (strpos($modelName, '\\') === 0) {
+            /** @var string $modelName */
             $modelName = substr($modelName, 1);
         }
 
