@@ -111,7 +111,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * @var bool|null
      */
-    protected $setWrappedConnetionToDebug;
+    protected $useDebugModeFlag;
 
     /**
      * @return string
@@ -482,10 +482,10 @@ class StandardServiceContainer implements ServiceContainerInterface
     {
         if (
             $connection instanceof ConnectionWrapper
-            && $this->setWrappedConnetionToDebug !== null
-            && $connection->useDebug !== $this->setWrappedConnetionToDebug
+            && $this->useDebugModeFlag !== null
+            && $connection->useDebug !== $this->useDebugModeFlag
         ) {
-            $connection->useDebug($this->setWrappedConnetionToDebug);
+            $connection->useDebug($this->useDebugModeFlag);
         }
     }
 
@@ -673,9 +673,10 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * Create connections in debug mode.
+     * Enable or disable debug output.
      *
-     * This only works with the default ConnectionWrapper.
+     * Sets created connections in debug mode. This only works when the
+     * default ConnectionWrapper is used..
      *
      * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()
      *
@@ -683,8 +684,8 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @return void
      */
-    public function setWrappedConnectionDebugMode(?bool $useDebug = true): void
+    public function useDebugMode(?bool $useDebug = true): void
     {
-        $this->setWrappedConnetionToDebug = $useDebug;
+        $this->useDebugModeFlag = $useDebug;
     }
 }
