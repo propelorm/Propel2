@@ -16,6 +16,8 @@ use Traversable;
 
 /**
  * Wraps a Statement class, providing logging.
+ *
+ * @implements \IteratorAggregate<int|string, mixed>
  */
 class StatementWrapper implements StatementInterface, IteratorAggregate
 {

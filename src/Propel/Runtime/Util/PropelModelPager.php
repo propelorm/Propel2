@@ -22,6 +22,8 @@ use Traversable;
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author François Zaninotto
+ *
+ * @implements \IteratorAggregate<int|string, mixed>
  */
 class PropelModelPager implements IteratorAggregate, Countable
 {

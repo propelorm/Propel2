@@ -39,6 +39,9 @@ use Traversable;
  * @method string toCSV(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
+ *
+ * @implements \ArrayAccess<int|string, mixed>
+ * @implements \IteratorAggregate<int|string, mixed>
  */
 class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {

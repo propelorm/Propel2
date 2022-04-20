@@ -19,6 +19,8 @@ use Propel\Runtime\Propel;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
+ *
+ * @implements \Iterator<int|string, mixed>
  */
 class OnDemandIterator implements Iterator
 {
