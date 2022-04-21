@@ -131,7 +131,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function isInDebugMode(): bool
     {
-        return $this->useDebugModeOnInstance ?? static::$useDebugMode ?? false;
+        return $this->useDebugModeOnInstance ?? static::$useDebugMode;
     }
 
     /**

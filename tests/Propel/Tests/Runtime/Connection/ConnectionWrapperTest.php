@@ -135,7 +135,6 @@ class ConnectionWrapperTest extends BookstoreTestBase
             [false, null, false, 'Instance should uses class mode if instance mode is null'],
             [true, false, false, 'Instance mode should override class mode'],
             [false, true, true, 'Instance mode should override class mode'],
-            [null, null, false, 'If unset, debug mode should default to false'],
         ];
     }
 }
