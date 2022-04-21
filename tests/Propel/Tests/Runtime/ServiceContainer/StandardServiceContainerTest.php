@@ -688,7 +688,7 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertConnectionDebugMode(false, $connectionName);
         
         $testModes = [true, false];
-        foreach($testModes as $mode){
+        foreach ($testModes as $mode) {
             $this->sc->useDebugMode($mode);
             $this->assertConnectionDebugMode($mode, $connectionName);
         }
