@@ -1288,7 +1288,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
-     * @return \Propel\Runtime\Collection\ObjectCollection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
+     * @return \Propel\Runtime\Collection\Collection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
      */
     public function find(?ConnectionInterface $con = null)
     {
@@ -1553,7 +1553,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return mixed the list of results, formatted by the current formatter
+     * @return \Propel\Runtime\Collection\Collection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
      */
     public function findPks(array $keys, ?ConnectionInterface $con = null)
     {
@@ -1587,7 +1587,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed $value A value for the condition
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con An optional connection object
      *
-     * @return mixed the list of results, formatted by the current formatter
+     * @return \Propel\Runtime\Collection\Collection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
      */
     public function findBy(string $column, $value, ?ConnectionInterface $con = null)
     {
@@ -1612,7 +1612,7 @@ class ModelCriteria extends BaseModelCriteria
      * @param mixed $conditions An array of conditions, using column phpNames as key
      * @param \Propel\Runtime\Connection\ConnectionInterface|null $con an optional connection object
      *
-     * @return mixed the list of results, formatted by the current formatter
+     * @return \Propel\Runtime\Collection\Collection|\Propel\Runtime\ActiveRecord\ActiveRecordInterface[]|mixed the list of results, formatted by the current formatter
      */
     public function findByArray($conditions, ?ConnectionInterface $con = null)
     {

@@ -10,6 +10,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use ArrayIterator;
 use IteratorAggregate;
+use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -184,6 +185,8 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
      *
      * @param string|null $modelName
      *
+     * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownModelException
+     *
      * @return $this The current object, for fluid interface
      */
     public function setModelName(?string $modelName)
@@ -195,6 +198,10 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
         }
         if (strpos($modelName, '\\') === 0) {
             $modelName = substr($modelName, 1);
+        }
+
+        if (!class_exists($modelName)) {
+            throw new UnknownModelException('Cannot find model class ' . $modelName);
         }
 
         $this->modelName = $modelName;

@@ -218,12 +218,12 @@ class QueryBuilder extends AbstractOMBuilder
 
         $script .= "
  *
- * @method     {$modelClass}[]|ObjectCollection find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
- * @psalm-method ObjectCollection&\Traversable<{$modelClass}> find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
+ * @method     {$modelClass}[]|Collection find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria
+ * @psalm-method Collection&\Traversable<{$modelClass}> find(?ConnectionInterface \$con = null) Return $modelClass objects based on current ModelCriteria";
         foreach ($this->getTable()->getColumns() as $column) {
             $script .= "
- * @method     {$modelClass}[]|ObjectCollection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column' . "
- * @psalm-method ObjectCollection&\Traversable<{$modelClass}> findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column';
+ * @method     {$modelClass}[]|Collection findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column' . "
+ * @psalm-method Collection&\Traversable<{$modelClass}> findBy" . $column->getPhpName() . '(' . $column->getPhpType() . ' $' . $column->getName() . ") Return $modelClass objects filtered by the " . $column->getName() . ' column';
         }
 
         $script .= "
@@ -835,7 +835,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     protected function addFindPks(string &$script): void
     {
         $this->declareClasses(
-            '\Propel\Runtime\Collection\ObjectCollection',
+            '\Propel\Runtime\Collection\Collection',
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Propel',
         );
@@ -858,7 +858,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * @param array \$keys Primary keys to use for the query
      * @param ConnectionInterface \$con an optional connection object
      *
-     * @return ObjectCollection|array|mixed the list of results, formatted by the current formatter
+     * @return Collection|array|mixed the list of results, formatted by the current formatter
      */
     public function findPks(\$keys, ?ConnectionInterface \$con = null)
     {";
