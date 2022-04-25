@@ -675,38 +675,29 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $handler);
     }
     
-    public function testGetDebugConnection()
-    {
-        $connectionName = 'sqlite::memory';
-        
-        $connectionManager = new ConnectionManagerSingle($connectionName);
-        $connectionManager->setConfiguration(['dsn' => 'sqlite::memory:']);
-        $this->sc->setConnectionManager($connectionManager);
-        
-        $this->sc->setAdapter($connectionName, new SqliteAdapter());
-
-        $this->assertConnectionDebugMode(false, $connectionName);
-        
-        $testModes = [true, false];
-        foreach ($testModes as $mode) {
-            $this->sc->useDebugMode($mode);
-            $this->assertConnectionDebugMode($mode, $connectionName);
-        }
-    }
     
-    protected function assertConnectionDebugMode(bool $isDebugMode, string $connectionName): void
+    /**
+     * @dataProvider debugModeDataProvider
+     */
+    public function testUseDebugMode(bool $useDebug, ?bool $useProfiler, bool $expectedConnectionMode, bool $expectedProfilerMode)
     {
-        $readConnection = $this->sc->getReadConnection($connectionName);
-        $this->assertWrappedConnectionInDebugMode($isDebugMode, $readConnection);
-        
-        $writeConnection = $this->sc->getWriteConnection($connectionName);
-        $this->assertWrappedConnectionInDebugMode($isDebugMode, $writeConnection);
+        $this->sc->useDebugMode($useDebug, $useProfiler);
+        $this->assertSame($expectedConnectionMode, ConnectionWrapper::$useDebugMode);
+        $this->assertSame($expectedProfilerMode, ConnectionFactory::$useProfilerConnection);
     }
-    
-    protected function assertWrappedConnectionInDebugMode(bool $isDebugMode, ConnectionInterface $connection): void
+        
+    public function debugModeDataProvider(): array
     {
-        $this->assertInstanceOf(ConnectionWrapper::class, $connection, 'Connection should be a ConnectionWrapper');
-        $this->assertSame($isDebugMode, $connection->isInDebugMode(), 'Debug state should match');
+        // use debug , use profile, connection debug, connection profile
+        return [
+            [false, null, false, false],
+            [false, false, false, false],
+            [false, true, false, true],
+            [true, null, true, true],
+            [true, false, true, false],
+            [true, false, true, false],
+            
+        ];
     }
 }
 

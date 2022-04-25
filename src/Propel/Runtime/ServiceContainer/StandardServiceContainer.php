@@ -15,6 +15,7 @@ use Monolog\Logger;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\Exception\AdapterException;
+use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
@@ -650,13 +651,18 @@ class StandardServiceContainer implements ServiceContainerInterface
      *
      * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()
      * @see \Propel\Runtime\Connection\ConnectionWrapper::isInDebugMode()
+     * @see \Propel\Runtime\Connection\ProfilerConnectionWrapper
      *
      * @param bool $useDebug
+     * @param bool|null $logStatementProfile If true, profile data of statement
+     *              execution (execution time, used memory) is added to log
+     *              output. Defaults to value of $useDebug.
      *
      * @return void
      */
-    public function useDebugMode(bool $useDebug = true): void
+    public function useDebugMode(bool $useDebug = true, ?bool $logStatementProfile = null): void
     {
         ConnectionWrapper::$useDebugMode = $useDebug;
+        ConnectionFactory::$useProfilerConnection = $logStatementProfile ?? $useDebug;
     }
 }
