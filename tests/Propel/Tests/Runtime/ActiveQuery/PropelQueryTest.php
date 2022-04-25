@@ -17,6 +17,8 @@ use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Collection\ArrayCollection;
 
 /**
  * Test class for PropelQuery
@@ -190,5 +192,30 @@ class PropelQueryTest extends BookstoreTestBase
         $result = $bookQuery->find();
 
         $this->assertNotNull($result);
+    }
+
+    /**
+     * @dataProvider findMethodsProvider
+     */
+    public function testReturnTypeOfFind(string $findMethodName, $findMethodArg)
+    {
+        $queryTypes = [
+            ['query' => BookQuery::create(), 'returnType' => ObjectCollection::class],
+            ['query' => BookQuery::create()->select(['id']), 'returnType' => ArrayCollection::class],
+            
+        ];
+        foreach($queryTypes as ['query' => $query, 'returnType' => $returnType]){
+            $result = call_user_func([$query, $findMethodName], $findMethodArg);
+            $this->assertInstanceOf($returnType, $result);
+        }
+    }
+    
+    public function findMethodsProvider()
+    {
+        return [
+            ['find', null],
+            ['findByTitle', 'le title'],
+            ['findPks', 42]
+        ];
     }
 }

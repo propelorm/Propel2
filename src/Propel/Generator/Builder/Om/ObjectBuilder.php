@@ -896,6 +896,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $orNull = $column->isNotNull() ? '' : '|null';
+        $descriptionReturnValueNull = $column->isNotNull() ? '' : ', NULL if column is NULL';
+        $descriptionReturnMysqlInvalidDate = $handleMysqlDate ? ", and 0 if column value is $mysqlInvalidDateString" : '';
 
         $script .= "
     /**
@@ -905,7 +907,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param string|null \$format The date/time format string (either date()-style or strftime()-style).
      *   If format is NULL, then the raw $dateTimeClass object will be returned.
      *
-     * @return string|{$dateTimeClass}{$orNull} Formatted date/time value as string or $dateTimeClass object (if format is NULL), NULL if column is NULL" . ($handleMysqlDate ? ', and 0 if column value is ' . $mysqlInvalidDateString : '') . "
+     * @return string|{$dateTimeClass}{$orNull} Formatted date/time value as string or $dateTimeClass object (if format is NULL){$descriptionReturnValueNull}{$descriptionReturnMysqlInvalidDate}.
      *
      * @throws \Propel\Runtime\Exception\PropelException - if unable to parse/validate the date/time value.
      *
@@ -4025,6 +4027,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
             $script .= "
         return " . implode(' && ', $tests) . ';';
+        } else {
+            $script .= "
+        return false;";
         }
         $script .= "
     }
