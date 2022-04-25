@@ -11,6 +11,7 @@ namespace Propel\Runtime;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerInterface;
+use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
@@ -143,6 +144,29 @@ class Propel
         }
 
         return self::$serviceContainer;
+    }
+
+    /**
+     * Returns the service container if it is an instance of
+     * StandardServiceContainer or throws an error if another service container
+     * is used.
+     *
+     * This method allows type-safe access to methods of
+     * StandardServiceContainer, it provides no other advantage over
+     * {@link Propel::getServiceContainer()}
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return \Propel\Runtime\ServiceContainer\StandardServiceContainer
+     */
+    public static function getStandardServiceContainer(): StandardServiceContainer
+    {
+        $sc = self::getServiceContainer();
+        if ($sc instanceof StandardServiceContainer) {
+            return $sc;
+        }
+
+        throw new PropelException('Instance was configured to not use StandardServiceContainer. Use Propel::getServiceContainer()');
     }
 
     /**

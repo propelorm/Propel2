@@ -12,6 +12,7 @@ use Propel\Runtime\Propel;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Exception\PropelException;
 
 class PropelTest extends BaseTestCase
 {
@@ -45,4 +46,20 @@ class PropelTest extends BaseTestCase
         $this->assertSame($newSC, Propel::getServiceContainer());
         Propel::setServiceContainer($oldSC);
     }
+    
+    public function testGetStandardServiceContainerWithDefaultContainer()
+    {
+        $sc = Propel::getStandardServiceContainer();
+        $this->assertInstanceOf(StandardServiceContainer::class, $sc);
+    }
+    
+    
+    public function testGetStandardServiceContainerThrowsErrorWithNonStandardContainer()
+    {
+        $sc = $this->createMock(ServiceContainerInterface::class);
+        Propel::setServiceContainer($sc);
+        $this->expectException(PropelException::class);
+        Propel::getStandardServiceContainer();
+    }
+    
 }
