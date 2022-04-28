@@ -92,7 +92,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function query(): DataFetcherInterface
     {
-        if ($this->connection->useDebug) {
+        if ($this->connection->isInDebugMode()) {
             $callback = [$this->connection->getWrappedConnection(), 'query'];
             $statement = $this->connection->callUserFunctionWithLogging($callback, [$this->sql], $this->sql);
         } else {
@@ -120,7 +120,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
     {
         $return = $this->statement->bindParam($parameter, $variable, $dataType, (int)$length, $driverOptions);
-        if ($this->connection->useDebug) {
+        if ($this->connection->isInDebugMode()) {
             $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = (int)$length > 100 ? '[Large value]' : var_export($variable, true);
             $this->boundValues[$parameter] = $valuestr;
@@ -144,7 +144,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool
     {
         $return = $this->statement->bindValue($parameter, $value, $dataType);
-        if ($this->connection->useDebug) {
+        if ($this->connection->isInDebugMode()) {
             $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = $dataType == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
             $this->boundValues[$parameter] = $valuestr;
@@ -208,7 +208,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      */
     public function execute(?array $inputParameters = null): bool
     {
-        if ($this->connection->useDebug) {
+        if ($this->connection->isInDebugMode()) {
             $sql = $this->getExecutedQueryString($inputParameters);
             $args = ($inputParameters !== null) ? [$inputParameters] : [];
 

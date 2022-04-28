@@ -24,6 +24,8 @@ use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Propel\Runtime\Util\Profiler;
 use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -671,6 +673,31 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceOf('\Monolog\Logger', $logger);
         $handler = $logger->popHandler();
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $handler);
+    }
+    
+    
+    /**
+     * @dataProvider debugModeDataProvider
+     */
+    public function testUseDebugMode(bool $useDebug, ?bool $useProfiler, bool $expectedConnectionMode, bool $expectedProfilerMode)
+    {
+        $this->sc->useDebugMode($useDebug, $useProfiler);
+        $this->assertSame($expectedConnectionMode, ConnectionWrapper::$useDebugMode);
+        $this->assertSame($expectedProfilerMode, ConnectionFactory::$useProfilerConnection);
+    }
+        
+    public function debugModeDataProvider(): array
+    {
+        // use debug , use profile, connection debug, connection profile
+        return [
+            [false, null, false, false],
+            [false, false, false, false],
+            [false, true, false, true],
+            [true, null, true, true],
+            [true, false, true, false],
+            [true, false, true, false],
+            
+        ];
     }
 }
 

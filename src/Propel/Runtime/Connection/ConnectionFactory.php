@@ -21,6 +21,13 @@ class ConnectionFactory
     public const DEFAULT_CONNECTION_CLASS = '\Propel\Runtime\Connection\ConnectionWrapper';
 
     /**
+     * If true, ConnectionFactory will use ProfilerConnectionWrapper.
+     *
+     * @var bool
+     */
+    public static $useProfilerConnection = false;
+
+    /**
      * Open a database connection based on a configuration.
      *
      * @param array $configuration
@@ -37,7 +44,9 @@ class ConnectionFactory
         AdapterInterface $adapter,
         string $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS
     ): ConnectionInterface {
-        if (isset($configuration['classname'])) {
+        if (static::$useProfilerConnection) {
+            $connectionClass = ProfilerConnectionWrapper::class;
+        } else if (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];
         } else {
             $connectionClass = $defaultConnectionClass;

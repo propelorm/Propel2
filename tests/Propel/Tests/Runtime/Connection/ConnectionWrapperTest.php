@@ -17,6 +17,12 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class ConnectionWrapperTest extends BookstoreTestBase
 {
+    protected function tearDown(): void
+    {
+        ConnectionWrapper::$useDebugMode = false;
+        parent::tearDown();
+    }
+    
     /**
      * Make sure logging is done after execution, otherwise Profiler will give wrong data.
      *
@@ -106,5 +112,29 @@ class ConnectionWrapperTest extends BookstoreTestBase
         }
 
         $this->assertEquals(1, $affectedRows, "ConnectionWrapper::exec() should have inserted one rows with $description debug mode");
+    }
+
+    /**
+     * @dataProvider debugModeProvider
+     *
+     * @return void
+     */
+    public function testInstanceAndClassDebugMode(?bool $classState, ?bool $instanceState, bool $expected, string $message): void
+    {
+        ConnectionWrapper::$useDebugMode = $classState;
+        $this->con->useDebug($instanceState);
+        
+        $this->assertSame($expected, $this->con->isInDebugMode(), $message);
+    }
+    
+    public function debugModeProvider()
+    {
+        // [class state, instance state, expected state, message]
+        return [
+            [true, null, true, 'Instance should use class mode if instance mode is null'],
+            [false, null, false, 'Instance should uses class mode if instance mode is null'],
+            [true, false, false, 'Instance mode should override class mode'],
+            [false, true, true, 'Instance mode should override class mode'],
+        ];
     }
 }

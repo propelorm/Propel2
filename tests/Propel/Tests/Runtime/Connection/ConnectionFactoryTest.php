@@ -14,9 +14,15 @@ use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Connection\ProfilerConnectionWrapper;
 
 class ConnectionFactoryTest extends BaseTestCase
 {
+    public function tearDown(): void
+    {
+        ConnectionFactory::$useProfilerConnection = false;
+        parent::tearDown();
+    }
     /**
      * @return void
      */
@@ -101,6 +107,17 @@ class ConnectionFactoryTest extends BaseTestCase
         $this->expectException(InvalidArgumentException::class);
 
         $con = ConnectionFactory::create(['dsn' => 'sqlite::memory:', 'attributes' => ['ATTR_CAE' => PDO::CASE_LOWER]], new SqliteAdapter());
+    }
+    
+    /**
+     * @return void
+     */
+    public function testUseProfilerConnectionOverridesConnectionClass()
+    {
+        ConnectionFactory::$useProfilerConnection = true;
+        $config = ['dsn' => 'sqlite::memory:', 'classname' => ConnectionWrapper::class];
+        $con = ConnectionFactory::create($config, new SqliteAdapter());
+        $this->assertInstanceOf(ProfilerConnectionWrapper::class, $con);
     }
 }
 

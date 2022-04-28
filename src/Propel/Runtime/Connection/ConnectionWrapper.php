@@ -39,16 +39,23 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     public const PROPEL_ATTR_CACHE_PREPARES = -1;
 
     /**
-     * @var string The datasource name associated to this connection
-     */
-    protected $name;
-
-    /**
-     * Whether the debug is enabled
+     * Set debug mode for all instances without instance-specific configuration.
      *
      * @var bool
      */
-    public $useDebug = false;
+    public static $useDebugMode = false;
+
+    /**
+     * Instance-specific debug mode setting.
+     *
+     * @var bool|null
+     */
+    protected $useDebugModeOnInstance;
+
+    /**
+     * @var string The datasource name associated to this connection
+     */
+    protected $name;
 
     /**
      * The wrapped connection class
@@ -116,6 +123,16 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
+
+    /**
+     * Determines if debug mode is used on this connection instance.
+     *
+     * @return bool
+     */
+    public function isInDebugMode(): bool
+    {
+        return $this->useDebugModeOnInstance ?? static::$useDebugMode;
+    }
 
     /**
      * Creates a Connection instance.
@@ -207,7 +224,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         $return = true;
         if (!$this->nestedTransactionCount) {
             $return = $this->connection->beginTransaction();
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Begin transaction');
             }
             $this->isUncommitable = false;
@@ -237,7 +254,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
                 }
 
                 $return = $this->connection->commit();
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Commit transaction');
                 }
             }
@@ -262,7 +279,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
         if ($opcount > 0 && $this->inTransaction()) {
             if ($opcount === 1) {
                 $return = $this->connection->rollBack();
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Rollback transaction');
                 }
             } else {
@@ -294,7 +311,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             // try to commit (or rollback) the transaction outside this scope.
             $this->nestedTransactionCount = 0;
 
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Rollback transaction');
             }
         }
@@ -398,7 +415,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             }
         }
 
-        if ($this->useDebug) {
+        if ($this->isInDebugMode()) {
             $this->log($statement);
         }
 
@@ -410,7 +427,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function exec($statement): int
     {
-        if ($this->useDebug) {
+        if ($this->isInDebugMode()) {
             /** @var callable $callback */
             $callback = [$this->connection, 'exec'];
 
@@ -611,11 +628,11 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
     /**
      * Enable or disable the query debug features
      *
-     * @param bool $value True to enable debug (default), false to disable it
+     * @param bool|null $value True to enable debug (default), false to disable it, null to use mode from class
      *
      * @return void
      */
-    public function useDebug(bool $value = true): void
+    public function useDebug(?bool $value = true): void
     {
         if (!$value) {
             // reset query logging
@@ -623,7 +640,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
             $this->queryCount = 0;
         }
         $this->clearStatementCache();
-        $this->useDebug = $value;
+        $this->useDebugModeOnInstance = $value;
     }
 
     /**
