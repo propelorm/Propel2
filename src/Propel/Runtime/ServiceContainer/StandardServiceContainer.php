@@ -664,5 +664,6 @@ class StandardServiceContainer implements ServiceContainerInterface
     {
         ConnectionWrapper::$useDebugMode = $useDebug;
         ConnectionFactory::$useProfilerConnection = $logStatementProfile ?? $useDebug;
+        $this->closeConnections();
     }
 }
