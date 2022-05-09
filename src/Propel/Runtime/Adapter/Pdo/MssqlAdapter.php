@@ -343,7 +343,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s:000';
     }
@@ -354,7 +354,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimeFormatter()
+    public function getTimeFormatter(): string
     {
         return 'H:i:s:000';
     }
