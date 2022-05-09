@@ -4,6 +4,7 @@ parameters:
     level: 6
     checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
     paths:
         - '%rootDir%/../../../src/'
     ignoreErrors:

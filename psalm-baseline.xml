@@ -83,12 +83,17 @@
     </InvalidReturnType>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
-    <UndefinedMethod occurrences="12">
+    <TooManyTemplateParams occurrences="4">
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+    </TooManyTemplateParams>
+    <UndefinedMethod occurrences="11">
       <code>$modelTableMapName::clearInstancePool()</code>
       <code>$modelTableMapName::clearRelatedInstancePool()</code>
       <code>addSelectColumns</code>
       <code>addSelfSelectColumns</code>
-      <code>getRelationMap</code>
       <code>getTableMap</code>
       <code>getTableMap</code>
       <code>getTableMap</code>
