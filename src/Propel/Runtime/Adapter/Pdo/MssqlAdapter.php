@@ -348,7 +348,6 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
         return 'Y-m-d H:i:s:000';
     }
 
-
     /**
      * Returns time formatter string for use in date() function.
      *
@@ -358,5 +357,4 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         return 'H:i:s:000';
     }
-    
 }
