@@ -337,7 +337,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
     public function applyLock(string &$sql, Lock $lock): void
     {
     }
-     
+
     /**
      * Returns timestamp formatter string for use in date() function.
      *
