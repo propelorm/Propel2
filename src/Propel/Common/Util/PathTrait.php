@@ -34,7 +34,7 @@ trait PathTrait
      */
     protected function getTemplatePath(string $path): string
     {
-        $srcPos = strpos($path, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
+        $srcPos = strrpos($path, DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR);
         if ($srcPos === false) {
             // BC shim for old template paths
             $path .= 'templates' . DIRECTORY_SEPARATOR;
