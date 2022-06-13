@@ -53,7 +53,7 @@
         "cs-fix": "phpcbf",
         "stan": "vendor/bin/phpstan analyze",
         "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
-        "psalm": "vendor/bin/psalm.phar --show-info=false",
+        "psalm": "vendor/bin/psalm.phar --config=psalm.xml",
         "psalm-update-baseline": "vendor/bin/psalm.phar --update-baseline",
         "psalm-set-baseline": "vendor/bin/psalm.phar --set-baseline=psalm-baseline.xml",
         "psalm-update-report": "vendor/bin/psalm.phar --report=psalm-report.xml",
