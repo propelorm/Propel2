@@ -158,7 +158,7 @@ jobs:
               run: composer stan
 
             - name: Psalm
-              run: composer psalm
+              run: composer psalm -- --php-version=${{ matrix.php-version }}
 
             - name: Code Style
               run: composer cs-check
