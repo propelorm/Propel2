@@ -127,9 +127,10 @@ jobs:
         runs-on: ubuntu-18.04
         steps:
             - name: Setup PHP
+              id: setup-php
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.1
+                  php-version: '8.1'
                   extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
                   coverage: pcov
 
@@ -158,7 +159,7 @@ jobs:
               run: composer stan
 
             - name: Psalm
-              run: composer psalm
+              run: composer psalm -- --php-version=${{ steps.setup-php.outputs.php-version }}
 
             - name: Code Style
               run: composer cs-check

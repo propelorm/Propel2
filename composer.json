@@ -16,15 +16,15 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
-        "psr/log": "^1.0||^2.0||^3.0",
-        "symfony/yaml": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/config": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/console": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/filesystem": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/finder": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/translation": "^4.4.0||^5.0.0||^6.0.0",
-        "symfony/validator": "^4.4.0||^5.0.0||^6.0.0"
+        "php": ">=7.4 || >=8.0",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "symfony/yaml": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/config": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/console": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/filesystem": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/finder": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/translation": "^4.4.0 || ^5.0.0 || ^6.0.0",
+        "symfony/validator": "^4.4.0 || ^5.0.0 || ^6.0.0"
     },
     "require-dev": {
         "ext-pdo": "*",
@@ -33,7 +33,7 @@
         "phpstan/phpstan": "^1.2",
         "phpunit/phpunit": "^9.5.0",
         "spryker/code-sniffer": "^0.17.2",
-        "psalm/phar": "^4.14",
+        "psalm/phar": "^4.23",
         "mikey179/vfsstream": "^1.6"
     },
     "suggest": {
@@ -53,7 +53,7 @@
         "cs-fix": "phpcbf",
         "stan": "vendor/bin/phpstan analyze",
         "stan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
-        "psalm": "vendor/bin/psalm.phar --show-info=false",
+        "psalm": "vendor/bin/psalm.phar --config=psalm.xml",
         "psalm-update-baseline": "vendor/bin/psalm.phar --update-baseline",
         "psalm-set-baseline": "vendor/bin/psalm.phar --set-baseline=psalm-baseline.xml",
         "psalm-update-report": "vendor/bin/psalm.phar --report=psalm-report.xml",
