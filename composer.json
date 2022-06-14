@@ -33,7 +33,7 @@
         "phpstan/phpstan": "^1.2",
         "phpunit/phpunit": "^9.5.0",
         "spryker/code-sniffer": "^0.17.2",
-        "psalm/phar": "^4.14",
+        "psalm/phar": "^4.23",
         "mikey179/vfsstream": "^1.6"
     },
     "suggest": {
