@@ -46,8 +46,9 @@
      * by Propel-generated children and objects.
      *
      * @param bool $b the state of the object.
+     * @return void
      */
-    public function setNew(bool $b)
+    public function setNew(bool $b): void
     {
         $this->new = $b;
     }
@@ -66,9 +67,9 @@
      * @param bool $b The deleted state of this object.
      * @return void
      */
-    public function setDeleted($b): void
+    public function setDeleted(bool $b): void
     {
-        $this->deleted = (boolean) $b;
+        $this->deleted = $b;
     }
 
     /**
@@ -200,8 +201,10 @@
     /**
      * Clean up internal collections prior to serializing
      * Avoids recursive loops that turn into segmentation faults when serializing
+     *
+     * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $this->clearAllReferences();
 

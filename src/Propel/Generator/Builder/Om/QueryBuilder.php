@@ -519,8 +519,8 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
     /**
      * Returns a new " . $classname . " object.
      *
-     * @param string \$modelAlias The alias of a model in the query
-     * @param Criteria \$criteria Optional Criteria to build the query from
+     * @param string|null \$modelAlias The alias of a model in the query
+     * @param Criteria|null \$criteria Optional Criteria to build the query from
      *
      * @return " . $classname . "
      */";
@@ -617,7 +617,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      * </code>
      *
      * @param " . $pkType . " \$key Primary key to use for the query
-     * @param ConnectionInterface \$con an optional connection object
+     * @param ConnectionInterface|null \$con an optional connection object
      *
      * @return $class|array|mixed the result, formatted by the current formatter
      */
@@ -1639,13 +1639,13 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @see useQuery()
      *
-     * @param string \$relationAlias optional alias for the relation,
+     * @param string|null \$relationAlias optional alias for the relation,
      *                                   to be used as main alias in the secondary query
      * @param string \$joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $queryClass A secondary query class using the current class as primary query
      */
-    public function use" . $relationName . 'Query($relationAlias = null, $joinType = ' . $joinType . ")
+    public function use" . $relationName . 'Query(?string $relationAlias = null, string $joinType = ' . $joinType . ")
     {
         return \$this
             ->join" . $relationName . "(\$relationAlias, \$joinType)
@@ -1685,7 +1685,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return $queryClass The inner query object of the EXISTS statement
      */
-    public function use{$relationName}ExistsQuery(\$modelAlias = null, \$queryClass = null, \$typeOfExists = '$existsType')
+    public function use{$relationName}ExistsQuery(?string \$modelAlias = null, ?string \$queryClass = null, string \$typeOfExists = '$existsType')
     {
         return \$this->useExistsQuery('$relationName', \$modelAlias, \$queryClass, \$typeOfExists);
     }
@@ -1700,7 +1700,7 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
      *
      * @return $queryClass The inner query object of the NOT EXISTS statement
      */
-    public function use{$relationName}NotExistsQuery(\$modelAlias = null, \$queryClass = null)
+    public function use{$relationName}NotExistsQuery(?string \$modelAlias = null, ?string \$queryClass = null)
     {
         return \$this->useExistsQuery('$relationName', \$modelAlias, \$queryClass, '$notExistsType');
     }
@@ -1811,7 +1811,7 @@ EOT;
      *
      * @return \$this The current query, for fluid interface
      */
-    public function prune($objectName = null)
+    public function prune(?$class $objectName = null)
     {
         if ($objectName) {";
         $pks = $table->getPrimaryKey();
