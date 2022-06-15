@@ -19,7 +19,7 @@ class TestableComment extends AggregateComment
 {
     // overrides the parent save() to bypass behavior hooks
 
-    public function save(?ConnectionInterface $con = null)
+    public function save(?ConnectionInterface $con = null): int
     {
         $con->beginTransaction();
         try {
