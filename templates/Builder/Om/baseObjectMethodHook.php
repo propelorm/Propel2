@@ -5,7 +5,7 @@
      * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preSave(?ConnectionInterface $con = null)
+    public function preSave(?ConnectionInterface $con = null): bool
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preSave')) {
@@ -38,7 +38,7 @@
      * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preInsert(?ConnectionInterface $con = null)
+    public function preInsert(?ConnectionInterface $con = null): bool
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preInsert')) {
@@ -71,7 +71,7 @@
      * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preUpdate(?ConnectionInterface $con = null)
+    public function preUpdate(?ConnectionInterface $con = null): bool
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preUpdate')) {
@@ -104,7 +104,7 @@
      * @param ConnectionInterface|null $con
      * @return bool
      */
-    public function preDelete(?ConnectionInterface $con = null)
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         <?php if ($hasBaseClass) : ?>
         if (is_callable('parent::preDelete')) {
