@@ -1811,7 +1811,7 @@ EOT;
      *
      * @return \$this The current query, for fluid interface
      */
-    public function prune(?$class $objectName = null)
+    public function prune($objectName = null)
     {
         if ($objectName) {";
         $pks = $table->getPrimaryKey();
