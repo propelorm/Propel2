@@ -3930,7 +3930,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param $ctype \$key Primary key.
      * @return void
      */
-    public function setPrimaryKey(\$key): void
+    public function setPrimaryKey($ctype \$key): void
     {
         \$this->set" . $col->getPhpName() . "(\$key);
     }
@@ -6440,7 +6440,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @throws \Propel\Runtime\Exception\PropelException
      * @see doSave()
      */
-    protected function doInsert(ConnectionInterface \$con)
+    protected function doInsert(ConnectionInterface \$con): void
     {";
         if ($this->getPlatform() instanceof MssqlPlatform) {
             if ($table->hasAutoIncrementPrimaryKey()) {
