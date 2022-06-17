@@ -1830,6 +1830,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         if ($typeHint) {
+            if ($typeHint === 'double') {
+                $typeHint = 'float';
+            }
+
             $typeHint .= ' ';
 
             if (!$column->isNotNull()) {
