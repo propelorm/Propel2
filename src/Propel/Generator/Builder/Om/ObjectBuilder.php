@@ -7285,7 +7285,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return string The value of the '{$column->getName()}' column
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)\$this->get{$column->getPhpName()}();
     }
