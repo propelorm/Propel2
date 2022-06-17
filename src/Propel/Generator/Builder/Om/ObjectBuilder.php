@@ -1817,28 +1817,16 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $typeHint = '';
         $null = '';
 
-
         if ($column->getTypeHint()) {
             $typeHint = $column->getTypeHint();
             if ($typeHint !== 'array') {
                 $typeHint = $this->declareClass($typeHint);
-            }
-        }
-
-        if (!$typeHint && $column->getPhpType()) {
-            $typeHint .=  $column->getPhpType();
-        }
-
-        if ($typeHint) {
-            if ($typeHint === 'double') {
-                $typeHint = 'float';
             }
 
             $typeHint .= ' ';
 
             if (!$column->isNotNull()) {
                 $null = ' = null';
-                $typeHint = '?'.$typeHint;
             }
         }
 
