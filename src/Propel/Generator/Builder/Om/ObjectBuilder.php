@@ -3953,7 +3953,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param array \$keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey(\$keys): void
+    public function setPrimaryKey(array \$keys): void
     {";
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
