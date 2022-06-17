@@ -47,7 +47,7 @@
      *
      * @param bool $b the state of the object.
      */
-    public function setNew(bool $b): bool
+    public function setNew(bool $b): void
     {
         $this->new = $b;
     }
