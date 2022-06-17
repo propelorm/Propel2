@@ -1534,11 +1534,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $cfc = $column->getPhpName();
         $visibility = $column->getAccessorVisibility();
-        $phpTypeHint = ($column->getTypeHint() ?: ($column->getPhpType() ?: ''));
-
-        if ($phpTypeHint && !$column->isNotNull()) {
-            $phpTypeHint = '?'.$phpTypeHint;
-        }
 
         $script .= "
     " . $visibility . " function get$cfc(";
@@ -1546,12 +1541,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $script .= 'ConnectionInterface $con = null';
         }
 
-        $script .= ")";
-        if ($phpTypeHint) {
-            $script .= ": ".$phpTypeHint;
-        }
-
-        $script .= "
+        $script .= ")
     {";
     }
 
