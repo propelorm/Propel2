@@ -4463,7 +4463,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param string \$relationName The name of the relation to initialize
      * @return void
      */
-    public function initRelation(\$relationName)
+    public function initRelation(\$relationName): void
     {";
         foreach ($referrers as $refFK) {
             if (!$refFK->isLocalPrimaryKey()) {
@@ -4836,7 +4836,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * @param {$className} \${$lowerRelatedObjectClassName} The $className object to add.
      */
-    protected function doAdd{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
+    protected function doAdd{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName}): void
     {
         \$this->{$collName}[]= \${$lowerRelatedObjectClassName};
         \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
@@ -5377,8 +5377,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Reset is the $collName collection loaded partially.
+     *
+     * @return void
      */
-    public function resetPartial{$relCol}(\$v = true)
+    public function resetPartial{$relCol}(\$v = true): void
     {
         \$this->{$collName}Partial = \$v;
     }
