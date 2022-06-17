@@ -47,7 +47,7 @@
      *
      * @param bool $b the state of the object.
      */
-    public function setNew(bool $b)
+    public function setNew(bool $b): bool
     {
         $this->new = $b;
     }
@@ -66,9 +66,9 @@
      * @param bool $b The deleted state of this object.
      * @return void
      */
-    public function setDeleted($b): void
+    public function setDeleted(bool $b): void
     {
-        $this->deleted = (boolean) $b;
+        $this->deleted = $b;
     }
 
     /**
