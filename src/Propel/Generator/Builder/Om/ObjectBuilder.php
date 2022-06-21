@@ -3927,10 +3927,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * Generic method to set the primary key ($clo column).
      *
-     * @param $ctype \$key Primary key.
+     * @param $ctype|null \$key Primary key.
      * @return void
      */
-    public function setPrimaryKey(\$key): void
+    public function setPrimaryKey(?$ctype \$key = null): void
     {
         \$this->set" . $col->getPhpName() . "(\$key);
     }
@@ -3953,7 +3953,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param array \$keys The elements of the composite key (order must match the order in XML file).
      * @return void
      */
-    public function setPrimaryKey(\$keys): void
+    public function setPrimaryKey(array \$keys): void
     {";
         $i = 0;
         foreach ($this->getTable()->getPrimaryKey() as $pk) {
@@ -4463,7 +4463,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param string \$relationName The name of the relation to initialize
      * @return void
      */
-    public function initRelation(\$relationName)
+    public function initRelation(\$relationName): void
     {";
         foreach ($referrers as $refFK) {
             if (!$refFK->isLocalPrimaryKey()) {
@@ -4836,7 +4836,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     /**
      * @param {$className} \${$lowerRelatedObjectClassName} The $className object to add.
      */
-    protected function doAdd{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName})
+    protected function doAdd{$relatedObjectClassName}($className \${$lowerRelatedObjectClassName}): void
     {
         \$this->{$collName}[]= \${$lowerRelatedObjectClassName};
         \${$lowerRelatedObjectClassName}->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
@@ -5377,8 +5377,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= "
     /**
      * Reset is the $collName collection loaded partially.
+     *
+     * @return void
      */
-    public function resetPartial{$relCol}(\$v = true)
+    public function resetPartial{$relCol}(\$v = true): void
     {
         \$this->{$collName}Partial = \$v;
     }
@@ -6296,7 +6298,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @throws \Propel\Runtime\Exception\PropelException
      * @see save()
      */
-    protected function doSave(ConnectionInterface \$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . ")
+    protected function doSave(ConnectionInterface \$con" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . "): int
     {
         \$affectedRows = 0; // initialize var to track total num of affected rows
         if (!\$this->alreadyInSave) {
@@ -6438,7 +6440,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @throws \Propel\Runtime\Exception\PropelException
      * @see doSave()
      */
-    protected function doInsert(ConnectionInterface \$con)
+    protected function doInsert(ConnectionInterface \$con): void
     {";
         if ($this->getPlatform() instanceof MssqlPlatform) {
             if ($table->hasAutoIncrementPrimaryKey()) {
@@ -6793,7 +6795,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $reloadOnUpdate = $table->isReloadOnUpdate();
         $reloadOnInsert = $table->isReloadOnInsert();
         $script .= "
-    public function save(?ConnectionInterface \$con = null" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . ")
+    public function save(?ConnectionInterface \$con = null" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . "): int
     {";
     }
 
@@ -7285,7 +7287,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return string The value of the '{$column->getName()}' column
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)\$this->get{$column->getPhpName()}();
     }
