@@ -479,9 +479,10 @@ class Column extends MappingModel
      *
      * @return string
      */
-    public function getLowercasedName(): string
+    public function getLowercasedName()
     {
-        return strtolower($this->name);
+        return strtolower($this->getPhpName());  //overrride by Chris Chase
+      //  return strtolower($this->name);
     }
 
     /**
