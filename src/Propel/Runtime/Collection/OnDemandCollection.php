@@ -109,7 +109,7 @@ class OnDemandCollection extends Collection
     }
 
     /**
-     * @return \Propel\Runtime\Collection\OnDemandIterator|\Traversable|\Countable
+     * @return \Propel\Runtime\Collection\OnDemandIterator|\Traversable&\Countable
      */
     public function getIterator(): Traversable
     {
