@@ -15,7 +15,7 @@ use ArrayIterator;
  *
  * @extends \ArrayIterator<(int|string), mixed>
  */
-class CollectionIterator extends ArrayIterator
+class CollectionIterator extends ArrayIterator implements IteratorInterface
 {
     /**
      * @var \Propel\Runtime\Collection\Collection

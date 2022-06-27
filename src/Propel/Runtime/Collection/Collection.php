@@ -201,7 +201,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
     }
 
     /**
-     * @return \Propel\Runtime\Collection\CollectionIterator
+     * @return \Propel\Runtime\Collection\CollectionIterator|\Propel\Runtime\Collection\IteratorInterface
      */
     public function getIterator(): Traversable
     {
