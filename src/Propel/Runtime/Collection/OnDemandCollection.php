@@ -108,10 +108,8 @@ class OnDemandCollection extends Collection
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
-    // IteratorAggregate Interface
-
     /**
-     * @return \Propel\Runtime\Collection\OnDemandIterator
+     * @return \Propel\Runtime\Collection\OnDemandIterator|\Traversable
      */
     public function getIterator(): Traversable
     {
