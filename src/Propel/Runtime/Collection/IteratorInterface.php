@@ -8,6 +8,9 @@
 
 namespace Propel\Runtime\Collection;
 
-interface IteratorInterface extends \Iterator, \Countable
+use Countable;
+use Iterator;
+
+interface IteratorInterface extends Iterator, Countable
 {
 }

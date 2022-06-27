@@ -13,7 +13,7 @@ use ArrayIterator;
 /**
  * Iterator class for iterating over Collection data
  *
- * @extends \ArrayIterator<(int|string), mixed>
+ * @implements \Propel\Runtime\Collection\IteratorInterface<(int|string), mixed>
  */
 class CollectionIterator extends ArrayIterator implements IteratorInterface
 {

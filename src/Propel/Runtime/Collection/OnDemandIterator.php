@@ -21,7 +21,7 @@ use Propel\Runtime\Propel;
  *
  * @author Francois Zaninotto
  *
- * @implements \Iterator<int|string, mixed>
+ * @implements \Propel\Runtime\Collection\IteratorInterface<(int|string), mixed>
  */
 class OnDemandIterator implements IteratorInterface
 {
