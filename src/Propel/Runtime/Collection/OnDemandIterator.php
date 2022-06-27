@@ -8,6 +8,7 @@
 
 namespace Propel\Runtime\Collection;
 
+use Countable;
 use Iterator;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
@@ -22,7 +23,7 @@ use Propel\Runtime\Propel;
  *
  * @implements \Iterator<int|string, mixed>
  */
-class OnDemandIterator implements Iterator
+class OnDemandIterator implements IteratorInterface
 {
     /**
      * @var \Propel\Runtime\Formatter\ObjectFormatter
