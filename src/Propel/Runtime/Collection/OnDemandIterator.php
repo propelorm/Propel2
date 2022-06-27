@@ -20,8 +20,6 @@ use Propel\Runtime\Propel;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
- *
- * @implements \Propel\Runtime\Collection\IteratorInterface<(int|string), mixed>
  */
 class OnDemandIterator implements IteratorInterface
 {

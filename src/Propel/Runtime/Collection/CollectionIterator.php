@@ -12,8 +12,6 @@ use ArrayIterator;
 
 /**
  * Iterator class for iterating over Collection data
- *
- * @implements \Propel\Runtime\Collection\IteratorInterface<(int|string), mixed>
  */
 class CollectionIterator extends ArrayIterator implements IteratorInterface
 {
