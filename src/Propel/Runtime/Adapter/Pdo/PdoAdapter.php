@@ -331,6 +331,7 @@ abstract class PdoAdapter
             switch ($cMap->getType()) {
                 case PropelTypes::TIMESTAMP:
                 case PropelTypes::BU_TIMESTAMP:
+                case PropelTypes::DATETIME:
                     $value = $dt->format($this->getTimestampFormatter());
 
                     break;

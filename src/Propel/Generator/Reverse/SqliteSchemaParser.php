@@ -56,7 +56,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'date' => PropelTypes::DATE,
         'time' => PropelTypes::TIME,
         'year' => PropelTypes::INTEGER,
-        'datetime' => PropelTypes::DATE,
+        'datetime' => PropelTypes::DATETIME,
         'timestamp' => PropelTypes::TIMESTAMP,
         'tinyblob' => PropelTypes::BINARY,
         'blob' => PropelTypes::BLOB,

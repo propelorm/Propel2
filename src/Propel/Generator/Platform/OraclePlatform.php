@@ -51,6 +51,7 @@ class OraclePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'NVARCHAR2', 2000));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'DATE'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'TIMESTAMP'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'TIMESTAMP'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'LONG RAW'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'BLOB'));

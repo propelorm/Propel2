@@ -243,6 +243,7 @@ class ColumnMap
         return in_array($this->type, [
             PropelTypes::TIMESTAMP,
             PropelTypes::DATE,
+            PropelTypes::DATETIME,
             PropelTypes::TIME,
             PropelTypes::BU_DATE,
             PropelTypes::BU_TIMESTAMP,

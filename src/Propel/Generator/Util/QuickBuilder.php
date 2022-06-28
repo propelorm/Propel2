@@ -344,7 +344,7 @@ class QuickBuilder
             } catch (Exception $e) {
                 //echo $sql; //uncomment for better debugging
                 throw new BuildException(sprintf(
-                    "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                    "Cannot execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
                     $statement,
                     $this->database,
                     $database,

@@ -247,6 +247,9 @@ class BaseTest extends MigrationTestCase
         <column name="field13" type="TIMESTAMP"/>
 
         <column name="field14" type="ENUM"/>
+
+        <column name="field15" type="TIMESTAMP"/>
+        <column name="field16" type="DATETIME"/>
     </table>
 </database>
 ';
@@ -272,6 +275,10 @@ class BaseTest extends MigrationTestCase
         <column name="field13" type="DATE"/>
 
         <column name="field14" type="VARCHAR" size="200"/>
+
+
+        <column name="field15" type="DATETIME"/>
+        <column name="field16" type="TIMESTAMP"/>
     </table>
 </database>
 ';

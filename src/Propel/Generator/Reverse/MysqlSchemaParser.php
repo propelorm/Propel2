@@ -55,7 +55,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'date' => PropelTypes::DATE,
         'time' => PropelTypes::TIME,
         'year' => PropelTypes::INTEGER,
-        'datetime' => PropelTypes::TIMESTAMP,
+        'datetime' => PropelTypes::DATETIME,
         'timestamp' => PropelTypes::TIMESTAMP,
         'tinyblob' => PropelTypes::BINARY,
         'blob' => PropelTypes::BLOB,
