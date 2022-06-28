@@ -18,6 +18,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Model\PropelTypes;
 
 class MysqlPlatformTest extends PlatformTestProvider
 {
@@ -956,5 +957,21 @@ CREATE TABLE `foo`
         $table->addColumns([$column]);
         $this->getPlatform()->normalizeTable($table);
         $this->assertEquals('`price` DECIMAL(10,3)', $this->getPlatform()->getColumnDDL($column));
+    }
+    
+    public function typeMappingDataProvider()
+    {
+        return [
+            [PropelTypes::DATETIME, 'DATETIME'],
+            [PropelTypes::TIMESTAMP, 'TIMESTAMP'],
+        ];
+    }
+    
+    /**
+     * @dataProvider typeMappingDataProvider
+     */
+    public function testTypeMapping(string $propelDataType, string $expectedMysqlDataType){
+        $actualMysqlDataType = $this->getPlatform()->getDomainForType($propelDataType)->getSqlType();
+        $this->assertEquals($expectedMysqlDataType, $actualMysqlDataType);
     }
 }
