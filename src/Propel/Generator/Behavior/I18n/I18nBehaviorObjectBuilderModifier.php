@@ -311,6 +311,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         return in_array($columnType, [
             PropelTypes::DATE,
+            PropelTypes::DATETIME,
             PropelTypes::TIME,
             PropelTypes::TIMESTAMP,
         ], true);
