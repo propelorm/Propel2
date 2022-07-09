@@ -1493,6 +1493,8 @@ ALTER TABLE %s ADD
 if (is_resource($columnValueAccessor)) {
     rewind($columnValueAccessor);
 }";
+        } elseif ($column->isPhpTypeSafeType()) {
+            $columnValueAccessor = $columnValueAccessor . ' ?? null';
         }
 
         $script .= sprintf(

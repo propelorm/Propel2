@@ -1703,4 +1703,14 @@ class Column extends MappingModel
     {
         return rtrim($phpName, 's');
     }
+
+    /**
+     * Returns whether the column PHP native type is type-safe as Property.
+     *
+     * @return bool
+     */
+    public function isPhpTypeSafeType(): bool
+    {
+        return $this->isPhpPrimitiveType() && !$this->isTemporalType();
+    }
 }

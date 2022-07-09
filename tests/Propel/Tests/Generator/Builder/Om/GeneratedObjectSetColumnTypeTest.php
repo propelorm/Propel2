@@ -47,8 +47,8 @@ EOF;
             $publicAccessorCode = <<<EOF
 class PublicComplexColumnTypeEntitySet extends MyNameSpace\ComplexColumnTypeEntitySet
 {
-    public \$bar;
-    public \$tags;
+    public ?int \$bar;
+    public ?int \$tags;
 }
 EOF;
             eval($publicAccessorCode);

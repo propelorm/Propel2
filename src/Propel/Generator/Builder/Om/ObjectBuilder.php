@@ -548,6 +548,25 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addColumnAttributeDeclaration(string &$script, Column $column): void
     {
         $clo = $column->getLowercasedName();
+
+        if ($column->isPhpTypeSafeType()) {
+            $type = $column->getPhpType();
+            if ($type === 'boolean') {
+                $type = 'bool';
+            }
+            if ($type === 'double') {
+                $type = 'float';
+            }
+            if (!$column->isNotNull()) {
+                $type = '?' . $type;
+            }
+            $script .= "
+    protected " . $type . ' $' . $clo . ";
+";
+
+            return;
+        }
+
         $script .= "
     protected \$" . $clo . ";
 ";
@@ -1000,7 +1019,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
 
             return "
-        if (!\$this->{$clo}_isLoaded && \$this->{$clo} === {$defaultValueString} && !\$this->isNew()) {
+        if (!\$this->{$clo}_isLoaded && (!isset(\$this->{$clo}) || \$this->{$clo} === {$defaultValueString}) && !\$this->isNew()) {
             \$this->load{$column->getPhpName()}(\$con);
         }
 ";
@@ -1357,7 +1376,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (null === \$this->$clo) {
+        if (!isset(\$this->$clo)) {
             return null;
         }
         \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
@@ -1434,7 +1453,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if (null === \$this->$cloConverted) {
             \$this->$cloConverted = [];
         }
-        if (!\$this->$cloConverted && null !== \$this->$clo) {
+        if (!\$this->$cloConverted && isset(\$this->$clo)) {
             \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
             try {
                 \$this->$cloConverted = SetColumnConverter::convertIntToArray(\$this->$clo, \$valueSet);
@@ -1572,7 +1591,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        return \$this->$clo;";
+        return \$this->$clo ?? null;";
     }
 
     /**
@@ -2287,8 +2306,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$v = array_search(\$v, \$valueSet);
         }
 
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
+        if ((\$this->$clo ?? null) !== \$v) {
+            if(\$v === null){
+                unset(\$this->$clo);
+            }else{
+                \$this->$clo = \$v;
+            }
             \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
@@ -2350,7 +2373,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             } catch (SetColumnConverterException \$e) {
                 throw new PropelException(sprintf('Value \"%s\" is not accepted in this set column', \$e->getValue()), \$e->getCode(), \$e);
             }
-            if (\$this->$clo !== \$v) {
+            \$compare = \$this->$clo ?? null;
+            if (\$compare !== \$v) {
                 \$this->$cloConverted = null;
                 \$this->$clo = \$v;
                 \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
@@ -2411,8 +2435,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
         }
 
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
+        if ((\$this->$clo ?? null) !== \$v) {
+            if(\$v === null){
+                unset(\$this->$clo);
+            }else{
+                \$this->$clo = \$v;
+            }
+            
             \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
@@ -2471,8 +2500,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (\$this->$clo !== \$v) {
-            \$this->$clo = \$v;
+        if ((\$this->$clo ?? null) !== \$v) {
+            if(\$v === null) {
+                unset(\$this->$clo);
+            }else{
+                \$this->$clo = \$v;
+            }
             \$this->modifiedColumns[" . $this->getColumnConstant($col) . "] = true;
         }
 ";
@@ -2718,7 +2751,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
+                    if(\$col !== null) {
+            \$this->$clo = (" . $col->getPhpType() . ') $col;
+                    }';
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
             \$this->$clo = \$col;";
@@ -2953,7 +2988,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $clo = $col->getLowercasedName();
             $script .= "
         if (\$this->isColumnModified(" . $this->getColumnConstant($col) . ")) {
-            \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);
+            \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo ?? null);
         }";
         }
     }
@@ -4253,11 +4288,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 $localColumns[$rightValueOrColumn->getPosition()] = '$this->' . $clo;
 
                 if ($cptype === 'int' || $cptype === 'float' || $cptype === 'double') {
-                    $conditional .= $and . '$this->' . $clo . ' != 0';
+                    $conditional .= $and . 'isset($this->' . $clo . ') && $this->' . $clo . ' != 0';
                 } elseif ($cptype === 'string') {
-                    $conditional .= $and . '($this->' . $clo . ' !== "" && $this->' . $clo . ' !== null)';
+                    $conditional .= $and . '(isset($this->' . $clo . ') && $this->' . $clo . ' !== "" && $this->' . $clo . ' !== null)';
                 } else {
-                    $conditional .= $and . '$this->' . $clo . ' !== null';
+                    $conditional .= $and . '($this->' . $clo . ') && $this->' . $clo . ' !== null';
                 }
             } else {
                 $val = var_export($rightValueOrColumn, true);
@@ -6578,7 +6613,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $columnProperty = $column->getLowercasedName();
             if (!$table->isAllowPkInsert()) {
                 $script .= "
-        if (null !== \$this->{$columnProperty}) {
+        if (isset(\$this->{$columnProperty})) {
             throw new PropelException('Cannot insert a value for auto-increment primary key (' . $constantName . ')');
         }";
             } elseif (!$platform->supportsInsertNullPk()) {
@@ -7162,8 +7197,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         foreach ($table->getColumns() as $col) {
             $clo = $col->getLowercasedName();
-            $script .= "
+            if ($col->isPhpTypeSafeType()) {
+                $script .= "
+        unset(\$this->" . $clo . ');';
+            } else {
+                $script .= "
         \$this->" . $clo . ' = null;';
+            }
             if ($col->isLazyLoad()) {
                 $script .= "
         \$this->" . $clo . '_isLoaded = false;';

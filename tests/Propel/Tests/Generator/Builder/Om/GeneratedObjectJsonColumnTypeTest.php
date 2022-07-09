@@ -41,7 +41,7 @@ EOF;
             $publicAccessorCode = <<<EOF
 class PublicComplexColumnTypeJsonEntity extends ComplexColumnTypeJsonEntity
 {
-    public \$bar;
+    public ?string \$bar;
 }
 EOF;
             eval($publicAccessorCode);

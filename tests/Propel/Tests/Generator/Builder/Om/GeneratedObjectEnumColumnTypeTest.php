@@ -43,7 +43,7 @@ EOF;
             $publicAccessorCode = <<<EOF
 class PublicComplexColumnTypeEntity3 extends ComplexColumnTypeEntity3
 {
-    public \$bar;
+    public ?int \$bar;
 }
 EOF;
             eval($publicAccessorCode);
