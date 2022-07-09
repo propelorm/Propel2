@@ -3914,9 +3914,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $this->addSetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
             $this->addSetPrimaryKeyMultiPK($script);
-        } else {
-            // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addSetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3973,37 +3970,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $i++;
         }
         $script .= "
-    }
-";
-    }
-
-    /**
-     * Adds the setPrimaryKey() method for objects that have no primary key.
-     * This "feature" is deprecated, since the setPrimaryKey() method is not required
-     * by the Persistent interface (or used by the templates). Hence, this method is also
-     * deprecated.
-     *
-     * @deprecated Not needed anymore.
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addSetPrimaryKeyNoPK(string &$script): void
-    {
-        $script .= "
-    /**
-     * Dummy primary key setter.
-     *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
-     */
-    public function setPrimaryKey(\$pk): void
-    {
-        // do nothing, because this object doesn't have any primary keys
     }
 ";
     }
