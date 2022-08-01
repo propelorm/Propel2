@@ -2719,6 +2719,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
+                    if($col->isPrimaryKey()) {
+                        $script .= "
+            // Add this primary key column to the primary key values array
+            \$this->primaryKeyValues['$clo'] = \$this->$clo;
+                    ";
+                    }
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
             \$this->$clo = \$col;";
@@ -2863,7 +2869,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         foreach ($this->getTable()->getPrimaryKey() as $col) {
             $clo = $col->getLowercasedName();
             $script .= "
-        \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);";
+        \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->primaryKeyValues['$clo']);";
         }
     }
 
@@ -6376,6 +6382,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     rewind(\$this->$clo);
                 }
 ";
+            }
+
+            // Update primary key values cache
+            if($col->isPrimaryKey()) {
+                $script .= "
+                \$this->primaryKeyValues['$clo'] = \$this->$clo;
+                ";
             }
         }
 

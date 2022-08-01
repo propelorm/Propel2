@@ -24,3 +24,11 @@
      * @var array
      */
     protected $virtualColumns = [];
+
+    /**
+    * The primary key columns stored with the original values in that array
+    * to support later changes of the primary keys itself.
+    * @see https://github.com/propelorm/Propel2/issues/978
+    * @var array
+    */
+    protected $primaryKeyValues = [];
