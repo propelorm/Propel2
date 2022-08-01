@@ -6385,7 +6385,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
 
             // Update primary key values cache
-            if($col->isPrimaryKey()) {
+            if ($col->isPrimaryKey()) {
                 $script .= "
                 \$this->primaryKeyValues['$clo'] = \$this->$clo;
                 ";
