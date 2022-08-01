@@ -2719,7 +2719,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
-                    if($col->isPrimaryKey()) {
+                    if ($col->isPrimaryKey()) {
                         $script .= "
             // Add this primary key column to the primary key values array
             \$this->primaryKeyValues['$clo'] = \$this->$clo;
