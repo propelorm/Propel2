@@ -31,7 +31,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Stack of warnings.
      *
-     * @var array string[]
+     * @var array<string>
      */
     protected $warnings = [];
 

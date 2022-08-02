@@ -42,7 +42,7 @@ class GeneratedObjectLobTest extends BookstoreEmptyTestBase
     /**
      * Array of filenames pointing to blob/clob files indexed by the basename.
      *
-     * @var array string[]
+     * @var array<string>
      */
     protected $sampleLobFiles = [];
 

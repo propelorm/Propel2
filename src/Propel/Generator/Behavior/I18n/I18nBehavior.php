@@ -380,7 +380,7 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     protected function getI18nColumnNamesFromConfig(): array
     {
