@@ -45,7 +45,7 @@ class Join
     /**
      * The left parts of the join condition
      *
-     * @var list<string>
+     * @var list<string|null>
      */
     protected $left = [];
 
