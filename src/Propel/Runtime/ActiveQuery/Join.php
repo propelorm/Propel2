@@ -45,7 +45,7 @@ class Join
     /**
      * The left parts of the join condition
      *
-     * @var array
+     * @var list<string>
      */
     protected $left = [];
 
@@ -62,14 +62,14 @@ class Join
     /**
      * The right parts of the join condition
      *
-     * @var array
+     * @var list<string>
      */
     protected $right = [];
 
     /**
      * The comparison operators for each pair of columns in the join condition
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $operators = [];
 
@@ -350,7 +350,7 @@ class Join
     }
 
     /**
-     * @return array<string>
+     * @return array<int, string>
      */
     public function getOperators(): array
     {

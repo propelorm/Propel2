@@ -256,7 +256,6 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         }
 
         foreach ($delegateTable->getForeignKeysReferencingTable($table->getName()) as $fk) {
-            /** @var \Propel\Generator\Model\ForeignKey $fk */
             $fks[] = $fk->getForeignColumnName();
         }
 

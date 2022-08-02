@@ -250,7 +250,7 @@ class VersionableBehavior extends Behavior
     }
 
     /**
-     * @return array<\Propel\Generator\Model\ForeignKey>
+     * @return list<\Propel\Generator\Model\ForeignKey>
      */
     public function getVersionableFks(): array
     {
@@ -267,7 +267,7 @@ class VersionableBehavior extends Behavior
     }
 
     /**
-     * @return array<\Propel\Generator\Model\ForeignKey>
+     * @return list<\Propel\Generator\Model\ForeignKey>
      */
     public function getVersionableReferrers(): array
     {
