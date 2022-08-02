@@ -62,7 +62,7 @@ class Join
     /**
      * The right parts of the join condition
      *
-     * @var list<string>
+     * @var list<string|null>
      */
     protected $right = [];
 
