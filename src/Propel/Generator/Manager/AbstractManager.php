@@ -30,8 +30,9 @@ use XsltProcessor;
 abstract class AbstractManager
 {
     /**
-     * @var array
      * Data models that we collect. One from each XML schema file.
+     *
+     * @var list<\Propel\Generator\Model\Schema>
      */
     protected $dataModels = [];
 

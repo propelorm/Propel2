@@ -216,7 +216,7 @@ class SortableBehavior extends Behavior
     /**
      * Returns all scope columns as array.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getScopes(): array
     {
