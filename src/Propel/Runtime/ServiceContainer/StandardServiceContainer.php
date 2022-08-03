@@ -50,12 +50,14 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
 
     /**
-     * @var array<\Propel\Runtime\Adapter\AdapterInterface> List of database adapter instances
+     * @var array<string, \Propel\Runtime\Adapter\AdapterInterface> List of database adapter instances
      */
     protected $adapters = [];
 
     /**
-     * @var array<string> List of database adapter classes
+     * @phpstan-var array<string, class-string>
+     *
+     * @var array<string, string> List of database adapter classes
      */
     protected $adapterClasses = [];
 
@@ -162,7 +164,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array<string> $adapterClasses A list of adapters
+     * @param array<string, string> $adapterClasses A list of adapters
      *
      * @return void
      */

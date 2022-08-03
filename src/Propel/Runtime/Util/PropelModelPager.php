@@ -202,7 +202,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     /**
      * @param int $nbLinks
      *
-     * @return array<int>
+     * @return list<int>
      */
     public function getLinks(int $nbLinks = 5): array
     {

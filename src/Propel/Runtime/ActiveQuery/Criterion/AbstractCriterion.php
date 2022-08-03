@@ -77,7 +77,7 @@ abstract class AbstractCriterion
     /**
      * Other connected criterions
      *
-     * @var array<\Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
+     * @var array<int, \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion>
      */
     protected $clauses = [];
 
@@ -85,7 +85,7 @@ abstract class AbstractCriterion
      * Operators for connected criterions
      * Only self::UND and self::ODER are accepted
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $conjunctions = [];
 

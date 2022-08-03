@@ -141,7 +141,7 @@ class MigrationManager extends AbstractManager
     /**
      * @throws \Exception
      *
-     * @return array<int>
+     * @return list<int>
      */
     public function getAllDatabaseVersions(): array
     {

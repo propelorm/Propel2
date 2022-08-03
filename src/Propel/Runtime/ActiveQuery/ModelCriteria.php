@@ -518,7 +518,7 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     protected function resolveSelectAll(): array
     {

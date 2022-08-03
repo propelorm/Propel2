@@ -54,7 +54,7 @@ abstract class DataModelBuilder
     /**
      * An array of warning messages that can be retrieved for display.
      *
-     * @var array string[]
+     * @var list<string>
      */
     private array $warnings = [];
 
