@@ -100,6 +100,75 @@ class DatabaseMapTest extends TestCaseFixtures
             $this->fail('addTableFromMapClass() adds a table from a map class');
         }
     }
+    
+    /**
+     * @return void
+     */
+    public function testRegisterTableByMapClassAddsClassAsString()
+    {
+        $databaseMap = new class('dummyDatabase') extends DatabaseMap {
+            public function getRawTables(){
+                return $this->tables;
+            }
+            
+            public function getRawTablesByPhpName(){
+                return $this->tablesByPhpName;
+            }
+        };
+        
+        $tableMapClass = BazTableMap::class;
+        $databaseMap->registerTableMapClass($tableMapClass);
+        
+        $tableNameToArray = [
+            BazTableMap::TABLE_NAME => $databaseMap->getRawTables(),
+            '\\' . BazTableMap::TABLE_PHP_NAME => $databaseMap->getRawTablesByPhpName(),
+        ];
+        
+        foreach($tableNameToArray as $name => $tables){
+            $this->assertArrayHasKey($name, $tables);
+            $this->assertSame($tableMapClass, $tables[$name]);
+        }
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetTableResolvesClassNames()
+    {
+        $tableMapClass = BazTableMap::class;
+        $databaseMap = new DatabaseMap('dummy');
+        $databaseMap->registerTableMapClass($tableMapClass);
+        
+        $table = $databaseMap->getTable($tableMapClass::TABLE_NAME);
+        $this->assertInstanceOf($tableMapClass, $table);
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetPhpTableResolvesClassNames()
+    {
+        $tableMapClass = BazTableMap::class;
+        $databaseMap = new DatabaseMap('dummy');
+        $databaseMap->registerTableMapClass($tableMapClass);
+        
+        $table = $databaseMap->getTableByPhpName($tableMapClass::TABLE_PHP_NAME);
+        $this->assertInstanceOf($tableMapClass, $table);
+    }
+    
+    /**
+     * @return void
+     */
+    public function testGetTablesResolvesClassNames()
+    {
+        $tableMapClass = BazTableMap::class;
+        $databaseMap = new DatabaseMap('dummy');
+        $databaseMap->registerTableMapClass($tableMapClass);
+        $tables = $databaseMap->getTables();
+
+        $table = $tables[$tableMapClass::TABLE_NAME];
+        $this->assertInstanceOf($tableMapClass, $table);
+    }
 
     /**
      * @return void
@@ -187,12 +256,15 @@ class TestDatabaseBuilder
 
 class BazTableMap extends TableMap
 {
+    public const TABLE_NAME = 'baz';
+    public const TABLE_PHP_NAME = 'Baz';
+
     /**
      * @return void
      */
     public function initialize(): void
     {
-        $this->setName('baz');
-        $this->setPhpName('Baz');
+        $this->setName(self::TABLE_NAME);
+        $this->setPhpName(self::TABLE_PHP_NAME);
     }
 }
