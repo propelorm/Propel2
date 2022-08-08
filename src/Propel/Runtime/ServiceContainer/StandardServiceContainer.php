@@ -264,7 +264,7 @@ class StandardServiceContainer implements ServiceContainerInterface
 
         foreach ($databaseNameToTableMapClassNames as $databaseName => $tableMapClassNames) {
             $databaseMap = $this->getDatabaseMap($databaseName);
-            array_map([$databaseMap, 'addTableFromMapClass'], $tableMapClassNames);
+            $databaseMap->registerTableMapClasses($tableMapClassNames);
         }
     }
 
