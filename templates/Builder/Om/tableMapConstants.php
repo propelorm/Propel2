@@ -14,7 +14,7 @@
     public const TABLE_NAME = '<?php echo $tableName ?>';
 
     /**
-     * The php name of this class (PascalCase)
+     * The PHP name of this class (PascalCase)
      */
     public const TABLE_PHP_NAME = '<?php echo $tablePhpName ?>';
 
