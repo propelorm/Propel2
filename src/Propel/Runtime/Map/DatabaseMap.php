@@ -38,14 +38,14 @@ class DatabaseMap
     /**
      * Tables in the database, using table name as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap|class-string>
+     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tables = [];
 
     /**
      * Tables in the database, using table phpName as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap|class-string>
+     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tablesByPhpName = [];
 
@@ -103,7 +103,7 @@ class DatabaseMap
 
     /**
      * @param string|null $phpName
-     * @param \Propel\Runtime\Map\TableMap|class-string $tableOrClassMap
+     * @param \Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap> $tableOrClassMap
      *
      * @return void
      */
@@ -143,11 +143,11 @@ class DatabaseMap
      * {@link DatabaseMap::getTableByPhpName()}, or
      * {@link DatabaseMap::getTables()}
      *
-     * @param class-string $tableMapClass The name of the table map to add
+     * @param class-string<\Propel\Runtime\Map\TableMap>|string $tableMapClass The name of the table map to add
      *
      * @return void
      */
-    public function registerTableMapClass($tableMapClass): void
+    public function registerTableMapClass(string $tableMapClass): void
     {
         $tableName = $tableMapClass::TABLE_NAME;
         $this->tables[$tableName] = $tableMapClass;
