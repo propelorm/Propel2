@@ -53,7 +53,7 @@ class Lock
 
     /**
      * @param string $type Lock type
-     * @param array $tableNames Table names to lock
+     * @param array<string> $tableNames Table names to lock
      * @param bool $noWait Whether to issue a non-blocking lock
      */
     public function __construct(string $type, array $tableNames = [], bool $noWait = false)

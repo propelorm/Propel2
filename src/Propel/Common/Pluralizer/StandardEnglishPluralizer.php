@@ -20,7 +20,7 @@ namespace Propel\Common\Pluralizer;
 class StandardEnglishPluralizer implements PluralizerInterface
 {
     /**
-     * @var array<string>
+     * @var array<string, string>
      */
     protected $plural = [
         '(matr|vert|ind)(ix|ex)' => '\1ices',
@@ -74,7 +74,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
     ];
 
     /**
-     * @var array<string>
+     * @var array<string, string>
      */
     protected $irregular = [
         'leaf' => 'leaves',

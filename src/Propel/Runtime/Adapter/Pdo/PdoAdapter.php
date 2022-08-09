@@ -481,7 +481,7 @@ abstract class PdoAdapter
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getPlainSelectedColumns(Criteria $criteria): array
     {
