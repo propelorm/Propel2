@@ -68,6 +68,10 @@
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
+    <UndefinedConstant occurrences="2">
+      <code>T_NAME_FULLY_QUALIFIED</code>
+      <code>T_NAME_QUALIFIED</code>
+    </UndefinedConstant>
   </file>
   <file src="src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php">
     <UndefinedMethod occurrences="1">

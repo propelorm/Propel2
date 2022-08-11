@@ -38,14 +38,14 @@ class DatabaseMap
     /**
      * Tables in the database, using table name as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap>
+     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tables = [];
 
     /**
      * Tables in the database, using table phpName as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap>
+     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tablesByPhpName = [];
 
@@ -93,15 +93,29 @@ class DatabaseMap
         $table->setDatabaseMap($this);
 
         $tableName = $table->getName();
-        if ($tableName && !$this->hasTable($tableName)) {
+        if ($tableName && (!$this->hasTable($tableName) || is_string($this->tables[$tableName]))) {
             $this->tables[$tableName] = $table;
         }
 
         $phpName = $table->getClassName();
-        if ($phpName && $phpName[0] !== '\\') {
+        $this->addTableByPhpName($phpName, $table);
+    }
+
+    /**
+     * @param string|null $phpName
+     * @param \Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap> $tableOrClassMap
+     *
+     * @return void
+     */
+    protected function addTableByPhpName(?string $phpName, $tableOrClassMap): void
+    {
+        if (!$phpName) {
+            return;
+        }
+        if ($phpName[0] !== '\\') {
             $phpName = '\\' . $phpName;
         }
-        $this->tablesByPhpName[$phpName] = $table;
+        $this->tablesByPhpName[$phpName] = $tableOrClassMap;
     }
 
     /**
@@ -118,6 +132,41 @@ class DatabaseMap
         $this->addTableObject($table);
 
         return $this->getTable($table->getName());
+    }
+
+    /**
+     * Registers a table map classes (by qualified name) as table belonging
+     * to this database.
+     *
+     * Classes added like this will only be instantiated when accessed
+     * through {@link DatabaseMap::getTable()},
+     * {@link DatabaseMap::getTableByPhpName()}, or
+     * {@link DatabaseMap::getTables()}
+     *
+     * @param class-string<\Propel\Runtime\Map\TableMap>|string $tableMapClass The name of the table map to add
+     *
+     * @return void
+     */
+    public function registerTableMapClass(string $tableMapClass): void
+    {
+        $tableName = $tableMapClass::TABLE_NAME;
+        $this->tables[$tableName] = $tableMapClass;
+
+        $tablePhpName = $tableMapClass::TABLE_PHP_NAME;
+        $this->addTableByPhpName($tablePhpName, $tableMapClass);
+    }
+
+    /**
+     * Registers a list of table map classes (by qualified name) as table maps
+     * belonging to this database.
+     *
+     * @param array<class-string> $tableMapClasses
+     *
+     * @return void
+     */
+    public function registerTableMapClasses(array $tableMapClasses): void
+    {
+        array_map([$this, 'registerTableMapClass'], $tableMapClasses);
     }
 
     /**
@@ -151,16 +200,28 @@ class DatabaseMap
             throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
         }
 
-        return $this->tables[$name];
+        $tableOrClass = $this->tables[$name];
+
+        return is_string($tableOrClass) ? $this->addTableFromMapClass($tableOrClass) : $tableOrClass;
     }
 
     /**
      * Get a TableMap[] of all of the tables in the database.
      *
+     * If tables are registered by class map name, they will be instantiated.
+     *
      * @return array<\Propel\Runtime\Map\TableMap>
      */
     public function getTables(): array
     {
+        foreach ($this->tables as $tableOrClassMap) {
+            if (!is_string($tableOrClassMap)) {
+                continue;
+            }
+            $this->addTableFromMapClass($tableOrClassMap);
+        }
+
+        /** @var array<\Propel\Runtime\Map\TableMap> */
         return $this->tables;
     }
 
@@ -192,7 +253,9 @@ class DatabaseMap
             $phpName = '\\' . $phpName;
         }
         if (isset($this->tablesByPhpName[$phpName])) {
-            return $this->tablesByPhpName[$phpName];
+            $tableOrClassMap = $this->tablesByPhpName[$phpName];
+
+            return is_string($tableOrClassMap) ? $this->addTableFromMapClass($tableOrClassMap) : $tableOrClassMap;
         }
 
         if (class_exists($tmClass = $phpName . 'TableMap')) {
