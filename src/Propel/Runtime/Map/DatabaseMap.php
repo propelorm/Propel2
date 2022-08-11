@@ -143,7 +143,7 @@ class DatabaseMap
      * {@link DatabaseMap::getTableByPhpName()}, or
      * {@link DatabaseMap::getTables()}
      *
-     * @param class-string<\Propel\Runtime\Map\TableMap>|string $tableMapClass The name of the table map to add
+     * @param class-string<\Propel\Runtime\Map\TableMap> $tableMapClass The name of the table map to add
      *
      * @return void
      */
