@@ -236,7 +236,8 @@ public function doSelect(ConnectionInterface \$con = null)
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
-        \$params = \$this->getParams();
+        \$params = [];
+        SelectQuerySqlBuilder::createSelectSql(\$this, \$params);
         \$sql = \$this->cacheFetch(\$key);
     } else {
         \$params = array();
