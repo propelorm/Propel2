@@ -130,6 +130,9 @@ public function cacheContains(\$key)
     return apc_fetch(\$key);";
 
                 break;
+            case 'apcu':
+                $script .= "return apcu_fetch(\$key);";
+                break;
             case 'array':
                 $script .= "
 
@@ -164,6 +167,9 @@ public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter(
     apc_store(\$key, \$value, \$lifetime);";
 
                 break;
+            case 'apcu':
+                $script .= "apcu_store(\$key, \$value, \$lifetime);";
+                break;
             case 'array':
                 $script .= "
     self::\$cacheBackend[\$key] = \$value;";
@@ -197,6 +203,9 @@ public function cacheFetch(\$key)
 
     return apc_fetch(\$key);";
 
+                break;
+            case 'apcu':
+                $script .= "return apcu_fetch(\$key);";
                 break;
             case 'array':
                 $script .= "
