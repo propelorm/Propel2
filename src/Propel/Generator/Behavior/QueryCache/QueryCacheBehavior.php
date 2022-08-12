@@ -245,8 +245,7 @@ public function doSelect(ConnectionInterface \$con = null)
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
-        \$params = [];
-        Propel\Runtime\ActiveQuery\SqlBuilder\SelectQuerySqlBuilder::createSelectSql(\$this, \$params);
+        \$params = \$this->>getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
         \$params = array();
@@ -286,8 +285,7 @@ public function doCount(ConnectionInterface \$con = null)
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
-        \$params = [];
-        Propel\Runtime\ActiveQuery\SqlBuilder\SelectQuerySqlBuilder::createSelectSql(\$this, \$params);
+        \$params = \$this->>getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
