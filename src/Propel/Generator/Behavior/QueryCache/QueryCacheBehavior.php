@@ -77,6 +77,7 @@ class QueryCacheBehavior extends Behavior
         $this->addCacheStore($script);
         $this->addDoSelect($script);
         $this->addDoCount($script);
+        $this->addGetParams($script);
 
         return $script;
     }
@@ -245,7 +246,7 @@ public function doSelect(ConnectionInterface \$con = null)
 
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
-        \$params = \$this->>getParams();
+        \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
         \$params = array();
@@ -334,5 +335,60 @@ public function doCount(ConnectionInterface \$con = null)
     return \$con->getDataFetcher(\$stmt);
 }
 ";
+    }
+
+    protected function addGetParams(&$script)
+    {
+        $script .= "
+            public function getParams()
+                {
+                    \$params = [];
+                    \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
+
+                    \$joins = \$this->getJoins();
+                    foreach (\$joins as \$join) {
+                        if (count(\$join?->getJoinCondition()?->getClauses() ?? []) > 0) {
+                            foreach (\$join->getJoinCondition()->getClauses() as \$clause) {
+                                \$params[] = [
+                                    'table' => \$clause->getTable(),
+                                    'column' => \$clause->getColumn(),
+                                    'value' => \$clause->getValue(),
+                                ];
+                            }
+                        }
+                    }
+
+                    \$map = \$this->getMap();
+                    foreach (\$this->getMap() as \$criterion) {
+                        \$table = null;
+                        foreach (\$criterion->getAttachedCriterion() as \$attachedCriterion) {
+                            \$tableName = \$attachedCriterion->getTable();
+
+                            \$table = \$this->getTableForAlias(\$tableName);
+                            if (\$table === null) {
+                                \$table = \$tableName;
+                            }
+
+                            if (
+                                (\$this->isIgnoreCase() || method_exists(\$attachedCriterion, 'setIgnoreCase'))
+                                && \$dbMap->getTable(\$table)->getColumn(\$attachedCriterion->getColumn())->isText()
+                            ) {
+                                \$attachedCriterion->setIgnoreCase(true);
+                            }
+                        }
+
+                        \$sb = '';
+                        \$criterion->appendPsTo(\$sb, \$params);
+                    }
+
+                    \$having = \$this->getHaving();
+                    if (\$having !== null) {
+                        \$sb = '';
+                        \$having->appendPsTo(\$sb, \$params);
+                    }
+
+                    return \$params;
+                }
+        ";
     }
 }
