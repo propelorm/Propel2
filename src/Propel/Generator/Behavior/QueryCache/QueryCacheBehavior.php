@@ -72,6 +72,7 @@ class QueryCacheBehavior extends Behavior
         $script = '';
         $this->addSetQueryKey($script);
         $this->addGetQueryKey($script);
+        $this->addCacheClear($script);
         $this->addCacheContains($script);
         $this->addCacheFetch($script);
         $this->addCacheStore($script);
@@ -113,6 +114,40 @@ public function getQueryKey()
 }
 ";
     }
+
+    protected function addCacheClear(&$script)
+    {
+        $script .= "
+public function cacheClear(\$key)
+{";
+        switch ($this->getParameter('backend')) {
+            case 'apc':
+                $script .= "
+
+    return apc_delete(\$key);";
+
+                break;
+            case 'apcu':
+                $script .= "return apcu_delete(\$key);";
+                break;
+            case 'array':
+                $script .= "
+
+    return isset(self::\$cacheBackend[\$key]);";
+
+                break;
+            case 'custom':
+            default:
+                $script .= "
+    throw new PropelException('You must override the cacheContains(), cacheStore(), and cacheFetch() methods to enable query cache');";
+
+                break;
+        }
+        $script .= "
+}
+";
+    }
+
 
     /**
      * @param string $script
@@ -248,6 +283,12 @@ public function doSelect(ConnectionInterface \$con = null)
     if (\$key && \$this->cacheContains(\$key)) {
         \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
+
+        if (substr_count(\$sql, ':') !== count(\$params)) {
+            \$this->cacheClear(\$key);
+            \$params = array();
+            \$sql = \$this->createSelectSql(\$params);
+        }
     } else {
         \$params = array();
         \$sql = \$this->createSelectSql(\$params);
@@ -284,11 +325,20 @@ public function doCount(ConnectionInterface \$con = null)
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
     \$db = Propel::getServiceContainer()->getAdapter(\$this->getDbName());
 
+    \$queryCached = false;
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
-        \$params = \$this->>getParams();
+        \$queryCached = true;
+        \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
-    } else {
+        if (substr_count(\$sql, ':') !== count(\$params)) {
+            \$this->cacheClear(\$key);
+            \$queryCached = false;
+        }
+
+    }
+
+    if (!\$queryCached){
         // check that the columns of the main class are already added (if this is the primary ModelCriteria)
         if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
             \$this->addSelfSelectColumns();
