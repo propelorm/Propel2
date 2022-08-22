@@ -218,7 +218,7 @@ EOF;
     public function testCopiedUniqueDoesNotDuplicateCopiedIndex()
     {
         $expectedSqlMigration = 'CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);';
-        $this->assertEquals(1, substr_count(self::$generatedSQL, $expectedSqlMigration));
+        $this->assertSame(1, substr_count(self::$generatedSQL, $expectedSqlMigration));
     }
 
     /**
