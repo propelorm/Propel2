@@ -142,7 +142,7 @@ class ArchivableBehavior extends Behavior
             // see https://github.com/propelorm/Propel/issues/175 for details
             foreach ($table->getUnices() as $unique) {
                 $index = new Index();
-                $index->setTable($table);
+                $index->setTable($archiveTable);
                 foreach ($unique->getColumns() as $columnName) {
                     if ($size = $unique->getColumnSize($columnName)) {
                         $index->addColumn(['name' => $columnName, 'size' => $size]);
@@ -150,7 +150,10 @@ class ArchivableBehavior extends Behavior
                         $index->addColumn(['name' => $columnName]);
                     }
                 }
-                $archiveTable->addIndex($index);
+
+                if (!$archiveTable->hasIndex($index->getName())) {
+                    $archiveTable->addIndex($index);
+                }
             }
             // every behavior adding a table should re-execute database behaviors
             foreach ($database->getBehaviors() as $behavior) {
