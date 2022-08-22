@@ -14,6 +14,8 @@ use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Generator\Platform\SqlitePlatform;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -94,6 +96,7 @@ class ArchivableBehavior extends Behavior
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
+        $platform = $database->getPlatform();
         $archiveTableName = $this->getParameter('archive_table') ?: ($this->getTable()->getOriginCommonName() . '_archive');
         if (!$database->hasTable($archiveTableName)) {
             // create the version table
@@ -128,6 +131,11 @@ class ArchivableBehavior extends Behavior
             // copy the indices
             foreach ($table->getIndices() as $index) {
                 $copiedIndex = clone $index;
+                // Some platforms require unique index names across whole database
+                // by unsetting the name, Propel will generate a unique name based on table and columns
+                if ($platform instanceof PgsqlPlatform || $platform instanceof SqlitePlatform) {
+                    $copiedIndex->setName(null);
+                }
                 $archiveTable->addIndex($copiedIndex);
             }
             // copy unique indices to indices
