@@ -15,6 +15,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 
 /**
@@ -131,9 +132,8 @@ class ArchivableBehavior extends Behavior
             // copy the indices
             foreach ($table->getIndices() as $index) {
                 $copiedIndex = clone $index;
-                // Some platforms require unique index names across whole database
-                // by unsetting the name, Propel will generate a unique name based on table and columns
-                if ($platform instanceof PgsqlPlatform || $platform instanceof SqlitePlatform) {
+                if ($this->isDistinctiveIndexNameRequired($platform)) {
+                    // by unsetting the name, Propel will generate a unique name based on table and columns
                     $copiedIndex->setName(null);
                 }
                 $archiveTable->addIndex($copiedIndex);
@@ -160,6 +160,16 @@ class ArchivableBehavior extends Behavior
         } else {
             $this->archiveTable = $database->getTable($archiveTableName);
         }
+    }
+
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
+     *
+     * @return bool
+     */
+    protected function isDistinctiveIndexNameRequired(?PlatformInterface $platform): bool
+    {
+        return $platform instanceof PgsqlPlatform || $platform instanceof SqlitePlatform;
     }
 
     /**
