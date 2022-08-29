@@ -57,7 +57,7 @@ class ArchivableBehaviorTest extends TestCase
         <foreign-key foreignTable="archivable_test_2">
             <reference local="foo_id" foreign="id"/>
         </foreign-key>
-        <index>
+        <index name="archivable_test_1_idx_title_age">
             <index-column name="title"/>
             <index-column name="age"/>
         </index>
