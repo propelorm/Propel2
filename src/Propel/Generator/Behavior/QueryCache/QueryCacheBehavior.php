@@ -70,6 +70,7 @@ class QueryCacheBehavior extends Behavior
         $builder->declareClasses('\Propel\Runtime\Propel');
         $this->tableClassName = $builder->getTableMapClassName();
         $script = '';
+        $this->addGenerateLimit($script);
         $this->addSetQueryKey($script);
         $this->addGetQueryKey($script);
         $this->addCacheClear($script);
@@ -81,6 +82,27 @@ class QueryCacheBehavior extends Behavior
         $this->addGetParams($script);
 
         return $script;
+    }
+
+    protected function addGenerateLimit(&$script)
+    {
+        $script .= "
+            protected function generateLimit()
+            {
+                \$limit = \$this->getLimit();
+                \$offset = \$this->getOffset();
+
+                if (\$limit > -1) {
+                    if (\$offset > 0) {
+                        return \" LIMIT \$offset, \$limit\";
+                    }
+
+                    return \" LIMIT \$limit\";
+                }
+
+                return \"\";
+            }
+        ";
     }
 
     /**
@@ -282,7 +304,7 @@ public function doSelect(ConnectionInterface \$con = null)
     \$key = \$this->getQueryKey();
     if (\$key && \$this->cacheContains(\$key)) {
         \$params = \$this->getParams();
-        \$sql = \$this->cacheFetch(\$key);
+        \$sql = \$this->cacheFetch(\$key) . \$this->generateLimit();
 
         if (substr_count(\$sql, ':') !== count(\$params)) {
             \$this->cacheClear(\$key);
@@ -304,7 +326,8 @@ public function doSelect(ConnectionInterface \$con = null)
         }
 
     if (\$key && !\$this->cacheContains(\$key)) {
-            \$this->cacheStore(\$key, \$sql);
+        \$sql = preg_replace('/LIMIT .*?(?=\)|$)/mi', '', \$sql);
+        \$this->cacheStore(\$key, \$sql);
     }
 
     return \$con->getDataFetcher(\$stmt);
