@@ -144,12 +144,16 @@ class DatabaseMap
      * {@link DatabaseMap::getTables()}
      *
      * @param class-string<\Propel\Runtime\Map\TableMap> $tableMapClass The name of the table map to add
-     * @param string $tableName The qualified table name
+     * @param string|null $tableName The name of the table map to add
      *
      * @return void
      */
-    public function registerTableMapClass(string $tableMapClass, string $tableName): void
+    public function registerTableMapClass(string $tableMapClass, string $tableName=null): void
     {
+        if (!$tableName) {
+            $tableName = $tableMapClass::TABLE_NAME;
+        }
+
         $this->tables[$tableName] = $tableMapClass;
     }
 
