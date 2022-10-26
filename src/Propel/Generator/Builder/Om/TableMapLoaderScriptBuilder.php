@@ -63,12 +63,14 @@ class TableMapLoaderScriptBuilder
         foreach ($schemas as $schema) {
             foreach ($schema->getDatabases(false) as $database) {
                 $databaseName = $database->getName();
-                $tableMapNames = array_map([$this, 'getFullyQualifiedTableMapClassName'], $database->getTables());
+                $tableMapPhpNames = array_map([$this, 'getFullyQualifiedTableMapClassName'], $database->getTables());
+                $tableNames = array_map([$this, 'getTableName'], $database->getTables());
+                $tableMapNames = array_combine($tableNames, $tableMapPhpNames);
                 if (array_key_exists($databaseName, $databaseNameToTableMapNames)) {
                     $existing = $databaseNameToTableMapNames[$databaseName];
                     $tableMapNames = array_merge($existing, $tableMapNames);
                 }
-                sort($tableMapNames);
+                ksort($tableMapNames);
                 $databaseNameToTableMapNames[$databaseName] = $tableMapNames;
             }
         }
