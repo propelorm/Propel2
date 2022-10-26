@@ -92,7 +92,17 @@ class TableMapLoaderScriptBuilder
 
         return $builder->getFullyQualifiedClassName();
     }
-
+    
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
+    protected function getTableName(Table $table): string
+    {
+        return $table->getCommonName();
+    }
+    
     /**
      * @param array $vars
      *
