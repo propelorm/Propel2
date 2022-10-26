@@ -144,7 +144,7 @@ class DatabaseMap
      * {@link DatabaseMap::getTables()}
      *
      * @param class-string<\Propel\Runtime\Map\TableMap> $tableMapClass The name of the table map to add
-     * @param string $tableName The name of the table map to add
+     * @param string $tableName The qualified table name
      *
      * @return void
      */
