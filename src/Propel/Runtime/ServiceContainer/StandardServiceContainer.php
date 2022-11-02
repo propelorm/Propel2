@@ -28,6 +28,9 @@ use Propel\Runtime\Util\Profiler;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * @psalm-import-type \Propel\Runtime\Map\TableMapDump from \Propel\Runtime\Map\DatabaseMap
+ */
 class StandardServiceContainer implements ServiceContainerInterface
 {
     /**
@@ -55,7 +58,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected $adapters = [];
 
     /**
-     * @phpstan-var array<string, class-string>
+     * @phpstan-var array<string, class-string<\Propel\Runtime\Adapter\AdapterInterface>>
      *
      * @var array<string, string> List of database adapter classes
      */
@@ -151,7 +154,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * This allows for lazy-loading adapter objects in getAdapter().
      *
      * @param string $name The datasource name
-     * @param string $adapterClass
+     * @param class-string<\Propel\Runtime\Adapter\AdapterInterface> $adapterClass
      *
      * @return void
      */
@@ -164,7 +167,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array<string, string> $adapterClasses A list of adapters
+     * @param array<string, class-string<\Propel\Runtime\Adapter\AdapterInterface>> $adapterClasses A list of adapters
      *
      * @return void
      */
@@ -271,7 +274,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param array $databaseNameToTableMapDumps
+     * @param array<string, \Propel\Runtime\Map\TableMapDump> $databaseNameToTableMapDumps
      *
      * @return void
      */
@@ -604,7 +607,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                 $handler = new RotatingFileHandler(
                     $configuration['path'],
                     $configuration['max_files'] ?? 0,
-                    $configuration['level'] ?? null,
+                    $configuration['level'] ?? 100,
                     $configuration['bubble'] ?? true,
                 );
 
@@ -612,8 +615,8 @@ class StandardServiceContainer implements ServiceContainerInterface
             case 'syslog':
                 $handler = new SyslogHandler(
                     $configuration['ident'],
-                    $configuration['facility'] ?? null,
-                    $configuration['level'] ?? null,
+                    $configuration['facility'] ?? LOG_USER,
+                    $configuration['level'] ?? 100,
                     $configuration['bubble'] ?? true,
                 );
 

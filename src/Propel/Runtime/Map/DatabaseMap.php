@@ -25,6 +25,11 @@ use Propel\Runtime\Propel;
  * @author Hans Lellelid <hans@xmpl.org> (Propel)
  * @author John D. McNally <jmcnally@collab.net> (Torque)
  * @author Daniel Rall <dlr@collab.net> (Torque)
+ *
+ * @psalm-consistent-constructor (instantiated by class name in StandardServiceContainer without arguments)
+ *
+ * @psalm-type \Propel\Runtime\Map\MapType = 'tablesByName' | 'tablesByPhpName'
+ * @psalm-type \Propel\Runtime\Map\TableMapDump array<\Propel\Runtime\Map\MapType, array<string, class-string<\Propel\Runtime\Map\TableMap>>>
  */
 class DatabaseMap
 {
@@ -38,14 +43,14 @@ class DatabaseMap
     /**
      * Tables in the database, using table name as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
+     * @var array<string, \Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tables = [];
 
     /**
      * Tables in the database, using table phpName as key
      *
-     * @var array<\Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
+     * @var array<string, \Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap>>
      */
     protected $tablesByPhpName = [];
 
@@ -121,7 +126,7 @@ class DatabaseMap
     /**
      * Add a new table to the database, using the tablemap class name.
      *
-     * @param string $tableMapClass The name of the table map to add
+     * @param class-string<\Propel\Runtime\Map\TableMap> $tableMapClass The name of the table map to add
      *
      * @return \Propel\Runtime\Map\TableMap The TableMap object
      */
@@ -137,23 +142,26 @@ class DatabaseMap
     /**
      * Dump table maps. Used during configuration generation.
      *
-     * @return array A dump that can be loaded again with {@link DatabaseMap::loadMapsFromDump()}
+     * @return \Propel\Runtime\Map\TableMapDump A dump that can be loaded again with {@link DatabaseMap::loadMapsFromDump()}
      */
     public function dumpMaps(): array
     {
+        /**
+         * @param $tableMap class-string<\Propel\Runtime\Map\TableMap>|\Propel\Runtime\Map\TableMap
+         * @return class-string<\Propel\Runtime\Map\TableMap>
+         */
         $toClassString = fn ($tableMap) => is_string($tableMap) ? $tableMap : get_class($tableMap);
-        $maps = [
+
+        return [
             'tablesByName' => array_map($toClassString, $this->tables),
             'tablesByPhpName' => array_map($toClassString, $this->tablesByPhpName),
         ];
-
-        return $maps;
     }
 
     /**
      * Load internal table maps from dump. Used during Propel initialization.
      *
-     * @param $mapsDump Table map dump as created by {@link DatabaseMap::dumpMaps()}
+     * @param \Propel\Runtime\Map\TableMapDump|array $mapsDump Table map dump as created by {@link DatabaseMap::dumpMaps()}
      *
      * @return void
      */
@@ -208,7 +216,7 @@ class DatabaseMap
      * Registers a list of table map classes (by qualified name) as table maps
      * belonging to this database.
      *
-     * @param array<class-string> $tableMapClasses
+     * @param array<class-string<\Propel\Runtime\Map\TableMap>> $tableMapClasses
      *
      * @return void
      */
