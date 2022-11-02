@@ -271,6 +271,23 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
+     * @param array $databaseNameToTableMapDumps
+     *
+     * @return void
+     */
+    public function initDatabaseMapFromDumps(array $databaseNameToTableMapDumps = []): void
+    {
+        if ($this->databaseMaps === null) {
+            $this->databaseMaps = [];
+        }
+
+        foreach ($databaseNameToTableMapDumps as $databaseName => $tableMapDumps) {
+            $databaseMap = $this->getDatabaseMap($databaseName);
+            $databaseMap->loadMapsFromDump($tableMapDumps);
+        }
+    }
+
+    /**
      * @phpstan-param class-string<\Propel\Runtime\Map\DatabaseMap> $databaseMapClass
      *
      * @param string $databaseMapClass

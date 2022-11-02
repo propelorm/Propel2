@@ -104,24 +104,35 @@ class DatabaseMapTest extends TestCaseFixtures
     /**
      * @return void
      */
+    public function testRegisterTableMapClassByName()
+    {
+        $databaseMap = new DatabaseMapWithGetters('dummyDatabase');
+        $tableName = 'database.table_name';
+        $phpTableName = '\\php\\table\\name';
+        $tableMapClass = 'TableClass';
+        $databaseMap->registerTableMapClassByName($tableName, $phpTableName, $tableMapClass);
+        
+        $this->assertTableMapContains($databaseMap, $tableName, $phpTableName, $tableMapClass);
+    }
+    
+    /**
+     * @return void
+     */
     public function testRegisterTableByMapClassAddsClassAsString()
     {
-        $databaseMap = new class('dummyDatabase') extends DatabaseMap {
-            public function getRawTables(){
-                return $this->tables;
-            }
-            
-            public function getRawTablesByPhpName(){
-                return $this->tablesByPhpName;
-            }
-        };
+        $databaseMap = new DatabaseMapWithGetters('dummyDatabase');
         
         $tableMapClass = BazTableMap::class;
         $databaseMap->registerTableMapClass($tableMapClass);
         
+        $this->assertTableMapContains($databaseMap, $tableMapClass::TABLE_NAME, '\\' . $tableMapClass::TABLE_PHP_NAME, $tableMapClass);
+    }
+
+    protected function assertTableMapContains(DatabaseMapWithGetters $databaseMap, $tableName, $phpTableName, $tableMapClass){
+
         $tableNameToArray = [
-            BazTableMap::TABLE_NAME => $databaseMap->getRawTables(),
-            '\\' . BazTableMap::TABLE_PHP_NAME => $databaseMap->getRawTablesByPhpName(),
+            $tableName => $databaseMap->getTablesByNameMap(),
+            $phpTableName => $databaseMap->getTablesByPhpNameMap(),
         ];
         
         foreach($tableNameToArray as $name => $tables){
@@ -223,6 +234,24 @@ class DatabaseMapTest extends TestCaseFixtures
     {
         $this->assertEquals('book', Propel::getServiceContainer()->getDatabaseMap('bookstore')->getTableByPhpName('Propel\Tests\Bookstore\Book')->getName(), 'getTableByPhpName() can autoload a TableMap when the class is generated and autoloaded');
     }
+
+    /**
+     * @return void
+     */
+    public function testLoadMapsFromDump()
+    {
+        $sourceMap = new DatabaseMapWithGetters('source');
+        $sourceMap->registerTableMapClass(BazTableMap::class);
+        $sourceMap->registerTableMapClassByName('le name', 'le php name', 'le quallfied class name');
+
+        $mapDump = $sourceMap->dumpMaps();
+
+        $targetMap = new DatabaseMapWithGetters('target');
+        $targetMap->loadMapsFromDump($mapDump);
+
+        $this->assertEquals($sourceMap->getTablesByNameMap(), $targetMap->getTablesByNameMap(), 'Name map should match');
+        $this->assertEquals($sourceMap->getTablesByPhpNameMap(), $targetMap->getTablesByPhpNameMap(), 'PHP name map should match');
+    }
 }
 
 class TestDatabaseBuilder
@@ -266,5 +295,14 @@ class BazTableMap extends TableMap
     {
         $this->setName(self::TABLE_NAME);
         $this->setPhpName(self::TABLE_PHP_NAME);
+    }
+}
+
+class DatabaseMapWithGetters extends DatabaseMap{
+    public function getTablesByNameMap(){
+        return $this->tables;
+    }
+    public function getTablesByPhpNameMap(){
+        return $this->tablesByPhpName;
     }
 }

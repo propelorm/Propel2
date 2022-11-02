@@ -135,6 +135,35 @@ class DatabaseMap
     }
 
     /**
+     * Dump table maps. Used during configuration generation.
+     *
+     * @return array A dump that can be loaded again with {@link DatabaseMap::loadMapsFromDump()}
+     */
+    public function dumpMaps(): array
+    {
+        $toClassString = fn ($tableMap) => is_string($tableMap) ? $tableMap : get_class($tableMap);
+        $maps = [
+            'tablesByName' => array_map($toClassString, $this->tables),
+            'tablesByPhpName' => array_map($toClassString, $this->tablesByPhpName),
+        ];
+
+        return $maps;
+    }
+
+    /**
+     * Load internal table maps from dump. Used during Propel initialization.
+     *
+     * @param $mapsDump Table map dump as created by {@link DatabaseMap::dumpMaps()}
+     *
+     * @return void
+     */
+    public function loadMapsFromDump(array $mapsDump): void
+    {
+        $this->tables = $mapsDump['tablesByName'];
+        $this->tablesByPhpName = $mapsDump['tablesByPhpName'];
+    }
+
+    /**
      * Registers a table map classes (by qualified name) as table belonging
      * to this database.
      *
@@ -150,9 +179,28 @@ class DatabaseMap
     public function registerTableMapClass(string $tableMapClass): void
     {
         $tableName = $tableMapClass::TABLE_NAME;
-        $this->tables[$tableName] = $tableMapClass;
-
         $tablePhpName = $tableMapClass::TABLE_PHP_NAME;
+        $this->registerTableMapClassByName($tableName, $tablePhpName, $tableMapClass);
+    }
+
+    /**
+     * Registers a table map classes (by qualified name) as table belonging
+     * to this database.
+     *
+     * Classes added like this will only be instantiated when accessed
+     * through {@link DatabaseMap::getTable()},
+     * {@link DatabaseMap::getTableByPhpName()}, or
+     * {@link DatabaseMap::getTables()}
+     *
+     * @param string $tableName Internal name of the table, i.e. 'bookstore_schemas.book'
+     * @param string|null $tablePhpName PHP name of the table, i.e. 'Book'
+     * @param class-string<\Propel\Runtime\Map\TableMap> $tableMapClass The name of the table map to add
+     *
+     * @return void
+     */
+    public function registerTableMapClassByName(string $tableName, ?string $tablePhpName, string $tableMapClass): void
+    {
+        $this->tables[$tableName] = $tableMapClass;
         $this->addTableByPhpName($tablePhpName, $tableMapClass);
     }
 
