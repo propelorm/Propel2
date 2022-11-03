@@ -274,7 +274,9 @@ class StandardServiceContainer implements ServiceContainerInterface
     }
 
     /**
-     * @param array<string, \Propel\Runtime\Map\TableMapDump> $databaseNameToTableMapDumps
+     * @psalm-param array<string, \Propel\Runtime\Map\TableMapDump> $databaseNameToTableMapDumps
+     *
+     * @param array<string, array<string, class-string<\Propel\Runtime\Map\TableMap>>> $databaseNameToTableMapDumps
      *
      * @return void
      */

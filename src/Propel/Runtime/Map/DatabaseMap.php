@@ -142,13 +142,14 @@ class DatabaseMap
     /**
      * Dump table maps. Used during configuration generation.
      *
-     * @return \Propel\Runtime\Map\TableMapDump A dump that can be loaded again with {@link DatabaseMap::loadMapsFromDump()}
+     * @psalm-return \Propel\Runtime\Map\TableMapDump
+     *
+     * @return array<string, array<string, class-string<\Propel\Runtime\Map\TableMap>>> A dump that can be loaded again with {@link DatabaseMap::loadMapsFromDump()}
      */
     public function dumpMaps(): array
     {
         /**
-         * @param $tableMap class-string<\Propel\Runtime\Map\TableMap>|\Propel\Runtime\Map\TableMap
-         * @return class-string<\Propel\Runtime\Map\TableMap>
+         * @psalm-var \Closure( class-string<\Propel\Runtime\Map\TableMap>|\Propel\Runtime\Map\TableMap ): class-string<\Propel\Runtime\Map\TableMap>
          */
         $toClassString = fn ($tableMap) => is_string($tableMap) ? $tableMap : get_class($tableMap);
 
@@ -161,7 +162,9 @@ class DatabaseMap
     /**
      * Load internal table maps from dump. Used during Propel initialization.
      *
-     * @param \Propel\Runtime\Map\TableMapDump|array $mapsDump Table map dump as created by {@link DatabaseMap::dumpMaps()}
+     * @psalm-param \Propel\Runtime\Map\TableMapDump $mapsDump
+     *
+     * @param array<string, array<string, class-string<\Propel\Runtime\Map\TableMap>>> $mapsDump Table map dump as created by {@link DatabaseMap::dumpMaps()}
      *
      * @return void
      */
