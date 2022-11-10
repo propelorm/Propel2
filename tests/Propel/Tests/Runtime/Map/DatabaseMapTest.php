@@ -128,7 +128,8 @@ class DatabaseMapTest extends TestCaseFixtures
         $this->assertTableMapContains($databaseMap, $tableMapClass::TABLE_NAME, '\\' . $tableMapClass::TABLE_PHP_NAME, $tableMapClass);
     }
 
-    protected function assertTableMapContains(DatabaseMapWithGetters $databaseMap, $tableName, $phpTableName, $tableMapClass){
+    protected function assertTableMapContains(DatabaseMapWithGetters $databaseMap, $tableName, $phpTableName, $tableMapClass)
+    {
 
         $tableNameToArray = [
             $tableName => $databaseMap->getTablesByNameMap(),
