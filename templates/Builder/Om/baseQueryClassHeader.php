@@ -19,7 +19,7 @@
 ?>
 
 /**
- * Base class that represents a query for the <?= $tableName ?> table.
+ * Base class that represents a query for the `<?= $tableName ?>` table.
  *
 <?php if ($tableDesc): ?>
  * <?= $tableDesc ?> 
@@ -36,7 +36,7 @@
 <?php endforeach;?>
  *
 <?php foreach($columns as $column):?>
- * @method     <?= $queryClass ?> groupBy<?= $column->getPhpName() ?>() Group by the <?= $column->getName() ?> column';
+ * @method     <?= $queryClass ?> groupBy<?= $column->getPhpName() ?>() Group by the <?= $column->getName() ?> column
 <?php endforeach;?>
  *
  * @method     <?= $queryClass ?> leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -52,7 +52,7 @@
  * @method     <?= $queryClass ?> rightJoin<?= $relationName ?>($relationAlias = null) Adds a RIGHT JOIN clause to the query using the <?= $relationName ?> relation
  * @method     <?= $queryClass ?> innerJoin<?= $relationName ?>($relationAlias = null) Adds a INNER JOIN clause to the query using the <?= $relationName ?> relation
  *
- * @method     <?= $queryClass ?> joinWith<?= $relationName ?>($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ' . $relationName . " relation
+ * @method     <?= $queryClass ?> joinWith<?= $relationName ?>($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the <?= $relationName ?> relation
  *
  * @method     <?= $queryClass ?> leftJoinWith<?= $relationName ?>() Adds a LEFT JOIN clause and with to the query using the <?= $relationName ?> relation
  * @method     <?= $queryClass ?> rightJoinWith<?= $relationName ?>() Adds a RIGHT JOIN clause and with to the query using the <?= $relationName ?> relation
@@ -74,7 +74,7 @@
  * @method     <?= $modelClass ?> requireOne(?ConnectionInterface $con = null) Return the first <?= $modelClass ?> matching the query and throws <?= $entityNotFoundExceptionClass ?> when not found
  *
 <?php foreach($columns as $column):?>
- * @method     <?= $modelClass ?> requireOneBy<?= $column->getPhpName() ?>(<?= $column->getPhpType() ?> $<?= $column->getName() ?>) Return the first <?= $modelClass ?> filtered by the $name column and throws <?= $entityNotFoundExceptionClass ?> when not found
+ * @method     <?= $modelClass ?> requireOneBy<?= $column->getPhpName() ?>(<?= $column->getPhpType() ?> $<?= $column->getName() ?>) Return the first <?= $modelClass ?> filtered by the <?= $column->getName() ?> column and throws <?= $entityNotFoundExceptionClass ?> when not found
 <?php endforeach;?>
  *
  * @method     <?= $modelClass ?>[]|Collection find(?ConnectionInterface $con = null) Return <?= $modelClass ?> objects based on current ModelCriteria
