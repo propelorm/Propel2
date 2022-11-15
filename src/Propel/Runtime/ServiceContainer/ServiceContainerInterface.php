@@ -36,7 +36,7 @@ interface ServiceContainerInterface
      *
      * @var string
      */
-    public const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
+    public const DEFAULT_DATABASE_MAP_CLASS = DatabaseMap::class;
 
     /**
      * The name of the default datasource.
@@ -50,7 +50,7 @@ interface ServiceContainerInterface
      *
      * @var string
      */
-    public const DEFAULT_PROFILER_CLASS = '\Propel\Runtime\Util\Profiler';
+    public const DEFAULT_PROFILER_CLASS = Profiler::class;
 
     /**
      * @return string
