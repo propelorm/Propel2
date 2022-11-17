@@ -25,9 +25,9 @@ fi
 
 "$psql" --version;
 
-dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" "$NO_PWD" "$DB_NAME";
+dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
 
-createdb  --host="$DB_HOSTNAME" --username="$DB_USER" "$NO_PWD" "$DB_NAME";
+createdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
 
 "$psql" --host="$DB_HOSTNAME" --username="$DB_USER" -c '
 CREATE SCHEMA bookstore_schemas;
