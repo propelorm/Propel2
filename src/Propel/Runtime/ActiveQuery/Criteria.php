@@ -2357,7 +2357,7 @@ class Criteria
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria|array $updateValues A Criteria object containing values used in set clause.
+     * @param \Propel\Runtime\ActiveQuery\Criteria $updateValues A Criteria object containing values used in set clause.
      * @param \Propel\Runtime\Connection\ConnectionInterface $con The ConnectionInterface connection object to use.
      *
      * @return int The number of rows affected by last update statement.
@@ -2366,7 +2366,7 @@ class Criteria
      *             Note that the return value does require that this information is returned
      *             (supported) by the Propel db driver.
      */
-    public function doUpdate($updateValues, ConnectionInterface $con): int
+    public function doUpdate(Criteria $updateValues, ConnectionInterface $con): int
     {
         return UpdateQueryExecutor::execute($this, $updateValues, $con);
     }

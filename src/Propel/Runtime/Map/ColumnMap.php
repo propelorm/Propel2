@@ -295,6 +295,16 @@ class ColumnMap
     }
 
     /**
+     * Whether this column contains UUIDs.
+     *
+     * @return bool
+     */
+    public function isUUID(): bool
+    {
+        return $this->type === PropelTypes::UUID;
+    }
+
+    /**
      * Set the size of this column.
      *
      * @param int|null $size An int specifying the size.

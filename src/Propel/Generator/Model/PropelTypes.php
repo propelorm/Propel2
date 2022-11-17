@@ -342,6 +342,16 @@ class PropelTypes
     public const JSON_TYPE = 'string';
 
     /**
+     * @var string
+     */
+    public const UUID = 'UUID';
+
+    /**
+     * @var string
+     */
+    public const UUID_NATIVE_TYPE = 'string';
+
+    /**
      * Propel mapping types.
      *
      * @var array
@@ -381,6 +391,7 @@ class PropelTypes
         self::BU_TIMESTAMP,
         self::SET,
         self::JSON,
+        self::UUID,
     ];
 
     /**
@@ -421,6 +432,7 @@ class PropelTypes
         self::SET => self::SET_NATIVE_TYPE,
         self::GEOMETRY => self::GEOMETRY,
         self::JSON => self::JSON_TYPE,
+        self::UUID => self::UUID_NATIVE_TYPE,
     ];
 
     /**
@@ -466,6 +478,7 @@ class PropelTypes
         self::BU_DATE => PDO::PARAM_STR,
         self::BU_TIMESTAMP => PDO::PARAM_STR,
         self::JSON => PDO::PARAM_STR,
+        self::UUID => PDO::PARAM_STR,
     ];
 
     /**
@@ -613,6 +626,20 @@ class PropelTypes
     public static function isLobType(string $mappingType): bool
     {
         return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY]);
+    }
+
+    /**
+     * Returns whether the given type is a UUID type.
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isUuidType(string $type): bool
+    {
+        return in_array($type, [
+            self::UUID,
+        ]);
     }
 
     /**

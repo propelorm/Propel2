@@ -62,6 +62,7 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT4'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'TIMESTAMP'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'uuid'));
     }
 
     /**
@@ -670,9 +671,6 @@ CREATE SEQUENCE %s;
             }
 
             if (!$toColumn->isAutoIncrement() && $fromColumn->isAutoIncrement()) {
-                $changedProperties['defaultValueValue'] = [$fromColumn->getDefaultValueString(), null];
-                $toColumn->setDefaultValue(null);
-
                 //remove sequence
                 if ($fromTable->getDatabase()->hasSequence($seqName)) {
                     $this->createOrDropSequences .= sprintf(
@@ -735,6 +733,18 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
+    public function isUuid(string $type): bool
+    {
+        $strings = ['UUID'];
+
+        return in_array(strtoupper($type), $strings);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
     public function isString(string $type): bool
     {
         $strings = ['VARCHAR'];
@@ -766,10 +776,6 @@ DROP SEQUENCE %s CASCADE;
         $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
         $name = $fromColumn->getName();
 
-        if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
-            //cast from int to string
-            return '  ';
-        }
         if ($this->isString($fromSqlType) && $this->isNumber($toSqlType)) {
             //cast from string to int
             return "
@@ -782,16 +788,18 @@ DROP SEQUENCE %s CASCADE;
             return " USING decode(CAST($name as text), 'escape')";
         }
 
-        if ($fromSqlType === 'DATE' && $toSqlType === 'TIME') {
-            return ' USING NULL';
-        }
-
-        if ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) {
+        if (
+            ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) ||
+            ($this->isString($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isUuid($fromSqlType) && $this->isString($toSqlType))
+        ) {
+            // no cast necessary
             return '';
         }
 
-        if ($this->isString($fromSqlType) && $this->isString($toSqlType)) {
-            return '';
+        if ($this->isString($fromSqlType) && $this->isUuid($toSqlType)) {
+            return " USING $name::uuid";
         }
 
         return ' USING NULL';

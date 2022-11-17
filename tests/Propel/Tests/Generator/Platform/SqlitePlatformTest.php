@@ -12,6 +12,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Runtime\Adapter\AdapterFactory;
@@ -428,5 +429,34 @@ DROP INDEX [babar];
 -----------------------------------------------------------------------
 ";
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
+    }
+    
+    public function unavailableTypesDataProvider()
+    {
+        return [
+            [PropelTypes::UUID],
+        ];
+    }
+    
+    /**
+     * @dataProvider unavailableTypesDataProvider
+     */
+    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
+    {
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+
+        $this->getPlatform()->getDomainForType($propelDataType);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+
+        $table = $this->getTableFromSchema($schema);
     }
 }
