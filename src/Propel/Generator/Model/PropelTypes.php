@@ -555,7 +555,7 @@ class PropelTypes
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
-        ]);
+        ], true);
     }
 
     /**
@@ -579,7 +579,7 @@ class PropelTypes
             self::BU_DATE,
             self::BU_TIMESTAMP,
             self::JSON,
-        ]);
+        ], true);
     }
 
     /**
@@ -601,7 +601,7 @@ class PropelTypes
             self::NUMERIC,
             self::DECIMAL,
             self::REAL,
-        ]);
+        ], true);
     }
 
     /**
@@ -613,7 +613,7 @@ class PropelTypes
      */
     public static function isBooleanType(string $mappingType): bool
     {
-        return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU]);
+        return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU], true);
     }
 
     /**
@@ -625,7 +625,7 @@ class PropelTypes
      */
     public static function isLobType(string $mappingType): bool
     {
-        return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY]);
+        return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY], true);
     }
 
     /**
@@ -639,7 +639,7 @@ class PropelTypes
     {
         return in_array($type, [
             self::UUID,
-        ]);
+        ], true);
     }
 
     /**
@@ -651,7 +651,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string']);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string'], true);
     }
 
     /**
@@ -663,7 +663,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveNumericType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float']);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float'], true);
     }
 
     /**
@@ -675,7 +675,7 @@ class PropelTypes
      */
     public static function isPhpObjectType(string $phpType): bool
     {
-        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array']);
+        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array'], true);
     }
 
     /**
