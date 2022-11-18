@@ -299,7 +299,7 @@ class ColumnMap
      *
      * @return bool
      */
-    public function isUUID(): bool
+    public function isUuid(): bool
     {
         return $this->type === PropelTypes::UUID;
     }
