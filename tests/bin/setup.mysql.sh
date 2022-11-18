@@ -53,5 +53,5 @@ CREATE SCHEMA migration;
 
 
 DIR=`dirname $0`;
-dsn="mysql:host=$DB_HOSTNAME;dbname=test";
+dsn="mysql:host=$DB_HOSTNAME;dbname=$DB_NAME";
 php $DIR/../../bin/propel test:prepare --vendor="mysql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
