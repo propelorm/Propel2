@@ -1,9 +1,7 @@
 #!/bin/sh
 
-psql=`which psql`;
-
-if [ "$psql" = "" ]; then
-    echo "Can not find psql binary. Is it installed?";
+if ! command -v psql > /dev/null; then
+    echo "Cannot find psql binary. Is it installed?";
     exit 1;
 fi
 
@@ -18,23 +16,31 @@ if [ "$DB_NAME" = "" ]; then
 fi
 
 DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
+DB_PW=${DB_PW-$PGPASSWORD};
 
-if [ "$PGPASSWORD" != '' ]; then
+if [ -z "$DB_PW" ]; then
+    echo "\$DB_PW not set. Leaving empty."
+else
     NO_PWD="--no-password"
 fi
 
-"$psql" --version;
+(
+    export PGPASSWORD=$DB_PW;
 
-dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" "$NO_PWD" "$DB_NAME";
+    echo "removing existing test db"
+    dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
 
-createdb  --host="$DB_HOSTNAME" --username="$DB_USER" "$NO_PWD" "$DB_NAME";
-
-"$psql" --host="$DB_HOSTNAME" --username="$DB_USER" -c '
-CREATE SCHEMA bookstore_schemas;
-CREATE SCHEMA contest;
-CREATE SCHEMA second_hand_books;
-CREATE SCHEMA migration;
-' "$DB_NAME";
+    echo "creating new test db"
+    createdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
+    
+    echo "creating schema"
+    psql --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD -c '
+    CREATE SCHEMA bookstore_schemas;
+    CREATE SCHEMA contest;
+    CREATE SCHEMA second_hand_books;
+    CREATE SCHEMA migration;
+    ' "$DB_NAME" >/dev/null;
+)
 
 DIR=`dirname $0`;
 dsn="pgsql:host=$DB_HOSTNAME;dbname=$DB_NAME";

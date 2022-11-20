@@ -83,7 +83,6 @@ jobs:
               if: matrix.db-type == 'pgsql'
               run: tests/bin/setup.pgsql.sh
               env:
-                  PGPASSWORD: 'postgres'
                   DB_NAME: 'propel-tests'
                   DB_USER: 'postgres'
                   DB_PW: 'postgres'
