@@ -71,6 +71,8 @@ class InsertQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
+     * Build a comma separated list of placeholders, i.e. ":p1,:p2,:p3" for 3 placeholders.
+     *
      * @param int $numberOfPlaceholders
      *
      * @return string

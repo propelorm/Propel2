@@ -12,6 +12,7 @@ use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Diff\TableDiff;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PgsqlPlatform;
 
@@ -20,9 +21,9 @@ class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return PgsqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PgsqlPlatform
     {
         return new PgsqlPlatform();
     }
@@ -447,5 +448,22 @@ EOF;
     public function testGetModifyTableForeignKeysSkipSql4DDL($databaseDiff)
     {
         $this->assertFalse($databaseDiff);
+    }
+
+    /**
+     * @dataProvider providerForTestMigrateToUUIDColumn
+     *
+     * @return void
+     */
+    public function testMigrateToUUIDColumn($tableDiff)
+    {
+        $expected = <<<END
+
+ALTER TABLE "foo" ALTER COLUMN "id" TYPE uuid USING id::uuid;
+
+ALTER TABLE "foo" ALTER COLUMN "id" SET DEFAULT vendor_specific_uuid_generator_function();
+
+END;
+        $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
     }
 }

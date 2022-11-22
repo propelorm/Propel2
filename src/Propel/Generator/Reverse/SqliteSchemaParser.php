@@ -68,6 +68,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'text' => PropelTypes::LONGVARCHAR,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**

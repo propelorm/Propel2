@@ -974,4 +974,33 @@ CREATE TABLE `foo`
         $actualMysqlDataType = $this->getPlatform()->getDomainForType($propelDataType)->getSqlType();
         $this->assertEquals($expectedMysqlDataType, $actualMysqlDataType);
     }
+    
+    public function unavailableTypesDataProvider()
+    {
+        return [
+            [PropelTypes::UUID],
+        ];
+    }
+    
+    /**
+     * @dataProvider unavailableTypesDataProvider
+     */
+    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
+    {
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+
+        $this->getPlatform()->getDomainForType($propelDataType);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+
+        $table = $this->getTableFromSchema($schema);
+    }
 }
