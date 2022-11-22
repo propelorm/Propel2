@@ -476,6 +476,7 @@ class ColumnTest extends ModelTestCase
             ['ENUM', PDO::PARAM_INT],
             ['BU_DATE', PDO::PARAM_STR],
             ['BU_TIMESTAMP', PDO::PARAM_STR],
+            ['UUID', PDO::PARAM_STR],
         ];
     }
 
@@ -707,6 +708,31 @@ class ColumnTest extends ModelTestCase
             ['DECIMAL', 'string', false],
             ['REAL', 'double', true],
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function testUuidType()
+    {
+        $domain = $this->getDomainMock();
+        $domain
+            ->expects($this->once())
+            ->method('setType')
+            ->with($this->equalTo(PropelTypes::UUID));
+
+        $domain
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue(PropelTypes::UUID));
+
+        $column = new Column('');
+        $column->setDomain($domain);
+        $column->setType(PropelTypes::UUID);
+
+        $this->assertSame('string', $column->getPhpType());
+        $this->assertTrue($column->isPhpPrimitiveType());
+        $this->assertTrue($column->isUuidType());
     }
 
     /**

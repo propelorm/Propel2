@@ -53,6 +53,7 @@ class MysqlPlatform extends DefaultPlatform
     protected function initialize(): void
     {
         parent::initialize();
+        unset($this->schemaDomainMap[PropelTypes::UUID]);
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'TINYINT', 1));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'TEXT'));

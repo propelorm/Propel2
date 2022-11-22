@@ -651,4 +651,24 @@ EOF;
 
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = "
+CREATE TABLE foo
+(
+    uuid UUID DEFAULT vendor_specific_default() NOT NULL,
+    other_uuid UUID
+);
+
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (uuid);
+";
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 }

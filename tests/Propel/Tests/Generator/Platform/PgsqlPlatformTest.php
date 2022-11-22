@@ -834,4 +834,25 @@ ALTER TABLE "foo" DROP CONSTRAINT "foo_bar_fk";
 ";
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $table = $this->getTableFromSchema($schema);
+        $expected = <<< 'EOT'
+
+CREATE TABLE "foo"
+(
+    "uuid" uuid DEFAULT vendor_specific_default() NOT NULL,
+    "other_uuid" uuid,
+    PRIMARY KEY ("uuid")
+);
+
+EOT;
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 }

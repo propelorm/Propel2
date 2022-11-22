@@ -360,4 +360,18 @@ EOF;
         [$table1],
         ];
     }
+
+    public function providerForTestCreateSchemaWithUuidColumns()
+    {
+        $schema = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="foo">
+        <column name="uuid" primaryKey="true" type="UUID" default="vendor_specific_default()"/>
+        <column name="other_uuid" type="UUID"/>
+    </table>
+</database>
+EOF;
+
+        return [[$schema]];
+    }
 }

@@ -1324,6 +1324,16 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns whether this column is a uuid type.
+     *
+     * @return bool
+     */
+    public function isUuidType(): bool
+    {
+        return PropelTypes::isUuidType($this->getType());
+    }
+
+    /**
      * Returns whether the column is an array column.
      *
      * @return bool

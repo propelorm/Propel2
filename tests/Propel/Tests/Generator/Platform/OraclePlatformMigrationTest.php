@@ -518,4 +518,22 @@ ALTER TABLE foo2
 ";
         $this->assertEquals($expected, $this->getPlatform()->getModifyDatabaseDDL($databaseDiff));
     }
+
+    /**
+     * @dataProvider providerForTestMigrateToUUIDColumn
+     *
+     * @return void
+     */
+    public function testMigrateToUUIDColumn($tableDiff)
+    {
+        $expected = <<<END
+
+ALTER TABLE foo MODIFY
+(
+    id UUID DEFAULT vendor_specific_uuid_generator_function() NOT NULL
+);
+
+END;
+        $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
+    }
 }
