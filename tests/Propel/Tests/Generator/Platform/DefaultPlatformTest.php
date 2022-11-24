@@ -11,6 +11,7 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Tests\TestCase;
 
 class DefaultPlatformTest extends TestCase
@@ -22,7 +23,7 @@ class DefaultPlatformTest extends TestCase
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         if (null === $this->platform) {
             $this->platform = new DefaultPlatform();

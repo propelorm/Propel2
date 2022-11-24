@@ -14,10 +14,12 @@ use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Exception\RuntimeException;
+use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\VendorInfo;
 
 /**
  * Baseclass for OM-building classes.
@@ -1189,4 +1191,40 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @return void
      */
     abstract protected function addClassClose(string &$script): void;
+
+    /**
+     * Returns the vendor info from the table for the configured platform.
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    protected function getVendorInfo(): VendorInfo
+    {
+        $dbVendorId = $this->getPlatform()->getDatabaseType();
+
+        return $this->getTable()->getVendorInfoForType($dbVendorId);
+    }
+
+    /**
+     * Returns the value for the uuid swap flag as set in the vendor information
+     * block in schema.xml as a literal ('true' or 'false').
+     *
+     * @psalm-return 'true'|'false'
+     *
+     * @see \Propel\Runtime\Util\UuidConverter::uuidToBin()
+     *
+     * @throws \Propel\Generator\Exception\SchemaException
+     *
+     * @return string
+     */
+    protected function getUuidSwapFlagLiteral(): string
+    {
+        $vendorInformation = $this->getVendorInfo();
+
+        $uuidSwapFlag = $vendorInformation->getParameter('UuidSwapFlag') ?? 'true';
+        if (!in_array($uuidSwapFlag, ['true', 'false'], true)) {
+            throw new SchemaException('Value for /database/vendor/parameter[name="UuidSwapFlag"] must be "true" or "false", but it is ' . $uuidSwapFlag);
+        }
+
+        return $uuidSwapFlag;
+    }
 }

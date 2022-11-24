@@ -338,4 +338,11 @@ interface PlatformInterface
      * @return void
      */
     public function setIdentifierQuoting(bool $enabled): void;
+
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
+    public function getAddTableDDL(Table $table): string;
 }

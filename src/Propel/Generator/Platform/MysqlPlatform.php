@@ -66,6 +66,7 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BINARY(16)'));
     }
 
     /**
@@ -331,9 +332,7 @@ CREATE TABLE %s
      */
     protected function getTableOptions(Table $table): array
     {
-        $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
-        $tableVI = $table->getVendorInfoForType('mysql');
-        $vi = $dbVI->getMergedVendorInfo($tableVI);
+        $vi = $table->getVendorInfoForType('mysql');
         $tableOptions = [];
         // List of supported table options
         // see http://dev.mysql.com/doc/refman/5.5/en/create-table.html

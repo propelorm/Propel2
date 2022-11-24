@@ -14,6 +14,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
@@ -23,9 +24,9 @@ class SqlitePlatformTest extends PlatformTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return \Propel\Generator\Platform\SqlitePlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new SqlitePlatform();
     }
@@ -458,5 +459,24 @@ DROP INDEX [babar];
         $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $table = $this->getTableFromSchema($schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid-bin] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid-bin] BLOB,
+    PRIMARY KEY ([uuid-bin])
+);
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

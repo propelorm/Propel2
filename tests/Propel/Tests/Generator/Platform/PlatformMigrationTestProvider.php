@@ -620,4 +620,16 @@ EOF;
 
         return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
     }
+
+    public function providerForTestMigrateToUuidBinColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36" autoIncrement="true"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="UUID_BINARY" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
+    }
 }

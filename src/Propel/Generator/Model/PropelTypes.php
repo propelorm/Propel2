@@ -352,6 +352,11 @@ class PropelTypes
     public const UUID_NATIVE_TYPE = 'string';
 
     /**
+     * @var string
+     */
+    public const UUID_BINARY = 'UUID_BINARY';
+
+    /**
      * Propel mapping types.
      *
      * @var array
@@ -392,6 +397,7 @@ class PropelTypes
         self::SET,
         self::JSON,
         self::UUID,
+        self::UUID_BINARY,
     ];
 
     /**
@@ -433,6 +439,7 @@ class PropelTypes
         self::GEOMETRY => self::GEOMETRY,
         self::JSON => self::JSON_TYPE,
         self::UUID => self::UUID_NATIVE_TYPE,
+        self::UUID_BINARY => self::UUID_NATIVE_TYPE,
     ];
 
     /**
@@ -479,6 +486,7 @@ class PropelTypes
         self::BU_TIMESTAMP => PDO::PARAM_STR,
         self::JSON => PDO::PARAM_STR,
         self::UUID => PDO::PARAM_STR,
+        self::UUID_BINARY => PDO::PARAM_LOB,
     ];
 
     /**
@@ -639,6 +647,7 @@ class PropelTypes
     {
         return in_array($type, [
             self::UUID,
+            self::UUID_BINARY,
         ], true);
     }
 
