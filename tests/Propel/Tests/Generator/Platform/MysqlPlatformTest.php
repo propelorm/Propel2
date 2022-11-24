@@ -19,6 +19,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Platform\PlatformInterface;
 
 class MysqlPlatformTest extends PlatformTestProvider
 {
@@ -27,7 +28,7 @@ class MysqlPlatformTest extends PlatformTestProvider
      *
      * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform():PlatformInterface
     {
         static $platform;
 
@@ -1002,5 +1003,24 @@ CREATE TABLE `foo`
         $this->expectException(\Propel\Generator\Exception\EngineException::class);
 
         $table = $this->getTableFromSchema($schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE `foo`
+(
+    `uuid-bin` BINARY(16) DEFAULT vendor_specific_default() NOT NULL,
+    `other_uuid-bin` BINARY(16),
+    PRIMARY KEY (`uuid-bin`)
+) ENGINE=InnoDB;
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

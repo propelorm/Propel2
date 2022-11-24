@@ -347,6 +347,10 @@
         <column name="style" type="ENUM" valueSet="novel, essay, poetry"/>
         <column name="style2" type="SET" valueSet="novel, essay, poetry"/>
         <column name="tags" type="ARRAY"/>
+        <column name="uuid_bin" required="false" type="UUID_BINARY"/>
+        <index>
+            <index-column name="uuid_bin"/>
+        </index>
     </table>
 
     <!-- Test single table inheritance with Abstract true -->

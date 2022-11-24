@@ -174,6 +174,10 @@ class QueryBuilder extends AbstractOMBuilder
         );
         $this->declareClassFromBuilder($this->getStubQueryBuilder(), 'Child');
         $this->declareClassFromBuilder($this->getTableMapBuilder());
+        $additionalModelClasses = $table->getAdditionalModelClassImports();
+        if ($additionalModelClasses) {
+            $this->declareClasses(...$additionalModelClasses);
+        }
 
         // apply behaviors
         $this->applyBehaviorModifier('queryAttributes', $script, '    ');
@@ -1147,6 +1151,10 @@ class QueryBuilder extends AbstractOMBuilder
         if (is_string(\$$variableName)) {
             \$$variableName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }";
+        } elseif ($col->isUuidBinaryType()) {
+            $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+            $script .= "
+        \$$variableName = UuidConverter::uuidToBinRecursive(\$$variableName, $uuidSwapFlag);";
         }
         $script .= "
 

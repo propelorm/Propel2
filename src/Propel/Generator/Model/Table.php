@@ -18,6 +18,7 @@ use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Util\UuidConverter;
 
 /**
  * Data about a table used in an application.
@@ -1859,6 +1860,31 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Returns a VendorInfo object by its vendor type id (i.e. "mysql").
+     *
+     * Vendor information is set in schema.xml for the table or the whole
+     * database. The method returns database-wide vendor information extended
+     * and possibly overridden by table vendor information.
+     *
+     * @see \Propel\Generator\Model\MappingModel::getVendorInfoForType()
+     *
+     * @param string $type Vendor id, i.e. "mysql"
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    public function getVendorInfoForType(string $type): VendorInfo
+    {
+        $tableVendorInfo = parent::getVendorInfoForType($type);
+        $db = $this->getDatabase();
+        if (!$db) {
+            return $tableVendorInfo;
+        }
+        $databaseVendorInfo = $db->getVendorInfoForType($type);
+
+        return $databaseVendorInfo->getMergedVendorInfo($tableVendorInfo);
+    }
+
+    /**
      * Get the database that contains this table.
      *
      * @throws \Propel\Generator\Exception\LogicException
@@ -2204,5 +2230,44 @@ class Table extends ScopedMappingModel implements IdMethod
     public function setIdentifierQuoting(?bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * Check if this table contains columns of the given type.
+     *
+     * @param string $type The type to check for, i.e. PropelTypes::BOOLEAN
+     *
+     * @return bool
+     */
+    public function containsColumnsOfType(string $type): bool
+    {
+        foreach ($this->columns as $column) {
+            if ($column->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get additional class imports for model and query classes needed by the columns.
+     *
+     * @psalm-return array<class-string>
+     *
+     * @see \Propel\Generator\Builder\Om\ObjectBuilder::addClassBody()
+     * @see \Propel\Generator\Builder\Om\QueryBuilder::addClassBody()
+     *
+     * @return array<string>|null
+     */
+    public function getAdditionalModelClassImports(): ?array
+    {
+        if ($this->containsColumnsOfType(PropelTypes::UUID_BINARY)) {
+            return [
+                UuidConverter::class,
+            ];
+        }
+
+        return null;
     }
 }
