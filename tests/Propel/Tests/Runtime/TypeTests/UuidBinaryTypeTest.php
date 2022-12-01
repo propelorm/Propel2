@@ -8,7 +8,6 @@
 
 namespace Propel\Tests\Runtime\TypeTest;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\Util\UuidConverter;
 use Propel\Tests\Bookstore\Base\Book2Query;
 use Propel\Tests\Bookstore\Book2;
