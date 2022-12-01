@@ -431,23 +431,6 @@ DROP INDEX [babar];
 ";
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
-    
-    public function unavailableTypesDataProvider()
-    {
-        return [
-            [PropelTypes::UUID],
-        ];
-    }
-    
-    /**
-     * @dataProvider unavailableTypesDataProvider
-     */
-    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
-    {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
-
-        $this->getPlatform()->getDomainForType($propelDataType);
-    }
 
     /**
      * @dataProvider providerForTestCreateSchemaWithUuidColumns
@@ -456,9 +439,16 @@ DROP INDEX [babar];
      */
     public function testCreateSchemaWithUuidColumns($schema)
     {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid] BLOB,
+    PRIMARY KEY ([uuid])
+);
+";
 
-        $table = $this->getTableFromSchema($schema);
+        $this->assertCreateTableMatches($expected, $schema);
     }
 
     /**

@@ -975,23 +975,6 @@ CREATE TABLE `foo`
         $actualMysqlDataType = $this->getPlatform()->getDomainForType($propelDataType)->getSqlType();
         $this->assertEquals($expectedMysqlDataType, $actualMysqlDataType);
     }
-    
-    public function unavailableTypesDataProvider()
-    {
-        return [
-            [PropelTypes::UUID],
-        ];
-    }
-    
-    /**
-     * @dataProvider unavailableTypesDataProvider
-     */
-    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
-    {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
-
-        $this->getPlatform()->getDomainForType($propelDataType);
-    }
 
     /**
      * @dataProvider providerForTestCreateSchemaWithUuidColumns
@@ -1000,9 +983,16 @@ CREATE TABLE `foo`
      */
     public function testCreateSchemaWithUuidColumns($schema)
     {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+        $expected = "
+CREATE TABLE `foo`
+(
+    `uuid` BINARY(16) DEFAULT vendor_specific_default() NOT NULL,
+    `other_uuid` BINARY(16),
+    PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB;
+";
 
-        $table = $this->getTableFromSchema($schema);
+        $this->assertCreateTableMatches($expected, $schema);
     }
 
     /**

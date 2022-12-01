@@ -1495,13 +1495,8 @@ if (is_resource($columnValueAccessor)) {
 }";
         }
 
-        $script .= sprintf(
-            "
-\$stmt->bindValue(%s, %s, %s);",
-            $identifier,
-            $columnValueAccessor,
-            PropelTypes::getPdoTypeString($column->getType()),
-        );
+        $pdoType = PropelTypes::getPdoTypeString($column->getType());
+        $script .= "\n\$stmt->bindValue($identifier, $columnValueAccessor, $pdoType);";
 
         return preg_replace('/^(.+)/m', $tab . '$1', $script);
     }

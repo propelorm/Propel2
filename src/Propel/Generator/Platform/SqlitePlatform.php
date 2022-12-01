@@ -59,8 +59,6 @@ class SqlitePlatform extends DefaultPlatform
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
 
-        unset($this->schemaDomainMap[PropelTypes::UUID]);
-
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'MEDIUMTEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATETIME'));
@@ -75,6 +73,9 @@ class SqlitePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BLOB'));
+
+        // no native UUID type, use UUID_BINARY
+        $this->schemaDomainMap[PropelTypes::UUID] = $this->schemaDomainMap[PropelTypes::UUID_BINARY];
     }
 
     /**
