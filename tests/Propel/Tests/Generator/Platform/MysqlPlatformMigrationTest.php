@@ -459,4 +459,65 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
             'Table `Foo2` should not renamed to `foo_bla` since we have already renamed a table to this name.'
         );
     }
+
+    /**
+     * @dataProvider providerForTestMigrateToUuidBinColumn
+     *
+     * @return void
+     */
+    public function testGetMigrateToUuidBinaryColumn($tableDiff)
+    {
+        $expected = <<<'EOT'
+
+;--sql statement block;
+# START migration of UUIDs in column 'foo.id'.
+# This can break your DB. Validate and edit these statements as you see fit.
+# Please be aware of Propel's ABSOLUTELY NO WARRANTY policy!
+
+;--sql statement block;
+
+ALTER TABLE `foo` DROP PRIMARY KEY;
+ALTER TABLE `foo` ADD COLUMN `id_%x` BINARY(16) AFTER `id`;
+UPDATE `foo` SET `id_%x` = UUID_TO_BIN(`id`, true);
+ALTER TABLE `foo` DROP COLUMN `id`;
+ALTER TABLE `foo` CHANGE COLUMN `id_%x` `id` BINARY(16) DEFAULT vendor_specific_uuid_generator_function() NOT NULL;
+ALTER TABLE `foo` ADD PRIMARY KEY (`id`);
+# END migration of UUIDs in column 'id'
+
+;--sql statement block;
+
+EOT;
+        $actual = $this->getPlatform()->getModifyTableColumnsDDL($tableDiff);
+        $this->assertStringMatchesFormat($expected, $actual);
+    }
+
+    /**
+     * @dataProvider providerForTestMigrateFromUuidBinColumn
+     *
+     * @return void
+     */
+    public function testGetMigrateFromUuidBinaryColumn($tableDiff)
+    {
+        $expected = <<<EOT
+
+;--sql statement block;
+# START migration of UUIDs in column 'foo.id'.
+# This can break your DB. Validate and edit these statements as you see fit.
+# Please be aware of Propel's ABSOLUTELY NO WARRANTY policy!
+
+;--sql statement block;
+
+ALTER TABLE `foo` DROP PRIMARY KEY;
+ALTER TABLE `foo` ADD COLUMN `id_%x` VARCHAR(36) AFTER `id`;
+UPDATE `foo` SET `id_%x` = BIN_TO_UUID(`id`, true);
+ALTER TABLE `foo` DROP COLUMN `id`;
+ALTER TABLE `foo` CHANGE COLUMN `id_%x` `id` VARCHAR(36) NOT NULL;
+ALTER TABLE `foo` ADD PRIMARY KEY (`id`);
+# END migration of UUIDs in column 'id'
+
+;--sql statement block;
+EOT;
+        $actual = $this->getPlatform()->getModifyTableColumnsDDL($tableDiff);
+        $this->assertStringMatchesFormat($expected, $actual);
+    }
 }

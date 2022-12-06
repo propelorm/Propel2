@@ -12,6 +12,7 @@ use PDO;
 use Propel\Runtime\Propel;
 use Propel\Runtime\Util\UuidConverter;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+use Propel\Tests\Helpers\CheckMysql8Trait;
 
 /**
  * @group mysql
@@ -19,29 +20,15 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class UuidConverterMysqlCompatibilityTest extends BookstoreTestBase
 {
-    /**
-     * @var ?bool
-     */
-    protected $isAtLeastMysql8 = null;
+    use CheckMysql8Trait;
 
     protected function setUp(): void
     {
         parent::setUp();
-        if ($this->isAtLeastMysql8 === null) {
-            $this->isAtLeastMysql8 = $this->getMySqlVersionAtLeast8();
-        }
-        if (!$this->isAtLeastMysql8) {
+        if(!$this->checkMysqlVersionAtLeast8()){
             $this->markTestSkipped('Test can only be run on MySQL version >= 8');
+            return;
         }
-    }
-
-    protected function getMySqlVersionAtLeast8(): bool
-    {
-        $con = Propel::getServiceContainer()->getConnection();
-        $query = "SELECT VERSION() NOT LIKE '%MariaDB%' AND VERSION() >= 8";
-        $result = $con->query($query)->fetchColumn(0);
-
-        return (bool) $result;
     }
 
     public function operationsDataProvider(): array

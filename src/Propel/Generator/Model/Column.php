@@ -1244,6 +1244,18 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns the SQL type as a string.
+     *
+     * @see Domain::getSqlType()
+     *
+     * @return string
+     */
+    public function getSqlType(): string
+    {
+        return $this->getDomain()->getSqlType();
+    }
+
+    /**
      * Returns the column PDO type integer for this column's mapping type.
      *
      * @return int
@@ -1722,5 +1734,19 @@ class Column extends MappingModel
     public static function generatePhpSingularName(string $phpName): string
     {
         return rtrim($phpName, 's');
+    }
+
+    /**
+     * Checks if xml attributes from schema.xml matches expected content declaration.
+     *
+     * @param string $content
+     *
+     * @return bool
+     */
+    public function isContent(string $content): bool
+    {
+        $contentAttribute = $this->getAttribute('content');
+
+        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($contentAttribute);
     }
 }

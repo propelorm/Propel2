@@ -781,7 +781,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of foreign column names.
      *
-     * @return array<string>
+     * @return array<string|null>
      */
     public function getForeignColumns(): array
     {

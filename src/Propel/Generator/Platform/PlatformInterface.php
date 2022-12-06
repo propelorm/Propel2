@@ -345,4 +345,14 @@ interface PlatformInterface
      * @return string
      */
     public function getAddTableDDL(Table $table): string;
+
+    /**
+     * Quotes identifiers used in database SQL if isIdentifierQuotingEnabled is true.
+     * Calls doQuoting() when identifierQuoting is enabled.
+     *
+     * @param string $text
+     *
+     * @return string Quoted identifier.
+     */
+    public function quoteIdentifier(string $text): string;
 }
