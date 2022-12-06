@@ -648,7 +648,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of local column names.
      *
-     * @return array
+     * @return array<string>
      */
     public function getLocalColumns(): array
     {
@@ -781,7 +781,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of foreign column names.
      *
-     * @return array
+     * @return array<string>
      */
     public function getForeignColumns(): array
     {
