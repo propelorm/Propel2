@@ -1038,6 +1038,20 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Get indexes on a column
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return array<\Propel\Generator\Model\Index>
+     */
+    public function getIndexesOnColumn(Column $column): array
+    {
+        $columnName = $column->getName();
+
+        return array_filter($this->indices, fn ($idx) => $idx->hasColumn($columnName));
+    }
+
+    /**
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
@@ -1804,14 +1818,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getForeignKeysReferencingTable(string $tableName): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if ($fk->getForeignTableName() === $tableName) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => $fk->getForeignTableName() === $tableName;
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1827,14 +1836,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getColumnForeignKeys(string $column): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if (in_array($column, $fk->getLocalColumns())) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => in_array($column, $fk->getLocalColumns(), true);
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1926,7 +1930,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function quoteIdentifier(string $text): string
     {
         if (!$this->getPlatform()) {
-            throw new RuntimeException('No platform specified. Can not quote without knowing which platform this table\'s database is using.');
+            throw new RuntimeException('No platform specified. Cannot quote without knowing which platform this table\'s database is using.');
         }
 
         if ($this->isIdentifierQuotingEnabled()) {

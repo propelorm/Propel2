@@ -59,7 +59,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'timestamp' => PropelTypes::TIMESTAMP,
         'tinyblob' => PropelTypes::BINARY,
         'blob' => PropelTypes::BLOB,
-        'mediumblob' => PropelTypes::VARBINARY,
+        'mediumblob' => PropelTypes::OBJECT,
         'longblob' => PropelTypes::LONGVARBINARY,
         'longtext' => PropelTypes::CLOB,
         'tinytext' => PropelTypes::VARCHAR,
@@ -67,6 +67,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'text' => PropelTypes::LONGVARCHAR,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
+        'binary' => PropelTypes::BINARY,
+        'varbinary' => PropelTypes::VARBINARY,
     ];
 
     /**
