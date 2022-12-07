@@ -59,7 +59,7 @@ class UuidConverterMysqlCompatibilityTest extends BookstoreTestBase
         $this->assertSame($mysqlBin, $propelBin, $description . ' should match between Propel and MySQL');
     }
 
-    public function executeStatement(string $statement, string $value)
+    protected function executeStatement(string $statement, string $value)
     {
         $con = Propel::getServiceContainer()->getConnection();
         $ps = $con->prepare($statement);

@@ -32,8 +32,9 @@ class OracleAdapterTest extends TestCaseFixtures
         return 'oracle';
     }
     
-    protected function createOracleSql(Criteria $query, &$params = []): string
+    protected function createOracleSql(Criteria $query): string
     {
+        $params = [];
         Propel::getServiceContainer()->setAdapter('oracle', new OracleAdapter());
         $query->setDbName('oracle');
         return $query->createSelectSql($params);
@@ -88,8 +89,12 @@ class OracleAdapterTest extends TestCaseFixtures
         $c = new Criteria();
         $c->addSelectColumn(BookTableMap::COL_ID);
         $c->addAsColumn('book_ID', BookTableMap::COL_ID);
-        $selectSql = $this->createOracleSql($c);
-        $this->assertEquals('SELECT book.id, book.id AS book_ID FROM book', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+        
+        $adapter = new OracleAdapter();
+        $fromClause = [];
+        $selectSql = $adapter->createSelectSqlPart($c, $fromClause);
+        $this->assertEquals('SELECT book.id, book.id AS book_ID', $selectSql, 'createSelectSqlPart() returns a SQL SELECT clause with both select and as columns');
+        $this->assertEquals(['book'], $fromClause, 'createSelectSqlPart() adds the tables from the select columns to the from clause');
     }
 
     /**
