@@ -14,6 +14,7 @@ use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 use Propel\Runtime\ActiveQuery\QueryExecutor\CountQueryExecutor;
@@ -723,6 +724,9 @@ class Criteria
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
             return new RawCriterion($this, $column, $value, $comparison);
         }
+        if ($value instanceof Criteria && $comparison === self::EQUAL) {
+            $comparison = InQueryCriterion::IN;
+        }
         switch ($comparison) {
             case self::CUSTOM:
                 // custom expression with no parameter binding
@@ -730,6 +734,13 @@ class Criteria
                 return new CustomCriterion($this, $value);
             case self::IN:
             case self::NOT_IN:
+            case InQueryCriterion::IN:
+            case InQueryCriterion::NOT_IN:
+                if ($value instanceof Criteria) {
+                    // table.column IN (SELECT ...)
+                    return new InQueryCriterion($this, $column, $comparison, $value);
+                }
+
                 // table.column IN (?, ?) or table.column NOT IN (?, ?)
                 // something like $c->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
                 return new InCriterion($this, $column, $value, $comparison);

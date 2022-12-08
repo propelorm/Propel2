@@ -13,19 +13,19 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Map\RelationMap;
 
 /**
- * Specialized Criterion used for EXISTS
+ * Specialized Criterion used for IN
  */
-class ExistsCriterion extends AbstractInnerQueryCriterion
+class InQueryCriterion extends AbstractInnerQueryCriterion
 {
     /**
      * @var string
      */
-    public const TYPE_EXISTS = 'EXISTS';
+    public const IN = 'IN';
 
     /**
      * @var string
      */
-    public const TYPE_NOT_EXISTS = 'NOT EXISTS';
+    public const NOT_IN = 'NOT IN';
 
     /**
      * @see AbstractInnerQueryCriterion::initRelation()
@@ -37,8 +37,14 @@ class ExistsCriterion extends AbstractInnerQueryCriterion
      */
     protected function initForRelation(ModelCriteria $outerQuery, RelationMap $relation): void
     {
-        $joinCondition = $this->buildJoinCondition($outerQuery, $relation);
-        $this->innerQuery->addAnd($joinCondition);
+        $outerColumns = $relation->getLeftColumns();
+        $this->leftOperand = ($outerColumns) ? reset($outerColumns)->getFullyQualifiedName() : null;
+
+        $innerColumns = $relation->getRightColumns();
+        if ($innerColumns && $this->innerQuery instanceof ModelCriteria) {
+            $columnName = reset($innerColumns)->getFullyQualifiedName();
+            $this->innerQuery->select($columnName);
+        }
     }
 
     /**
@@ -50,7 +56,7 @@ class ExistsCriterion extends AbstractInnerQueryCriterion
      */
     protected function resolveOperator(?string $operatorDeclaration): string
     {
-        return ($operatorDeclaration === static::TYPE_NOT_EXISTS) ? static::TYPE_NOT_EXISTS : static::TYPE_EXISTS;
+        return ($operatorDeclaration === static::NOT_IN) ? static::NOT_IN : static::IN;
     }
 
     /**
@@ -61,8 +67,6 @@ class ExistsCriterion extends AbstractInnerQueryCriterion
      */
     protected function processInnerQuery(): Criteria
     {
-        return $this->innerQuery
-            ->clearSelectColumns()
-            ->addAsColumn('existsFlag', '1');
+        return $this->innerQuery;
     }
 }
