@@ -238,7 +238,7 @@ class BaseTest extends MigrationTestCase
         <column name="field6" type="DOUBLE"/>
 
         <column name="field7" type="BINARY" size="6"/>
-        <column name="field8" type="VARBINARY" size="6"/>
+        <column name="field8" type="VARBINARY"/>
         <column name="field9" type="LONGVARBINARY"/>
         <column name="field10" type="BLOB"/>
 
@@ -265,7 +265,7 @@ class BaseTest extends MigrationTestCase
         <column name="field5" type="DOUBLE"/>
         <column name="field6" type="BIGINT"/>
 
-        <column name="field7" type="VARBINARY" size="12"/>
+        <column name="field7" type="VARBINARY"/>
         <column name="field8" type="LONGVARBINARY"/>
         <column name="field9" type="BLOB"/>
         <column name="field10" type="BINARY" size="8"/>
