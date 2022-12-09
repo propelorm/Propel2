@@ -22,6 +22,15 @@ use Propel\Generator\Model\Unique;
 abstract class PlatformTestProvider extends PlatformTestBase
 {
     /**
+     * @return void
+     */
+    public function assertCreateTableMatches(string $expected, $schema, ?string $tableName = 'foo' )
+    {
+        $table = $this->getTableFromSchema($schema, $tableName);
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
+
+    /**
      * @return string[][]
      */
     public function providerForTestGetAddTablesDDL()
@@ -368,6 +377,20 @@ EOF;
     <table name="foo">
         <column name="uuid" primaryKey="true" type="UUID" default="vendor_specific_default()"/>
         <column name="other_uuid" type="UUID"/>
+    </table>
+</database>
+EOF;
+
+        return [[$schema]];
+    }
+
+    public function providerForTestCreateSchemaWithUuidBinaryColumns()
+    {
+        $schema = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="foo">
+        <column name="uuid-bin" primaryKey="true" type="UUID_BINARY" default="vendor_specific_default()"/>
+        <column name="other_uuid-bin" type="UUID_BINARY"/>
     </table>
 </database>
 EOF;

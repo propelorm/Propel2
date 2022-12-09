@@ -17,6 +17,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
 class PgsqlPlatformTest extends PlatformTestProvider
 {
@@ -25,7 +26,7 @@ class PgsqlPlatformTest extends PlatformTestProvider
      *
      * @return \Propel\Generator\Platform\PgsqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new PgsqlPlatform();
     }
@@ -836,13 +837,21 @@ ALTER TABLE "foo" DROP CONSTRAINT "foo_bar_fk";
     }
 
     /**
+     * @return void
+     */
+    public function assertCreateTableMatches(string $expected, $schema, ?string $tableName = 'foo' )
+    {
+        $table = $this->getTableFromSchema($schema, $tableName);
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
+
+    /**
      * @dataProvider providerForTestCreateSchemaWithUuidColumns
      *
      * @return void
      */
     public function testCreateSchemaWithUuidColumns($schema)
     {
-        $table = $this->getTableFromSchema($schema);
         $expected = <<< 'EOT'
 
 CREATE TABLE "foo"
@@ -853,6 +862,26 @@ CREATE TABLE "foo"
 );
 
 EOT;
-        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = <<< 'EOT'
+
+CREATE TABLE "foo"
+(
+    "uuid-bin" BYTEA DEFAULT vendor_specific_default() NOT NULL,
+    "other_uuid-bin" BYTEA,
+    PRIMARY KEY ("uuid-bin")
+);
+
+EOT;
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

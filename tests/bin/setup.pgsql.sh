@@ -25,15 +25,15 @@ else
 fi
 
 (
-    export PGPASSWORD=$DB_PW;
+    export PGPASSWORD="$DB_PW";
 
-    echo "removing existing test db"
+    echo "Dropping existing test db"
     dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
 
-    echo "creating new test db"
+    echo "Creating new test db"
     createdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
     
-    echo "creating schema"
+    echo "Creating schemas"
     psql --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD -c '
     CREATE SCHEMA bookstore_schemas;
     CREATE SCHEMA contest;

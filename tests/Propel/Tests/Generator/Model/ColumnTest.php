@@ -476,7 +476,8 @@ class ColumnTest extends ModelTestCase
             ['ENUM', PDO::PARAM_INT],
             ['BU_DATE', PDO::PARAM_STR],
             ['BU_TIMESTAMP', PDO::PARAM_STR],
-            ['UUID', PDO::PARAM_STR],
+            [PropelTypes::UUID, PDO::PARAM_STR],
+            [PropelTypes::UUID_BINARY, PDO::PARAM_LOB],
         ];
     }
 
@@ -711,29 +712,41 @@ class ColumnTest extends ModelTestCase
     }
 
     /**
+     * @dataProvider provideMappingUuidTypes
+     *
      * @return void
      */
-    public function testUuidType()
+    public function testUuidType(string $columnType, string $phpType)
     {
         $domain = $this->getDomainMock();
         $domain
             ->expects($this->once())
             ->method('setType')
-            ->with($this->equalTo(PropelTypes::UUID));
+            ->with($this->equalTo($columnType));
 
         $domain
             ->expects($this->any())
             ->method('getType')
-            ->will($this->returnValue(PropelTypes::UUID));
+            ->will($this->returnValue($columnType));
 
         $column = new Column('');
         $column->setDomain($domain);
-        $column->setType(PropelTypes::UUID);
+        $column->setType($columnType);
 
-        $this->assertSame('string', $column->getPhpType());
+        $this->assertSame($phpType, $column->getPhpType());
         $this->assertTrue($column->isPhpPrimitiveType());
         $this->assertTrue($column->isUuidType());
     }
+
+    public function provideMappingUuidTypes()
+    {
+        return [
+            // column type, php type, 
+            [PropelTypes::UUID, 'string'],
+            [PropelTypes::UUID_BINARY, 'string'],
+        ];
+    }
+
 
     /**
      * @dataProvider provideMappingTextTypes

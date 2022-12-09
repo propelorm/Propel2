@@ -10,6 +10,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Util\VfsTrait;
 
 class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
@@ -21,9 +22,9 @@ class MysqlPlatformMigrationMyISAMTest extends PlatformMigrationTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         if (!$this->platform) {
             $this->platform = new MysqlPlatform();

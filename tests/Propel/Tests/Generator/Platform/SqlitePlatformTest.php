@@ -14,6 +14,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
@@ -23,9 +24,9 @@ class SqlitePlatformTest extends PlatformTestProvider
     /**
      * Get the Platform object for this class
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return \Propel\Generator\Platform\SqlitePlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new SqlitePlatform();
     }
@@ -430,23 +431,6 @@ DROP INDEX [babar];
 ";
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
-    
-    public function unavailableTypesDataProvider()
-    {
-        return [
-            [PropelTypes::UUID],
-        ];
-    }
-    
-    /**
-     * @dataProvider unavailableTypesDataProvider
-     */
-    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
-    {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
-
-        $this->getPlatform()->getDomainForType($propelDataType);
-    }
 
     /**
      * @dataProvider providerForTestCreateSchemaWithUuidColumns
@@ -455,8 +439,34 @@ DROP INDEX [babar];
      */
     public function testCreateSchemaWithUuidColumns($schema)
     {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid] BLOB,
+    PRIMARY KEY ([uuid])
+);
+";
 
-        $table = $this->getTableFromSchema($schema);
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid-bin] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid-bin] BLOB,
+    PRIMARY KEY ([uuid-bin])
+);
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

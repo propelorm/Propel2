@@ -18,6 +18,7 @@ use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Util\UuidConverter;
 
 /**
  * Data about a table used in an application.
@@ -1037,6 +1038,20 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * Get indexes on a column
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return array<\Propel\Generator\Model\Index>
+     */
+    public function getIndexesOnColumn(Column $column): array
+    {
+        $columnName = $column->getName();
+
+        return array_filter($this->indices, fn ($idx) => $idx->hasColumn($columnName));
+    }
+
+    /**
      * Adds a new index to the indices list and set the
      * parent table of the column to the current table.
      *
@@ -1803,14 +1818,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getForeignKeysReferencingTable(string $tableName): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if ($fk->getForeignTableName() === $tableName) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => $fk->getForeignTableName() === $tableName;
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1826,14 +1836,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getColumnForeignKeys(string $column): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if (in_array($column, $fk->getLocalColumns())) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => in_array($column, $fk->getLocalColumns(), true);
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1856,6 +1861,31 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getDatabase(): ?Database
     {
         return $this->database;
+    }
+
+    /**
+     * Returns a VendorInfo object by its vendor type id (i.e. "mysql").
+     *
+     * Vendor information is set in schema.xml for the table or the whole
+     * database. The method returns database-wide vendor information extended
+     * and possibly overridden by table vendor information.
+     *
+     * @see \Propel\Generator\Model\MappingModel::getVendorInfoForType()
+     *
+     * @param string $type Vendor id, i.e. "mysql"
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    public function getVendorInfoForType(string $type): VendorInfo
+    {
+        $tableVendorInfo = parent::getVendorInfoForType($type);
+        $db = $this->getDatabase();
+        if (!$db) {
+            return $tableVendorInfo;
+        }
+        $databaseVendorInfo = $db->getVendorInfoForType($type);
+
+        return $databaseVendorInfo->getMergedVendorInfo($tableVendorInfo);
     }
 
     /**
@@ -1900,7 +1930,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function quoteIdentifier(string $text): string
     {
         if (!$this->getPlatform()) {
-            throw new RuntimeException('No platform specified. Can not quote without knowing which platform this table\'s database is using.');
+            throw new RuntimeException('No platform specified. Cannot quote without knowing which platform this table\'s database is using.');
         }
 
         if ($this->isIdentifierQuotingEnabled()) {
@@ -2204,5 +2234,44 @@ class Table extends ScopedMappingModel implements IdMethod
     public function setIdentifierQuoting(?bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * Check if this table contains columns of the given type.
+     *
+     * @param string $type The type to check for, i.e. PropelTypes::BOOLEAN
+     *
+     * @return bool
+     */
+    public function containsColumnsOfType(string $type): bool
+    {
+        foreach ($this->columns as $column) {
+            if ($column->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get additional class imports for model and query classes needed by the columns.
+     *
+     * @psalm-return array<class-string>
+     *
+     * @see \Propel\Generator\Builder\Om\ObjectBuilder::addClassBody()
+     * @see \Propel\Generator\Builder\Om\QueryBuilder::addClassBody()
+     *
+     * @return array<string>|null
+     */
+    public function getAdditionalModelClassImports(): ?array
+    {
+        if ($this->containsColumnsOfType(PropelTypes::UUID_BINARY)) {
+            return [
+                UuidConverter::class,
+            ];
+        }
+
+        return null;
     }
 }

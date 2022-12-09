@@ -19,6 +19,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Platform\PlatformInterface;
 
 class MysqlPlatformTest extends PlatformTestProvider
 {
@@ -27,7 +28,7 @@ class MysqlPlatformTest extends PlatformTestProvider
      *
      * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform():PlatformInterface
     {
         static $platform;
 
@@ -974,23 +975,6 @@ CREATE TABLE `foo`
         $actualMysqlDataType = $this->getPlatform()->getDomainForType($propelDataType)->getSqlType();
         $this->assertEquals($expectedMysqlDataType, $actualMysqlDataType);
     }
-    
-    public function unavailableTypesDataProvider()
-    {
-        return [
-            [PropelTypes::UUID],
-        ];
-    }
-    
-    /**
-     * @dataProvider unavailableTypesDataProvider
-     */
-    public function testExceptionOnAccessOfUnavailableType(string $propelDataType)
-    {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
-
-        $this->getPlatform()->getDomainForType($propelDataType);
-    }
 
     /**
      * @dataProvider providerForTestCreateSchemaWithUuidColumns
@@ -999,8 +983,34 @@ CREATE TABLE `foo`
      */
     public function testCreateSchemaWithUuidColumns($schema)
     {
-        $this->expectException(\Propel\Generator\Exception\EngineException::class);
+        $expected = "
+CREATE TABLE `foo`
+(
+    `uuid` BINARY(16) DEFAULT vendor_specific_default() NOT NULL,
+    `other_uuid` BINARY(16),
+    PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB;
+";
 
-        $table = $this->getTableFromSchema($schema);
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE `foo`
+(
+    `uuid-bin` BINARY(16) DEFAULT vendor_specific_default() NOT NULL,
+    `other_uuid-bin` BINARY(16),
+    PRIMARY KEY (`uuid-bin`)
+) ENGINE=InnoDB;
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }
