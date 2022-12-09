@@ -620,4 +620,28 @@ EOF;
 
         return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
     }
+
+    public function providerForTestMigrateToUuidBinColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="UUID_BINARY" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
+    }
+
+    public function providerForTestMigrateFromUuidBinColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="UUID_BINARY" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36" content="UUID"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
+    }
 }

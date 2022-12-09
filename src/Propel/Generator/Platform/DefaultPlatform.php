@@ -23,6 +23,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Generator\Platform\Util\AlterTableStatementMerger;
 use Propel\Runtime\Connection\ConnectionInterface;
 use ReflectionClass;
 
@@ -896,41 +897,7 @@ ALTER TABLE %s RENAME TO %s;
             $columnChangeString .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
         }
 
-        if ($columnChangeString) {
-            //merge column changes into one command. This is more compatible especially with PK constraints.
-
-            $changes = explode(';', $columnChangeString);
-            $columnChanges = [];
-
-            foreach ($changes as $change) {
-                if (!trim($change)) {
-                    continue;
-                }
-                $isCompatibleCall = preg_match(
-                    sprintf('/ALTER TABLE %s (?!RENAME)/', $this->quoteIdentifier($toTable->getName())),
-                    $change,
-                );
-                if ($isCompatibleCall) {
-                    $columnChanges[] = preg_replace(
-                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($toTable->getName())),
-                        "\n\n  ",
-                        trim($change),
-                    );
-                } else {
-                    $ret .= $change . ";\n";
-                }
-            }
-
-            if (0 < count($columnChanges)) {
-                $ret .= sprintf(
-                    "
-ALTER TABLE %s%s;
-",
-                    $this->quoteIdentifier($toTable->getName()),
-                    implode(',', $columnChanges),
-                );
-            }
-        }
+        $ret .= AlterTableStatementMerger::merge($toTable, $columnChangeString);
 
         // create indices, foreign keys
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
@@ -1278,7 +1245,7 @@ ALTER TABLE %s ADD
      *
      * @return string Quoted identifier.
      */
-    protected function quoteIdentifier(string $text): string
+    public function quoteIdentifier(string $text): string
     {
         return $this->isIdentifierQuotingEnabled() ? $this->doQuoting($text) : $text;
     }
@@ -1495,13 +1462,8 @@ if (is_resource($columnValueAccessor)) {
 }";
         }
 
-        $script .= sprintf(
-            "
-\$stmt->bindValue(%s, %s, %s);",
-            $identifier,
-            $columnValueAccessor,
-            PropelTypes::getPdoTypeString($column->getType()),
-        );
+        $pdoType = PropelTypes::getPdoTypeString($column->getType());
+        $script .= "\n\$stmt->bindValue($identifier, $columnValueAccessor, $pdoType);";
 
         return preg_replace('/^(.+)/m', $tab . '$1', $script);
     }

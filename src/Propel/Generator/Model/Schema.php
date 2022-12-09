@@ -193,16 +193,15 @@ class Schema
             return $this->databases[0];
         }
 
-        $db = null;
         foreach ($this->databases as $database) {
-            if ($database->getName() === $name) {
-                $db = $database;
-
-                break;
+            if ($database->getName() !== $name) {
+                continue;
             }
+
+            return $database;
         }
 
-        return $db;
+        return null;
     }
 
     /**

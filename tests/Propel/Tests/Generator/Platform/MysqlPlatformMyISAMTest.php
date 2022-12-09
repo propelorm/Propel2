@@ -18,6 +18,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
 class MysqlPlatformMyISAMTest extends PlatformTestProvider
 {
@@ -26,7 +27,7 @@ class MysqlPlatformMyISAMTest extends PlatformTestProvider
      *
      * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         static $platform;
 
