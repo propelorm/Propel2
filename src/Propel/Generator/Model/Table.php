@@ -565,35 +565,35 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function addColumn($col): Column
     {
-        if ($col instanceof Column) {
-            if (isset($this->columnsByName[$col->getName()])) {
-                throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
-            }
+        if (is_array($col)) {
+            $column = new Column($col['name']);
+            $column->setTable($this);
+            $column->loadMapping($col);
 
-            $col->setTable($this);
-
-            if ($col->isInheritance()) {
-                $this->inheritanceColumn = $col;
-            }
-
-            $this->columns[] = $col;
-            $this->columnsByName[(string)$col->getName()] = $col;
-            $this->columnsByLowercaseName[strtolower((string)$col->getName())] = $col;
-            $this->columnsByPhpName[(string)$col->getPhpName()] = $col;
-            $col->setPosition(count($this->columns));
-
-            if ($col->requiresTransactionInPostgres()) {
-                $this->needsTransactionInPostgres = true;
-            }
-
-            return $col;
+            $col = $column;
         }
 
-        $column = new Column($col['name']);
-        $column->setTable($this);
-        $column->loadMapping($col);
+        if (isset($this->columnsByName[$col->getName()])) {
+            throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
+        }
 
-        return $this->addColumn($column); // call self w/ different param
+        $col->setTable($this);
+
+        if ($col->isInheritance()) {
+            $this->inheritanceColumn = $col;
+        }
+
+        $this->columns[] = $col;
+        $this->columnsByName[(string)$col->getName()] = $col;
+        $this->columnsByLowercaseName[strtolower((string)$col->getName())] = $col;
+        $this->columnsByPhpName[(string)$col->getPhpName()] = $col;
+        $col->setPosition(count($this->columns));
+
+        if ($col->requiresTransactionInPostgres()) {
+            $this->needsTransactionInPostgres = true;
+        }
+
+        return $col;
     }
 
     /**

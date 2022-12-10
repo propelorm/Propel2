@@ -89,8 +89,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Setter for the tableEngineKeyword property
-     *
      * @param string $tableEngineKeyword
      *
      * @return void
@@ -101,8 +99,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Getter for the tableEngineKeyword property
-     *
      * @return string
      */
     public function getTableEngineKeyword(): string
@@ -111,8 +107,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Setter for the defaultTableEngine property
-     *
      * @param string $defaultTableEngine
      *
      * @return void
@@ -123,8 +117,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Getter for the defaultTableEngine property
-     *
      * @return string
      */
     public function getDefaultTableEngine(): string
