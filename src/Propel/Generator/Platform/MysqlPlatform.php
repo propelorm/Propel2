@@ -47,6 +47,11 @@ class MysqlPlatform extends DefaultPlatform
     protected $serverVersion;
 
     /**
+     * @var bool
+     */
+    protected $useUuidNativeType = false;
+
+    /**
      * Initializes db specific domain mapping.
      *
      * @return void
@@ -68,8 +73,7 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BINARY', 16));
 
-        // no native UUID type, use UUID_BINARY
-        $this->schemaDomainMap[PropelTypes::UUID] = $this->schemaDomainMap[PropelTypes::UUID_BINARY];
+        $this->setUuidTypeMapping();
     }
 
     /**
@@ -80,12 +84,46 @@ class MysqlPlatform extends DefaultPlatform
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         parent::setGeneratorConfig($generatorConfig);
-        if ($defaultTableEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
+
+        $mysqlConfig = $generatorConfig->get()['database']['adapters']['mysql'];
+
+        if ($defaultTableEngine = $mysqlConfig['tableType']) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
-        if ($tableEngineKeyword = $generatorConfig->get()['database']['adapters']['mysql']['tableEngineKeyword']) {
+        if ($tableEngineKeyword = $mysqlConfig['tableEngineKeyword']) {
             $this->tableEngineKeyword = $tableEngineKeyword;
         }
+        if ($uuidColumnType = $mysqlConfig['uuidColumnType']) {
+            $enable = strtolower($uuidColumnType) === 'native';
+            $this->setUuidNativeType($enable);
+        }
+    }
+
+    /**
+     * @param bool $enable
+     *
+     * @return void
+     */
+    public function setUuidNativeType(bool $enable): void
+    {
+        $this->useUuidNativeType = $enable;
+        $this->setUuidTypeMapping();
+    }
+
+    /**
+     * Set column type for UUIDs according to MysqlPlatform::useUuidNativeType.
+     *
+     * Currently, only MariaDB has a native UUID type.
+     *
+     * @return void
+     */
+    protected function setUuidTypeMapping(): void
+    {
+        $domain = ($this->useUuidNativeType)
+            ? new Domain(PropelTypes::UUID, 'UUID')
+            : $this->schemaDomainMap[PropelTypes::UUID_BINARY];
+
+        $this->schemaDomainMap[PropelTypes::UUID] = $domain;
     }
 
     /**
