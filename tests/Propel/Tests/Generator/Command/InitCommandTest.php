@@ -108,39 +108,39 @@ class InitCommandTest extends TestCaseFixtures
     }
 
     /**
+     * Gets the user input responses to the prompts during init command.
+     * 
+     * 1. database type
+     * 2. host
+     * 3. port
+     * 4. database name
+     * 5. user
+     * 6. password
+     * 7. charset
+     * 8. ...
+     * 
      * @param string $lastAnswer
      *
      * @return array
      */
     private function getInputsArray($lastAnswer = 'yes')
     {
-        $dsn = $this->getConnectionDsn('bookstore', true);
-
-        $dsn = str_replace(':', ';', $dsn);
-        $dsnArray = explode(';', $dsn);
-        $dsnArray = array_map(function ($element) {
-            $pos = strpos($element, '=');
-            if (false !== $pos) {
-                $element = substr($element, $pos + 1);
-            }
-
-            return $element;
-        }, $dsnArray);
+        // like mysql:host=$DB_HOSTNAME;port=$DB_PORT;dbname=$DB_NAME;user=$DB_USER;password=$DB_PW
+        $dsnData = $this->getParsedDsn();
 
         $inputs = [];
-        $firstDsnElement = array_shift($dsnArray);
-        if ($firstDsnElement) {
-            $inputs[] = $firstDsnElement;
+        if ($dsnData['type']) {
+            $inputs[] = $dsnData['type'];
         }
 
         if ($this->getDriver() !== 'sqlite') {
-            $inputs[] = array_shift($dsnArray);
-            $inputs[] = null;
+            $inputs[] = $dsnData['host'] ?? null;
+            $inputs[] = $dsnData['port'] ?? null;
         }
         $inputs = array_merge($inputs, [
-            $dsnArray[0],
-            isset($dsnArray[1]) ? $dsnArray[1] : null,
-            isset($dsnArray[2]) ? $dsnArray[2] : null,
+            $dsnData['dbname'] ?? null,
+            $dsnData['user'] ?? null,
+            $dsnData['password'] ?? null,
             'utf8',
             'no',
             $this->dir,
@@ -151,5 +151,31 @@ class InitCommandTest extends TestCaseFixtures
         ]);
 
         return $inputs;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getParsedDsn(): array
+    {
+        $dsn = $this->getConnectionDsn('bookstore', true);
+
+        $parsedDsn = [];
+
+        $firstColon = strpos($dsn, ':');
+        $parsedDsn['type'] = substr($dsn, 0, $firstColon);
+
+        if($parsedDsn['type'] === 'sqlite'){
+            return $parsedDsn;
+        }
+
+        $namedArgsString = substr($dsn, $firstColon + 1);
+        $namedArgsStrings = explode(';', $namedArgsString);
+        foreach($namedArgsStrings as $argString){
+            [$key, $value] = explode('=', $argString);
+            $parsedDsn[$key] = $value;
+        }
+
+        return $parsedDsn;
     }
 }
