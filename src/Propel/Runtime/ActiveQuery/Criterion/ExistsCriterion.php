@@ -8,61 +8,32 @@
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
 
-use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Map\RelationMap;
 
 /**
- * Specialized Criterion used for EXISTS
+ * Specialized Criterion used for EXISTS with simpler constructor than ExistsQueryCriterion for BC
  */
-class ExistsCriterion extends AbstractInnerQueryCriterion
+class ExistsCriterion extends ExistsQueryCriterion
 {
-    /**
-     * @var string
-     */
-    public const TYPE_EXISTS = 'EXISTS';
+ /**
+  * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_*|null $typeOfExists
+  *
+  * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
+  * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQuery
+  * @param string|null $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
+  * @param \Propel\Runtime\Map\RelationMap|null $relationMap where outer query is on the left side
+  */
+    public function __construct(
+        $outerQuery,
+        ModelCriteria $existsQuery,
+        ?string $typeOfExists = null,
+        ?RelationMap $relationMap = null
+    ) {
+        parent::__construct($outerQuery, null, $typeOfExists, $existsQuery);
 
-    /**
-     * @var string
-     */
-    public const TYPE_NOT_EXISTS = 'NOT EXISTS';
-
-    /**
-     * @see AbstractInnerQueryCriterion::initRelation()
-     *
-     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
-     * @param \Propel\Runtime\Map\RelationMap $relation
-     *
-     * @return void
-     */
-    protected function initForRelation(ModelCriteria $outerQuery, RelationMap $relation): void
-    {
-        $joinCondition = $this->buildJoinCondition($outerQuery, $relation);
-        $this->innerQuery->addAnd($joinCondition);
-    }
-
-    /**
-     * @see AbstractNestedQueryCriterion::resolveOperator()
-     *
-     * @param string|null $operatorDeclaration
-     *
-     * @return string
-     */
-    protected function resolveOperator(?string $operatorDeclaration): string
-    {
-        return ($operatorDeclaration === static::TYPE_NOT_EXISTS) ? static::TYPE_NOT_EXISTS : static::TYPE_EXISTS;
-    }
-
-    /**
-     * @see AbstractNestedQueryCriterion::processInnerQuery()
-     * Allows to edit or replace the inner query before it is turned to SQL.
-     *
-     * @return \Propel\Runtime\ActiveQuery\Criteria
-     */
-    protected function processInnerQuery(): Criteria
-    {
-        return $this->innerQuery
-            ->clearSelectColumns()
-            ->addAsColumn('existsFlag', '1');
+        if ($relationMap) {
+            $this->initForRelation($outerQuery, $relationMap);
+        }
     }
 }

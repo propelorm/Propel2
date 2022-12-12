@@ -713,19 +713,19 @@ class Criteria
      *
      * @param string $column Full name of column (for example TABLE.COLUMN).
      * @param mixed|null $value
-     * @param string|int $comparison Criteria comparison constant or PDO binding type
+     * @param string|int|null $comparison Criteria comparison constant or PDO binding type
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
-    public function getNewCriterion(string $column, $value = null, $comparison = self::EQUAL): AbstractCriterion
+    public function getNewCriterion(string $column, $value = null, $comparison = null): AbstractCriterion
     {
         if (is_int($comparison)) {
             // $comparison is a PDO::PARAM_* constant value
             // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
             return new RawCriterion($this, $column, $value, $comparison);
         }
-        if ($value instanceof Criteria && $comparison === self::EQUAL) {
-            $comparison = InQueryCriterion::IN;
+        if ($comparison === null) {
+            $comparison = ($value instanceof Criteria) ? InQueryCriterion::IN : self::EQUAL;
         }
         switch ($comparison) {
             case self::CUSTOM:
@@ -2077,16 +2077,16 @@ class Criteria
      *  - addAnd(column, value)
      *  - addAnd(Criterion)
      *
-     * @param mixed $p1
-     * @param mixed|null $p2
-     * @param mixed|null $p3
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1
+     * @param mixed|null $value
+     * @param mixed|null $condition
      * @param bool $preferColumnCondition
      *
      * @return $this A modified Criteria object.
      */
-    public function addAnd($p1, $p2 = null, $p3 = null, bool $preferColumnCondition = true)
+    public function addAnd($p1, $value = null, $condition = null, bool $preferColumnCondition = true)
     {
-        $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
+        $criterion = $this->getCriterionForCondition($p1, $value, $condition);
 
         $key = $criterion->getTable() . '.' . $criterion->getColumn();
         if ($preferColumnCondition && $this->containsKey($key)) {
@@ -2112,16 +2112,16 @@ class Criteria
      *  - addOr(column, value)
      *  - addOr(Criterion)
      *
-     * @param mixed $p1
-     * @param mixed $p2
-     * @param mixed $p3
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1
+     * @param mixed $value
+     * @param mixed $condition
      * @param bool $preferColumnCondition
      *
      * @return $this A modified Criteria object.
      */
-    public function addOr($p1, $p2 = null, $p3 = null, bool $preferColumnCondition = true)
+    public function addOr($p1, $value = null, $condition = null, bool $preferColumnCondition = true)
     {
-        $rightCriterion = $this->getCriterionForCondition($p1, $p2, $p3);
+        $rightCriterion = $this->getCriterionForCondition($p1, $value, $condition);
 
         $leftCriterion = $this->getLastCriterion();
 

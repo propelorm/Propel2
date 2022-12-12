@@ -14,7 +14,7 @@ use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion;
 
 /**
@@ -1592,8 +1592,8 @@ class QueryBuilder extends AbstractOMBuilder
             'queryClass' => $queryClass,
             'relationDescription' => $this->getRelationDescription($relationName, $fkTable),
             'relationName' => $relationName,
-            'existsType' => ExistsCriterion::TYPE_EXISTS,
-            'notExistsType' => ExistsCriterion::TYPE_NOT_EXISTS,
+            'existsType' => ExistsQueryCriterion::TYPE_EXISTS,
+            'notExistsType' => ExistsQueryCriterion::TYPE_NOT_EXISTS,
         ];
         $templatePath = $this->getTemplatePath(__DIR__);
 
@@ -1711,11 +1711,11 @@ class QueryBuilder extends AbstractOMBuilder
      * using the $crossTableName table as cross reference
      *
      * @param $fkPhpName $objectName the related object to use as filter
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL and Criteria::IN for queries
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy{$relName}($objectName, string \$comparison = Criteria::EQUAL)
+    public function filterBy{$relName}($objectName, string \$comparison = null)
     {
         \$this
             ->use{$relationName}Query()

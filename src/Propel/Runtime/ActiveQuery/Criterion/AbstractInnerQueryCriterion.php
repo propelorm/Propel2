@@ -54,6 +54,16 @@ abstract class AbstractInnerQueryCriterion extends AbstractCriterion
     abstract protected function processInnerQuery(): Criteria;
 
     /**
+     * Entry point for child classes to add information about the relation to the query.
+     *
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
+     * @param \Propel\Runtime\Map\RelationMap $relation
+     *
+     * @return void
+     */
+    abstract protected function initForRelation(ModelCriteria $outerQuery, RelationMap $relation): void;
+
+    /**
      * Allows to edit or replace the inner query before it is turned to SQL.
      *
      * @param mixed $outerQuery
@@ -92,19 +102,6 @@ abstract class AbstractInnerQueryCriterion extends AbstractCriterion
         $this->leftOperand = $leftOperand;
         $this->sqlOperator = $this->resolveOperator($operator);
         $this->innerQuery = $innerQuery;
-    }
-
-    /**
-     * Entry point for child classes to add information about the relation to the query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
-     * @param \Propel\Runtime\Map\RelationMap $relation
-     *
-     * @return void
-     */
-    protected function initForRelation(ModelCriteria $outerQuery, RelationMap $relation): void
-    {
-        // does nothing per default
     }
 
     /**
