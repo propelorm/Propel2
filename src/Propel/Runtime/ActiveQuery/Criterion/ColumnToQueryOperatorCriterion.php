@@ -13,20 +13,10 @@ use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Map\RelationMap;
 
 /**
- * Specialized Criterion used for IN
+ * Creates filters in the form "column <operator> (SELECT ...)
  */
-class InQueryCriterion extends AbstractInnerQueryCriterion
+class ColumnToQueryOperatorCriterion extends AbstractInnerQueryCriterion
 {
-    /**
-     * @var string
-     */
-    public const IN = 'IN';
-
-    /**
-     * @var string
-     */
-    public const NOT_IN = 'NOT IN';
-
     /**
      * @see AbstractInnerQueryCriterion::initRelation()
      *
@@ -56,7 +46,7 @@ class InQueryCriterion extends AbstractInnerQueryCriterion
      */
     protected function resolveOperator(?string $operatorDeclaration): string
     {
-        return ($operatorDeclaration === static::NOT_IN) ? static::NOT_IN : static::IN;
+        return $operatorDeclaration ?? trim(Criteria::IN);
     }
 
     /**

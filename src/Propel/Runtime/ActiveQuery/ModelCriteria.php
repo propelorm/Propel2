@@ -15,10 +15,11 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ColumnToQueryOperatorCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
@@ -169,14 +170,14 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string $column A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param mixed $value A value for the condition
-     * @param string|null $comparison What to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string|null $comparison What to use for the column comparison, defaults to Criteria::EQUAL or Criteria::IN for subqueries
      *
      * @return $this The current object, for fluid interface
      */
     public function filterBy(string $column, $value, ?string $comparison = null)
     {
         $columnName = $this->getRealColumnName($column);
-        $this->map[$columnName] = $this->getNewCriterion($columnName, $value, $comparison);
+        $this->map[$columnName] = CriterionFactory::build($this, $columnName, $comparison, $value);
 
         return $this;
     }
@@ -1007,12 +1008,12 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Adds and returns an internal query to be used in an IN-clause.
      *
-     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion::*IN $type
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criteria::*IN $type
      *
      * @param string $relationName name of the relation
      * @param string|null $modelAlias sets an alias for the nested query
      * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     * @param string $type InQueryCriterion::IN or InQueryCriterion::NOT_IN. Defaults to IN
+     * @param string $type Criteria::IN or Criteria::NOT_IN. Defaults to IN
      *
      * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
@@ -1020,9 +1021,9 @@ class ModelCriteria extends BaseModelCriteria
         string $relationName,
         ?string $modelAlias = null,
         ?string $queryClass = null,
-        string $type = InQueryCriterion::IN
+        string $type = Criteria::IN
     ) {
-        return $this->useAbstractInnerQueryCriterion(InQueryCriterion::class, $relationName, $modelAlias, $queryClass, $type);
+        return $this->useAbstractInnerQueryCriterion(ColumnToQueryOperatorCriterion::class, $relationName, $modelAlias, $queryClass, $type);
     }
 
     /**
@@ -1038,7 +1039,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function useNotInQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null)
     {
-        return $this->useInQuery($relationName, $modelAlias, $queryClass, InQueryCriterion::NOT_IN);
+        return $this->useInQuery($relationName, $modelAlias, $queryClass, Criteria::NOT_IN);
     }
 
     /**

@@ -6,7 +6,7 @@
      *
      * @param string|null $modelAlias sets an alias for the nested query
      * @param string|null $queryClass Allows to use a custom query class for the IN query, like ExtendedBookQuery::class
-     * @param string $typeOfIn InQueryCriterion::IN or InQueryCriterion::NOT_IN
+     * @param string $typeOfIn Criteria::IN or Criteria::NOT_IN
      *
      * @return <?= $queryClass ?> The inner query object of the IN statement
      */

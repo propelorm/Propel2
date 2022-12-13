@@ -14,8 +14,8 @@ use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion;
 
 /**
  * Generates a base Query class for user object model (OM).
@@ -169,6 +169,7 @@ class QueryBuilder extends AbstractOMBuilder
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\ActiveQuery\ModelCriteria',
             '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\Criterion\CriterionFactory',
             '\Propel\Runtime\ActiveQuery\ModelJoin',
             '\Exception',
             '\Propel\Runtime\Exception\PropelException',
@@ -1620,8 +1621,8 @@ class QueryBuilder extends AbstractOMBuilder
             'queryClass' => $queryClass,
             'relationDescription' => $this->getRelationDescription($relationName, $fkTable),
             'relationName' => $relationName,
-            'inType' => InQueryCriterion::IN,
-            'notInType' => InQueryCriterion::NOT_IN,
+            'inType' => trim(Criteria::IN),
+            'notInType' => trim(Criteria::NOT_IN),
         ];
         $templatePath = $this->getTemplatePath(__DIR__);
 

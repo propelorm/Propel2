@@ -9,6 +9,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\Join as ActiveQueryJoin;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Exception\LogicException;
@@ -742,22 +743,25 @@ class Join
         $joinCondition = null;
         for ($i = 0; $i < $this->count; $i++) {
             if ($this->leftValues[$i]) {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getLeftColumn($i),
-                    $this->leftValues[$i],
                     self::EQUAL,
+                    $this->leftValues[$i],
                 );
             } elseif ($this->rightValues[$i]) {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getRightColumn($i),
-                    $this->rightValues[$i],
                     self::EQUAL,
+                    $this->rightValues[$i],
                 );
             } else {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getLeftColumn($i),
-                    $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
                     Criteria::CUSTOM,
+                    $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
                 );
             }
             if ($joinCondition === null) {

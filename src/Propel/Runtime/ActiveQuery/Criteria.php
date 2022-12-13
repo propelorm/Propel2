@@ -10,13 +10,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Exception;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InQueryCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\QueryExecutor\CountQueryExecutor;
 use Propel\Runtime\ActiveQuery\QueryExecutor\DeleteAllQueryExecutor;
 use Propel\Runtime\ActiveQuery\QueryExecutor\DeleteQueryExecutor;
@@ -719,48 +713,7 @@ class Criteria
      */
     public function getNewCriterion(string $column, $value = null, $comparison = null): AbstractCriterion
     {
-        if (is_int($comparison)) {
-            // $comparison is a PDO::PARAM_* constant value
-            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new RawCriterion($this, $column, $value, $comparison);
-        }
-        if ($comparison === null) {
-            $comparison = ($value instanceof Criteria) ? InQueryCriterion::IN : self::EQUAL;
-        }
-        switch ($comparison) {
-            case self::CUSTOM:
-                // custom expression with no parameter binding
-                // something like $c->add(BookTableMap::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
-                return new CustomCriterion($this, $value);
-            case self::IN:
-            case self::NOT_IN:
-            case InQueryCriterion::IN:
-            case InQueryCriterion::NOT_IN:
-                if ($value instanceof Criteria) {
-                    // table.column IN (SELECT ...)
-                    return new InQueryCriterion($this, $column, $comparison, $value);
-                }
-
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                // something like $c->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
-                return new InCriterion($this, $column, $value, $comparison);
-            case self::LIKE:
-            case self::NOT_LIKE:
-            case self::ILIKE:
-            case self::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                // something like $c->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
-                return new LikeCriterion($this, $column, $value, $comparison);
-            case self::BINARY_NONE:
-            case self::BINARY_ALL:
-                // table.column & ? = 0 (Similar to  "NOT IN")
-                // something like $c->add(BookTableMap::SOME_ARRAY_VAR, 26, Criteria::BINARY_NONE);
-                return new BinaryCriterion($this, $column, $value, $comparison);
-            default:
-                // simple comparison
-                // something like $c->add(BookTableMap::PRICE, 12, Criteria::GREATER_THAN);
-                return new BasicCriterion($this, $column, $value, $comparison);
-        }
+        return CriterionFactory::build($this, $column, $comparison, $value);
     }
 
     /**
@@ -1200,7 +1153,8 @@ class Criteria
             $conditionClause .= $condition[2] ?? Join::EQUAL;
             $conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
             $conditionClause .= $rightColumnName;
-            $criterion = $this->getNewCriterion($leftTableName . '.' . $leftColumnName, $conditionClause, self::CUSTOM);
+            $fullColumnName = $leftTableName . '.' . $leftColumnName;
+            $criterion = CriterionFactory::build($this, $fullColumnName, self::CUSTOM, $conditionClause);
 
             if ($joinCondition === null) {
                 $joinCondition = $criterion;
@@ -2062,7 +2016,7 @@ class Criteria
 
         // $comparison is one of Criteria's constants, or a PDO binding type
         // something like $c->add(BookTableMap::TITLE, 'War%', Criteria::LIKE);
-        return $this->getNewCriterion((string)$p1, $value, $comparison);
+        return CriterionFactory::build($this, (string)$p1, $comparison, $value);
     }
 
     /**
