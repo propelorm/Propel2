@@ -19,7 +19,7 @@ class ExistsCriterion extends ExistsQueryCriterion
  /**
   * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_*|null $typeOfExists
   *
-  * @param \Propel\Runtime\ActiveQuery\ModelCriteria $outerQuery
+  * @param \Propel\Runtime\ActiveQuery\ModelCriteria|\Propel\Runtime\ActiveQuery\Criteria $outerQuery
   * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQuery
   * @param string|null $typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
   * @param \Propel\Runtime\Map\RelationMap|null $relationMap where outer query is on the left side
@@ -32,7 +32,7 @@ class ExistsCriterion extends ExistsQueryCriterion
     ) {
         parent::__construct($outerQuery, null, $typeOfExists, $existsQuery);
 
-        if ($relationMap) {
+        if ($relationMap && $outerQuery instanceof ModelCriteria) {
             $this->initForRelation($outerQuery, $relationMap);
         }
     }

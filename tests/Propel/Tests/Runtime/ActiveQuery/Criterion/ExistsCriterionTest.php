@@ -9,17 +9,17 @@
 namespace Propel\Tests\Runtime\ActiveQuery\Criterion;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\TestCaseFixtures;
 use Propel\Tests\Bookstore\AuthorQuery;
 
 /**
- * Test class for ExistsQueryCriterion.
+ * Test class for ExistsCriterion.
  *
  * @author Moritz Ringler
  */
-class ExistsQueryCriterionTest extends TestCaseFixtures
+class ExistsCriterionTest extends TestCaseFixtures
 {
     /**
      * @return void
@@ -27,7 +27,7 @@ class ExistsQueryCriterionTest extends TestCaseFixtures
     public function testAppendPsToAppendsExistsClause()
     {
         $query = BookQuery::create();
-        $exists = new ExistsQueryCriterion(new Criteria(), null, null, $query);
+        $exists = new ExistsCriterion(new Criteria(), $query);
 
         $params = [];
         $ps = '';
@@ -46,7 +46,7 @@ class ExistsQueryCriterionTest extends TestCaseFixtures
     public function testAppendPsToAppendsNotExistsClause()
     {
         $query = BookQuery::create();
-        $exists = new ExistsQueryCriterion(new Criteria(), null,  ExistsQueryCriterion::TYPE_NOT_EXISTS, $query,);
+        $exists = new ExistsCriterion(new Criteria(), $query, ExistsCriterion::TYPE_NOT_EXISTS);
 
         $params = [];
         $ps = '';
@@ -67,7 +67,7 @@ class ExistsQueryCriterionTest extends TestCaseFixtures
         $authorQuery = AuthorQuery::create();
         $bookQuery = BookQuery::create();
         $bookRelationMap = $authorQuery->getTableMap()->getRelation('Book');
-        ExistsQueryCriterion::createForRelation($authorQuery, $bookRelationMap, null, $bookQuery,);
+        new ExistsCriterion($authorQuery, $bookQuery, ExistsCriterion::TYPE_EXISTS, $bookRelationMap);
         $params = [];
         $bookSql = $bookQuery->createSelectSql($params);
 
@@ -82,7 +82,7 @@ class ExistsQueryCriterionTest extends TestCaseFixtures
         $authorQuery = AuthorQuery::create();
         $bookQuery = BookQuery::create();
         $bookRelationMap = $authorQuery->getTableMap()->getRelation('Book');
-        $exists = ExistsQueryCriterion::createForRelation($authorQuery, $bookRelationMap, null, $bookQuery);
+        $exists = new ExistsCriterion($authorQuery, $bookQuery, ExistsCriterion::TYPE_EXISTS, $bookRelationMap);
 
         $params = [];
         $ps = '';

@@ -9,7 +9,7 @@
 namespace Propel\Tests\Generator\Builder\Om;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Exception\PropelException;
@@ -1312,7 +1312,7 @@ class QueryBuilderTest extends BookstoreTestBase
     public function testUseRelationNotExistsQuery()
     {
         $expected = BookQuery::create()
-        ->useExistsQuery('Author', null, null, ExistsQueryCriterion::TYPE_NOT_EXISTS)
+        ->useExistsQuery('Author', null, null, ExistsCriterion::TYPE_NOT_EXISTS)
         ->filterByFirstName('Leo')
         ->endUse();
         $actual = BookQuery::create()
