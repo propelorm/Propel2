@@ -129,11 +129,19 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
+     * @return void
+     */
+    protected function initialize(): void
+    {
+        $this->initializeTypeMap();
+    }
+
+    /**
      * Initialize the type -> Domain mapping.
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
         $this->schemaDomainMap = [];
         foreach (PropelTypes::getPropelTypes() as $type) {

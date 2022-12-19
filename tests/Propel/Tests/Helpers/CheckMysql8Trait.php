@@ -13,7 +13,7 @@ use Propel\Runtime\Propel;
 trait CheckMysql8Trait
 {
     /**
-     * @var ?bool|null
+     * @var bool|null
      */
     protected static $isAtLeastMysql8 = null;
 

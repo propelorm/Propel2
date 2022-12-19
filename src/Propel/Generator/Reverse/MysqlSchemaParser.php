@@ -68,6 +68,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
         'binary' => PropelTypes::BINARY,
+        'uuid' => PropelTypes::UUID, // for MariaDB
     ];
 
     /**
