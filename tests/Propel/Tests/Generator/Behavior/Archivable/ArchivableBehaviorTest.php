@@ -25,6 +25,7 @@ use Map\ArchivableTest3TableMap;
 use Map\ArchivableTest4TableMap;
 use Map\ArchivableTest5TableMap;
 use Map\MyOldArchivableTest3TableMap;
+use Propel\Generator\Exception\SchemaException;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 use function substr_count;
@@ -190,6 +191,172 @@ EOF;
     {
         $table = ArchivableTest1ArchiveTableMap::getTableMap();
         $this->assertEquals([], $table->getRelations());
+    }
+
+    public function invalidFkTestDataProvider(): array
+    {
+        return [
+            [
+                'missing `local_column` parameter','
+                    <parameter name="foreign_table" value="archived_fk_table" />
+                    <parameter name="foreign_column" value="id" />
+            '],[
+                'missing `foreign_table` parameter','
+                    <parameter name="local_column" value="fk_column" />
+                    <parameter name="foreign_column" value="id" />
+            '],[
+                'missing `foreign_column` parameter','
+                    <parameter name="local_column" value="fk_column" />
+                    <parameter name="foreign_table" value="archived_fk_table" />
+            ']
+        ];
+    }
+
+    /**
+     * @dataProvider invalidFkTestDataProvider
+     *
+     * @return void
+     */
+    public function testMissingFkParametersThrowsException(string $description, string $parameters)
+    {
+        //$this->markTestSkipped();
+        $schema = <<<EOF
+        <database name="archivable_behavior_test_0">
+        
+            <table name="source_table">
+                <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        
+                <behavior name="archivable">
+                    <parameter-list name="foreign_keys">
+                        <parameter-list-item>
+                            $parameters
+                        </parameter-list-item>
+                    </parameter-list>
+                </behavior>
+            </table>
+        
+        </database>
+        EOF;
+
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+
+        $this->expectException(SchemaException::class);
+        $builder->getDatabase();
+    }
+
+    public function addFkTestDataProvider(): array
+    {
+        return [
+            // description, behavior parameters, local fk, foreign table name, foreign column name
+            [
+                'Should not export fks per default',
+                '',
+                null, null, null, false
+            ], [
+                'Parameter `inherit_foreign_key_relations` should preserve old fks without constraints',
+                '
+                    <parameter name="inherit_foreign_key_relations" value="true"/>
+                ',
+                'fk_column', 'fk_table', 'id', false
+            ], [
+                'Parameter `inherit_foreign_key_constraints` should preserve old fks with constraints',
+                '
+                    <parameter name="inherit_foreign_key_relations" value="true"/>
+                    <parameter name="inherit_foreign_key_constraints" value="true"/>
+                ',
+                'fk_column', 'fk_table', 'id', true
+            ], [
+                'Parameter `foreign_keys` allows to redefine fks with db constraint as default',
+                '
+                    <parameter-list name="foreign_keys">
+                        <parameter-list-item>
+                            <parameter name="localColumn" value="fk_column" />
+                            <parameter name="foreignTable" value="archived_fk_table" />
+                            <parameter name="foreignColumn" value="id" />
+                        </parameter-list-item>
+                    </parameter-list>
+                ',
+                'fk_column', 'archived_fk_table', 'id', true
+            ], [
+                'Parameter `foreign_keys` allows to redefine fks without db constraint',
+                '
+                    <parameter-list name="foreign_keys">
+                        <parameter-list-item>
+                            <parameter name="localColumn" value="fk_column" />
+                            <parameter name="foreignTable" value="archived_fk_table" />
+                            <parameter name="foreignColumn" value="id" />
+                            <parameter name="skipSql" value="true" />
+                        </parameter-list-item>
+                    </parameter-list>
+                ',
+                'fk_column', 'archived_fk_table', 'id', false
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider addFkTestDataProvider
+     *
+     * @return void
+     */
+    public function testAddFkParameter(
+        string $description,
+        string $parameters,
+        ?string $localColumnName, 
+        ?string $fkTableName,
+        ?string $fkColumnName,
+        bool $withDbConstraint
+    ): void
+    {
+        $archiveTableName = 'archive_table_with_FK';
+
+        // Two archived tables connected by a foreign key 
+        $schema = <<<EOF
+<database name="archivable_behavior_test_0">
+
+    <table name="table_with_FK">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="fk_column" type="INTEGER"/>
+
+        <foreign-key foreignTable="fk_table">
+            <reference local="fk_column" foreign="id"/>
+        </foreign-key>
+
+        <behavior name="archivable">
+            <parameter name="archive_table" value="$archiveTableName"/>
+            $parameters
+        </behavior>
+    </table>
+
+    <table name="fk_table">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+
+        <behavior name="archivable">
+            <parameter name="archive_table" value="archived_fk_table"/>
+        </behavior>
+    </table>
+
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $fks = $builder->getDatabase()->getTable($archiveTableName)->getForeignKeys();
+
+        $expectedCount = $fkColumnName ? 1 : 0;
+        $this->assertCount($expectedCount, $fks, $description);
+
+        if(!$localColumnName){
+            return;
+        }
+
+        /** @var \Propel\Generator\Model\ForeignKey */
+        $fk = reset($fks);
+
+        $this->assertSame($localColumnName, $fk->getLocalColumnName(), 'Local column name should match');
+        $this->assertSame($fkTableName, $fk->getForeignTableCommonName(), 'Foreign table name should match');
+        $this->assertSame($fkColumnName, $fk->getForeignColumnName(), 'Foreign column name should match');
+        $this->assertSame(!$withDbConstraint, $fk->isSkipSql());
     }
 
     /**
