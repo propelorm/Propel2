@@ -15,8 +15,10 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BasicModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\BinaryModelCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ColumnToQueryOperatorCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\InModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\LikeModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
@@ -120,11 +122,16 @@ class ModelCriteria extends BaseModelCriteria
     protected $isSelfSelected = false;
 
     /**
-     * Indicates that this query is wrapped in an EXISTS-statement
+     * Indicates that this query is wrapped in an InnerQueryCriterion.
+     *
+     * Marks the query to be
+     *
+     * @see ModelCriteria::useAbstractInnerQueryCriterion()
+     * @see ModelCriteria::endUse()
      *
      * @var bool
      */
-    protected $isExistsQuery = false;
+    protected $isInnerQueryInCriterion = false;
 
     /**
      * Adds a condition on a column based on a pseudo SQL clause
@@ -163,13 +170,14 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string $column A string representing thecolumn phpName, e.g. 'AuthorId'
      * @param mixed $value A value for the condition
-     * @param string $comparison What to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string|null $comparison What to use for the column comparison, defaults to Criteria::EQUAL or Criteria::IN for subqueries
      *
      * @return $this The current object, for fluid interface
      */
-    public function filterBy(string $column, $value, string $comparison = Criteria::EQUAL)
+    public function filterBy(string $column, $value, ?string $comparison = null)
     {
-        $this->add($this->getRealColumnName($column), $value, $comparison);
+        $columnName = $this->getRealColumnName($column);
+        $this->map[$columnName] = CriterionFactory::build($this, $columnName, $comparison, $value);
 
         return $this;
     }
@@ -253,18 +261,18 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @example MyOuterQuery::create()->whereExists(MyDataQuery::create()->where('MyData.MyField = MyOuter.MyField'))
      *
-     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_* $type
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion::TYPE_* $operator
      *
      * @see ModelCriteria::useExistsQuery() can be used
      *
      * @param \Propel\Runtime\ActiveQuery\ModelCriteria $existsQueryCriteria the query object used in the EXISTS statement
-     * @param string $type Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
+     * @param string $operator Either ExistsQueryCriterion::TYPE_EXISTS or ExistsQueryCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
      *
      * @return $this
      */
-    public function whereExists(ActiveQueryModelCriteria $existsQueryCriteria, string $type = ExistsCriterion::TYPE_EXISTS)
+    public function whereExists(ActiveQueryModelCriteria $existsQueryCriteria, string $operator = ExistsQueryCriterion::TYPE_EXISTS)
     {
-        $criterion = new ExistsCriterion($this, $existsQueryCriteria, $type);
+        $criterion = new ExistsQueryCriterion($this, null, $operator, $existsQueryCriteria);
 
         $this->addUsingOperator($criterion);
 
@@ -280,7 +288,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function whereNotExists(ActiveQueryModelCriteria $existsQueryCriteria)
     {
-        $this->whereExists($existsQueryCriteria, ExistsCriterion::TYPE_NOT_EXISTS);
+        $this->whereExists($existsQueryCriteria, ExistsQueryCriterion::TYPE_NOT_EXISTS);
 
         return $this;
     }
@@ -907,7 +915,7 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function endUse(): ?self
     {
-        if ($this->isExistsQuery) {
+        if ($this->isInnerQueryInCriterion) {
             return $this->getPrimaryCriteria();
         }
 
@@ -928,36 +936,57 @@ class ModelCriteria extends BaseModelCriteria
     /**
      * Adds and returns an internal query to be used in an EXISTS-clause.
      *
-     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion::TYPE_* $type
+     * @param class-string<\Propel\Runtime\ActiveQuery\Criterion\AbstractInnerQueryCriterion> $abstractInnerQueryCriterionClass
+     * @param string $relationName name of the relation
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string|null $operatorDeclaration Either ExistsQueryCriterion::TYPE_EXISTS or ExistsQueryCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    protected function useAbstractInnerQueryCriterion(
+        string $abstractInnerQueryCriterionClass,
+        string $relationName,
+        ?string $modelAlias = null,
+        ?string $queryClass = null,
+        ?string $operatorDeclaration = null
+    ) {
+        $relationMap = $this->getTableMapOrFail()->getRelation($relationName);
+        $className = (string)$relationMap->getRightTable()->getClassName();
+
+        /** @var static $innerQuery */
+        $innerQuery = ($queryClass === null) ? PropelQuery::from($className) : new $queryClass();
+        $innerQuery->isInnerQueryInCriterion = true;
+        $innerQuery->primaryCriteria = $this;
+        if ($modelAlias !== null) {
+            $innerQuery->setModelAlias($modelAlias, true);
+        }
+
+        $criterion = $abstractInnerQueryCriterionClass::createForRelation($this, $relationMap, $operatorDeclaration, $innerQuery);
+        $this->addUsingOperator($criterion);
+
+        return $innerQuery;
+    }
+
+    /**
+     * Adds and returns an internal query to be used in an EXISTS-clause.
+     *
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion::TYPE_* $type
      *
      * @param string $relationName name of the relation
      * @param string|null $modelAlias sets an alias for the nested query
-     * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     * @param string $type Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
+     * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string $type Either ExistsQueryCriterion::TYPE_EXISTS or ExistsQueryCriterion::TYPE_NOT_EXISTS. Defaults to EXISTS
      *
-     * @return static
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
     public function useExistsQuery(
         string $relationName,
         ?string $modelAlias = null,
         ?string $queryClass = null,
-        string $type = ExistsCriterion::TYPE_EXISTS
+        string $type = ExistsQueryCriterion::TYPE_EXISTS
     ) {
-        $relationMap = $this->getTableMapOrFail()->getRelation($relationName);
-        $className = (string)$relationMap->getRightTable()->getClassName();
-
-        /** @var static $queryInExists */
-        $queryInExists = ($queryClass === null) ? PropelQuery::from($className) : new $queryClass();
-        $queryInExists->isExistsQuery = true;
-        $queryInExists->primaryCriteria = $this;
-        if ($modelAlias !== null) {
-            $queryInExists->setModelAlias($modelAlias, true);
-        }
-
-        $criterion = new ExistsCriterion($this, $queryInExists, $type, $relationMap);
-        $this->addUsingOperator($criterion);
-
-        return $queryInExists;
+        return $this->useAbstractInnerQueryCriterion(ExistsQueryCriterion::class, $relationName, $modelAlias, $queryClass, $type);
     }
 
     /**
@@ -967,13 +996,50 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @param string $relationName
      * @param string|null $modelAlias sets an alias for the nested query
-     * @param string|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
      *
-     * @return static
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
     public function useNotExistsQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null)
     {
-        return $this->useExistsQuery($relationName, $modelAlias, $queryClass, ExistsCriterion::TYPE_NOT_EXISTS);
+        return $this->useExistsQuery($relationName, $modelAlias, $queryClass, ExistsQueryCriterion::TYPE_NOT_EXISTS);
+    }
+
+    /**
+     * Adds and returns an internal query to be used in an IN-clause.
+     *
+     * @phpstan-param \Propel\Runtime\ActiveQuery\Criteria::*IN $type
+     *
+     * @param string $relationName name of the relation
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string $type Criteria::IN or Criteria::NOT_IN. Defaults to IN
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function useInQuery(
+        string $relationName,
+        ?string $modelAlias = null,
+        ?string $queryClass = null,
+        string $type = Criteria::IN
+    ) {
+        return $this->useAbstractInnerQueryCriterion(ColumnToQueryOperatorCriterion::class, $relationName, $modelAlias, $queryClass, $type);
+    }
+
+    /**
+     * Use NOT IN rather than IN.
+     *
+     * @see ModelCriteria::useExistsQuery()
+     *
+     * @param string $relationName
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param class-string<\Propel\Runtime\ActiveQuery\ModelCriteria>|null $queryClass allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     *
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function useNotInQuery(string $relationName, ?string $modelAlias = null, ?string $queryClass = null)
+    {
+        return $this->useInQuery($relationName, $modelAlias, $queryClass, Criteria::NOT_IN);
     }
 
     /**
@@ -2479,23 +2545,25 @@ class ModelCriteria extends BaseModelCriteria
     {
         // Maybe it's a magic call to one of the methods supporting it, e.g. 'findByTitle'
         static $methods = ['findBy', 'findOneBy', 'requireOneBy', 'filterBy', 'orderBy', 'groupBy'];
-        foreach ($methods as $method) {
-            if (strpos($name, $method) === 0) {
-                $columns = substr($name, strlen($method));
-                if (in_array($method, ['findBy', 'findOneBy', 'requireOneBy'], true) && strpos($columns, 'And') !== false) {
-                    $method = $method . 'Array';
-                    $columns = explode('And', $columns);
-                    $conditions = [];
-                    foreach ($columns as $column) {
-                        $conditions[$column] = array_shift($arguments);
-                    }
-                    array_unshift($arguments, $conditions);
-                } else {
-                    array_unshift($arguments, $columns);
-                }
-
-                return $this->$method(...$arguments);
+        foreach ($methods as $methodName) {
+            $startsWithMethodName = strpos($name, $methodName) === 0;
+            if (!$startsWithMethodName) {
+                continue;
             }
+            $columnExpression = substr($name, strlen($methodName));
+            $isMultipleColumnsExpression = in_array($methodName, ['findBy', 'findOneBy', 'requireOneBy'], true) && strpos($columnExpression, 'And') !== false;
+            if (!$isMultipleColumnsExpression) {
+                return $this->$methodName($columnExpression, ...$arguments);
+            }
+
+            $arrayMethodName = $methodName . 'Array';
+            $columnNames = explode('And', $columnExpression);
+            $columnConditions = [];
+            foreach ($columnNames as $columnName) {
+                $columnConditions[$columnName] = array_shift($arguments);
+            }
+
+            return $this->$arrayMethodName($columnConditions, ...$arguments);
         }
 
         // Maybe it's a magic call to a qualified joinWith method, e.g. 'leftJoinWith' or 'joinWithAuthor'
@@ -2528,9 +2596,9 @@ class ModelCriteria extends BaseModelCriteria
                     $arguments[0] = null;
                 }
                 $arguments[] = $joinType;
-                $method = lcfirst(substr($name, $pos));
+                $methodName = lcfirst(substr($name, $pos));
 
-                return $this->$method(...$arguments);
+                return $this->$methodName(...$arguments);
             }
         }
 

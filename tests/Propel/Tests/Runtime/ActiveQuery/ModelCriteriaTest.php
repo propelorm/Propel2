@@ -464,7 +464,7 @@ class ModelCriteriaTest extends BookstoreTestBase
     /**
      * @return void
      */
-    public function testFilterBy()
+    public function testFilterByColumn()
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo');
@@ -475,7 +475,13 @@ class ModelCriteriaTest extends BookstoreTestBase
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
         $this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a simple column name');
+    }
 
+    /**
+     * @return void
+     */
+    public function testFilterByOperator()
+    {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
         $c->filterBy('Title', 'foo', Criteria::NOT_EQUAL);
 
@@ -484,8 +490,14 @@ class ModelCriteriaTest extends BookstoreTestBase
         $params = [
             ['table' => 'book', 'column' => 'title', 'value' => 'foo'],
         ];
-        $this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a sicustom comparator');
+        $this->assertCriteriaTranslation($c, $sql, $params, 'filterBy() accepts a custom comparator');
+    }
 
+    /**
+     * @return void
+     */
+    public function testFilterByAlias()
+    {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book', 'b');
         $c->filterBy('Title', 'foo');
 
@@ -500,6 +512,34 @@ class ModelCriteriaTest extends BookstoreTestBase
             $params,
             'filterBy() accepts a simple column name, even if initialized with an alias'
         );
+    }
+
+    public function filterByWithSubqueryDataProvider(): array
+    {
+        return [
+            // operator input, operator in query
+            ['should use IN as default operator', null, 'IN'],
+            ['should use supplied operator', Criteria::EQUAL, '='],
+        ];
+    }
+
+    /**
+     * @dataProvider filterByWithSubqueryDataProvider
+     *
+     * @return void
+     */
+    public function testFilterByWithSubquery(string $description, ?string $operatorInput, string $sqlOperator)
+    {
+        $subquery = AuthorQuery::create()->filterByAge(40, Criteria::GREATER_EQUAL)->select('FirstName');
+        $c = BookQuery::create()->filterBy('Title', $subquery, $operatorInput);
+
+        $expectedQuery = "SELECT  FROM book WHERE book.title $sqlOperator (SELECT author.first_name AS \"FirstName\" FROM author WHERE author.age>=:p1)";
+        $sql = $this->getSql($expectedQuery);
+
+        $params = [
+            ['table' => 'author', 'column' => 'age', 'value' => '40'],
+        ];
+        $this->assertCriteriaTranslation($c, $sql, $params, $description);
     }
 
     /**
