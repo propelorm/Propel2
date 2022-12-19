@@ -40,9 +40,9 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'BOOLEAN'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'INT2'));

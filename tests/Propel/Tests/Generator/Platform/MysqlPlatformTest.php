@@ -836,15 +836,13 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_fk`;
         $schema = '
 <database name="test1" identifierQuoting="true">
   <table name="foo">
-    <behavior name="AutoAddPK"/>
-    <column name="name" type="VARCHAR"/>
     <column name="subid" type="INTEGER"/>
+    <column name="id" type="INTEGER"/>
   </table>
   <table name="bar">
-    <behavior name="AutoAddPK"/>
 
-    <column name="name" type="VARCHAR"/>
     <column name="subid" type="INTEGER"/>
+    <column name="id" type="INTEGER"/>
 
     <foreign-key foreignTable="foo">
       <reference local="id" foreign="id"/>
@@ -857,10 +855,8 @@ ALTER TABLE `foo` DROP FOREIGN KEY `foo_bar_fk`;
         $expectedRelationSql = "
 CREATE TABLE `bar`
 (
-    `name` VARCHAR(255),
     `subid` INTEGER,
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (`id`),
+    `id` INTEGER,
     INDEX `bar_fi_bb8268` (`id`, `subid`),
     CONSTRAINT `bar_fk_bb8268`
         FOREIGN KEY (`id`,`subid`)
@@ -1012,5 +1008,31 @@ CREATE TABLE `foo`
 ";
 
         $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @return void
+     */
+    public function testUuidColumnTypeDefaultsToBinary()
+    {
+        $platform = new MysqlPlatform();
+
+        $uuidSqlType = $platform->getDomainForType(PropelTypes::UUID)->getSqlType();
+        $this->assertEquals(PropelTypes::BINARY, $uuidSqlType);
+    }
+
+    /**
+     * @return void
+     */
+    public function testEnableUuidNativeType()
+    {
+        $platform = new MysqlPlatform();
+
+        $configProp['propel']['database']['adapters']['mysql']['uuidColumnType'] = 'native';
+        $config = new GeneratorConfig(__DIR__ . '/../../../../Fixtures/bookstore', $configProp);
+        $platform->setGeneratorConfig($config);
+
+        $uuidSqlType = $platform->getDomainForType(PropelTypes::UUID)->getSqlType();
+        $this->assertEquals(PropelTypes::UUID, $uuidSqlType);
     }
 }
