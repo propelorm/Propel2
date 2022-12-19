@@ -131,7 +131,7 @@ abstract class MappingModel implements MappingModelInterface
         }
 
         $value = implode(' | ', $values);
-        if ($value === ' | ') {
+        if (empty($value) || ' | ' === $value) {
             return null;
         }
 

@@ -603,10 +603,10 @@ abstract class " . $this->getUnqualifiedClassName() . ' extends ' . $parentClass
             foreach ($pks as $col) {
                 $colNames[] = '$' . $col->getName();
             }
-            $pkType = 'array[' . implode(', ', $colNames) . ']';
+            $pkType = 'array['. join(', ', $colNames) . ']';
             $script .= "
      * <code>
-     * \$obj = \$c->findPk(array(" . implode(', ', $examplePk) . '), $con);';
+     * \$obj = \$c->findPk(array(" . join(', ', $examplePk) . "), \$con);";
         } else {
             $pkType = 'mixed';
             $script .= "

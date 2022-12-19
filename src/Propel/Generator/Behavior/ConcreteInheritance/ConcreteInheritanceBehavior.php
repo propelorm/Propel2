@@ -36,12 +36,14 @@ class ConcreteInheritanceBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected $parameters = [
-        'extends' => '',
-        'descendant_column' => 'descendant_class',
-        'copy_data_to_parent' => 'true',
-        'copy_data_to_child' => 'false',
-        'schema' => '',
-        'exclude_behaviors' => '',
+        'extends'              => '',
+        'descendant_column'    => 'descendant_class',
+        'copy_data_to_parent'  => 'true',
+        'copy_data_to_child'   => 'false',
+        'schema'               => '',
+        'exclude_behaviors'    => '',
+        'exclude_indices'      => '',
+        'exclude_foreign_keys' => '',
     ];
 
     /**
@@ -93,25 +95,32 @@ class ConcreteInheritanceBehavior extends Behavior
         }
 
         // add the foreign keys of the parent table
-        foreach ($parentTable->getForeignKeys() as $fk) {
-            $copiedFk = clone $fk;
-            $copiedFk->setName('');
-            $copiedFk->setRefPhpName('');
-            $this->getTable()->addForeignKey($copiedFk);
+        $excludeForeignKeys = $this->getParameter('exclude_foreign_keys');
+        if ('*' !== $excludeForeignKeys) {
+            foreach ($parentTable->getForeignKeys() as $fk) {
+                $copiedFk = clone $fk;
+                $copiedFk->setName('');
+                $copiedFk->setRefPhpName('');
+                $this->getTable()->addForeignKey($copiedFk)
+                ;
+            }
         }
 
-        // add the indices of the parent table
-        foreach ($parentTable->getIndices() as $index) {
-            $copiedIndex = clone $index;
-            $copiedIndex->setName('');
-            $this->getTable()->addIndex($copiedIndex);
-        }
+        $excludeIndices = $this->getParameter('exclude_indices');
+        if ('*' !== $excludeIndices) {
+            // add the indices of the parent table
+            foreach ($parentTable->getIndices() as $index) {
+                $copiedIndex = clone $index;
+                $copiedIndex->setName('');
+                $this->getTable()->addIndex($copiedIndex);
+            }
 
-        // add the unique indices of the parent table
-        foreach ($parentTable->getUnices() as $unique) {
-            $copiedUnique = clone $unique;
-            $copiedUnique->setName('');
-            $this->getTable()->addUnique($copiedUnique);
+            // add the unique indices of the parent table
+            foreach ($parentTable->getUnices() as $unique) {
+                $copiedUnique = clone $unique;
+                $copiedUnique->setName('');
+                $this->getTable()->addUnique($copiedUnique);
+            }
         }
 
         // list of Behaviors to be excluded in child table

@@ -562,9 +562,13 @@ EOT;
      */
     protected function addTableVendorInfo(Table $table): void
     {
-        /** @var \PDOStatement $stmt */
-        $stmt = $this->dbh->query("SHOW TABLE STATUS LIKE '" . $table->getName() . "'");
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($table->guessSchemaName()) {
+            $sql = sprintf("SHOW TABLE STATUS FROM %s LIKE '%s'", $table->guessSchemaName(), $table->getCommonName());
+        } else {
+            $sql = sprintf("SHOW TABLE STATUS LIKE '%s'", $table->getName());
+        }
+        $stmt = $this->dbh->query($sql);
+        $row  = $stmt->fetch(\PDO::FETCH_ASSOC);
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
             $row = ['Engine' => $row ? $row['Engine'] : null];

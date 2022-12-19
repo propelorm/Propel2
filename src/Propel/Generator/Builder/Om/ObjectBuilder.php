@@ -3755,6 +3755,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $script .= $pkCheck ? implode(" &&\n            ", $pkCheck) : 'false';
 
         $script .= ";\n";
+        $script .= "
+        if (\$validPk) {
+            return md5(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        }
+        ";
 
         /** @var array<\Propel\Generator\Model\ForeignKey> $primaryKeyFKs */
         $primaryKeyFKs = [];
@@ -3786,10 +3791,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (\$validPk) {
-            return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
-        } elseif (\$validPrimaryKeyFKs) {
-            return crc32(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        if (\$validPrimaryKeyFKs) {
+            return md5(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
         }
 
         return spl_object_hash(\$this);

@@ -246,7 +246,7 @@ class SchemaReader
                         $this->isForReferenceOnly = ($isForRefOnly !== null ? (strtolower($isForRefOnly) === 'true') : true); // defaults to TRUE
                     }
 
-                    if ($xmlFile[0] !== '/') {
+                    if ('/' !== substr($xmlFile, 0, 1)) {
                         $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
                             throw new SchemaException(sprintf('Unknown include external `%s`', $xmlFile));
@@ -261,8 +261,7 @@ class SchemaReader
 
                     break;
                 case 'table':
-                    if (
-                        !isset($attributes['schema'])
+                    if (!isset($attributes['schema'])
                         && $this->currDB->getSchema() && $this->currDB->getPlatform()->supportsSchemas()
                         && strpos($attributes['name'], $this->currDB->getPlatform()->getSchemaDelimiter()) === false
                     ) {

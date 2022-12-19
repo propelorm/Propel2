@@ -16,6 +16,7 @@ use Propel\Generator\Model\Behavior;
  * Uses two additional columns storing the creation and update date
  *
  * @author François Zaninotto
+ * @author Ansas Meyer
  */
 class TimestampableBehavior extends Behavior
 {
@@ -69,6 +70,18 @@ class TimestampableBehavior extends Behavior
     }
 
     /**
+     * @return string the PHP code to be added to the builder
+     */
+    public function objectAttributes($builder)
+    {
+        if (!$this->withUpdatedAt()) {
+            return '';
+        }
+
+        return "protected \$keepUpdateDateUnchanged = false;\n";
+    }
+
+    /**
      * Get the setter of one of the columns of the behavior
      *
      * @param string $column One of the behavior columns, 'create_column' or 'update_column'
@@ -103,9 +116,9 @@ class TimestampableBehavior extends Behavior
         if ($this->withUpdatedAt()) {
             $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
                 ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()';
-
-            return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ")) {
+                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()'
+            ;
+            return "if (\$this->isModified() && !\$this->keepUpdateDateUnchanged && !\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
 }";
         }
@@ -163,11 +176,13 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $bui
 /**
  * Mark the current object so that the update date doesn't get updated during next save
  *
+ * @param bool \$keep [optional]
+ *
  * @return \$this The current object (for fluent API support)
  */
-public function keepUpdateDateUnchanged()
+public function keepUpdateDateUnchanged(\$keep = true)
 {
-    \$this->modifiedColumns[" . $this->getColumnConstant('update_column', $builder) . "] = true;
+    \$this->keepUpdateDateUnchanged = (bool) \$keep;
 
     return \$this;
 }

@@ -31,8 +31,15 @@ class MigrationUpCommand extends AbstractCommand
         $this
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
             ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
-            ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
-            ->addOption('fake', null, InputOption::VALUE_NONE, 'Does not touch the actual schema, but marks next migration as executed.')
+            ->addOption('connection',
+                null,
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Connection to use',
+                [])
+            ->addOption('fake',
+                null,
+                InputOption::VALUE_NONE,
+                'Does not touch the actual schema, but marks next migration as executed.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Continues with the migration even when errors occur.')
             ->setName('migration:up')
             ->setAliases(['up'])
@@ -63,7 +70,7 @@ class MigrationUpCommand extends AbstractCommand
         $manager = new MigrationManager();
         $manager->setGeneratorConfig($generatorConfig);
 
-        $connections = [];
+        $connections       = [];
         $optionConnections = $input->getOption('connection');
         if (!$optionConnections) {
             $connections = $generatorConfig->getBuildConnections();
@@ -126,8 +133,8 @@ class MigrationUpCommand extends AbstractCommand
                 ));
             }
 
-            $conn = $manager->getAdapterConnection($datasource);
-            $res = 0;
+            $conn       = $manager->getAdapterConnection($datasource);
+            $res        = 0;
             $statements = SqlParser::parseString($sql);
 
             if (!$input->getOption('fake')) {
