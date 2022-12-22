@@ -28,14 +28,15 @@ class ArchivableBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected $parameters = [
-        'archive_table' => '',
-        'archive_phpname' => null,
-        'archive_class' => '',
-        'log_archived_at' => 'true',
+        'archive_table'      => '',
+        'archive_phpname'    => null,
+        'archive_class'      => '',
+        'log_archived_at'    => 'true',
         'archived_at_column' => 'archived_at',
-        'archive_on_insert' => 'false',
-        'archive_on_update' => 'false',
-        'archive_on_delete' => 'true',
+        'archive_on_insert'  => 'false',
+        'archive_on_update'  => 'false',
+        'archive_on_delete'  => 'true',
+        'date_type'          => 'DATETIME',
     ];
 
     /**
@@ -121,7 +122,7 @@ class ArchivableBehavior extends Behavior
             if ($this->getParameter('log_archived_at') == 'true') {
                 $archiveTable->addColumn([
                     'name' => $this->getParameter('archived_at_column'),
-                    'type' => 'TIMESTAMP',
+                    'type' => $this->getParameter('date_type'),
                 ]);
             }
             // do not copy foreign keys

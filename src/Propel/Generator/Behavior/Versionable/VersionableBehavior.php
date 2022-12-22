@@ -26,15 +26,16 @@ class VersionableBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected $parameters = [
-        'version_column' => 'version',
-        'version_table' => '',
-        'log_created_at' => 'false',
-        'log_created_by' => 'false',
-        'log_comment' => 'false',
+        'version_column'            => 'version',
+        'version_table'             => '',
+        'log_created_at'            => 'false',
+        'log_created_by'            => 'false',
+        'log_comment'               => 'false',
         'version_created_at_column' => 'version_created_at',
         'version_created_by_column' => 'version_created_by',
-        'version_comment_column' => 'version_comment',
-        'indices' => 'false',
+        'version_comment_column'    => 'version_comment',
+        'indices'                   => 'false',
+        'date_type'                 => 'DATETIME',
     ];
 
     /**
@@ -112,7 +113,7 @@ class VersionableBehavior extends Behavior
         if ($this->getParameter('log_created_at') === 'true' && !$table->hasColumn($this->getParameter('version_created_at_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('version_created_at_column'),
-                'type' => 'TIMESTAMP',
+                'type' => $this->getParameter('date_type'),
             ]);
         }
         if ($this->getParameter('log_created_by') === 'true' && !$table->hasColumn($this->getParameter('version_created_by_column'))) {

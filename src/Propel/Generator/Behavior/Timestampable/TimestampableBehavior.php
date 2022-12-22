@@ -24,10 +24,11 @@ class TimestampableBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected $parameters = [
-        'create_column' => 'created_at',
-        'update_column' => 'updated_at',
+        'create_column'      => 'created_at',
+        'update_column'      => 'updated_at',
         'disable_created_at' => 'false',
         'disable_updated_at' => 'false',
+        'date_type'          => 'DATETIME',
     ];
 
     /**
@@ -58,13 +59,13 @@ class TimestampableBehavior extends Behavior
         if ($this->withCreatedAt() && !$table->hasColumn($this->getParameter('create_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('create_column'),
-                'type' => 'TIMESTAMP',
+                'type' => $this->getParameter('date_type'),
             ]);
         }
         if ($this->withUpdatedAt() && !$table->hasColumn($this->getParameter('update_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('update_column'),
-                'type' => 'TIMESTAMP',
+                'type' => $this->getParameter('date_type'),
             ]);
         }
     }
