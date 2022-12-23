@@ -44,7 +44,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @var string
      */
-    private const SCHEMA_DIR_MIGRATE_TO_VERSION = __DIR__ . '/../../../../Fixtures/migration-command/migrate-to-version';
+    private const SCHEMA_DIR_MIGRATE_TO_VERSION = __DIR__ . '/../../../../Fixtures/migrate-to-version';
 
     /**
      * @see \Propel\Generator\Command\MigrationMigrateCommand::COMMAND_OPTION_MIGRATE_TO_VERSION

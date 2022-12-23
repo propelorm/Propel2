@@ -12,6 +12,8 @@ use PDO;
 use PDOException;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Tests\TestCase;
 
@@ -341,13 +343,14 @@ class MigrationManagerTest extends TestCase
         $migrationManager->createMigrationTable('migration');
 
         $connection = $migrationManager->getAdapterConnection('migration');
+
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $migrationManager->getPlatform('migration');
 
-        $sql = sprintf(
-            'ALTER TABLE %s DROP COLUMN %s',
-            $migrationManager->getMigrationTable(),
-            self::COL_EXECUTION_DATETIME,
-        );
+        $column = new Column(self::COL_EXECUTION_DATETIME);
+        $column->setTable(new Table($migrationManager->getMigrationTable()));
+
+        $sql = $platform->getRemoveColumnDDL($column);
 
         $stmt = $connection->prepare($sql);
         $stmt->execute();
