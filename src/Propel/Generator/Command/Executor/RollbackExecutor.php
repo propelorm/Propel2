@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Service class for executing rollback.
  */
-class RollbackExecutor implements RollbackExecutorInterface
+class RollbackExecutor
 {
     /**
      * @var string
