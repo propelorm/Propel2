@@ -269,13 +269,17 @@ class MigrationManager extends AbstractManager
         $this->modifyMigrationTableIfOutdated($conn, $platform);
 
         $sql = sprintf(
-            'INSERT INTO %s (%s, %s) VALUES (?, NOW())',
+            'INSERT INTO %s (%s, %s) VALUES (?, ?)',
             $this->getMigrationTable(),
             $platform->doQuoting(static::COL_VERSION),
             $platform->doQuoting(static::COL_EXECUTION_DATETIME),
         );
+
+        $executionDatetime = date('Y-m-d H:i:s');
+
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
+        $stmt->bindParam(2, $executionDatetime);
         $stmt->execute();
     }
 
