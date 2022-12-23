@@ -19,6 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MigrationStatusCommand extends AbstractCommand
 {
     /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_LAST_VERSION = 'last-version';
+
+    /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_LAST_VERSION_DESCRIPTION = 'Use this option to receive the last executed version of the migration.';
+
+    /**
      * @inheritDoc
      */
     protected function configure()
@@ -29,6 +39,7 @@ class MigrationStatusCommand extends AbstractCommand
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
             ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption(static::COMMAND_OPTION_LAST_VERSION, null, InputOption::VALUE_NONE, static::COMMAND_OPTION_LAST_VERSION_DESCRIPTION)
             ->setName('migration:status')
             ->setAliases(['status'])
             ->setDescription('Get migration status');
@@ -90,6 +101,11 @@ class MigrationStatusCommand extends AbstractCommand
                     ));
                 }
                 $manager->createMigrationTable($datasource);
+            } else {
+                $manager->modifyMigrationTableIfOutdated(
+                    $manager->getAdapterConnection($datasource),
+                    $manager->getPlatform($datasource),
+                );
             }
         }
 
@@ -104,6 +120,13 @@ class MigrationStatusCommand extends AbstractCommand
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');
             }
+        }
+
+        if ($input->getOption(static::COMMAND_OPTION_LAST_VERSION) && $oldestMigrationTimestamp) {
+            $output->writeln(sprintf(
+                'The last executed version of the migration is %s',
+                $oldestMigrationTimestamp,
+            ));
         }
 
         $output->writeln('Listing Migration files...');

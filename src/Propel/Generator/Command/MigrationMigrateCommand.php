@@ -9,6 +9,7 @@
 namespace Propel\Generator\Command;
 
 use Exception;
+use Propel\Generator\Command\Executor\RollbackExecutor;
 use Propel\Generator\Manager\MigrationManager;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Exception\RuntimeException;
@@ -22,6 +23,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MigrationMigrateCommand extends AbstractCommand
 {
     /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_MIGRATE_TO_VERSION = 'migrate-to-version';
+
+    /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_MIGRATE_TO_VERSION_DESCRIPTION = 'Defines the version to migrate database.';
+
+    /**
      * @inheritDoc
      */
     protected function configure()
@@ -34,6 +45,7 @@ class MigrationMigrateCommand extends AbstractCommand
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
             ->addOption('fake', null, InputOption::VALUE_NONE, 'Does not touch the actual schema, but marks all migration as executed.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Continues with the migration even when errors occur.')
+            ->addOption(static::COMMAND_OPTION_MIGRATE_TO_VERSION, null, InputOption::VALUE_REQUIRED, static::COMMAND_OPTION_MIGRATE_TO_VERSION_DESCRIPTION)
             ->setName('migration:migrate')
             ->setAliases(['migrate'])
             ->setDescription('Execute all pending migrations');
@@ -78,13 +90,18 @@ class MigrationMigrateCommand extends AbstractCommand
         $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
+        $version = $input->getOption(static::COMMAND_OPTION_MIGRATE_TO_VERSION);
+        if ($version && $manager->isDatabaseVersionApplied($version)) {
+            return $this->executeRollbackToVersion($input, $output, $manager, $version);
+        }
+
         if (!$manager->getFirstUpMigrationTimestamp()) {
             $output->writeln('All migrations were already executed - nothing to migrate.');
 
             return static::CODE_SUCCESS;
         }
 
-        $timestamps = $manager->getValidMigrationTimestamps();
+        $timestamps = $manager->getValidMigrationTimestamps($version);
         if (count($timestamps) > 1) {
             $output->writeln(sprintf('%d migrations to execute', count($timestamps)));
         }
@@ -185,6 +202,39 @@ class MigrationMigrateCommand extends AbstractCommand
         }
 
         $output->writeln('Migration complete. No further migration to execute.');
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param \Propel\Generator\Manager\MigrationManager $migrationManager
+     * @param int $version
+     *
+     * @return int
+     */
+    protected function executeRollbackToVersion(
+        InputInterface $input,
+        OutputInterface $output,
+        MigrationManager $migrationManager,
+        int $version,
+    ): int {
+        $rollbackTimestamps = $migrationManager->getAlreadyExecutedMigrationTimestamps($version);
+        if ($rollbackTimestamps === []) {
+            $output->writeln(sprintf('The last executed version of the migration is %s - nothing to migrate.', $version));
+
+            return static::CODE_SUCCESS;
+        }
+
+        $rollbackExecutor = new RollbackExecutor($input, $output, $migrationManager);
+        while ($rollbackTimestamps !== []) {
+            if (!$rollbackExecutor->executeRollbackToPreviousVersion($rollbackTimestamps)) {
+                return static::CODE_ERROR;
+            }
+        }
+
+        $output->writeln(sprintf('The last executed version of the migration is %s.', $version));
 
         return static::CODE_SUCCESS;
     }
