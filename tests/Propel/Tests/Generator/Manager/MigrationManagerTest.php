@@ -152,7 +152,7 @@ class MigrationManagerTest extends TestCase
         array $localTimestamps,
         array $databaseMigrationData,
         array $expectedTimestamps,
-        ?int $expectedVersion = null,
+        ?int $expectedVersion = null
     ): void {
         $migrationManager = $this->createMigrationManager($localTimestamps);
         $migrationManager->createMigrationTable('migration');
