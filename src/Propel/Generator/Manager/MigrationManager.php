@@ -226,7 +226,6 @@ class MigrationManager extends AbstractManager
         $statements = $platform->getAddTableDDL($table);
         $conn = $this->getAdapterConnection($datasource);
         $res = SqlParser::executeString($statements, $conn);
-
         if (!$res) {
             throw new Exception(sprintf('Unable to create migration table in datasource "%s"', $datasource));
         }
