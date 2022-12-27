@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="migration_command">
+
+    <table name="table1">
+        <column name="created_at" required="false" type="TIMESTAMP"/>
+    </table>
+
+</database>

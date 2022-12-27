@@ -310,7 +310,7 @@ class MigrationManagerTest extends TestCase
         $stmt->execute();
         $migrationData = $stmt->fetch();
 
-        $this->assertSame($expectedVersion, $migrationData[self::COL_VERSION]);
+        $this->assertSame($expectedVersion, (int)$migrationData[self::COL_VERSION]);
         $this->assertSame($expectedExecutionDatetime, $migrationData[self::COL_EXECUTION_DATETIME]);
     }
 
