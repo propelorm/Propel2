@@ -415,7 +415,7 @@ class MigrationTest extends TestCaseFixturesDatabase
         $versions = $stmt->fetchAll();
         $lastVersion = array_pop($versions)[self::COL_VERSION];
 
-        $this->assertSame($version, $lastVersion);
+        $this->assertSame($version, (int)$lastVersion);
     }
 
     /**
