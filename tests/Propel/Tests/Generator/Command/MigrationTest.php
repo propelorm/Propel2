@@ -145,25 +145,90 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
+    public function testMigrateCommandShouldMigrateToTheLastVersionIfTheGivenVersionIsNotExists(): void
     {
         $outputString = $this->runCommandAndAssertSuccess(
-            'migration:status',
-            new MigrationStatusCommand(),
-            [self::COMMAND_OPTION_LAST_VERSION => true],
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => 0],
+            self::MIGRATE_DOWN_AFTERWARDS,
         );
 
-        $this->assertStringContainsString('The last executed version of the migration is', $outputString);
+        $this->assertStringContainsString('Migration complete.', $outputString);
     }
 
     /**
      * @return void
      */
-    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
+    public function testMigrateCommandShouldDoNothingIfGivenVersionIsTheLastAppliedVersion(): void
     {
-        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
+        $this->setUpMigrateToVersion();
 
-        $this->assertStringNotContainsString('The last executed version of the migration is', $outputString);
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('The last executed version of the migration is %s - nothing to migrate.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldRollbackToTheGivenVersionIfItIsLowerThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_first($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('The last executed version of the migration is %s.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldMigrateToTheGivenVersionIfItIsHigherThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $this->migrateDown();
+
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString('Migration complete. No further migration to execute.', $outputString);
+
+        $this->tearDownMigrateToVersion($migrationVersions);
     }
 
     /**
