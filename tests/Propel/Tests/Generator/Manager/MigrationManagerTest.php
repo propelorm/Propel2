@@ -337,32 +337,6 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testModifyMigrationTableIfOutdatedShouldAddExecutionDatetimeColumn(): void
-    {
-        $migrationManager = $this->createMigrationManager([]);
-        $migrationManager->createMigrationTable('migration');
-
-        $connection = $migrationManager->getAdapterConnection('migration');
-
-        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
-        $platform = $migrationManager->getPlatform('migration');
-
-        $column = new Column(self::COL_EXECUTION_DATETIME);
-        $column->setTable(new Table($migrationManager->getMigrationTable()));
-
-        $sql = $platform->getRemoveColumnDDL($column);
-
-        $stmt = $connection->prepare($sql);
-        $stmt->execute();
-
-        $migrationManager->modifyMigrationTableIfOutdated($connection, $platform);
-
-        $this->assertTrue($this->columnExists($migrationManager, self::COL_EXECUTION_DATETIME));
-    }
-
-    /**
-     * @return void
-     */
     public function testModifyMigrationTableShouldThrowExceptionIfMigrationTableDoesNotExist(): void
     {
         $migrationManager = $this->createMigrationManager([]);
