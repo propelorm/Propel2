@@ -276,4 +276,75 @@ class MigrationTest extends TestCaseFixturesDatabase
             $this->assertStringNotContainsString('CREATE TABLE ', $content);
         }
     }
+
+    /**
+     * @param int $version
+     *
+     * @return void
+     */
+    private function assertIsCurrentVersion(int $version): void
+    {
+        $sql = sprintf('SELECT %s FROM %s', self::COL_VERSION, self::MIGRATION_TABLE);
+
+        $stmt = Propel::getServiceContainer()->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $versions = $stmt->fetchAll();
+        $lastVersion = array_pop($versions)[self::COL_VERSION];
+
+        $this->assertSame($version, $lastVersion);
+    }
+
+    /**
+     * @return void
+     */
+    private function setUpMigrateToVersion(): void
+    {
+        $this->deleteMigrationFiles();
+
+        /** @var array<string> $versionDirectories */
+        $versionDirectories = glob(
+            sprintf(
+                '%s%s*',
+                self::SCHEMA_DIR_MIGRATE_TO_VERSION,
+                DIRECTORY_SEPARATOR,
+            ),
+            GLOB_ONLYDIR,
+        );
+
+        foreach ($versionDirectories as $versionDirectory) {
+            $this->runCommand('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => $versionDirectory]);
+            $this->migrateUp();
+            sleep(1);
+        }
+    }
+
+    /**
+     * @param list<int> $migrationVersions
+     *
+     * @return void
+     */
+    private function tearDownMigrateToVersion(array $migrationVersions): void
+    {
+        foreach ($migrationVersions as $migrationVersion) {
+            $this->migrateDown();
+        }
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function getMigrationVersions(): array
+    {
+        $migrationFiles = scandir(sprintf('%s%s', self::OUTPUT_DIR, DIRECTORY_SEPARATOR));
+
+        $migrationVersions = [];
+        foreach ($migrationFiles as $migrationFile) {
+            if (preg_match('/^PropelMigration_(\d+).*\.php$/', $migrationFile, $matches)) {
+                $migrationVersions[] = (int)$matches[1];
+            }
+        }
+
+        return $migrationVersions;
+    }
 }
