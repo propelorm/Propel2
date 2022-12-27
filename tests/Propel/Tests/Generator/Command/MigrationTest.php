@@ -145,30 +145,6 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
-    {
-        $outputString = $this->runCommandAndAssertSuccess(
-            'migration:status',
-            new MigrationStatusCommand(),
-            [self::COMMAND_OPTION_LAST_VERSION => true],
-        );
-
-        $this->assertStringContainsString('The last executed version of the migration is', $outputString);
-    }
-
-    /**
-     * @return void
-     */
-    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
-    {
-        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
-
-        $this->assertStringNotContainsString('The last executed version of the migration is', $outputString);
-    }
-
-    /**
-     * @return void
-     */
     private function deleteMigrationFiles(): void
     {
         $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . 'PropelMigration_*.php');
@@ -299,76 +275,5 @@ class MigrationTest extends TestCaseFixturesDatabase
         } else {
             $this->assertStringNotContainsString('CREATE TABLE ', $content);
         }
-    }
-
-    /**
-     * @param int $version
-     *
-     * @return void
-     */
-    private function assertIsCurrentVersion(int $version): void
-    {
-        $sql = sprintf('SELECT %s FROM %s', self::COL_VERSION, self::MIGRATION_TABLE);
-
-        $stmt = Propel::getServiceContainer()->getConnection()->prepare($sql);
-        $stmt->execute();
-
-        $versions = $stmt->fetchAll();
-        $lastVersion = array_pop($versions)[self::COL_VERSION];
-
-        $this->assertSame($version, $lastVersion);
-    }
-
-    /**
-     * @return void
-     */
-    private function setUpMigrateToVersion(): void
-    {
-        $this->deleteMigrationFiles();
-
-        /** @var array<string> $versionDirectories */
-        $versionDirectories = glob(
-            sprintf(
-                '%s%s*',
-                self::SCHEMA_DIR_MIGRATE_TO_VERSION,
-                DIRECTORY_SEPARATOR,
-            ),
-            GLOB_ONLYDIR,
-        );
-
-        foreach ($versionDirectories as $versionDirectory) {
-            $this->runCommand('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => $versionDirectory]);
-            $this->migrateUp();
-            sleep(1);
-        }
-    }
-
-    /**
-     * @param list<int> $migrationVersions
-     *
-     * @return void
-     */
-    private function tearDownMigrateToVersion(array $migrationVersions): void
-    {
-        foreach ($migrationVersions as $migrationVersion) {
-            $this->migrateDown();
-        }
-    }
-
-    /**
-     * @return list<int>
-     */
-    private function getMigrationVersions(): array
-    {
-        $migrationFiles = scandir(sprintf('%s%s', self::OUTPUT_DIR, DIRECTORY_SEPARATOR));
-
-        $migrationVersions = [];
-        foreach ($migrationFiles as $migrationFile) {
-            if (preg_match('/^PropelMigration_(\d+).*\.php$/', $migrationFile, $matches)) {
-                $migrationVersions[] = (int)$matches[1];
-            }
-        }
-
-        return $migrationVersions;
     }
 }
