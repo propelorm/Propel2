@@ -72,75 +72,6 @@ class MigrationTest extends TestCaseFixturesDatabase
      */
     private const MIGRATION_TABLE = 'propel_migration';
 
-    /**
-     * @return void
-     */
-    public function testDiffCommandCreatesFiles(): void
-    {
-        $this->deleteMigrationFiles();
-        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
-        $this->assertGeneratedFileContainsCreateTableStatement(true, 'PropelMigration_*.php');
-    }
-
-    /**
-     * @return void
-     */
-    public function testDiffCommandCreatesSuffixedFiles(): void
-    {
-        $this->deleteMigrationFiles();
-        $suffix = 'an_explanatory_filename_suffix';
-        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
-        $this->assertGeneratedFileContainsCreateTableStatement(true, "PropelMigration_*_$suffix.php");
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateCommandCreatesFiles(): void
-    {
-        $this->deleteMigrationFiles();
-        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
-        $this->assertGeneratedFileContainsCreateTableStatement(false, 'PropelMigration_*.php');
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateCommandCreatesSuffixedFiles(): void
-    {
-        $this->deleteMigrationFiles();
-        $suffix = 'an_explanatory_filename_suffix';
-        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
-        $this->assertGeneratedFileContainsCreateTableStatement(false, "PropelMigration_*_$suffix.php");
-    }
-
-    /**
-     * @return void
-     */
-    public function testUpCommandPerformsUpMigration(): void
-    {
-        $outputString = $this->runCommandAndAssertSuccess('migration:up', new MigrationUpCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
-        $this->assertStringContainsString('Migration complete.', $outputString);
-    }
-
-    /**
-     * @return void
-     */
-    public function testDownCommandPerformsDownMigration(): void
-    {
-        $this->migrateUp();
-        $outputString = $this->runCommandAndAssertSuccess('migration:down', new MigrationDownCommand());
-        $this->assertStringContainsString('Reverse migration complete.', $outputString);
-    }
-
-    /**
-     * @return void
-     */
-    public function testMigrateCommandPerformsUpMigration(): void
-    {
-        $outputString = $this->runCommandAndAssertSuccess('migration:migrate', new MigrationMigrateCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
-        $this->assertStringContainsString('Migration complete.', $outputString);
-    }
 
     /**
      * @return void
@@ -229,6 +160,76 @@ class MigrationTest extends TestCaseFixturesDatabase
         $this->assertStringContainsString('Migration complete. No further migration to execute.', $outputString);
 
         $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDiffCommandCreatesFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, 'PropelMigration_*.php');
+    }
+
+    /**
+     * @return void
+     */
+    public function testDiffCommandCreatesSuffixedFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, "PropelMigration_*_$suffix.php");
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, 'PropelMigration_*.php');
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesSuffixedFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, "PropelMigration_*_$suffix.php");
+    }
+
+    /**
+     * @return void
+     */
+    public function testUpCommandPerformsUpMigration(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:up', new MigrationUpCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDownCommandPerformsDownMigration(): void
+    {
+        $this->migrateUp();
+        $outputString = $this->runCommandAndAssertSuccess('migration:down', new MigrationDownCommand());
+        $this->assertStringContainsString('Reverse migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandPerformsUpMigration(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:migrate', new MigrationMigrateCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
     }
 
     /**
