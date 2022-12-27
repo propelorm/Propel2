@@ -29,6 +29,7 @@ class MigrationStatusCommand extends AbstractCommand
             ->addOption('output-dir', null, InputOption::VALUE_REQUIRED, 'The output directory')
             ->addOption('migration-table', null, InputOption::VALUE_REQUIRED, 'Migration table name')
             ->addOption('connection', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Connection to use', [])
+            ->addOption('last-version', null, InputOption::VALUE_NONE, 'Use this option to receive the last executed version of the migration.')
             ->setName('migration:status')
             ->setAliases(['status'])
             ->setDescription('Get migration status');
@@ -90,6 +91,11 @@ class MigrationStatusCommand extends AbstractCommand
                     ));
                 }
                 $manager->createMigrationTable($datasource);
+            } else {
+                $manager->modifyMigrationTableIfOutdated(
+                    $manager->getAdapterConnection($datasource),
+                    $manager->getPlatform($datasource),
+                );
             }
         }
 
@@ -104,6 +110,13 @@ class MigrationStatusCommand extends AbstractCommand
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');
             }
+        }
+
+        if ($input->getOption('last-version') && $oldestMigrationTimestamp) {
+            $output->writeln(sprintf(
+                'The last executed version of the migration is %s',
+                $oldestMigrationTimestamp,
+            ));
         }
 
         $output->writeln('Listing Migration files...');

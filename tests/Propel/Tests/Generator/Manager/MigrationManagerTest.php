@@ -8,8 +8,13 @@
 
 namespace Propel\Tests\Generator\Manager;
 
+use PDO;
+use PDOException;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Tests\TestCase;
 
 /**
@@ -18,9 +23,11 @@ use Propel\Tests\TestCase;
 class MigrationManagerTest extends TestCase
 {
     /**
+     * @param list<int> $migrationTimestamps
+     *
      * @return \Propel\Generator\Manager\MigrationManager
      */
-    private function createMigrationManager(array $migrationTimestamps)
+    private function createMigrationManager(array $migrationTimestamps): MigrationManager
     {
         $generatorConfig = new GeneratorConfig(__DIR__ . '/../../../../Fixtures/migration/');
 
@@ -46,7 +53,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testMigrationTableWillBeCreated()
+    public function testMigrationTableWillBeCreated(): void
     {
         $migrationManager = $this->createMigrationManager([]);
         $this->assertFalse($migrationManager->migrationTableExists('migration'));
@@ -56,30 +63,39 @@ class MigrationManagerTest extends TestCase
     }
 
     /**
+     * @dataProvider getAllDatabaseVersionsDataProvider
+     *
+     * @param array<int, string|null> $migrationData
+     * @param list<int> $expectedDatabaseVersions
+     *
      * @return void
      */
-    public function testGetAllDatabaseVersions()
+    public function testGetAllDatabaseVersions(array $migrationData, array $expectedDatabaseVersions): void
     {
-        $databaseVersions = [1, 2, 3];
         $migrationManager = $this->createMigrationManager([]);
         $migrationManager->createMigrationTable('migration');
 
-        foreach ($databaseVersions as $version) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $version);
-        }
+        $this->addMigrations($migrationManager, $migrationData);
 
-        $this->assertEquals($databaseVersions, $migrationManager->getAllDatabaseVersions());
+        $this->assertSame($expectedDatabaseVersions, $migrationManager->getAllDatabaseVersions());
     }
 
     /**
+     * @dataProvider getValidMigrationTimestampsDataProvider
+     *
+     * @param list<int> $localTimestamps
+     * @param list<int> $databaseTimestamps
+     * @param list<int> $expectedTimestamps
+     * @param int|null $expectedVersion
+     *
      * @return void
      */
-    public function testGetValidMigrationTimestamps()
-    {
-        $localTimestamps = [1, 2, 3, 4];
-        $databaseTimestamps = [1, 2];
-        $expectedMigrationTimestamps = [3, 4];
-
+    public function testGetValidMigrationTimestamps(
+        array $localTimestamps,
+        array $databaseTimestamps,
+        array $expectedTimestamps,
+        ?int $expectedVersion = null
+    ): void {
         $migrationManager = $this->createMigrationManager($localTimestamps);
         $migrationManager->createMigrationTable('migration');
 
@@ -87,13 +103,13 @@ class MigrationManagerTest extends TestCase
             $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
         }
 
-        $this->assertEquals($expectedMigrationTimestamps, $migrationManager->getValidMigrationTimestamps());
+        $this->assertSame($expectedTimestamps, $migrationManager->getValidMigrationTimestamps($expectedVersion));
     }
 
     /**
      * @return void
      */
-    public function testRemoveMigrationTimestamp()
+    public function testRemoveMigrationTimestamp(): void
     {
         $localTimestamps = [1, 2];
         $databaseTimestamps = [1, 2];
@@ -111,28 +127,33 @@ class MigrationManagerTest extends TestCase
     }
 
     /**
+     * @dataProvider getAlreadyExecutedTimestampsDataProvider
+     *
+     * @param list<int> $localTimestamps
+     * @param array<int, string|null> $databaseMigrationData
+     * @param list<int> $expectedTimestamps
+     * @param int|null $expectedVersion
+     *
      * @return void
      */
-    public function testGetAlreadyExecutedTimestamps()
-    {
-        $timestamps = [1, 2];
-
-        $migrationManager = $this->createMigrationManager($timestamps);
+    public function testGetAlreadyExecutedTimestamps(
+        array $localTimestamps,
+        array $databaseMigrationData,
+        array $expectedTimestamps,
+        ?int $expectedVersion = null
+    ): void {
+        $migrationManager = $this->createMigrationManager($localTimestamps);
         $migrationManager->createMigrationTable('migration');
 
-        $this->assertEquals([], $migrationManager->getAlreadyExecutedMigrationTimestamps());
+        $this->addMigrations($migrationManager, $databaseMigrationData);
 
-        foreach ($timestamps as $timestamp) {
-            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
-        }
-
-        $this->assertEquals($timestamps, $migrationManager->getAlreadyExecutedMigrationTimestamps());
+        $this->assertSame($expectedTimestamps, $migrationManager->getAlreadyExecutedMigrationTimestamps($expectedVersion));
     }
 
     /**
      * @return void
      */
-    public function testIsPending()
+    public function testIsPending(): void
     {
         $localTimestamps = [1, 2];
 
@@ -149,7 +170,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testGetOldestDatabaseVersion()
+    public function testGetOldestDatabaseVersion(): void
     {
         $timestamps = [1, 2];
         $migrationManager = $this->createMigrationManager($timestamps);
@@ -165,7 +186,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testGetFirstUpMigrationTimestamp()
+    public function testGetFirstUpMigrationTimestamp(): void
     {
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
         $migrationManager->createMigrationTable('migration');
@@ -178,7 +199,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testGetFirstDownMigrationTimestamp()
+    public function testGetFirstDownMigrationTimestamp(): void
     {
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
         $migrationManager->createMigrationTable('migration');
@@ -192,7 +213,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testGetCommentMigrationManager()
+    public function testGetCommentMigrationManager(): void
     {
         $migrationManager = $this->createMigrationManager([1, 2, 3]);
 
@@ -204,18 +225,24 @@ class MigrationManagerTest extends TestCase
     /**
      * @return void
      */
-    public function testBuildVariableNamesFromConnectionNames()
+    public function testBuildVariableNamesFromConnectionNames(): void
     {
-        $manager = new class() extends MigrationManager{
+        $manager = new class () extends MigrationManager {
+            /**
+             * @param array<int|string, string> $migrationsUp
+             * @param array<string, string> $migrationsDown
+             *
+             * @return array<string, string>
+             */
             public function build(array $migrationsUp, array $migrationsDown): array
             {
                 return static::buildConnectionToVariableNameMap($migrationsUp, $migrationsDown);
             }
         };
-        
+
         $migrationsUp = array_fill_keys(['default', 'with space', '\/', '123'], '');
         $migrationsDown = array_fill_keys(['default', 'connection$', 'connection&', 'connection%'], '');
-        
+
         $expectedResult = [
             'default' => '$connection_default',
             'with space' => '$connection_withspace',
@@ -227,5 +254,317 @@ class MigrationManagerTest extends TestCase
         ];
         $result = $manager->build($migrationsUp, $migrationsDown);
         $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateMigrationTableShouldTableWithColumns(): void
+    {
+        $migrationManager = $this->createMigrationManager([]);
+        $migrationManager->createMigrationTable('migration');
+
+        $this->assertTrue($migrationManager->migrationTableExists('migration'));
+        $this->assertTrue($this->columnExists($migrationManager, 'version'));
+        $this->assertTrue($this->columnExists($migrationManager, 'execution_datetime'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testUpdateLatestMigrationTimestamp(): void
+    {
+        $expectedVersion = 1;
+        $expectedExecutionDatetime = date('Y-m-d H:i:s');
+
+        $migrationManager = $this->createMigrationManager([]);
+        $migrationManager->createMigrationTable('migration');
+
+        $migrationManager->updateLatestMigrationTimestamp('migration', $expectedVersion);
+
+        $connection = $migrationManager->getAdapterConnection('migration');
+        $sql = sprintf(
+            'SELECT %s, %s FROM %s WHERE %s=%s',
+            'version',
+            'execution_datetime',
+            $migrationManager->getMigrationTable(),
+            'version',
+            $expectedVersion,
+        );
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute();
+        $migrationData = $stmt->fetch();
+
+        $this->assertSame($expectedVersion, $migrationData['version']);
+        $this->assertSame($expectedExecutionDatetime, $migrationData['execution_datetime']);
+    }
+
+    /**
+     * @return void
+     */
+    public function testModifyMigrationTableIfOutdatedShouldNotUpdateTableIfExecutionDatetimeColumnExists(): void
+    {
+        $migrationManager = $this->createMigrationManager([]);
+        $migrationManager->createMigrationTable('migration');
+
+        $platformMock = $this->getMockBuilder(DefaultPlatform::class)
+            ->setMethods(['getAddColumnDDL'])
+            ->getMock();
+
+        $platformMock->expects($this->never())->method('getAddColumnDDL');
+
+        $migrationManager->modifyMigrationTableIfOutdated(
+            $migrationManager->getAdapterConnection('migration'),
+            $platformMock,
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testModifyMigrationTableIfOutdatedShouldAddExecutionDatetimeColumn(): void
+    {
+        $migrationManager = $this->createMigrationManager([]);
+        $migrationManager->createMigrationTable('migration');
+
+        $connection = $migrationManager->getAdapterConnection('migration');
+
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $platform = $migrationManager->getPlatform('migration');
+
+        $column = new Column('execution_datetime');
+        $column->setTable(new Table($migrationManager->getMigrationTable()));
+
+        $sql = $platform->getRemoveColumnDDL($column);
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute();
+
+        $migrationManager->modifyMigrationTableIfOutdated($connection, $platform);
+
+        $this->assertTrue($this->columnExists($migrationManager, 'execution_datetime'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testModifyMigrationTableShouldThrowExceptionIfMigrationTableDoesNotExist(): void
+    {
+        $migrationManager = $this->createMigrationManager([]);
+
+        $this->expectException(PDOException::class);
+
+        $migrationManager->modifyMigrationTableIfOutdated(
+            $migrationManager->getAdapterConnection('migration'),
+            $migrationManager->getPlatform('migration'),
+        );
+    }
+
+    /**
+     * @dataProvider isDatabaseVersionsAppliedDataProvider
+     *
+     * @param list<int> $localTimestamps
+     * @param list<int> $databaseTimestamps
+     * @param int $version
+     * @param bool $expectedIsDatabaseVersionApplied
+     *
+     * @return void
+     */
+    public function testIsDatabaseVersionsApplied(
+        array $localTimestamps,
+        array $databaseTimestamps,
+        int $version,
+        bool $expectedIsDatabaseVersionApplied
+    ): void {
+        $migrationManager = $this->createMigrationManager($localTimestamps);
+        $migrationManager->createMigrationTable('migration');
+
+        foreach ($databaseTimestamps as $timestamp) {
+            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+        }
+
+        $this->assertSame($expectedIsDatabaseVersionApplied, $migrationManager->isDatabaseVersionApplied($version));
+    }
+
+    /**
+     * @return array<int, array<int, array<int, mixed>>>
+     */
+    public function getAllDatabaseVersionsDataProvider(): array
+    {
+        return [
+            [
+                [
+                    1 => null,
+                    2 => null,
+                    3 => null,
+                ],
+                [1, 2, 3],
+            ],
+            [
+                [
+                    1 => date('Y-m-d H:i:s'),
+                    2 => date('Y-m-d H:i:s', strtotime('-1 day')),
+                    3 => date('Y-m-d H:i:s', strtotime('+1 day')),
+                ],
+                [2, 1, 3],
+            ],
+            [
+                [
+                    1 => date('Y-m-d H:i:s'),
+                    2 => date('Y-m-d H:i:s', strtotime('-1 day')),
+                    3 => date('Y-m-d H:i:s', strtotime('-1 day')),
+                ],
+                [2, 3, 1],
+            ],
+            [
+                [
+                    1 => null,
+                    2 => date('Y-m-d H:i:s', strtotime('+1 day')),
+                    3 => date('Y-m-d H:i:s'),
+                ],
+                [1, 3, 2],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<int, array<int>|int>>
+     */
+    public function getValidMigrationTimestampsDataProvider(): array
+    {
+        return [
+            'The method should return full diff if a specific version is not provided.' => [
+                [1, 2, 3],
+                [1, 2],
+                [3],
+            ],
+            'The method should return full diff if the given version is not found in the intersection.' => [
+                [1, 2, 3],
+                [1, 2],
+                [3],
+                4,
+            ],
+            'The method should cut all values from the diff after the given version.' => [
+                [1, 2, 3, 4],
+                [1],
+                [2, 3],
+                3,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<int, array|int>>
+     */
+    public function getAlreadyExecutedTimestampsDataProvider(): array
+    {
+        return [
+            'The method should return an empty array if no intersection is found.' => [
+                [1, 2, 3],
+                [],
+                [],
+            ],
+            'The method should return full intersection if a specific version is not provided.' => [
+                [1, 2, 3, 4],
+                [1 => null, 2 => null, 3 => null],
+                [1, 2, 3],
+            ],
+            'The method should return the intersection according to the order of executed migrations.' => [
+                [1, 2, 3, 4],
+                [1 => date('Y-m-d H:i:s'), 2 => null, 3 => null],
+                [2, 3, 1],
+            ],
+            'The method should return a full intersection if the given version is not found in the intersection.' => [
+                [1, 2, 3, 4],
+                [1 => null, 2 => null, 3 => null],
+                [1, 2, 3],
+                4,
+            ],
+            'The method should cut all values from the intersection before the given version.' => [
+                [1, 2, 3, 4],
+                [1 => null, 2 => null, 3 => null],
+                [3],
+                2,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<int, array<int, mixed>>
+     */
+    public function isDatabaseVersionsAppliedDataProvider(): array
+    {
+        return [
+            [
+                [1, 2, 3],
+                [1, 2],
+                4,
+                false,
+            ],
+            [
+                [1, 2, 3],
+                [1, 2],
+                1,
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $migrationManager
+     * @param array<int, string|null> $migrationData
+     *
+     * @return void
+     */
+    private function addMigrations(MigrationManager $migrationManager, array $migrationData): void
+    {
+        $platform = $migrationManager->getPlatform('migration');
+        $connection = $migrationManager->getAdapterConnection('migration');
+
+        foreach ($migrationData as $version => $executionDatetime) {
+            $sql = sprintf(
+                'INSERT INTO %s (%s, %s) VALUES (?, ?)',
+                $migrationManager->getMigrationTable(),
+                $platform->doQuoting('version'),
+                $platform->doQuoting('execution_datetime'),
+            );
+
+            $stmt = $connection->prepare($sql);
+            $stmt->bindParam(1, $version, PDO::PARAM_INT);
+            $stmt->bindParam(
+                2,
+                $executionDatetime,
+                $executionDatetime === null ? PDO::PARAM_NULL : PDO::PARAM_STR,
+            );
+
+            $stmt->execute();
+        }
+    }
+
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $migrationManager
+     * @param string $columnName
+     *
+     * @return bool
+     */
+    private function columnExists(MigrationManager $migrationManager, string $columnName): bool
+    {
+        $connection = $migrationManager->getAdapterConnection('migration');
+
+        $sql = sprintf(
+            'SELECT %s FROM %s',
+            $columnName,
+            $migrationManager->getMigrationTable(),
+        );
+
+        try {
+            $stmt = $connection->prepare($sql);
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

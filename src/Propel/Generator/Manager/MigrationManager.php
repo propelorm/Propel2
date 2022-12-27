@@ -150,34 +150,27 @@ class MigrationManager extends AbstractManager
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
-        /** @var array<int> $migrationTimestamps */
         $migrationTimestamps = [];
         foreach ($connections as $name => $params) {
-            $conn = $this->getAdapterConnection($name);
-            $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
-            if (!$platform->supportsMigrations()) {
-                continue;
-            }
-
-            $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-
             try {
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-
-                while ($migrationTimestamp = $stmt->fetchColumn()) {
-                    /** @phpstan-var int $migrationTimestamp */
-                    $migrationTimestamps[] = $migrationTimestamp;
-                }
+                $migrationTimestamps += $this->getMigrationData($name);
             } catch (PDOException $e) {
                 $this->createMigrationTable($name);
                 $migrationTimestamps = [];
             }
         }
 
-        sort($migrationTimestamps);
+        usort($migrationTimestamps, function (array $a, array $b) {
+            if ($a['execution_datetime'] === $b['execution_datetime']) {
+                return $a['version'] <=> $b['version'];
+            }
 
-        return $migrationTimestamps;
+            return $a['execution_datetime'] <=> $b['execution_datetime'];
+        });
+
+        return array_map(function (array $migrationTimestamp) {
+            return (int)$migrationTimestamp['version'];
+        }, $migrationTimestamps);
     }
 
     /**
@@ -222,6 +215,8 @@ class MigrationManager extends AbstractManager
         $column->setDefaultValue('0');
 
         $table->addColumn($column);
+
+        $table->addColumn($this->createExecutionDatetimeColumn($platform));
         // insert the table into the database
         $statements = $platform->getAddTableDDL($table);
         $conn = $this->getAdapterConnection($datasource);
@@ -264,13 +259,21 @@ class MigrationManager extends AbstractManager
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
+
+        $this->modifyMigrationTableIfOutdated($conn, $platform);
+
         $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (?)',
+            'INSERT INTO %s (%s, %s) VALUES (?, ?)',
             $this->getMigrationTable(),
             $platform->doQuoting('version'),
+            $platform->doQuoting('execution_datetime'),
         );
+
+        $executionDatetime = date('Y-m-d H:i:s');
+
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
+        $stmt->bindParam(2, $executionDatetime);
         $stmt->execute();
     }
 
@@ -295,14 +298,25 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return array<int>
+     * @param int|null $version
+     *
+     * @return list<int>
      */
-    public function getValidMigrationTimestamps(): array
+    public function getValidMigrationTimestamps(?int $version = null): array
     {
         $migrationTimestamps = array_diff($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
         sort($migrationTimestamps);
 
-        return $migrationTimestamps;
+        if ($version === null) {
+            return $migrationTimestamps;
+        }
+
+        $versionIndex = array_search($version, $migrationTimestamps, true);
+        if ($versionIndex === false) {
+            return $migrationTimestamps;
+        }
+
+        return array_slice($migrationTimestamps, 0, $versionIndex + 1);
     }
 
     /**
@@ -314,14 +328,30 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return array<int>
+     * @param int|null $version
+     *
+     * @return list<int>
      */
-    public function getAlreadyExecutedMigrationTimestamps(): array
+    public function getAlreadyExecutedMigrationTimestamps(?int $version = null): array
     {
-        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
-        sort($migrationTimestamps);
+        $allDatabaseVersions = $this->getAllDatabaseVersions();
+        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $allDatabaseVersions);
 
-        return $migrationTimestamps;
+        $sortOrder = array_flip($allDatabaseVersions);
+        usort($migrationTimestamps, function (int $a, int $b) use ($sortOrder) {
+            return $sortOrder[$a] <=> $sortOrder[$b];
+        });
+
+        if ($version === null) {
+            return $migrationTimestamps;
+        }
+
+        $versionIndex = array_search($version, $migrationTimestamps, true);
+        if ($versionIndex === false) {
+            return $migrationTimestamps;
+        }
+
+        return array_slice($migrationTimestamps, $versionIndex + 1);
     }
 
     /**
@@ -503,5 +533,111 @@ class MigrationManager extends AbstractManager
         }
 
         return array_pop($versions);
+    }
+
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @throws \Exception
+     *
+     * @return void
+     */
+    public function modifyMigrationTableIfOutdated(ConnectionInterface $connection, PlatformInterface $platform): void
+    {
+        if ($this->columnExists($connection, 'execution_datetime')) {
+            return;
+        }
+
+        $table = new Table($this->getMigrationTable());
+
+        $column = $this->createExecutionDatetimeColumn($platform);
+        $column->setTable($table);
+
+        /** @phpstan-var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $sql = $platform->getAddColumnDDL($column);
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute();
+    }
+
+    /**
+     * @param int $version
+     *
+     * @return bool
+     */
+    public function isDatabaseVersionApplied(int $version): bool
+    {
+        return in_array($version, $this->getAlreadyExecutedMigrationTimestamps());
+    }
+
+    /**
+     * @param string $connectionName
+     *
+     * @return array
+     */
+    protected function getMigrationData(string $connectionName): array
+    {
+        $connection = $this->getAdapterConnection($connectionName);
+        $platform = $this->getGeneratorConfig()->getConfiguredPlatform($connection);
+        if (!$platform->supportsMigrations()) {
+            return [];
+        }
+
+        $this->modifyMigrationTableIfOutdated($connection, $platform);
+
+        $sql = sprintf(
+            'SELECT %s, %s FROM %s',
+            'version',
+            'execution_datetime',
+            $this->getMigrationTable(),
+        );
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute();
+
+        $migrationData = [];
+        while ($migrationRow = $stmt->fetch()) {
+            $migrationData[] = $migrationRow;
+        }
+
+        return $migrationData;
+    }
+
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    protected function createExecutionDatetimeColumn(PlatformInterface $platform): Column
+    {
+        $column = new Column('execution_datetime');
+        $column->getDomain()->copy($platform->getDomainForType('DATETIME'));
+
+        return $column;
+    }
+
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     * @param string $columnName
+     *
+     * @return bool
+     */
+    protected function columnExists(ConnectionInterface $connection, string $columnName): bool
+    {
+        $sql = sprintf(
+            'SELECT %s FROM %s',
+            $columnName,
+            $this->getMigrationTable(),
+        );
+
+        try {
+            $stmt = $connection->prepare($sql);
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }
