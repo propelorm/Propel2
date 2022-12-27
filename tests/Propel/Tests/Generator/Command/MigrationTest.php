@@ -145,6 +145,30 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
+    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->assertStringContainsString('The last executed version of the migration is', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
+
+        $this->assertStringNotContainsString('The last executed version of the migration is', $outputString);
+    }
+
+    /**
+     * @return void
+     */
     private function deleteMigrationFiles(): void
     {
         $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . 'PropelMigration_*.php');
