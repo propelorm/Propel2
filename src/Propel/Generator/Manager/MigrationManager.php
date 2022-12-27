@@ -545,8 +545,6 @@ class MigrationManager extends AbstractManager
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection
      * @param \Propel\Generator\Platform\PlatformInterface $platform
      *
-     * @throws \Exception
-     *
      * @return void
      */
     public function modifyMigrationTableIfOutdated(ConnectionInterface $connection, PlatformInterface $platform): void
