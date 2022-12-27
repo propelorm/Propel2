@@ -13,6 +13,7 @@ use Propel\Generator\Command\MigrationCreateCommand;
 use Propel\Generator\Command\MigrationDiffCommand;
 use Propel\Generator\Command\MigrationDownCommand;
 use Propel\Generator\Command\MigrationMigrateCommand;
+use Propel\Generator\Command\MigrationStatusCommand;
 use Propel\Generator\Command\MigrationUpCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
@@ -51,6 +52,13 @@ class MigrationTest extends TestCaseFixturesDatabase
      * @var string
      */
     private const COMMAND_OPTION_MIGRATE_TO_VERSION = '--migrate-to-version';
+
+    /**
+     * @see \Propel\Generator\Command\MigrationStatusCommand::COMMAND_OPTION_LAST_VERSION
+     *
+     * @var string
+     */
+    private const COMMAND_OPTION_LAST_VERSION = '--last-version';
 
     /**
      * @uses \Propel\Generator\Manager\MigrationManager::COL_VERSION
@@ -221,6 +229,30 @@ class MigrationTest extends TestCaseFixturesDatabase
         $this->assertStringContainsString('Migration complete. No further migration to execute.', $outputString);
 
         $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->assertStringContainsString('The last executed version of the migration is', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
+
+        $this->assertStringNotContainsString('The last executed version of the migration is', $outputString);
     }
 
     /**
