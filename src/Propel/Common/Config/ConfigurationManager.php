@@ -228,7 +228,7 @@ class ConfigurationManager
      *
      * @throws \Propel\Common\Config\Exception\InvalidArgumentException
      *
-     * @return array<string>
+     * @return array<int, string>
      */
     private function getConfigFileNamesFromDirectory(string $path): array
     {

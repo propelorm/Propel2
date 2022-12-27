@@ -243,6 +243,7 @@ class ColumnMap
         return in_array($this->type, [
             PropelTypes::TIMESTAMP,
             PropelTypes::DATE,
+            PropelTypes::DATETIME,
             PropelTypes::TIME,
             PropelTypes::BU_DATE,
             PropelTypes::BU_TIMESTAMP,
@@ -291,6 +292,16 @@ class ColumnMap
             PropelTypes::LONGVARCHAR,
             PropelTypes::CHAR,
         ]);
+    }
+
+    /**
+     * Whether this column contains UUIDs.
+     *
+     * @return bool
+     */
+    public function isUuid(): bool
+    {
+        return PropelTypes::isUuidType($this->type);
     }
 
     /**

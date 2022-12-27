@@ -27,6 +27,7 @@ use Map\ArchivableTest5TableMap;
 use Map\MyOldArchivableTest3TableMap;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
+use function substr_count;
 
 /**
  * Tests for ArchivableBehavior class
@@ -57,7 +58,7 @@ class ArchivableBehaviorTest extends TestCase
         <foreign-key foreignTable="archivable_test_2">
             <reference local="foo_id" foreign="id"/>
         </foreign-key>
-        <index>
+        <index name="archivable_test_1_idx_title_age">
             <index-column name="title"/>
             <index-column name="age"/>
         </index>
@@ -83,6 +84,9 @@ class ArchivableBehaviorTest extends TestCase
         <unique>
             <unique-column name="title"/>
         </unique>
+        <index>
+            <index-column name="title"/>
+        </index>
         <behavior name="archivable">
             <parameter name="log_archived_at" value="false"/>
             <parameter name="archive_table" value="my_old_archivable_test_3"/>
@@ -206,6 +210,15 @@ EOF;
         $table = ArchivableTest2ArchiveTableMap::getTableMap();
         $expected = 'CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);';
         $this->assertStringContainsString($expected, self::$generatedSQL);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCopiedUniqueDoesNotDuplicateCopiedIndex()
+    {
+        $expectedSqlMigration = 'CREATE INDEX my_old_archivable_test_3_i_639136 ON my_old_archivable_test_3 (title);';
+        $this->assertSame(1, substr_count(self::$generatedSQL, $expectedSqlMigration));
     }
 
     /**

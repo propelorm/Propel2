@@ -304,18 +304,17 @@ class TableComparator
                 $sameName = $caseInsensitive ?
                     strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
                     $fromTableFk->getName() == $toTableFk->getName();
-                if ($sameName && !$toTableFk->isPolymorphic()) {
-                    if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
-                    } else {
-                        // same name, but different columns
-                        $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
-                        $fkDifferences++;
-                    }
+                if (!$sameName || $toTableFk->isPolymorphic()) {
+                    continue;
                 }
+                $hasChanged = ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive);
+                if ($hasChanged) {
+                    // same name, but different columns
+                    $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
+                    $fkDifferences++;
+                }
+                unset($fromTableFks[$fromTableFkPos]);
+                unset($toTableFks[$toTableFkPos]);
             }
         }
 

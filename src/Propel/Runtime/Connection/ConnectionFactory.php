@@ -46,7 +46,7 @@ class ConnectionFactory
     ): ConnectionInterface {
         if (static::$useProfilerConnection) {
             $connectionClass = ProfilerConnectionWrapper::class;
-        } else if (isset($configuration['classname'])) {
+        } elseif (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];
         } else {
             $connectionClass = $defaultConnectionClass;

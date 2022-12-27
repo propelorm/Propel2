@@ -58,6 +58,7 @@ class OracleSchemaParser extends AbstractSchemaParser
         'NUMBER' => PropelTypes::INTEGER,
         'NVARCHAR2' => PropelTypes::VARCHAR,
         'TIMESTAMP' => PropelTypes::TIMESTAMP,
+        'UUID' => PropelTypes::UUID,
         'VARCHAR2' => PropelTypes::VARCHAR,
     ];
 

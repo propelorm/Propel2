@@ -119,6 +119,11 @@ class PropelTypes
     /**
      * @var string
      */
+    public const DATETIME = 'DATETIME';
+
+    /**
+     * @var string
+     */
     public const TIME = 'TIME';
 
     /**
@@ -279,6 +284,11 @@ class PropelTypes
     /**
      * @var string
      */
+    public const DATETIME_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const TIME_NATIVE_TYPE = 'string';
 
     /**
@@ -332,6 +342,21 @@ class PropelTypes
     public const JSON_TYPE = 'string';
 
     /**
+     * @var string
+     */
+    public const UUID = 'UUID';
+
+    /**
+     * @var string
+     */
+    public const UUID_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
+    public const UUID_BINARY = 'UUID_BINARY';
+
+    /**
      * Propel mapping types.
      *
      * @var array
@@ -355,6 +380,7 @@ class PropelTypes
         self::LONGVARBINARY,
         self::BLOB,
         self::DATE,
+        self::DATETIME,
         self::TIME,
         self::TIMESTAMP,
         self::BOOLEAN,
@@ -370,6 +396,8 @@ class PropelTypes
         self::BU_TIMESTAMP,
         self::SET,
         self::JSON,
+        self::UUID,
+        self::UUID_BINARY,
     ];
 
     /**
@@ -397,6 +425,7 @@ class PropelTypes
         self::LONGVARBINARY => self::LONGVARBINARY_NATIVE_TYPE,
         self::BLOB => self::BLOB_NATIVE_TYPE,
         self::DATE => self::DATE_NATIVE_TYPE,
+        self::DATETIME => self::DATETIME_NATIVE_TYPE,
         self::BU_DATE => self::BU_DATE_NATIVE_TYPE,
         self::TIME => self::TIME_NATIVE_TYPE,
         self::TIMESTAMP => self::TIMESTAMP_NATIVE_TYPE,
@@ -409,6 +438,8 @@ class PropelTypes
         self::SET => self::SET_NATIVE_TYPE,
         self::GEOMETRY => self::GEOMETRY,
         self::JSON => self::JSON_TYPE,
+        self::UUID => self::UUID_NATIVE_TYPE,
+        self::UUID_BINARY => self::UUID_NATIVE_TYPE,
     ];
 
     /**
@@ -437,6 +468,7 @@ class PropelTypes
         self::LONGVARBINARY => PDO::PARAM_LOB,
         self::BLOB => PDO::PARAM_LOB,
         self::DATE => PDO::PARAM_STR,
+        self::DATETIME => PDO::PARAM_STR,
         self::TIME => PDO::PARAM_STR,
         self::TIMESTAMP => PDO::PARAM_STR,
         self::BOOLEAN => PDO::PARAM_BOOL,
@@ -453,6 +485,8 @@ class PropelTypes
         self::BU_DATE => PDO::PARAM_STR,
         self::BU_TIMESTAMP => PDO::PARAM_STR,
         self::JSON => PDO::PARAM_STR,
+        self::UUID => PDO::PARAM_STR,
+        self::UUID_BINARY => PDO::PARAM_LOB,
     ];
 
     /**
@@ -524,11 +558,12 @@ class PropelTypes
     {
         return in_array($type, [
             self::DATE,
+            self::DATETIME,
             self::TIME,
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
-        ]);
+        ], true);
     }
 
     /**
@@ -546,12 +581,13 @@ class PropelTypes
             self::LONGVARCHAR,
             self::CLOB,
             self::DATE,
+            self::DATETIME,
             self::TIME,
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
             self::JSON,
-        ]);
+        ], true);
     }
 
     /**
@@ -573,7 +609,7 @@ class PropelTypes
             self::NUMERIC,
             self::DECIMAL,
             self::REAL,
-        ]);
+        ], true);
     }
 
     /**
@@ -585,7 +621,7 @@ class PropelTypes
      */
     public static function isBooleanType(string $mappingType): bool
     {
-        return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU]);
+        return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU], true);
     }
 
     /**
@@ -597,7 +633,22 @@ class PropelTypes
      */
     public static function isLobType(string $mappingType): bool
     {
-        return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY]);
+        return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY], true);
+    }
+
+    /**
+     * Returns whether the given type is a UUID type.
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isUuidType(string $type): bool
+    {
+        return in_array($type, [
+            self::UUID,
+            self::UUID_BINARY,
+        ], true);
     }
 
     /**
@@ -609,7 +660,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string']);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string'], true);
     }
 
     /**
@@ -621,7 +672,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveNumericType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float']);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float'], true);
     }
 
     /**
@@ -633,7 +684,7 @@ class PropelTypes
      */
     public static function isPhpObjectType(string $phpType): bool
     {
-        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array']);
+        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array'], true);
     }
 
     /**

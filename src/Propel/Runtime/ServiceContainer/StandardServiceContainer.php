@@ -28,6 +28,9 @@ use Propel\Runtime\Util\Profiler;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
+/**
+ * @psalm-import-type \Propel\Runtime\Map\TableMapDump from \Propel\Runtime\Map\DatabaseMap
+ */
 class StandardServiceContainer implements ServiceContainerInterface
 {
     /**
@@ -50,12 +53,14 @@ class StandardServiceContainer implements ServiceContainerInterface
     protected const HOWTO_FIX_MISSING_LOADER_SCRIPT_URL = 'https://github.com/propelorm/Propel2/wiki/Exception-Target:-Loading-the-database';
 
     /**
-     * @var array<\Propel\Runtime\Adapter\AdapterInterface> List of database adapter instances
+     * @var array<string, \Propel\Runtime\Adapter\AdapterInterface> List of database adapter instances
      */
     protected $adapters = [];
 
     /**
-     * @var array<string> List of database adapter classes
+     * @phpstan-var array<string, class-string<\Propel\Runtime\Adapter\AdapterInterface>>
+     *
+     * @var array<string, string> List of database adapter classes
      */
     protected $adapterClasses = [];
 
@@ -149,7 +154,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * This allows for lazy-loading adapter objects in getAdapter().
      *
      * @param string $name The datasource name
-     * @param string $adapterClass
+     * @param class-string<\Propel\Runtime\Adapter\AdapterInterface> $adapterClass
      *
      * @return void
      */
@@ -162,7 +167,7 @@ class StandardServiceContainer implements ServiceContainerInterface
     /**
      * Reset existing adapters classes and set new classes for all datasources.
      *
-     * @param array<string> $adapterClasses A list of adapters
+     * @param array<string, class-string<\Propel\Runtime\Adapter\AdapterInterface>> $adapterClasses A list of adapters
      *
      * @return void
      */
@@ -264,7 +269,26 @@ class StandardServiceContainer implements ServiceContainerInterface
 
         foreach ($databaseNameToTableMapClassNames as $databaseName => $tableMapClassNames) {
             $databaseMap = $this->getDatabaseMap($databaseName);
-            array_map([$databaseMap, 'addTableFromMapClass'], $tableMapClassNames);
+            $databaseMap->registerTableMapClasses($tableMapClassNames);
+        }
+    }
+
+    /**
+     * @psalm-param array<string, \Propel\Runtime\Map\TableMapDump> $databaseNameToTableMapDumps
+     *
+     * @param array<string, array<string, class-string<\Propel\Runtime\Map\TableMap>>> $databaseNameToTableMapDumps
+     *
+     * @return void
+     */
+    public function initDatabaseMapFromDumps(array $databaseNameToTableMapDumps = []): void
+    {
+        if ($this->databaseMaps === null) {
+            $this->databaseMaps = [];
+        }
+
+        foreach ($databaseNameToTableMapDumps as $databaseName => $tableMapDumps) {
+            $databaseMap = $this->getDatabaseMap($databaseName);
+            $databaseMap->loadMapsFromDump($tableMapDumps);
         }
     }
 
@@ -585,7 +609,7 @@ class StandardServiceContainer implements ServiceContainerInterface
                 $handler = new RotatingFileHandler(
                     $configuration['path'],
                     $configuration['max_files'] ?? 0,
-                    $configuration['level'] ?? null,
+                    $configuration['level'] ?? 100,
                     $configuration['bubble'] ?? true,
                 );
 
@@ -593,8 +617,8 @@ class StandardServiceContainer implements ServiceContainerInterface
             case 'syslog':
                 $handler = new SyslogHandler(
                     $configuration['ident'],
-                    $configuration['facility'] ?? null,
-                    $configuration['level'] ?? null,
+                    $configuration['facility'] ?? LOG_USER,
+                    $configuration['level'] ?? 100,
                     $configuration['bubble'] ?? true,
                 );
 

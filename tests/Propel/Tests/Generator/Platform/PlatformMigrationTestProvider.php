@@ -12,6 +12,8 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Diff\ColumnComparator;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Model\Diff\TableComparator;
+use Propel\Generator\Model\Diff\TableDiff;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 
 /**
@@ -578,5 +580,68 @@ EOF;
         $diff = DatabaseComparator::computeDiff($d2, $d1);
 
         return [[$diff]];
+    }
+
+    protected function buildTableDiff(string $tableName, string $tableColumnsFrom, string $tableColumnsTo): TableDiff
+    {
+        $schema1 = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="$tableName">
+        $tableColumnsFrom
+    </table>
+</database>
+EOF;
+        $schema2 = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="$tableName">
+        $tableColumnsTo
+    </table>
+</database>
+EOF;
+
+        $t1 = $this->getDatabaseFromSchema($schema1)->getTable($tableName);
+        $t2 = $this->getDatabaseFromSchema($schema2)->getTable($tableName);
+        $tc = new TableComparator();
+        $tc->setFromTable($t1);
+        $tc->setToTable($t2);
+        $tc->compareColumns();
+
+        return $tc->getTableDiff();
+    }
+
+    public function providerForTestMigrateToUUIDColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36" autoIncrement="true"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="UUID" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
+    }
+
+    public function providerForTestMigrateToUuidBinColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="UUID_BINARY" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
+    }
+
+    public function providerForTestMigrateFromUuidBinColumn()
+    {
+        $tableColumnsFrom = <<<EOF
+        <column name="id" primaryKey="true" type="UUID_BINARY" default="vendor_specific_uuid_generator_function()"/>
+EOF;
+        $tableColumnsTo = <<<EOF
+        <column name="id" primaryKey="true" type="VARCHAR" size="36" content="UUID"/>
+EOF;
+
+        return [[$this->buildTableDiff('foo', $tableColumnsFrom, $tableColumnsTo)]];
     }
 }

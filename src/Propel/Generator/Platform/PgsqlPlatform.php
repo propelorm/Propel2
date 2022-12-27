@@ -40,9 +40,9 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'BOOLEAN'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'INT2'));
@@ -61,6 +61,9 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT4'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'TIMESTAMP'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'uuid'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BYTEA'));
     }
 
     /**
@@ -581,7 +584,7 @@ ALTER TABLE %s RENAME TO %s;
      */
     public function hasSize(string $sqlType): bool
     {
-        return !in_array($sqlType, ['BYTEA', 'TEXT', 'DOUBLE PRECISION']);
+        return !in_array(strtoupper($sqlType), ['BYTEA', 'TEXT', 'DOUBLE PRECISION'], true);
     }
 
     /**
@@ -669,9 +672,6 @@ CREATE SEQUENCE %s;
             }
 
             if (!$toColumn->isAutoIncrement() && $fromColumn->isAutoIncrement()) {
-                $changedProperties['defaultValueValue'] = [$fromColumn->getDefaultValueString(), null];
-                $toColumn->setDefaultValue(null);
-
                 //remove sequence
                 if ($fromTable->getDatabase()->hasSequence($seqName)) {
                     $this->createOrDropSequences .= sprintf(
@@ -734,11 +734,23 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
+    public function isUuid(string $type): bool
+    {
+        $strings = ['UUID'];
+
+        return in_array(strtoupper($type), $strings, true);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
     public function isString(string $type): bool
     {
         $strings = ['VARCHAR'];
 
-        return in_array(strtoupper($type), $strings);
+        return in_array(strtoupper($type), $strings, true);
     }
 
     /**
@@ -750,7 +762,7 @@ DROP SEQUENCE %s CASCADE;
     {
         $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
 
-        return in_array(strtoupper($type), $numbers);
+        return in_array(strtoupper($type), $numbers, true);
     }
 
     /**
@@ -765,10 +777,6 @@ DROP SEQUENCE %s CASCADE;
         $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
         $name = $fromColumn->getName();
 
-        if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
-            //cast from int to string
-            return '  ';
-        }
         if ($this->isString($fromSqlType) && $this->isNumber($toSqlType)) {
             //cast from string to int
             return "
@@ -781,16 +789,18 @@ DROP SEQUENCE %s CASCADE;
             return " USING decode(CAST($name as text), 'escape')";
         }
 
-        if ($fromSqlType === 'DATE' && $toSqlType === 'TIME') {
-            return ' USING NULL';
-        }
-
-        if ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) {
+        if (
+            ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) ||
+            ($this->isString($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isUuid($fromSqlType) && $this->isString($toSqlType))
+        ) {
+            // no cast necessary
             return '';
         }
 
-        if ($this->isString($fromSqlType) && $this->isString($toSqlType)) {
-            return '';
+        if ($this->isString($fromSqlType) && $this->isUuid($toSqlType)) {
+            return " USING $name::uuid";
         }
 
         return ' USING NULL';

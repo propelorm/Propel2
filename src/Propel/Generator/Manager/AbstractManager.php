@@ -17,7 +17,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Schema;
-use XsltProcessor;
+use XSLTProcessor;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema
@@ -30,8 +30,9 @@ use XsltProcessor;
 abstract class AbstractManager
 {
     /**
-     * @var array
      * Data models that we collect. One from each XML schema file.
+     *
+     * @var list<\Propel\Generator\Model\Schema>
      */
     protected $dataModels = [];
 
@@ -322,7 +323,7 @@ abstract class AbstractManager
                     // normalize the document using normalizer stylesheet
                     $xslDom = new DOMDocument('1.0', 'UTF-8');
                     $xslDom->load($this->xsl->getAbsolutePath());
-                    $xsl = new XsltProcessor();
+                    $xsl = new XSLTProcessor();
                     $xsl->importStyleSheet($xslDom);
                     $dom = $xsl->transformToDoc($dom);
                 }

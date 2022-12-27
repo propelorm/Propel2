@@ -1,10 +1,12 @@
-<?php declare(strict_types = 1);
+<?php
 
 /**
  * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Propel\Generator\Util;
 
@@ -344,7 +346,7 @@ class QuickBuilder
             } catch (Exception $e) {
                 //echo $sql; //uncomment for better debugging
                 throw new BuildException(sprintf(
-                    "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
+                    "Cannot execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n\nDiff:\n%s",
                     $statement,
                     $this->database,
                     $database,

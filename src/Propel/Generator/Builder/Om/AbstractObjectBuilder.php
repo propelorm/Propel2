@@ -39,6 +39,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
             // if they're not using the DateTime class then we will generate "compatibility" accessor method
             if (
                 $type === PropelTypes::DATE
+                || $type === PropelTypes::DATETIME
                 || $type === PropelTypes::TIME
                 || $type === PropelTypes::TIMESTAMP
             ) {
@@ -90,6 +91,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 $this->addLobMutator($script, $col);
             } elseif (
                 $col->getType() === PropelTypes::DATE
+                || $col->getType() === PropelTypes::DATETIME
                 || $col->getType() === PropelTypes::TIME
                 || $col->getType() === PropelTypes::TIMESTAMP
             ) {

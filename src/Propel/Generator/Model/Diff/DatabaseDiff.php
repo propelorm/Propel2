@@ -19,12 +19,12 @@ use Propel\Generator\Model\Table;
 class DatabaseDiff
 {
     /**
-     * @var array<\Propel\Generator\Model\Table>
+     * @var array<string, \Propel\Generator\Model\Table>
      */
     protected $addedTables;
 
     /**
-     * @var array<\Propel\Generator\Model\Table>
+     * @var array<string, \Propel\Generator\Model\Table>
      */
     protected $removedTables;
 
@@ -34,12 +34,12 @@ class DatabaseDiff
     protected $modifiedTables;
 
     /**
-     * @var array<string>
+     * @var array<string, string>
      */
     protected $renamedTables;
 
     /**
-     * @var array<string>
+     * @var array<string, string>
      */
     protected $possibleRenamedTables;
 
@@ -145,7 +145,7 @@ class DatabaseDiff
     /**
      * Sets the removes tables.
      *
-     * @param array<\Propel\Generator\Model\Table> $tables
+     * @param array<string, \Propel\Generator\Model\Table> $tables
      *
      * @return void
      */
@@ -182,7 +182,7 @@ class DatabaseDiff
     /**
      * Returns the list of removed tables.
      *
-     * @return array<\Propel\Generator\Model\Table>
+     * @return array<string, \Propel\Generator\Model\Table>
      */
     public function getRemovedTables(): array
     {
@@ -214,7 +214,7 @@ class DatabaseDiff
     /**
      * Sets the modified tables
      *
-     * @param array<\Propel\Generator\Model\Diff\TableDiff> $tables
+     * @param array<string, \Propel\Generator\Model\Diff\TableDiff> $tables
      *
      * @return void
      */
@@ -249,7 +249,7 @@ class DatabaseDiff
     /**
      * Returns the modified tables.
      *
-     * @return array<\Propel\Generator\Model\Diff\TableDiff>
+     * @return array<string, \Propel\Generator\Model\Diff\TableDiff>
      */
     public function getModifiedTables(): array
     {
@@ -259,7 +259,7 @@ class DatabaseDiff
     /**
      * Sets the renamed tables.
      *
-     * @param array<string> $tables
+     * @param array<string, string> $tables
      *
      * @return void
      */
@@ -284,7 +284,7 @@ class DatabaseDiff
     /**
      * Returns the list of renamed tables.
      *
-     * @return array<string>
+     * @return array<string, string>
      */
     public function getRenamedTables(): array
     {

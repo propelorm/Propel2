@@ -8,7 +8,6 @@
 
 namespace Propel\Runtime\Collection;
 
-use Iterator;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -19,10 +18,8 @@ use Propel\Runtime\Propel;
  * Class for iterating over a statement and returning one Propel object at a time
  *
  * @author Francois Zaninotto
- *
- * @implements \Iterator<int|string, mixed>
  */
-class OnDemandIterator implements Iterator
+class OnDemandIterator implements IteratorInterface
 {
     /**
      * @var \Propel\Runtime\Formatter\ObjectFormatter

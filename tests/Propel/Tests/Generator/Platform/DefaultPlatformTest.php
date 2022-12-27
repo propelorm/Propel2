@@ -11,6 +11,7 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Tests\TestCase;
 
 class DefaultPlatformTest extends TestCase
@@ -22,7 +23,7 @@ class DefaultPlatformTest extends TestCase
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         if (null === $this->platform) {
             $this->platform = new DefaultPlatform();
@@ -179,6 +180,7 @@ class DefaultPlatformTest extends TestCase
             [$this->createColumn(PropelTypes::DATE, '2020-02-03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d") : null, PDO::PARAM_STR);'],
             [$this->createColumn(PropelTypes::TIME, '11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("H:i:s.u") : null, PDO::PARAM_STR);'],
             [$this->createColumn(PropelTypes::TIMESTAMP, '2020-02-03 11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);'],
+            [$this->createColumn(PropelTypes::DATETIME, '2022-06-28 11:01:03'), '$stmt->bindValue(ID, ACCESSOR ? ACCESSOR->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);'],
             [$this->createColumn(PropelTypes::BLOB, 'BLOB'), '$stmt->bindValue(ID, ACCESSOR, PDO::PARAM_LOB);'],
         ];
     }

@@ -237,7 +237,7 @@ class BaseTest extends MigrationTestCase
         <column name="field5" type="FLOAT"/>
         <column name="field6" type="DOUBLE"/>
 
-        <column name="field7" type="BINARY"/>
+        <column name="field7" type="BINARY" size="6"/>
         <column name="field8" type="VARBINARY"/>
         <column name="field9" type="LONGVARBINARY"/>
         <column name="field10" type="BLOB"/>
@@ -247,6 +247,9 @@ class BaseTest extends MigrationTestCase
         <column name="field13" type="TIMESTAMP"/>
 
         <column name="field14" type="ENUM"/>
+
+        <column name="field15" type="TIMESTAMP"/>
+        <column name="field16" type="DATETIME"/>
     </table>
 </database>
 ';
@@ -265,13 +268,17 @@ class BaseTest extends MigrationTestCase
         <column name="field7" type="VARBINARY"/>
         <column name="field8" type="LONGVARBINARY"/>
         <column name="field9" type="BLOB"/>
-        <column name="field10" type="BINARY"/>
+        <column name="field10" type="BINARY" size="8"/>
 
         <column name="field11" type="TIME"/>
         <column name="field12" type="TIMESTAMP"/>
         <column name="field13" type="DATE"/>
 
         <column name="field14" type="VARCHAR" size="200"/>
+
+
+        <column name="field15" type="DATETIME"/>
+        <column name="field16" type="TIMESTAMP"/>
     </table>
 </database>
 ';

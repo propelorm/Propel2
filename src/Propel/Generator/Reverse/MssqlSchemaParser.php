@@ -60,7 +60,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'timestamp' => PropelTypes::BINARY,
         'tinyint identity' => PropelTypes::TINYINT,
         'tinyint' => PropelTypes::TINYINT,
-        'uniqueidentifier' => PropelTypes::CHAR,
+        'uniqueidentifier' => PropelTypes::UUID,
         'varbinary' => PropelTypes::VARBINARY,
         'varbinary(max)' => PropelTypes::CLOB,
         'varchar' => PropelTypes::VARCHAR,

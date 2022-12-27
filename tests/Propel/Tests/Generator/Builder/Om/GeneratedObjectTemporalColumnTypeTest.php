@@ -39,6 +39,7 @@ class GeneratedObjectTemporalColumnTypeTest extends TestCase
         <column name="bar2" type="TIME"/>
         <column name="bar3" type="TIMESTAMP"/>
         <column name="bar4" type="TIMESTAMP" default="2011-12-09"/>
+        <column name="datetimecolumn" type="DATETIME"/>
     </table>
 </database>
 EOF;
@@ -112,45 +113,39 @@ EOF;
         $r = new ComplexColumnTypeEntity5();
         $r->setBar3(time());
         $this->assertEquals(date('Y-m-d H:i'), $r->getBar3('Y-m-d H:i'));
+        
+        $r = new ComplexColumnTypeEntity5();
+        $r->setDatetimecolumn(time());
+        $this->assertEquals(date('Y-m-d H:i'), $r->getDatetimecolumn('Y-m-d H:i'));
     }
-
+    
+    public function persistenceDataProvider()
+    {
+        return [
+            // type description, column name , input date value, formatted input date, format
+            ['Date', 'Bar1', new DateTime('1999-12-20'), '1999-12-20', 'Y-m-d'],
+            ['Time', 'Bar2', strtotime('12:55'), '12:55', 'H:i'],
+            ['Timestamp', 'Bar3', new DateTime('1999-12-20 12:55'), '1999-12-20 12:55', 'Y-m-d H:i'],
+            ['Datetime', 'Datetimecolumn', new DateTime('2022-06-28 11:55'), '2022-06-28 11:55', 'Y-m-d H:i'],
+        ];
+    }
+    
     /**
-     * @return void
+     * @dataProvider persistenceDataProvider
      */
-    public function testDatePersistence()
+    public function testPersistence($typeDescription, $columnName, $inputDateValue, $formattedDate, $format)
     {
         $r = new ComplexColumnTypeEntity5();
-        $r->setBar1(new DateTime('1999-12-20'));
+        $r->setByName($columnName, $inputDateValue);
         $r->save();
         ComplexColumnTypeEntity5TableMap::clearInstancePool();
         $r1 = ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
-        $this->assertEquals('1999-12-20', $r1->getBar1(null)->format('Y-m-d'));
-    }
-
-    /**
-     * @return void
-     */
-    public function testTimePersistence()
-    {
-        $r = new ComplexColumnTypeEntity5();
-        $r->setBar2(strtotime('12:55'));
-        $r->save();
-        ComplexColumnTypeEntity5TableMap::clearInstancePool();
-        $r1 = ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
-        $this->assertEquals('12:55', $r1->getBar2(null)->format('H:i'));
-    }
-
-    /**
-     * @return void
-     */
-    public function testTimestampPersistence()
-    {
-        $r = new ComplexColumnTypeEntity5();
-        $r->setBar3(new DateTime('1999-12-20 12:55'));
-        $r->save();
-        ComplexColumnTypeEntity5TableMap::clearInstancePool();
-        $r1 = ComplexColumnTypeEntity5Query::create()->findPk($r->getId());
-        $this->assertEquals('1999-12-20 12:55', $r1->getBar3(null)->format('Y-m-d H:i'));
+        
+        $storedValue = $r1->getByName($columnName);
+        $this->assertInstanceOf(DateTime::class, $storedValue, "$typeDescription column should return DateTime objects");
+        
+        $formattedReturnValue = $storedValue->format($format);
+        $this->assertEquals($formattedDate, $formattedReturnValue, "$typeDescription column: persisted value should match");
     }
 
     /**

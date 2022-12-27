@@ -73,6 +73,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'timestamp with time zone' => PropelTypes::TIMESTAMP,
         'double precision' => PropelTypes::DOUBLE,
         'json' => PropelTypes::JSON,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**

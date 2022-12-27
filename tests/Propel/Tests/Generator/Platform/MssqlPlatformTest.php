@@ -14,6 +14,7 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MssqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
 class MssqlPlatformTest extends PlatformTestProvider
 {
@@ -22,7 +23,7 @@ class MssqlPlatformTest extends PlatformTestProvider
      *
      * @return \Propel\Generator\Platform\MssqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new MssqlPlatform();
     }
@@ -696,5 +697,42 @@ ALTER TABLE [foo] DROP CONSTRAINT [foo_bar_fk];
 -----------------------------------------------------------------------
 ";
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid] UNIQUEIDENTIFIER DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid] UNIQUEIDENTIFIER NULL,
+    CONSTRAINT [foo_pk] PRIMARY KEY ([uuid])
+);
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid-bin] BINARY(16) DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid-bin] BINARY(16) NULL,
+    CONSTRAINT [foo_pk] PRIMARY KEY ([uuid-bin])
+);
+";
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

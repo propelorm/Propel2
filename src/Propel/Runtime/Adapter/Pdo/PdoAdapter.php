@@ -331,6 +331,7 @@ abstract class PdoAdapter
             switch ($cMap->getType()) {
                 case PropelTypes::TIMESTAMP:
                 case PropelTypes::BU_TIMESTAMP:
+                case PropelTypes::DATETIME:
                     $value = $dt->format($this->getTimestampFormatter());
 
                     break;
@@ -480,7 +481,7 @@ abstract class PdoAdapter
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getPlainSelectedColumns(Criteria $criteria): array
     {

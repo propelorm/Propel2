@@ -18,6 +18,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\VendorInfo;
 
 /**
  * Baseclass for OM-building classes.
@@ -1189,4 +1190,28 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @return void
      */
     abstract protected function addClassClose(string &$script): void;
+
+    /**
+     * Returns the vendor info from the table for the configured platform.
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    protected function getVendorInfo(): VendorInfo
+    {
+        $dbVendorId = $this->getPlatform()->getDatabaseType();
+
+        return $this->getTable()->getVendorInfoForType($dbVendorId);
+    }
+
+    /**
+     * @psalm-return 'true'|'false'
+     *
+     * @see \Propel\Generator\Model\VendorInfo::getUuidSwapFlagLiteral()
+     *
+     * @return string
+     */
+    protected function getUuidSwapFlagLiteral(): string
+    {
+        return $this->getVendorInfo()->getUuidSwapFlagLiteral();
+    }
 }

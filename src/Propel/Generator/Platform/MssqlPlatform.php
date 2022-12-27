@@ -44,6 +44,7 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'DATETIME2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, 'DATE'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'TIME'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME2'));
@@ -56,6 +57,8 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'UNIQUEIDENTIFIER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BINARY(16)'));
     }
 
     /**
