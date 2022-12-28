@@ -51,11 +51,11 @@ class SetColumnConverter
      * Converts set column integer value to corresponding array.
      *
      * @param string|null $val
-     * @param array<string> $valueSet
+     * @param array<int, string> $valueSet
      *
      * @throws \Propel\Common\Exception\SetColumnConverterException
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function convertIntToArray(?string $val, array $valueSet): array
     {
@@ -63,10 +63,11 @@ class SetColumnConverter
             return [];
         }
         $bitValueStr = strrev(base_convert($val, 10, 2));
+        $bitLength = strlen($bitValueStr);
         $valueArr = [];
-        for ($bit = 0, $bitlen = strlen($bitValueStr); $bit < $bitlen; $bit++) {
+        for ($bit = 0; $bit < $bitLength; $bit++) {
             if (!isset($valueSet[$bit])) {
-                throw new SetColumnConverterException(sprintf('Unknown value key: "%s"', $bit), $bit);
+                throw new SetColumnConverterException(sprintf('Unknown value key `%s` for value `%s`', $bit, $val), $bit);
             }
             if ($bitValueStr[$bit] === '1') {
                 $valueArr[] = $valueSet[$bit];

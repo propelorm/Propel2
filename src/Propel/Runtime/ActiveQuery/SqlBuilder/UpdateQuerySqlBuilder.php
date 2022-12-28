@@ -23,7 +23,7 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
 
     /**
      * @psalm-var array<string, array<string>>
-     * @var array<string>
+     * @var array<array<string>>
      */
     protected $updateTablesColumns;
 

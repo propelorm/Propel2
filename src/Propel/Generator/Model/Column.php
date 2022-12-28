@@ -261,6 +261,27 @@ class Column extends MappingModel
     }
 
     /**
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
+     *
+     * @return \Propel\Generator\Model\Domain
+     */
+    protected function getDomainFromAttributes(?PlatformInterface $platform): Domain
+    {
+        $domainName = $this->getAttribute('domain');
+        if ($domainName) {
+             return $this->getDatabase()->getDomain($domainName);
+        }
+        $type = $this->getAttribute('type', static::DEFAULT_TYPE);
+        $type = strtoupper($type);
+        if ($platform) {
+            return $platform->getDomainForType($type);
+        }
+
+        // no platform - probably during tests
+        return new Domain($type);
+    }
+
+    /**
      * @throws \Propel\Generator\Exception\EngineException
      *
      * @return void
@@ -269,34 +290,11 @@ class Column extends MappingModel
     {
         try {
             $database = $this->getDatabase();
+            $platform = ($this->hasPlatform()) ? $this->getPlatform() : null;
+
             $domain = $this->getDomain();
-
-            $platform = null;
-            if ($this->hasPlatform()) {
-                $platform = $this->getPlatform();
-            }
-
-            $dom = $this->getAttribute('domain');
-            if ($dom) {
-                $domain->copy($database->getDomain($dom));
-            } else {
-                if ($this->getAttribute('type')) {
-                    $type = strtoupper($this->getAttribute('type'));
-                    if ($platform) {
-                        $domain->copy($platform->getDomainForType($type));
-                    } else {
-                        // no platform - probably during tests
-                        $this->setDomain(new Domain($type));
-                    }
-                } else {
-                    if ($platform) {
-                        $domain->copy($platform->getDomainForType(self::DEFAULT_TYPE));
-                    } else {
-                        // no platform - probably during tests
-                        $this->setDomain(new Domain(self::DEFAULT_TYPE));
-                    }
-                }
-            }
+            $domainInAttributes = $this->getDomainFromAttributes($platform);
+            $domain->copy($domainInAttributes);
 
             $this->name = $this->getAttribute('name');
             $this->phpName = $this->getAttribute('phpName');
@@ -312,10 +310,7 @@ class Column extends MappingModel
             */
             $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $database->getDefaultPhpNamingMethod());
 
-            $this->namePrefix = $this->getAttribute(
-                'prefix',
-                $this->parentTable->getAttribute('columnPrefix'),
-            );
+            $this->namePrefix = $this->getAttribute('prefix', $this->parentTable->getAttribute('columnPrefix'));
 
             // Accessor visibility - no idea why this returns null, or the use case for that
             $visibility = $this->getMethodVisibility('accessorVisibility', 'defaultAccessorVisibility') ?: '';
@@ -433,13 +428,11 @@ class Column extends MappingModel
      */
     public function getDomain(): Domain
     {
-        $domain = $this->domain;
-        if ($domain === null) {
-            $domain = new Domain();
-            $this->domain = $domain;
+        if ($this->domain === null) {
+            $this->domain = new Domain();
         }
 
-        return $domain;
+        return $this->domain;
     }
 
     /**
@@ -1244,6 +1237,18 @@ class Column extends MappingModel
     }
 
     /**
+     * Returns the SQL type as a string.
+     *
+     * @see Domain::getSqlType()
+     *
+     * @return string
+     */
+    public function getSqlType(): string
+    {
+        return $this->getDomain()->getSqlType();
+    }
+
+    /**
      * Returns the column PDO type integer for this column's mapping type.
      *
      * @return int
@@ -1321,6 +1326,26 @@ class Column extends MappingModel
     public function isTemporalType(): bool
     {
         return PropelTypes::isTemporalType($this->getType());
+    }
+
+    /**
+     * Returns whether this column is a uuid type.
+     *
+     * @return bool
+     */
+    public function isUuidType(): bool
+    {
+        return PropelTypes::isUuidType($this->getType());
+    }
+
+    /**
+     * Returns whether this column is a uuid bin type.
+     *
+     * @return bool
+     */
+    public function isUuidBinaryType(): bool
+    {
+        return $this->getType() === PropelTypes::UUID_BINARY;
     }
 
     /**
@@ -1702,5 +1727,19 @@ class Column extends MappingModel
     public static function generatePhpSingularName(string $phpName): string
     {
         return rtrim($phpName, 's');
+    }
+
+    /**
+     * Checks if xml attributes from schema.xml matches expected content declaration.
+     *
+     * @param string $content
+     *
+     * @return bool
+     */
+    public function isContent(string $content): bool
+    {
+        $contentAttribute = $this->getAttribute('content');
+
+        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($contentAttribute);
     }
 }

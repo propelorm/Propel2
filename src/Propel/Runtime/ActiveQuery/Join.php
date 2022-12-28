@@ -9,6 +9,7 @@
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\Join as ActiveQueryJoin;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Exception\LogicException;
@@ -45,7 +46,7 @@ class Join
     /**
      * The left parts of the join condition
      *
-     * @var array
+     * @var list<string|null>
      */
     protected $left = [];
 
@@ -62,14 +63,14 @@ class Join
     /**
      * The right parts of the join condition
      *
-     * @var array
+     * @var list<string|null>
      */
     protected $right = [];
 
     /**
      * The comparison operators for each pair of columns in the join condition
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $operators = [];
 
@@ -127,9 +128,9 @@ class Join
      * Use it preferably with no arguments, and then use addCondition() and setJoinType()
      * Syntax with arguments used mainly for backwards compatibility
      *
-     * @param array|string|null $leftColumn The left column of the join condition
+     * @param array<string>|string|null $leftColumn The left column of the join condition
      *                            (may contain an alias name)
-     * @param array|string|null $rightColumn The right column of the join condition
+     * @param array<string>|string|null $rightColumn The right column of the join condition
      *                            (may contain an alias name)
      * @param string|null $joinType The type of the join. Valid join types are null (implicit join),
      *                            Criteria::LEFT_JOIN, Criteria::RIGHT_JOIN, and Criteria::INNER_JOIN
@@ -186,8 +187,8 @@ class Join
     /**
      * Join condition definition, for several conditions
      *
-     * @param array $lefts The left columns of the join condition
-     * @param array $rights The right columns of the join condition
+     * @param array<string> $lefts The left columns of the join condition
+     * @param array<string> $rights The right columns of the join condition
      * @param array<string> $operators The comparison operators of the join condition, default Join::EQUAL
      *
      * @throws \Propel\Runtime\Exception\LogicException
@@ -350,7 +351,7 @@ class Join
     }
 
     /**
-     * @return array<string>
+     * @return array<int, string>
      */
     public function getOperators(): array
     {
@@ -742,22 +743,25 @@ class Join
         $joinCondition = null;
         for ($i = 0; $i < $this->count; $i++) {
             if ($this->leftValues[$i]) {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getLeftColumn($i),
-                    $this->leftValues[$i],
                     self::EQUAL,
+                    $this->leftValues[$i],
                 );
             } elseif ($this->rightValues[$i]) {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getRightColumn($i),
-                    $this->rightValues[$i],
                     self::EQUAL,
+                    $this->rightValues[$i],
                 );
             } else {
-                $criterion = $c->getNewCriterion(
+                $criterion = CriterionFactory::build(
+                    $c,
                     $this->getLeftColumn($i),
-                    $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
                     Criteria::CUSTOM,
+                    $this->getLeftColumn($i) . $this->getOperator($i) . $this->getRightColumn($i),
                 );
             }
             if ($joinCondition === null) {

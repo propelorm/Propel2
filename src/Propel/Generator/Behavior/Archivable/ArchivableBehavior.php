@@ -14,6 +14,9 @@ use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Platform\SqlitePlatform;
 
 /**
  * Keeps tracks of an ActiveRecord object, even after deletion
@@ -94,6 +97,7 @@ class ArchivableBehavior extends Behavior
     {
         $table = $this->getTable();
         $database = $table->getDatabase();
+        $platform = $database->getPlatform();
         $archiveTableName = $this->getParameter('archive_table') ?: ($this->getTable()->getOriginCommonName() . '_archive');
         if (!$database->hasTable($archiveTableName)) {
             // create the version table
@@ -128,13 +132,17 @@ class ArchivableBehavior extends Behavior
             // copy the indices
             foreach ($table->getIndices() as $index) {
                 $copiedIndex = clone $index;
+                if ($this->isDistinctiveIndexNameRequired($platform)) {
+                    // by unsetting the name, Propel will generate a unique name based on table and columns
+                    $copiedIndex->setName(null);
+                }
                 $archiveTable->addIndex($copiedIndex);
             }
             // copy unique indices to indices
             // see https://github.com/propelorm/Propel/issues/175 for details
             foreach ($table->getUnices() as $unique) {
                 $index = new Index();
-                $index->setTable($table);
+                $index->setTable($archiveTable);
                 foreach ($unique->getColumns() as $columnName) {
                     if ($size = $unique->getColumnSize($columnName)) {
                         $index->addColumn(['name' => $columnName, 'size' => $size]);
@@ -142,7 +150,10 @@ class ArchivableBehavior extends Behavior
                         $index->addColumn(['name' => $columnName]);
                     }
                 }
-                $archiveTable->addIndex($index);
+
+                if (!$archiveTable->hasIndex($index->getName())) {
+                    $archiveTable->addIndex($index);
+                }
             }
             // every behavior adding a table should re-execute database behaviors
             foreach ($database->getBehaviors() as $behavior) {
@@ -152,6 +163,16 @@ class ArchivableBehavior extends Behavior
         } else {
             $this->archiveTable = $database->getTable($archiveTableName);
         }
+    }
+
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface|null $platform
+     *
+     * @return bool
+     */
+    protected function isDistinctiveIndexNameRequired(?PlatformInterface $platform): bool
+    {
+        return $platform instanceof PgsqlPlatform || $platform instanceof SqlitePlatform;
     }
 
     /**

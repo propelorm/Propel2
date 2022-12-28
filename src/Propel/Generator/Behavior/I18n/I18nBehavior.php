@@ -125,7 +125,7 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return array<\Propel\Generator\Model\Column>
+     * @return list<\Propel\Generator\Model\Column>
      */
     public function getI18nColumns(): array
     {
@@ -380,7 +380,7 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     protected function getI18nColumnNamesFromConfig(): array
     {

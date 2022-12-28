@@ -14,15 +14,16 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\OraclePlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
 class OraclePlatformTest extends PlatformTestProvider
 {
     /**
      * Get the Platform object for this class
      *
-     * @return \Propel\Generator\Platform\PlatformInterface
+     * @return \Propel\Generator\Platform\OraclePlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new OraclePlatform();
     }
@@ -650,5 +651,43 @@ ALTER TABLE book ADD CONSTRAINT book_fk_4444ca
 EOF;
 
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $expected = "
+CREATE TABLE foo
+(
+    uuid UUID DEFAULT vendor_specific_default() NOT NULL,
+    other_uuid UUID
+);
+
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (uuid);
+";
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE foo
+(
+    uuid-bin RAW(16) DEFAULT vendor_specific_default() NOT NULL,
+    other_uuid-bin RAW(16)
+);
+
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (uuid-bin);
+";
+        $this->assertCreateTableMatches($expected, $schema);
     }
 }

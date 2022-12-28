@@ -8,6 +8,8 @@
 
 namespace Propel\Generator\Model;
 
+use Propel\Generator\Exception\SchemaException;
+
 /**
  * Object to hold vendor specific information.
  *
@@ -160,5 +162,27 @@ class VendorInfo extends MappingModel
     protected function setupObject(): void
     {
         $this->type = $this->getAttribute('type');
+    }
+
+    /**
+     * Returns the value for the uuid swap flag as set in the vendor information
+     * block in schema.xml as a literal ('true' or 'false').
+     *
+     * @psalm-return 'true'|'false'
+     *
+     * @see \Propel\Runtime\Util\UuidConverter::uuidToBin()
+     *
+     * @throws \Propel\Generator\Exception\SchemaException
+     *
+     * @return string
+     */
+    public function getUuidSwapFlagLiteral(): string
+    {
+        $uuidSwapFlag = $this->getParameter('UuidSwapFlag') ?? 'true';
+        if (!in_array($uuidSwapFlag, ['true', 'false'], true)) {
+            throw new SchemaException('Value for `/database/vendor/parameter[name="UuidSwapFlag"]` must be `true` or `false`, but it is `' . $uuidSwapFlag . '`');
+        }
+
+        return $uuidSwapFlag;
     }
 }

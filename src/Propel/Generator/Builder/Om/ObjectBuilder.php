@@ -323,6 +323,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $table = $this->getTable();
+
+        $additionalModelClasses = $table->getAdditionalModelClassImports();
+        if ($additionalModelClasses) {
+            $this->declareClasses(...$additionalModelClasses);
+        }
+
         if (!$table->isAlias()) {
             $this->addConstants($script);
             $this->addAttributes($script);
@@ -1709,6 +1715,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         } elseif ($column->isPhpObjectType()) {
             $script .= "
             \$this->$clo = (\$firstColumn !== null) ? new " . $column->getPhpType() . '($firstColumn) : null;';
+        } elseif ($column->getType() === PropelTypes::UUID_BINARY) {
+            $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+            $script .= "
+            if (is_resource(\$firstColumn)) {
+                \$firstColumn = stream_get_contents(\$firstColumn);
+            }
+            \$this->$clo = (\$firstColumn) ? UuidConverter::binToUuid(\$firstColumn, $uuidSwapFlag) : null;";
         } else {
             $script .= "
             \$this->$clo = \$firstColumn;";
@@ -2716,6 +2729,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     }
                     $script .= "
             \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
+                } elseif ($col->isUuidBinaryType()) {
+                    $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+                    $script .= "
+            if (is_resource(\$col)) {
+                \$col = stream_get_contents(\$col);
+            }
+            \$this->$clo = (\$col) ? UuidConverter::binToUuid(\$col, $uuidSwapFlag) : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
@@ -2751,8 +2771,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         if ($this->getBuildProperty('generator.objectModel.addSaveMethod')) {
             $script .= "
-            \$this->resetModified();
-";
+
+            \$this->resetModified();";
         }
 
         $script .= "
@@ -2956,10 +2976,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
-            $clo = $col->getLowercasedName();
+            $accessValueStatement = $this->getAccessValueStatement($col);
+            $columnConstant = $this->getColumnConstant($col);
             $script .= "
-        if (\$this->isColumnModified(" . $this->getColumnConstant($col) . ")) {
-            \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);
+        if (\$this->isColumnModified($columnConstant)) {
+            \$criteria->add($columnConstant, $accessValueStatement);
         }";
         }
     }
@@ -3920,9 +3941,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $this->addSetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
             $this->addSetPrimaryKeyMultiPK($script);
-        } else {
-            // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addSetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3979,37 +3997,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $i++;
         }
         $script .= "
-    }
-";
-    }
-
-    /**
-     * Adds the setPrimaryKey() method for objects that have no primary key.
-     * This "feature" is deprecated, since the setPrimaryKey() method is not required
-     * by the Persistent interface (or used by the templates). Hence, this method is also
-     * deprecated.
-     *
-     * @deprecated Not needed anymore.
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addSetPrimaryKeyNoPK(string &$script): void
-    {
-        $script .= "
-    /**
-     * Dummy primary key setter.
-     *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
-     */
-    public function setPrimaryKey(\$pk): void
-    {
-        // do nothing, because this object doesn't have any primary keys
     }
 ";
     }
@@ -6646,12 +6633,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$stmt = \$con->prepare(\$sql);
             foreach (\$modifiedColumns as \$identifier => \$columnName) {
                 switch (\$columnName) {";
+
+        $tab = '                        ';
         foreach ($table->getColumns() as $column) {
             $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
+            $accessValueStatement = $this->getAccessValueStatement($column);
+            $bindValueStatement = $platform->getColumnBindingPHP($column, '$identifier', $accessValueStatement, $tab);
             $script .= "
-                    case $columnNameCase:";
-            $script .= $platform->getColumnBindingPHP($column, '$identifier', '$this->' . $column->getLowercasedName(), '                        ');
-            $script .= "
+                    case $columnNameCase:$bindValueStatement
+
                         break;";
         }
         $script .= "
@@ -6690,6 +6680,30 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         return $script;
+    }
+
+    /**
+     * Get the statement how a column value is accessed in the script.
+     *
+     * Note that this is not necessarily just the getter. If the value is
+     * stored on the model in an encoded format, the statement returned by
+     * this method includes the statement to decode the value.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
+    protected function getAccessValueStatement(Column $column): string
+    {
+        $columnName = $column->getLowercasedName();
+
+        if ($column->isUuidBinaryType()) {
+            $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+
+            return "(\$this->$columnName) ? UuidConverter::uuidToBin(\$this->$columnName, $uuidSwapFlag) : null";
+        }
+
+        return "\$this->$columnName";
     }
 
     /**

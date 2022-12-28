@@ -41,14 +41,14 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
      *
      * @see self::bindValue()
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected static $typeMap = [
-        0 => 'PDO::PARAM_NULL',
-        1 => 'PDO::PARAM_INT',
-        2 => 'PDO::PARAM_STR',
-        3 => 'PDO::PARAM_LOB',
-        5 => 'PDO::PARAM_BOOL',
+        PDO::PARAM_NULL => 'PDO::PARAM_NULL',
+        PDO::PARAM_INT => 'PDO::PARAM_INT',
+        PDO::PARAM_STR => 'PDO::PARAM_STR',
+        PDO::PARAM_LOB => 'PDO::PARAM_LOB',
+        PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
     ];
 
     /**

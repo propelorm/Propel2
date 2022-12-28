@@ -14,9 +14,14 @@
     public const TABLE_NAME = '<?php echo $tableName ?>';
 
     /**
+     * The PHP name of this class (PascalCase)
+     */
+    public const TABLE_PHP_NAME = '<?php echo $tablePhpName ?>';
+
+    /**
      * The related Propel class for this table
      */
-    public const OM_CLASS = '<?php echo $tablePhpName ?>';
+    public const OM_CLASS = '<?php echo $omClassName ?>';
 
     /**
      * A class that can be returned by this tableMap
