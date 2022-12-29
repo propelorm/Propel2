@@ -37,6 +37,13 @@ class MigrationManagerTest extends TestCase
     private const COL_EXECUTION_DATETIME = 'execution_datetime';
 
     /**
+     * @uses \Propel\Generator\Manager\MigrationManager::EXECUTION_DATETIME_FORMAT
+     *
+     * @var string
+     */
+    private const EXECUTION_DATETIME_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * @param list<int> $migrationTimestamps
      *
      * @return \Propel\Generator\Manager\MigrationManager
@@ -289,7 +296,7 @@ class MigrationManagerTest extends TestCase
     public function testUpdateLatestMigrationTimestamp(): void
     {
         $expectedVersion = 1;
-        $expectedExecutionDatetime = date('Y-m-d H:i:s');
+        $expectedExecutionDatetime = date(self::EXECUTION_DATETIME_FORMAT);
 
         $migrationManager = $this->createMigrationManager([]);
         $migrationManager->createMigrationTable('migration');
@@ -391,25 +398,25 @@ class MigrationManagerTest extends TestCase
             ],
             [
                 [
-                    1 => date('Y-m-d H:i:s'),
-                    2 => date('Y-m-d H:i:s', strtotime('-1 day')),
-                    3 => date('Y-m-d H:i:s', strtotime('+1 day')),
+                    1 => date(self::EXECUTION_DATETIME_FORMAT),
+                    2 => date(self::EXECUTION_DATETIME_FORMAT, strtotime('-1 day')),
+                    3 => date(self::EXECUTION_DATETIME_FORMAT, strtotime('+1 day')),
                 ],
                 [2, 1, 3],
             ],
             [
                 [
-                    1 => date('Y-m-d H:i:s'),
-                    2 => date('Y-m-d H:i:s', strtotime('-1 day')),
-                    3 => date('Y-m-d H:i:s', strtotime('-1 day')),
+                    1 => date(self::EXECUTION_DATETIME_FORMAT),
+                    2 => date(self::EXECUTION_DATETIME_FORMAT, strtotime('-1 day')),
+                    3 => date(self::EXECUTION_DATETIME_FORMAT, strtotime('-1 day')),
                 ],
                 [2, 3, 1],
             ],
             [
                 [
                     1 => null,
-                    2 => date('Y-m-d H:i:s', strtotime('+1 day')),
-                    3 => date('Y-m-d H:i:s'),
+                    2 => date(self::EXECUTION_DATETIME_FORMAT, strtotime('+1 day')),
+                    3 => date(self::EXECUTION_DATETIME_FORMAT),
                 ],
                 [1, 3, 2],
             ],
@@ -460,7 +467,7 @@ class MigrationManagerTest extends TestCase
             ],
             'The method should return the intersection according to the order of executed migrations.' => [
                 [1, 2, 3, 4],
-                [1 => date('Y-m-d H:i:s'), 2 => null, 3 => null],
+                [1 => date(self::EXECUTION_DATETIME_FORMAT), 2 => null, 3 => null],
                 [2, 3, 1],
             ],
             'The method should return a full intersection if the given version is not found in the intersection.' => [

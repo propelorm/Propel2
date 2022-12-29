@@ -159,7 +159,7 @@ class RollbackExecutor
         foreach ($statements as $statement) {
             try {
                 if ($this->input->getOption(static::COMMAND_OPTION_VERBOSE)) {
-                    $this->output->writeln(sprintf('Executing statement "%s"', $statement));
+                    $this->output->writeln(sprintf('Executing statement `%s`', $statement));
                 }
 
                 $conn->exec($statement);
@@ -168,11 +168,11 @@ class RollbackExecutor
                 if ($this->input->getOption(static::COMMAND_OPTION_FORCE)) {
                     //continue, but print error message
                     $this->output->writeln(
-                        sprintf('<error>Failed to execute SQL "%s". Continue migration.</error>', $statement),
+                        sprintf('<error>Failed to execute SQL `%s`. Continue migration.</error>', $statement),
                     );
                 } else {
                     throw new RuntimeException(
-                        sprintf('<error>Failed to execute SQL "%s". Aborting migration.</error>', $statement),
+                        sprintf('<error>Failed to execute SQL `%s`. Aborting migration.</error>', $statement),
                         0,
                         $e,
                     );

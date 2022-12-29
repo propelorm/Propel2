@@ -43,6 +43,11 @@ class MigrationManager extends AbstractManager
     protected const COL_EXECUTION_DATETIME = 'execution_datetime';
 
     /**
+     * @var string
+     */
+    protected const EXECUTION_DATETIME_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * @var array
      */
     protected $connections = [];
@@ -275,7 +280,7 @@ class MigrationManager extends AbstractManager
             $platform->doQuoting(static::COL_EXECUTION_DATETIME),
         );
 
-        $executionDatetime = date('Y-m-d H:i:s');
+        $executionDatetime = date(static::EXECUTION_DATETIME_FORMAT);
 
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
