@@ -633,12 +633,7 @@ class MigrationManager extends AbstractManager
         $stmt = $connection->prepare($sql);
         $stmt->execute();
 
-        $migrationData = [];
-        while ($migrationRow = $stmt->fetch()) {
-            $migrationData[] = $migrationRow;
-        }
-
-        return $migrationData;
+        return $stmt->fetchAll();
     }
 
     /**
