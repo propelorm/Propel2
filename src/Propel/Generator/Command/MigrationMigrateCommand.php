@@ -30,7 +30,7 @@ class MigrationMigrateCommand extends AbstractCommand
     /**
      * @var string
      */
-    protected const COMMAND_OPTION_MIGRATE_TO_VERSION_DESCRIPTION = 'Defines the version to migrate database.';
+    protected const COMMAND_OPTION_MIGRATE_TO_VERSION_DESCRIPTION = 'Defines the version to migrate database to.';
 
     /**
      * @inheritDoc
@@ -101,7 +101,7 @@ class MigrationMigrateCommand extends AbstractCommand
             return static::CODE_SUCCESS;
         }
 
-        $timestamps = $manager->getValidMigrationTimestamps($version);
+        $timestamps = $manager->getNonExecutedMigrationTimestampsByVersion($version);
         if (count($timestamps) > 1) {
             $output->writeln(sprintf('%d migrations to execute', count($timestamps)));
         }
@@ -220,21 +220,25 @@ class MigrationMigrateCommand extends AbstractCommand
         MigrationManager $migrationManager,
         int $version
     ): int {
-        $rollbackTimestamps = $migrationManager->getAlreadyExecutedMigrationTimestamps($version);
-        if ($rollbackTimestamps === []) {
-            $output->writeln(sprintf('The last executed version of the migration is %s - nothing to migrate.', $version));
+        $alreadyExecutedMigrations = $migrationManager->getAlreadyExecutedMigrationTimestampsByVersion($version);
+        if ($alreadyExecutedMigrations === []) {
+            $output->writeln(sprintf('Already at version %s.', $version));
 
             return static::CODE_SUCCESS;
         }
 
         $rollbackExecutor = new RollbackExecutor($input, $output, $migrationManager);
-        while ($rollbackTimestamps !== []) {
-            if (!$rollbackExecutor->executeRollbackToPreviousVersion($rollbackTimestamps)) {
+
+        while ($alreadyExecutedMigrations !== []) {
+            $currentVersion = array_pop($alreadyExecutedMigrations);
+            $previousVersion = count($alreadyExecutedMigrations) ? $alreadyExecutedMigrations[array_key_last($alreadyExecutedMigrations)] : null;
+
+            if (!$rollbackExecutor->executeRollbackToPreviousVersion($currentVersion, $previousVersion)) {
                 return static::CODE_ERROR;
             }
         }
 
-        $output->writeln(sprintf('The last executed version of the migration is %s.', $version));
+        $output->writeln(sprintf('Successfully rollback to migration version %s.', $version));
 
         return static::CODE_SUCCESS;
     }

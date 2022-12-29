@@ -74,13 +74,30 @@ class MigrationDownCommand extends AbstractCommand
         $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
-        $previousTimestamps = $manager->getAlreadyExecutedMigrationTimestamps();
+        $alreadyExecutedMigrations = $manager->getAlreadyExecutedMigrationTimestamps();
+        if ($alreadyExecutedMigrations === []) {
+            $output->writeln('No migrations were ever executed on this database - nothing to reverse.');
 
-        $rollbackExecutor = new RollbackExecutor($input, $output, $manager);
-        if ($rollbackExecutor->executeRollbackToPreviousVersion($previousTimestamps)) {
-            return static::CODE_SUCCESS;
+            return static::CODE_ERROR;
         }
 
-        return static::CODE_ERROR;
+        $rollbackExecutor = new RollbackExecutor($input, $output, $manager);
+
+        $currentMigrationVersion = array_pop($alreadyExecutedMigrations);
+
+        $leftMigrationsCount = count($alreadyExecutedMigrations);
+        $previousMigrationVersion = array_pop($alreadyExecutedMigrations);
+
+        if (!$rollbackExecutor->executeRollbackToPreviousVersion($currentMigrationVersion, $previousMigrationVersion)) {
+            return static::CODE_ERROR;
+        }
+
+        if ($leftMigrationsCount) {
+            $output->writeln(sprintf('Reverse migration complete. %d more migrations available for reverse.', $leftMigrationsCount));
+        } else {
+            $output->writeln('Reverse migration complete. No more migration available for reverse');
+        }
+
+        return static::CODE_SUCCESS;
     }
 }

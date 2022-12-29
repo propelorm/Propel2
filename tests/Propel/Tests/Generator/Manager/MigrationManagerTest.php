@@ -12,8 +12,6 @@ use PDO;
 use PDOException;
 use Propel\Generator\Config\GeneratorConfig;
 use Propel\Generator\Manager\MigrationManager;
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Tests\TestCase;
 
@@ -102,7 +100,26 @@ class MigrationManagerTest extends TestCase
     }
 
     /**
-     * @dataProvider getValidMigrationTimestampsDataProvider
+     * @return void
+     */
+    public function testGetValidMigrationTimestamps(): void
+    {
+        $localTimestamps = [1, 2, 3, 4];
+        $databaseTimestamps = [1, 2];
+        $expectedMigrationTimestamps = [3, 4];
+
+        $migrationManager = $this->createMigrationManager($localTimestamps);
+        $migrationManager->createMigrationTable('migration');
+
+        foreach ($databaseTimestamps as $timestamp) {
+            $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
+        }
+
+        $this->assertEquals($expectedMigrationTimestamps, $migrationManager->getValidMigrationTimestamps());
+    }
+
+    /**
+     * @dataProvider getGetNonExecutedMigrationTimestampsByVersionDataProvider
      *
      * @param list<int> $localTimestamps
      * @param list<int> $databaseTimestamps
@@ -111,7 +128,7 @@ class MigrationManagerTest extends TestCase
      *
      * @return void
      */
-    public function testGetValidMigrationTimestamps(
+    public function testGetNonExecutedMigrationTimestampsByVersion(
         array $localTimestamps,
         array $databaseTimestamps,
         array $expectedTimestamps,
@@ -124,7 +141,7 @@ class MigrationManagerTest extends TestCase
             $migrationManager->updateLatestMigrationTimestamp('migration', $timestamp);
         }
 
-        $this->assertSame($expectedTimestamps, $migrationManager->getValidMigrationTimestamps($expectedVersion));
+        $this->assertSame($expectedTimestamps, $migrationManager->getNonExecutedMigrationTimestampsByVersion($expectedVersion));
     }
 
     /**
@@ -153,11 +170,33 @@ class MigrationManagerTest extends TestCase
      * @param list<int> $localTimestamps
      * @param array<int, string|null> $databaseMigrationData
      * @param list<int> $expectedTimestamps
-     * @param int|null $expectedVersion
      *
      * @return void
      */
     public function testGetAlreadyExecutedTimestamps(
+        array $localTimestamps,
+        array $databaseMigrationData,
+        array $expectedTimestamps
+    ): void {
+        $migrationManager = $this->createMigrationManager($localTimestamps);
+        $migrationManager->createMigrationTable('migration');
+
+        $this->addMigrations($migrationManager, $databaseMigrationData);
+
+        $this->assertSame($expectedTimestamps, $migrationManager->getAlreadyExecutedMigrationTimestamps());
+    }
+
+    /**
+     * @dataProvider getAlreadyExecutedMigrationTimestampsByVersionDataProvider
+     *
+     * @param list<int> $localTimestamps
+     * @param array<int, string|null> $databaseMigrationData
+     * @param list<int> $expectedTimestamps
+     * @param int|null $expectedVersion
+     *
+     * @return void
+     */
+    public function testGetAlreadyExecutedMigrationTimestampsByVersion(
         array $localTimestamps,
         array $databaseMigrationData,
         array $expectedTimestamps,
@@ -168,7 +207,7 @@ class MigrationManagerTest extends TestCase
 
         $this->addMigrations($migrationManager, $databaseMigrationData);
 
-        $this->assertSame($expectedTimestamps, $migrationManager->getAlreadyExecutedMigrationTimestamps($expectedVersion));
+        $this->assertSame($expectedTimestamps, $migrationManager->getAlreadyExecutedMigrationTimestampsByVersion($expectedVersion));
     }
 
     /**
@@ -326,19 +365,25 @@ class MigrationManagerTest extends TestCase
      */
     public function testModifyMigrationTableIfOutdatedShouldNotUpdateTableIfExecutionDatetimeColumnExists(): void
     {
-        $migrationManager = $this->createMigrationManager([]);
-        $migrationManager->createMigrationTable('migration');
-
         $platformMock = $this->getMockBuilder(DefaultPlatform::class)
             ->setMethods(['getAddColumnDDL'])
             ->getMock();
 
+        $migrationManager = $this->getMockBuilder(MigrationManager::class)
+            ->setMethods(['getPlatform'])
+            ->getMock();
+
+        $migrationManager->expects($this->any())
+            ->method('getPlatform')
+            ->willReturn($platformMock);
+
+        $generatorConfig = new GeneratorConfig(__DIR__ . '/../../../../Fixtures/migration/');
+        $migrationManager->setConnections($generatorConfig->getBuildConnections());
+        $migrationManager->setMigrationTable('migration');
+
         $platformMock->expects($this->never())->method('getAddColumnDDL');
 
-        $migrationManager->modifyMigrationTableIfOutdated(
-            $migrationManager->getAdapterConnection('migration'),
-            $platformMock,
-        );
+        $migrationManager->modifyMigrationTableIfOutdated('migration');
     }
 
     /**
@@ -350,10 +395,7 @@ class MigrationManagerTest extends TestCase
 
         $this->expectException(PDOException::class);
 
-        $migrationManager->modifyMigrationTableIfOutdated(
-            $migrationManager->getAdapterConnection('migration'),
-            $migrationManager->getPlatform('migration'),
-        );
+        $migrationManager->modifyMigrationTableIfOutdated('migration');
     }
 
     /**
@@ -426,7 +468,7 @@ class MigrationManagerTest extends TestCase
     /**
      * @return array<string, array<int, array<int>|int>>
      */
-    public function getValidMigrationTimestampsDataProvider(): array
+    public function getGetNonExecutedMigrationTimestampsByVersionDataProvider(): array
     {
         return [
             'The method should return full diff if a specific version is not provided.' => [
@@ -460,6 +502,20 @@ class MigrationManagerTest extends TestCase
                 [],
                 [],
             ],
+            'The method should return the intersection according to the order of executed migrations.' => [
+                [1, 2, 3, 4],
+                [1 => date(self::EXECUTION_DATETIME_FORMAT), 2 => null, 3 => null],
+                [2, 3, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, array<int, array|int>>
+     */
+    public function getAlreadyExecutedMigrationTimestampsByVersionDataProvider(): array
+    {
+        return [
             'The method should return full intersection if a specific version is not provided.' => [
                 [1, 2, 3, 4],
                 [1 => null, 2 => null, 3 => null],

@@ -66,33 +66,21 @@ class RollbackExecutor
     }
 
     /**
-     * @param list<int> $previousTimestamps
+     * @param int $currentVersion
+     * @param int|null $previousVersion
      *
      * @return bool
      */
-    public function executeRollbackToPreviousVersion(array &$previousTimestamps): bool
+    public function executeRollbackToPreviousVersion(int $currentVersion, ?int $previousVersion = null): bool
     {
-        $nextMigrationTimestamp = array_pop($previousTimestamps);
-        if (!$nextMigrationTimestamp) {
-            $this->output->writeln('No migration were ever executed on this database - nothing to reverse.');
-
-            return false;
-        }
-
         $this->output->writeln(sprintf(
             'Executing migration %s down',
-            $this->migrationManager->getMigrationClassName($nextMigrationTimestamp),
+            $this->migrationManager->getMigrationClassName($currentVersion),
         ));
 
-        $nbPreviousTimestamps = count($previousTimestamps);
-        $previousTimestamp = 0;
-        if ($nbPreviousTimestamps) {
-            $previousTimestamp = $previousTimestamps[array_key_last($previousTimestamps)];
-        }
-
-        $migration = $this->migrationManager->getMigrationObject($nextMigrationTimestamp);
-        if (!$this->input->getOption(static::COMMAND_OPTION_FAKE) && $migration->preDown($this->migrationManager) === false) {
-            if (!$this->input->getOption(static::COMMAND_OPTION_FORCE)) {
+        $migration = $this->migrationManager->getMigrationObject($currentVersion);
+        if (!$this->isFake() && $migration->preDown($this->migrationManager) === false) {
+            if (!$this->isForce()) {
                 $this->output->writeln('<error>preDown() returned false. Aborting migration.</error>');
 
                 return false;
@@ -104,25 +92,19 @@ class RollbackExecutor
         foreach ($migration->getDownSQL() as $datasource => $sql) {
             $this->executeRollbackForDatasource($datasource, $sql);
 
-            $this->migrationManager->removeMigrationTimestamp($datasource, $nextMigrationTimestamp);
+            $this->migrationManager->removeMigrationTimestamp($datasource, $currentVersion);
 
-            if ($this->input->getOption(static::COMMAND_OPTION_VERBOSE)) {
+            if ($this->isVerbose()) {
                 $this->output->writeln(sprintf(
                     'Downgraded migration date to %d for datasource "%s"',
-                    $previousTimestamp,
+                    $previousVersion,
                     $datasource,
                 ));
             }
         }
 
-        if (!$this->input->getOption(static::COMMAND_OPTION_FAKE)) {
+        if (!$this->isFake()) {
             $migration->postDown($this->migrationManager);
-        }
-
-        if ($nbPreviousTimestamps) {
-            $this->output->writeln(sprintf('Reverse migration complete. %d more migrations available for reverse.', $nbPreviousTimestamps));
-        } else {
-            $this->output->writeln('Reverse migration complete. No more migration available for reverse');
         }
 
         return true;
@@ -140,7 +122,7 @@ class RollbackExecutor
     {
         $connection = $this->migrationManager->getConnection($datasource);
 
-        if ($this->input->getOption(static::COMMAND_OPTION_VERBOSE)) {
+        if ($this->isVerbose()) {
             $this->output->writeln(sprintf(
                 'Connecting to database "%s" using DSN "%s"',
                 $datasource,
@@ -152,20 +134,20 @@ class RollbackExecutor
         $res = 0;
         $statements = SqlParser::parseString($sql);
 
-        if ($this->input->getOption(static::COMMAND_OPTION_FAKE)) {
+        if ($this->isFake()) {
             return;
         }
 
         foreach ($statements as $statement) {
             try {
-                if ($this->input->getOption(static::COMMAND_OPTION_VERBOSE)) {
+                if ($this->isVerbose()) {
                     $this->output->writeln(sprintf('Executing statement `%s`', $statement));
                 }
 
                 $conn->exec($statement);
                 $res++;
             } catch (Exception $e) {
-                if ($this->input->getOption(static::COMMAND_OPTION_FORCE)) {
+                if ($this->isForce()) {
                     //continue, but print error message
                     $this->output->writeln(
                         sprintf('<error>Failed to execute SQL `%s`. Continue migration.</error>', $statement),
@@ -186,5 +168,29 @@ class RollbackExecutor
             count($statements),
             $datasource,
         ));
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isFake(): bool
+    {
+        return (bool)$this->input->getOption(static::COMMAND_OPTION_FAKE);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isForce(): bool
+    {
+        return (bool)$this->input->getOption(static::COMMAND_OPTION_FORCE);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isVerbose(): bool
+    {
+        return (bool)$this->input->getOption(static::COMMAND_OPTION_VERBOSE);
     }
 }

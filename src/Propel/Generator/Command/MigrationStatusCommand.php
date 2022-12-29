@@ -26,7 +26,7 @@ class MigrationStatusCommand extends AbstractCommand
     /**
      * @var string
      */
-    protected const COMMAND_OPTION_LAST_VERSION_DESCRIPTION = 'Use this option to receive the last executed version of the migration.';
+    protected const COMMAND_OPTION_LAST_VERSION_DESCRIPTION = 'Use this option to receive the version of the last executed migration.';
 
     /**
      * @inheritDoc
@@ -83,6 +83,13 @@ class MigrationStatusCommand extends AbstractCommand
         $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
+        $oldestMigrationTimestamp = $manager->getOldestDatabaseVersion();
+        if ($input->getOption(static::COMMAND_OPTION_LAST_VERSION)) {
+            $output->writeln((string)$oldestMigrationTimestamp);
+
+            return static::CODE_SUCCESS;
+        }
+
         $output->writeln('Checking Database Versions...');
         foreach ($manager->getConnections() as $datasource => $params) {
             if ($input->getOption('verbose')) {
@@ -102,14 +109,10 @@ class MigrationStatusCommand extends AbstractCommand
                 }
                 $manager->createMigrationTable($datasource);
             } else {
-                $manager->modifyMigrationTableIfOutdated(
-                    $manager->getAdapterConnection($datasource),
-                    $manager->getPlatform($datasource),
-                );
+                $manager->modifyMigrationTableIfOutdated($datasource);
             }
         }
 
-        $oldestMigrationTimestamp = $manager->getOldestDatabaseVersion();
         if ($input->getOption('verbose')) {
             if ($oldestMigrationTimestamp) {
                 $output->writeln(sprintf(
@@ -120,13 +123,6 @@ class MigrationStatusCommand extends AbstractCommand
             } else {
                 $output->writeln('No migration was ever executed on these connection settings.');
             }
-        }
-
-        if ($input->getOption(static::COMMAND_OPTION_LAST_VERSION) && $oldestMigrationTimestamp) {
-            $output->writeln(sprintf(
-                'The last executed version of the migration is %s',
-                $oldestMigrationTimestamp,
-            ));
         }
 
         $output->writeln('Listing Migration files...');

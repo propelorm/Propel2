@@ -175,7 +175,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->assertIsCurrentVersion($expectedVersion);
         $this->assertStringContainsString(
-            sprintf('The last executed version of the migration is %s - nothing to migrate.', $expectedVersion),
+            sprintf('Already at version %s.', $expectedVersion),
             $outputString,
         );
 
@@ -200,7 +200,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->assertIsCurrentVersion($expectedVersion);
         $this->assertStringContainsString(
-            sprintf('The last executed version of the migration is %s.', $expectedVersion),
+            sprintf('Successfully rollback to migration version %s.', $expectedVersion),
             $outputString,
         );
 
@@ -234,10 +234,25 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
+    public function testMigrationStatusCommandShouldReturnEmptyWhenOptionIsProvidedAndMigrationsWereNotExecuted(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->assertEmpty(trim(str_replace('\n', '', $outputString)));
+    }
+
+    /**
+     * @return void
+     */
     public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
     {
         $this->setUpMigrateToVersion();
-        $this->migrateDown();
+
+        $migrationVersions = $this->getMigrationVersions();
 
         $outputString = $this->runCommandAndAssertSuccess(
             'migration:status',
@@ -247,7 +262,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->tearDownMigrateToVersion($this->getMigrationVersions());
 
-        $this->assertStringContainsString('The last executed version of the migration is', $outputString);
+        $this->assertSame((string)array_pop($migrationVersions), trim(str_replace('\n', '', $outputString)));
     }
 
     /**
@@ -262,7 +277,7 @@ class MigrationTest extends TestCaseFixturesDatabase
 
         $this->tearDownMigrateToVersion($this->getMigrationVersions());
 
-        $this->assertStringNotContainsString('The last executed version of the migration is', $outputString);
+        $this->assertStringContainsString('Checking Database Versions', $outputString);
     }
 
     /**
