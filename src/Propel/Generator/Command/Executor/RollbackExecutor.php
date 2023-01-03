@@ -80,7 +80,7 @@ class RollbackExecutor
 
         $migration = $this->migrationManager->getMigrationObject($currentVersion);
 
-        $canBeRollback = $this->isFake() || $migration->preDown($this->migrationManager);
+        $canBeRollback = $this->isFake() || $migration->preDown($this->migrationManager) !== false;
         if (!$canBeRollback && !$this->isForce()) {
             $this->output->writeln('<error>preDown() returned false. Aborting migration.</error>');
 
