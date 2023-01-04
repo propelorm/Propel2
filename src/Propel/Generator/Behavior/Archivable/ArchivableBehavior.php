@@ -148,11 +148,49 @@ class ArchivableBehavior extends Behavior
     {
         $archiveTable = $this->getArchiveTable();
         $sourceTable = $this->getTable();
-        $database = $sourceTable->getDatabase();
-        $platform = $database->getPlatform();
 
-        // copy all the columns
-        foreach ($sourceTable->getColumns() as $sourceColumn) {
+        $columns = $sourceTable->getColumns();
+        $this->syncColumns($archiveTable, $columns);
+
+        $this->addArchivedAtColumn($archiveTable);
+
+        $foreignKeys = $this->getParameter('foreign_keys');
+        if ($foreignKeys) {
+            foreach ($foreignKeys as $fkData) {
+                $this->createForeignKeyFromParameters($archiveTable, $fkData);
+            }
+        }
+
+        $inheritFkRelations = $this->parameterHasValue('inherit_foreign_key_relations', 'true');
+        $inheritFkConstraints = $this->parameterHasValue('inherit_foreign_key_constraints', 'true');
+        if ($inheritFkRelations || $inheritFkConstraints) {
+            $foreignKeys = $sourceTable->getForeignKeys();
+            $this->syncForeignKeys($archiveTable, $foreignKeys, $inheritFkConstraints);
+        }
+
+        $indexes = $sourceTable->getIndices();
+        $platform = $sourceTable->getDatabase()->getPlatform();
+        $renameIndexes = $this->isDistinctiveIndexNameRequired($platform);
+        $this->syncIndexes($archiveTable, $indexes, $renameIndexes);
+
+        $uniqueIndexes = $sourceTable->getUnices();
+        $this->syncUniqueIndexes($archiveTable, $uniqueIndexes);
+
+        $behaviors = $sourceTable->getDatabase()->getBehaviors();
+        $this->reapplyBehaviors($behaviors);
+
+        return $archiveTable;
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Table $archiveTable
+     * @param array<\Propel\Generator\Model\Column> $columns
+     *
+     * @return void
+     */
+    protected function syncColumns(Table $archiveTable, array $columns)
+    {
+        foreach ($columns as $sourceColumn) {
             if ($archiveTable->hasColumn($sourceColumn)) {
                 continue;
             }
@@ -161,48 +199,60 @@ class ArchivableBehavior extends Behavior
             $archiveColumn->setAutoIncrement(false);
             $archiveTable->addColumn($archiveColumn);
         }
+    }
 
-        // add archived_at column
-        if (
-            $this->parameterHasValue('log_archived_at', 'true') &&
-            !$archiveTable->hasColumn($this->getParameter('archived_at_column'))
-        ) {
-            $archiveTable->addColumn([
-                'name' => $this->getParameter('archived_at_column'),
-                'type' => 'TIMESTAMP',
-            ]);
+    /**
+     * @param \Propel\Generator\Model\Table $archiveTable
+     *
+     * @return void
+     */
+    protected function addArchivedAtColumn(Table $archiveTable)
+    {
+        if (!$this->parameterHasValue('log_archived_at', 'true')) {
+            return;
         }
+        $columnName = $this->getParameter('archived_at_column');
+        if ($archiveTable->hasColumn($columnName)) {
+            return;
+        }
+        $archiveTable->addColumn([
+            'name' => $columnName,
+            'type' => 'TIMESTAMP',
+        ]);
+    }
 
-        // add fks declared on behavior
-        $foreignKeys = $this->getParameter('foreign_keys');
-        if ($foreignKeys) {
-            foreach ($foreignKeys as $fkData) {
-                $this->createForeignKeyFromParameters($archiveTable, $fkData);
+    /**
+     * @param \Propel\Generator\Model\Table $archiveTable
+     * @param array<\Propel\Generator\Model\ForeignKey> $foreignKeys
+     * @param bool $inheritConstraints
+     *
+     * @return void
+     */
+    protected function syncForeignKeys(Table $archiveTable, array $foreignKeys, bool $inheritConstraints)
+    {
+        foreach ($foreignKeys as $foreignKey) {
+            if ($archiveTable->containsForeignKeyWithSameName($foreignKey)) {
+                continue;
             }
+            $copiedForeignKey = clone $foreignKey;
+            $copiedForeignKey->setSkipSql(!$inheritConstraints);
+            $archiveTable->addForeignKey($copiedForeignKey);
         }
+    }
 
-        // copy foreign keys if enabled in parameters
-        if (
-            $this->parameterHasValue('inherit_foreign_key_relations', 'true') ||
-            $this->parameterHasValue('inherit_foreign_key_constraints', 'true')
-        ) {
-            foreach ($sourceTable->getForeignKeys() as $foreignKey) {
-                if ($archiveTable->containsForeignKeyWithSameName($foreignKey)) {
-                    continue;
-                }
-                $copiedForeignKey = clone $foreignKey;
-                $archiveTable->addForeignKey($copiedForeignKey);
-
-                $createConstraint = $this->parameterHasValue('inherit_foreign_key_constraints', 'true');
-                $copiedForeignKey->setSkipSql(!$createConstraint);
-            }
-        }
-
-        // copy the indices
-        foreach ($sourceTable->getIndices() as $index) {
+    /**
+     * @param \Propel\Generator\Model\Table $archiveTable
+     * @param array<\Propel\Generator\Model\Index> $indexes
+     * @param bool $rename
+     *
+     * @return void
+     */
+    protected function syncIndexes(Table $archiveTable, array $indexes, bool $rename)
+    {
+        foreach ($indexes as $index) {
             $copiedIndex = clone $index;
-            if ($this->isDistinctiveIndexNameRequired($platform)) {
-                // by unsetting the name, Propel will generate a unique name based on table and columns
+            if ($rename) {
+                // by removing the name, Propel will generate a unique name based on table and columns
                 $copiedIndex->setName(null);
             }
             if ($archiveTable->hasIndex($index->getName())) {
@@ -210,16 +260,30 @@ class ArchivableBehavior extends Behavior
             }
             $archiveTable->addIndex($copiedIndex);
         }
-        // create unique indexes as regular indexes (unique columns in source table can be archived multiple times)
-        foreach ($sourceTable->getUnices() as $unique) {
+    }
+
+    /**
+     * Create regular indexes from unique indexes on the given archive table.
+     *
+     * The archive table cannot use unique indexes, as even unique data on the
+     * source table can be archived several times.
+     *
+     * @param \Propel\Generator\Model\Table $archiveTable
+     * @param array<\Propel\Generator\Model\Unique> $uniqueIndexes
+     *
+     * @return void
+     */
+    protected function syncUniqueIndexes(Table $archiveTable, array $uniqueIndexes)
+    {
+        foreach ($uniqueIndexes as $unique) {
             $index = new Index();
             $index->setTable($archiveTable);
             foreach ($unique->getColumns() as $columnName) {
-                if ($size = $unique->getColumnSize($columnName)) {
-                    $index->addColumn(['name' => $columnName, 'size' => $size]);
-                } else {
-                    $index->addColumn(['name' => $columnName]);
-                }
+                $columnDef = [
+                    'name' => $columnName,
+                    'size' => $unique->getColumnSize($columnName),
+                ];
+                $index->addColumn($columnDef);
             }
 
             if ($archiveTable->hasIndex($index->getName())) {
@@ -227,15 +291,21 @@ class ArchivableBehavior extends Behavior
             }
             $archiveTable->addIndex($index);
         }
-        // every behavior adding a table should re-execute database behaviors
-        foreach ($database->getBehaviors() as $behavior) {
+    }
+
+    /**
+     * @param array $behaviors
+     *
+     * @return void
+     */
+    protected function reapplyBehaviors(array $behaviors)
+    {
+        foreach ($behaviors as $behavior) {
             if ($behavior instanceof ArchivableBehavior) {
                 continue;
             }
             $behavior->modifyDatabase();
         }
-
-        return $archiveTable;
     }
 
     /**
