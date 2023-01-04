@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -70,13 +71,15 @@ class PropelDateTime extends DateTime
      *
      * @param string|null $time Optional, in seconds. Floating point allowed.
      *
+     * @throws \InvalidArgumentException
+     *
      * @return \DateTime
      */
     public static function createHighPrecision(?string $time = null): DateTime
     {
         $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
         if ($dateTime === false) {
-            throw new \InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
+            throw new InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
         }
 
         $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
