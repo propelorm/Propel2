@@ -37,7 +37,7 @@ class UniqueValidator extends ConstraintValidator
         $object = $this->context->getObject();
         if ($object->isNew() && $matches->count() > 0) {
             $this->context->addViolation($constraint->message);
-        } elseif ($object->isModified() && $matches->count() > (in_array($columnName, $object->getModifiedColumns()) ? 0 : 1)) {
+        } elseif ($object->isModified() && $matches->count() > (in_array($columnName, $object->getModifiedColumns(), true) ? 0 : 1)) {
             $this->context->addViolation($constraint->message);
         }
     }

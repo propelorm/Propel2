@@ -9,12 +9,12 @@
 namespace Propel\Runtime\Util;
 
 /**
- * Helpes to manually convert uuids to byte types
+ * Helps to manually convert UUIDs to byte types
  */
 class UuidConverter
 {
     /**
-     * Transforms a uuid string to a binary string.
+     * Transforms a UUID string to a binary string.
      *
      * @param string $uuid
      * @param bool $swapFlag Swap first four bytes for better indexing of version-1 UUIDs (@link https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_uuid-to-bin)
@@ -31,11 +31,11 @@ class UuidConverter
                 $uuid,
             );
 
-        return hex2bin($rawHex);
+        return (string)hex2bin($rawHex);
     }
 
     /**
-     * Transforms a binary string to a uuid string.
+     * Transforms a binary string to a UUID string.
      *
      * @param string $bin
      * @param bool $swapFlag Assume bytes were swapped (@link https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_bin-to-uuid)
