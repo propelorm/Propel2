@@ -13,6 +13,7 @@ use Propel\Generator\Command\MigrationCreateCommand;
 use Propel\Generator\Command\MigrationDiffCommand;
 use Propel\Generator\Command\MigrationDownCommand;
 use Propel\Generator\Command\MigrationMigrateCommand;
+use Propel\Generator\Command\MigrationStatusCommand;
 use Propel\Generator\Command\MigrationUpCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
@@ -25,14 +26,56 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class MigrationTest extends TestCaseFixturesDatabase
 {
+    /**
+     * @var bool
+     */
     private const MIGRATE_DOWN_AFTERWARDS = true;
+
+    /**
+     * @var string
+     */
     private const SCHEMA_DIR = __DIR__ . '/../../../../Fixtures/migration-command';
+
+    /**
+     * @var string
+     */
     private const OUTPUT_DIR = __DIR__ . '/../../../../migrationdiff';
+
+    /**
+     * @var string
+     */
+    private const SCHEMA_DIR_MIGRATE_TO_VERSION = __DIR__ . '/../../../../Fixtures/migrate-to-version';
+
+    /**
+     * @see \Propel\Generator\Command\MigrationMigrateCommand::COMMAND_OPTION_MIGRATE_TO_VERSION
+     *
+     * @var string
+     */
+    private const COMMAND_OPTION_MIGRATE_TO_VERSION = '--migrate-to-version';
+
+    /**
+     * @see \Propel\Generator\Command\MigrationStatusCommand::COMMAND_OPTION_LAST_VERSION
+     *
+     * @var string
+     */
+    private const COMMAND_OPTION_LAST_VERSION = '--last-version';
+
+    /**
+     * @uses \Propel\Generator\Manager\MigrationManager::COL_VERSION
+     *
+     * @var string
+     */
+    private const COL_VERSION = 'version';
+
+    /**
+     * @var string
+     */
+    private const MIGRATION_TABLE = 'propel_migration';
 
     /**
      * @return void
      */
-    public function testDiffCommandCreatesFiles()
+    public function testDiffCommandCreatesFiles(): void
     {
         $this->deleteMigrationFiles();
         $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
@@ -42,7 +85,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testDiffCommandCreatesSuffixedFiles()
+    public function testDiffCommandCreatesSuffixedFiles(): void
     {
         $this->deleteMigrationFiles();
         $suffix = 'an_explanatory_filename_suffix';
@@ -53,7 +96,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testCreateCommandCreatesFiles()
+    public function testCreateCommandCreatesFiles(): void
     {
         $this->deleteMigrationFiles();
         $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
@@ -63,7 +106,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testCreateCommandCreatesSuffixedFiles()
+    public function testCreateCommandCreatesSuffixedFiles(): void
     {
         $this->deleteMigrationFiles();
         $suffix = 'an_explanatory_filename_suffix';
@@ -74,7 +117,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testUpCommandPerformsUpMigration()
+    public function testUpCommandPerformsUpMigration(): void
     {
         $outputString = $this->runCommandAndAssertSuccess('migration:up', new MigrationUpCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
         $this->assertStringContainsString('Migration complete.', $outputString);
@@ -83,7 +126,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testDownCommandPerformsDownMigration()
+    public function testDownCommandPerformsDownMigration(): void
     {
         $this->migrateUp();
         $outputString = $this->runCommandAndAssertSuccess('migration:down', new MigrationDownCommand());
@@ -93,10 +136,148 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    public function testMigrateCommandPerformsUpMigration()
+    public function testMigrateCommandPerformsUpMigration(): void
     {
         $outputString = $this->runCommandAndAssertSuccess('migration:migrate', new MigrationMigrateCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
         $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldMigrateToTheLastVersionIfTheGivenVersionIsNotExists(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => 0],
+            self::MIGRATE_DOWN_AFTERWARDS,
+        );
+
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldDoNothingIfGivenVersionIsTheLastAppliedVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('Already at version %s.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldRollbackToTheGivenVersionIfItIsLowerThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_first($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('Successfully rollback to migration version %s.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldMigrateToTheGivenVersionIfItIsHigherThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $this->migrateDown();
+
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString('Migration complete. No further migration to execute.', $outputString);
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldReturnEmptyWhenOptionIsProvidedAndMigrationsWereNotExecuted(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->assertEmpty(trim(str_replace('\n', '', $outputString)));
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->tearDownMigrateToVersion($this->getMigrationVersions());
+
+        $this->assertSame((string)array_pop($migrationVersions), trim(str_replace('\n', '', $outputString)));
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
+    {
+        $this->setUpMigrateToVersion();
+        $this->migrateDown();
+
+        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
+
+        $this->tearDownMigrateToVersion($this->getMigrationVersions());
+
+        $this->assertStringContainsString('Checking Database Versions', $outputString);
     }
 
     /**
@@ -118,7 +299,7 @@ class MigrationTest extends TestCaseFixturesDatabase
      * @param array $additionalArguments
      * @param bool $migrateDownAfterwards
      *
-     * @return \Symfony\Component\Console\Output\StreamOutput
+     * @return string
      */
     private function runCommandAndAssertSuccess(
         string $commandName,
@@ -146,7 +327,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    private function migrateUp()
+    private function migrateUp(): void
     {
         $this->runCommand('migration:up', new MigrationUpCommand());
     }
@@ -154,7 +335,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @return void
      */
-    private function migrateDown()
+    private function migrateDown(): void
     {
         $this->runCommand('migration:down', new MigrationDownCommand());
     }
@@ -232,5 +413,78 @@ class MigrationTest extends TestCaseFixturesDatabase
         } else {
             $this->assertStringNotContainsString('CREATE TABLE ', $content);
         }
+    }
+
+    /**
+     * @param int $version
+     *
+     * @return void
+     */
+    private function assertIsCurrentVersion(int $version): void
+    {
+        $sql = sprintf('SELECT %s FROM %s', self::COL_VERSION, self::MIGRATION_TABLE);
+
+        $stmt = Propel::getServiceContainer()->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $versions = $stmt->fetchAll();
+        $lastVersion = array_pop($versions)[self::COL_VERSION];
+
+        $this->assertSame($version, (int)$lastVersion);
+    }
+
+    /**
+     * @return void
+     */
+    private function setUpMigrateToVersion(): void
+    {
+        $this->deleteMigrationFiles();
+
+        /** @var array<string> $versionDirectories */
+        $versionDirectories = glob(
+            sprintf(
+                '%s%s*',
+                self::SCHEMA_DIR_MIGRATE_TO_VERSION,
+                DIRECTORY_SEPARATOR,
+            ),
+            GLOB_ONLYDIR,
+        );
+
+        foreach ($versionDirectories as $versionDirectory) {
+            $this->runCommand('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => $versionDirectory]);
+            $this->migrateUp();
+            sleep(1);
+        }
+    }
+
+    /**
+     * @param list<int> $migrationVersions
+     *
+     * @return void
+     */
+    private function tearDownMigrateToVersion(array $migrationVersions): void
+    {
+        foreach ($migrationVersions as $migrationVersion) {
+            $this->migrateDown();
+        }
+
+        $this->deleteMigrationFiles();
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function getMigrationVersions(): array
+    {
+        $migrationFiles = scandir(sprintf('%s%s', self::OUTPUT_DIR, DIRECTORY_SEPARATOR));
+
+        $migrationVersions = [];
+        foreach ($migrationFiles as $migrationFile) {
+            if (preg_match('/^PropelMigration_(\d+).*\.php$/', $migrationFile, $matches)) {
+                $migrationVersions[] = (int)$matches[1];
+            }
+        }
+
+        return $migrationVersions;
     }
 }
