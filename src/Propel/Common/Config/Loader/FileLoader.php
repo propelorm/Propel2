@@ -179,6 +179,7 @@ abstract class FileLoader extends BaseFileLoader
          * when it matches the entire $value, it can resolve to any value.
          * otherwise, it is replaced with the resolved string or number.
          */
+        /** @phpstan-var string|null $onlyKey */
         $onlyKey = null;
         $replaced = preg_replace_callback('/%([^%\s]*+)%/', function ($match) use ($resolving, $value, &$onlyKey) {
             $key = $match[1];

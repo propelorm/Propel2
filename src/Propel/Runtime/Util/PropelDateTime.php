@@ -68,13 +68,16 @@ class PropelDateTime extends DateTime
      *
      * Usually `new \Datetime()` does not contain milliseconds so you need a method like this.
      *
-     * @param bool|null $time optional in seconds. floating point allowed.
+     * @param string|null $time Optional, in seconds. Floating point allowed.
      *
      * @return \DateTime
      */
-    public static function createHighPrecision(?bool $time = null): DateTime
+    public static function createHighPrecision(?string $time = null): DateTime
     {
         $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+        if ($dateTime === false) {
+            throw new \InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
+        }
 
         $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 
