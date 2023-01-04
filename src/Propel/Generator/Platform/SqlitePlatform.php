@@ -47,8 +47,6 @@ class SqlitePlatform extends DefaultPlatform
     protected $tableAlteringWorkaround = true;
 
     /**
-     * Initializes db specific domain mapping.
-     *
      * @return void
      */
     protected function initialize(): void
@@ -58,6 +56,16 @@ class SqlitePlatform extends DefaultPlatform
         $version = $this->getVersion();
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
+    }
+
+    /**
+     * Initializes db specific domain mapping.
+     *
+     * @return void
+     */
+    protected function initializeTypeMap(): void
+    {
+        parent::initializeTypeMap();
 
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'MEDIUMTEXT'));

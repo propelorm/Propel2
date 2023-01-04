@@ -260,7 +260,7 @@ class PropelDateTimeTest extends TestCase
         $originalTimezone = date_default_timezone_get();
         date_default_timezone_set('America/New_York');
 
-        $createHP = PropelDateTime::createHighPrecision();
+        $createHP = PropelDateTime::createHighPrecision(PropelDateTime::getMicrotime());
 
         $dt = new DateTime();
         $dt->setTimezone(new DateTimeZone('America/New_York'));

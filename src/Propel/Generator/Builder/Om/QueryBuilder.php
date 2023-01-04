@@ -14,7 +14,8 @@ use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
-use Propel\Runtime\ActiveQuery\Criterion\ExistsCriterion;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Criterion\ExistsQueryCriterion;
 
 /**
  * Generates a base Query class for user object model (OM).
@@ -168,6 +169,7 @@ class QueryBuilder extends AbstractOMBuilder
             '\Propel\Runtime\Propel',
             '\Propel\Runtime\ActiveQuery\ModelCriteria',
             '\Propel\Runtime\ActiveQuery\Criteria',
+            '\Propel\Runtime\ActiveQuery\Criterion\CriterionFactory',
             '\Propel\Runtime\ActiveQuery\ModelJoin',
             '\Exception',
             '\Propel\Runtime\Exception\PropelException',
@@ -1516,6 +1518,7 @@ class QueryBuilder extends AbstractOMBuilder
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
         $this->addWithRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
         $this->addUseRelatedExistsQuery($script, $fkTable, $queryClass, $relationName);
+        $this->addUseRelatedInQuery($script, $fkTable, $queryClass, $relationName);
     }
 
     /**
@@ -1537,6 +1540,7 @@ class QueryBuilder extends AbstractOMBuilder
         $this->addUseRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
         $this->addWithRelatedQuery($script, $fkTable, $queryClass, $relationName, $joinType);
         $this->addUseRelatedExistsQuery($script, $fkTable, $queryClass, $relationName);
+        $this->addUseRelatedInQuery($script, $fkTable, $queryClass, $relationName);
     }
 
     /**
@@ -1585,45 +1589,61 @@ class QueryBuilder extends AbstractOMBuilder
      */
     protected function addUseRelatedExistsQuery(string &$script, Table $fkTable, string $queryClass, string $relationName): void
     {
-        $relationDescription = ($relationName === $fkTable->getPhpName()) ?
+        $vars = [
+            'queryClass' => $queryClass,
+            'relationDescription' => $this->getRelationDescription($relationName, $fkTable),
+            'relationName' => $relationName,
+            'existsType' => ExistsQueryCriterion::TYPE_EXISTS,
+            'notExistsType' => ExistsQueryCriterion::TYPE_NOT_EXISTS,
+        ];
+        $templatePath = $this->getTemplatePath(__DIR__);
+
+        $template = new PropelTemplate();
+        $filePath = $templatePath . 'baseQueryExistsMethods.php';
+        $template->setTemplateFile($filePath);
+
+        $script .= $template->render($vars);
+    }
+
+    /**
+     * Adds a useInQuery and useNotInQuery to the object script.
+     *
+     * @param string $script The script will be modified in this method.
+     * @param \Propel\Generator\Model\Table $fkTable The target of the relation
+     * @param string $queryClass Query object class name that will be returned by the IN statement.
+     * @param string $relationName Name of the relation
+     *
+     * @return void
+     */
+    protected function addUseRelatedInQuery(string &$script, Table $fkTable, string $queryClass, string $relationName): void
+    {
+        $vars = [
+            'queryClass' => $queryClass,
+            'relationDescription' => $this->getRelationDescription($relationName, $fkTable),
+            'relationName' => $relationName,
+            'inType' => trim(Criteria::IN),
+            'notInType' => trim(Criteria::NOT_IN),
+        ];
+        $templatePath = $this->getTemplatePath(__DIR__);
+
+        $template = new PropelTemplate();
+        $filePath = $templatePath . 'baseQueryInMethods.php';
+        $template->setTemplateFile($filePath);
+
+        $script .= $template->render($vars);
+    }
+
+    /**
+     * @param string $relationName
+     * @param \Propel\Generator\Model\Table $fkTable
+     *
+     * @return string
+     */
+    protected function getRelationDescription(string $relationName, Table $fkTable): string
+    {
+        return ($relationName === $fkTable->getPhpName()) ?
             "relation to $relationName table" :
             "$relationName relation to the {$fkTable->getPhpName()} table";
-
-        $notExistsType = ExistsCriterion::TYPE_NOT_EXISTS;
-        $existsType = ExistsCriterion::TYPE_EXISTS;
-
-        $script .= <<< EOT
-    /**
-     * Use the $relationDescription for an EXISTS query.
-     *
-     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
-     *
-     * @param string|null \$queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     * @param string|null \$modelAlias sets an alias for the nested query
-     * @param string \$typeOfExists Either ExistsCriterion::TYPE_EXISTS or ExistsCriterion::TYPE_NOT_EXISTS
-     *
-     * @return $queryClass The inner query object of the EXISTS statement
-     */
-    public function use{$relationName}ExistsQuery(\$modelAlias = null, \$queryClass = null, \$typeOfExists = '$existsType')
-    {
-        return \$this->useExistsQuery('$relationName', \$modelAlias, \$queryClass, \$typeOfExists);
-    }
-
-    /**
-     * Use the $relationDescription for a NOT EXISTS query.
-     *
-     * @see use{$relationName}ExistsQuery()
-     *
-     * @param string|null \$modelAlias sets an alias for the nested query
-     * @param string|null \$queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
-     *
-     * @return $queryClass The inner query object of the NOT EXISTS statement
-     */
-    public function use{$relationName}NotExistsQuery(\$modelAlias = null, \$queryClass = null)
-    {
-        return \$this->useExistsQuery('$relationName', \$modelAlias, \$queryClass, '$notExistsType');
-    }
-EOT;
     }
 
     /**
@@ -1692,11 +1712,11 @@ EOT;
      * using the $crossTableName table as cross reference
      *
      * @param $fkPhpName $objectName the related object to use as filter
-     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param string \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL and Criteria::IN for queries
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy{$relName}($objectName, string \$comparison = Criteria::EQUAL)
+    public function filterBy{$relName}($objectName, string \$comparison = null)
     {
         \$this
             ->use{$relationName}Query()

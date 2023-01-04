@@ -16,7 +16,8 @@ if [ "$DB_NAME" = "" ]; then
 fi
 
 DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
-DB_PW=${DB_PW-$PGPASSWORD};
+DB_PW=${DB_PW-$PGPASSWORD};.0.1};
+DB_PORT=${DB_PORT-5432};
 
 if [ -z "$DB_PW" ]; then
     echo "\$DB_PW not set. Leaving empty."
@@ -28,10 +29,10 @@ fi
     export PGPASSWORD="$DB_PW";
 
     echo "Dropping existing test db"
-    dropdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
+    dropdb  --host="$DB_HOSTNAME" --port=$DB_PORT --username="$DB_USER" $NO_PWD "$DB_NAME" || exit 1;
 
     echo "Creating new test db"
-    createdb  --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD "$DB_NAME";
+    createdb  --host="$DB_HOSTNAME" --port=$DB_PORT --username="$DB_USER" $NO_PWD "$DB_NAME" || exit 1;
     
     echo "Creating schemas"
     psql --host="$DB_HOSTNAME" --username="$DB_USER" $NO_PWD -c '
@@ -40,8 +41,8 @@ fi
     CREATE SCHEMA second_hand_books;
     CREATE SCHEMA migration;
     ' "$DB_NAME" >/dev/null;
-)
+) || exit 1;
 
 DIR=`dirname $0`;
-dsn="pgsql:host=$DB_HOSTNAME;dbname=$DB_NAME";
+dsn="pgsql:host=$DB_HOSTNAME;port=$DB_PORT;dbname=$DB_NAME";
 php $DIR/../../bin/propel test:prepare --vendor="pgsql" --dsn="$dsn" --user="$DB_USER" --password="$DB_PW";
