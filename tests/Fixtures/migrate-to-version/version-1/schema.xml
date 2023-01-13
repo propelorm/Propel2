@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="migration_command">
+
+    <table name="table1">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" description="Book Id"/>
+        <column name="title" type="VARCHAR" required="true" primaryString="true"/>
+        <column name="email" type="VARCHAR" required="false" primaryString="true"/>
+        <column name="table2_id" type="INTEGER"/>
+        <foreign-key foreignTable="table2" onDelete="setnull" onUpdate="cascade">
+            <reference local="table2_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
+    <table name="table2">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR"/>
+        <column name="created_at" required="false" type="TIMESTAMP"/>
+    </table>
+
+</database>

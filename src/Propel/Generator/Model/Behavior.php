@@ -266,6 +266,19 @@ class Behavior extends MappingModel
     }
 
     /**
+     * Checks if a param has the given value
+     *
+     * @param string $paramName
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    public function parameterHasValue(string $paramName, $value): bool
+    {
+        return $this->parameters[$paramName] === $value;
+    }
+
+    /**
      * Defines when this behavior must execute its modifyTable() method
      * relative to other behaviors. The bigger the value is, the later the
      * behavior is executed.

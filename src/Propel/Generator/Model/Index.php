@@ -105,26 +105,27 @@ class Index extends MappingModel
      */
     protected function doNaming(): void
     {
-        if (!$this->name || $this->autoNaming) {
-            $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
-
-            if ($this->columns) {
-                $hash = [];
-                $hash[] = implode(',', (array)$this->columns);
-                $hash[] = implode(',', (array)$this->columnsSize);
-
-                $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
-            } else {
-                $newName .= 'no_columns';
-            }
-
-            if ($this->table) {
-                $newName = $this->table->getCommonName() . '_' . $newName;
-            }
-
-            $this->name = $newName;
-            $this->autoNaming = true;
+        if ($this->name && !$this->autoNaming) {
+            return;
         }
+        $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
+
+        if ($this->columns) {
+            $hash = [];
+            $hash[] = implode(',', (array)$this->columns);
+            $hash[] = implode(',', (array)$this->columnsSize);
+
+            $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
+        } else {
+            $newName .= 'no_columns';
+        }
+
+        if ($this->table) {
+            $newName = $this->table->getCommonName() . '_' . $newName;
+        }
+
+        $this->name = $newName;
+        $this->autoNaming = true;
     }
 
     /**

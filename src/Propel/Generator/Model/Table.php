@@ -968,6 +968,18 @@ class Table extends ScopedMappingModel implements IdMethod
     }
 
     /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return bool
+     */
+    public function containsForeignKeyWithSameName(ForeignKey $fk): bool
+    {
+        $name = $fk->getPhpName() ?: $fk->getName();
+
+        return isset($this->foreignKeysByName[$name]);
+    }
+
+    /**
      * Return true if the column requires a transaction in Postgres.
      *
      * @return bool
