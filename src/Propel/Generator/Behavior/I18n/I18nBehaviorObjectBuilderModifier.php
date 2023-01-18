@@ -102,7 +102,8 @@ class I18nBehaviorObjectBuilderModifier
         $script .= $this->addSetLocale();
         $script .= $this->addGetLocale();
 
-        if ($alias = $this->behavior->getParameter('locale_alias')) {
+        $alias = $this->behavior->getParameter('locale_alias');
+        if ($alias) {
             $script .= $this->addGetLocaleAlias($alias);
             $script .= $this->addSetLocaleAlias($alias);
         }

@@ -414,7 +414,8 @@ class ObjectCollection extends Collection
      */
     public function search($element)
     {
-        if (isset($this->indexSplHash[$splHash = spl_object_hash($element)])) {
+        $splHash = spl_object_hash($element);
+        if (isset($this->indexSplHash[$splHash])) {
             return $this->index[$this->indexSplHash[$splHash]];
         }
 
@@ -463,7 +464,8 @@ class ObjectCollection extends Collection
      */
     public function removeObject($element): void
     {
-        if (($pos = $this->search($element)) !== false) {
+        $pos = $this->search($element);
+        if ($pos !== false) {
             $this->remove($pos);
         }
     }

@@ -87,13 +87,16 @@ class MysqlPlatform extends DefaultPlatform
 
         $mysqlConfig = $generatorConfig->get()['database']['adapters']['mysql'];
 
-        if ($defaultTableEngine = $mysqlConfig['tableType']) {
+        $defaultTableEngine = $mysqlConfig['tableType'];
+        if ($defaultTableEngine) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
-        if ($tableEngineKeyword = $mysqlConfig['tableEngineKeyword']) {
+        $tableEngineKeyword = $mysqlConfig['tableEngineKeyword'];
+        if ($tableEngineKeyword) {
             $this->tableEngineKeyword = $tableEngineKeyword;
         }
-        if ($uuidColumnType = $mysqlConfig['uuidColumnType']) {
+        $uuidColumnType = $mysqlConfig['uuidColumnType'];
+        if ($uuidColumnType) {
             $enable = strtolower($uuidColumnType) === 'native';
             $this->setUuidNativeType($enable);
         }
@@ -482,6 +485,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                     throw new EngineException('Unexpected value "' . $unsigned . '" for MySQL vendor column parameter "Unsigned", expecting "true" or "false".');
             }
         }
+
         if ($colinfo->hasParameter('Charset')) {
             $ddl[] = 'CHARACTER SET ' . $this->quote($colinfo->getParameter('Charset'));
         }
@@ -490,6 +494,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($colinfo->hasParameter('Collate')) {
             $ddl[] = 'COLLATE ' . $this->quote($colinfo->getParameter('Collate'));
         }
+
         if ($sqlType === 'TIMESTAMP') {
             if ($notNullString === '') {
                 $notNullString = 'NULL';
@@ -509,7 +514,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $ddl[] = $notNullString;
             }
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
         if ($col->getDescription()) {

@@ -205,7 +205,8 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
             }
 
             foreach ($connectionNames as $name) {
-                if ($definition = $this->getConfigProperty('database.connections.' . $name)) {
+                $definition = $this->getConfigProperty('database.connections.' . $name);
+                if ($definition) {
                     $this->buildConnections[$name] = $definition;
                 }
             }

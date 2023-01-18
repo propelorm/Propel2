@@ -118,10 +118,12 @@ class SqlitePlatform extends DefaultPlatform
     {
         parent::setGeneratorConfig($generatorConfig);
 
-        if (($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey')) !== null) {
+        $foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey');
+        if ($foreignKeySupport !== null) {
             $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);
         }
-        if (($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround')) !== null) {
+        $tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround');
+        if ($tableAlteringWorkaround !== null) {
             $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);
         }
     }
@@ -517,7 +519,8 @@ PRAGMA foreign_keys = ON;
             $lines[] = $this->getColumnDDL($column);
         }
 
-        if ($table->hasPrimaryKey() && ($pk = $this->getPrimaryKeyDDL($table))) {
+        $pk = $this->getPrimaryKeyDDL($table);
+        if ($pk) {
             $lines[] = $pk;
         }
 
