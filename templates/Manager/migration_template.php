@@ -17,9 +17,9 @@ class <?= $migrationClassName ?>
     /**
      * @param \Propel\Generator\Manager\MigrationManager $manager
      *
-     * @return void
+     * @return null|false|void
      */
-    public function preUp(MigrationManager $manager): void
+    public function preUp(MigrationManager $manager)
     {
         // add the pre-migration code here
     }
@@ -27,9 +27,9 @@ class <?= $migrationClassName ?>
     /**
      * @param \Propel\Generator\Manager\MigrationManager $manager
      *
-     * @return void
+     * @return null|false|void
      */
-    public function postUp(MigrationManager $manager): void
+    public function postUp(MigrationManager $manager)
     {
         // add the post-migration code here
     }
@@ -37,9 +37,9 @@ class <?= $migrationClassName ?>
     /**
      * @param \Propel\Generator\Manager\MigrationManager $manager
      *
-     * @return void
+     * @return null|false|void
      */
-    public function preDown(MigrationManager $manager): void
+    public function preDown(MigrationManager $manager)
     {
         // add the pre-migration code here
     }
@@ -47,9 +47,9 @@ class <?= $migrationClassName ?>
     /**
      * @param \Propel\Generator\Manager\MigrationManager $manager
      *
-     * @return void
+     * @return null|false|void
      */
-    public function postDown(MigrationManager $manager): void
+    public function postDown(MigrationManager $manager)
     {
         // add the post-migration code here
     }
