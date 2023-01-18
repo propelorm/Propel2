@@ -9,24 +9,47 @@ use Propel\Generator\Manager\MigrationManager;
  */
 class <?= $migrationClassName ?>
 {
+    /**
+     * @var string
+     */
     public $comment = '<?= $commentString ?>';
 
-    public function preUp(MigrationManager $manager)
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return void
+     */
+    public function preUp(MigrationManager $manager): void
     {
         // add the pre-migration code here
     }
 
-    public function postUp(MigrationManager $manager)
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return void
+     */
+    public function postUp(MigrationManager $manager): void
     {
         // add the post-migration code here
     }
 
-    public function preDown(MigrationManager $manager)
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return void
+     */
+    public function preDown(MigrationManager $manager): void
     {
         // add the pre-migration code here
     }
 
-    public function postDown(MigrationManager $manager)
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return void
+     */
+    public function postDown(MigrationManager $manager): void
     {
         // add the post-migration code here
     }
@@ -37,7 +60,7 @@ class <?= $migrationClassName ?>
      * @return array list of the SQL strings to execute for the Up migration
      *               the keys being the datasources
      */
-    public function getUpSQL()
+    public function getUpSQL(): array
     {
 <?php foreach($migrationsUp as $connectionName => $sql): ?>
         <?= $connectionToVariableName[$connectionName] ?> = <<< 'EOT'
@@ -58,7 +81,7 @@ EOT;
      * @return array list of the SQL strings to execute for the Down migration
      *               the keys being the datasources
      */
-    public function getDownSQL()
+    public function getDownSQL(): array
     {
 <?php foreach($migrationsDown as $connectionName => $sql): ?>
         <?= $connectionToVariableName[$connectionName] ?> = <<< 'EOT'
