@@ -5,9 +5,9 @@ use Propel\Generator\Manager\MigrationManager;
 /**
  * Data object containing the SQL and PHP code to migrate the database
  * up to version <?= $timestamp ?>.
- * Generated on <?= $timeInWords ?> <?= $migrationAuthor ?> 
+ * Generated on <?= $timeInWords ?> <?= $migrationAuthor ?>
  */
-class <?= $migrationClassName ?> 
+class <?= $migrationClassName ?>
 {
     public $comment = '<?= $commentString ?>';
 
@@ -45,11 +45,11 @@ class <?= $migrationClassName ?>
 EOT;
 
 <?php endforeach;?>
-        return array(
+        return [
 <?php foreach($connectionToVariableName as $connectionName => $variableName): ?>
             '<?= $connectionName ?>' => <?= $variableName ?>,
 <?php endforeach;?>
-        );
+        ];
     }
 
     /**
@@ -66,11 +66,11 @@ EOT;
 EOT;
 
 <?php endforeach;?>
-        return array(
+        return [
 <?php foreach($connectionToVariableName as $connectionName => $variableName): ?>
             '<?= $connectionName ?>' => <?= $variableName ?>,
 <?php endforeach;?>
-        );
+        ];
     }
 
 }

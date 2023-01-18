@@ -46,11 +46,11 @@ class GeneratorConfigTest extends TestCase
     {
         $php = "
 <?php
-    return array(
-        'propel' => array(
-            'database' => array(
-                'connections' => array(
-                    'mysource' => array(
+    return [
+        'propel' => [
+            'database' => [
+                'connections' => [
+                    'mysource' => [
                         'adapter' => 'sqlite',
                         'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                         'dsn' => 'sqlite:" . sys_get_temp_dir() . "/mydb',
@@ -58,10 +58,10 @@ class GeneratorConfigTest extends TestCase
                         'password' => '',
                         'model_paths' => [
                             'src',
-                            'vendor'
-                        ]
-                    ),
-                    'yoursource' => array(
+                            'vendor',
+                        ],
+                    ],
+                    'yoursource' => [
                         'adapter' => 'mysql',
                         'classname' => 'Propel\\Runtime\\Connection\\DebugPDO',
                         'dsn' => 'mysql:host=localhost;dbname=yourdb',
@@ -69,21 +69,21 @@ class GeneratorConfigTest extends TestCase
                         'password' => '',
                         'model_paths' => [
                             'src',
-                            'vendor'
-                        ]
-                    )
-                )
-            ),
-            'runtime' => array(
+                            'vendor',
+                        ],
+                    ],
+                ],
+            ],
+            'runtime' => [
                 'defaultConnection' => 'mysource',
-                'connections' => array('mysource', 'yoursource')
-            ),
-            'generator' => array(
+                'connections' => ['mysource', 'yoursource'],
+            ],
+            'generator' => [
                 'defaultConnection' => 'mysource',
-                'connections' => array('mysource', 'yoursource')
-            )
-        )
-);
+                'connections' => ['mysource', 'yoursource'],
+            ],
+        ]
+    ];
 ";
         $file = $this->newFile('propel.php.dist', $php);
 
