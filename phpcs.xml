@@ -34,9 +34,6 @@
     <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition">
         <severity>0</severity>
     </rule>
-    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison">
-        <severity>0</severity>
-    </rule>
     <rule ref="Generic.PHP.NoSilencedErrors">
         <severity>0</severity>
     </rule>
