@@ -266,9 +266,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addValueSetColumnAttributes(string &$script): void
     {
         $script .= "
-    /** 
-     * The enumerated values for this table 
-     * 
+    /**
+     * The enumerated values for this table
+     *
      * @var array<string, array<string>>
      */
     protected static \$enumValueSets = [";
@@ -1195,7 +1195,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);
         }
 
-        return array(\$obj, \$col);
+        return [\$obj, \$col];
     }
 ";
     }
