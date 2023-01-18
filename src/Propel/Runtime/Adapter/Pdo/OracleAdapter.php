@@ -267,9 +267,9 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $type = $lock->getType();
 
-        if (Lock::SHARED === $type) {
+        if ($type === Lock::SHARED) {
             $sql .= ' LOCK IN SHARE MODE';
-        } elseif (Lock::EXCLUSIVE === $type) {
+        } elseif ($type === Lock::EXCLUSIVE) {
             $sql .= ' FOR UPDATE';
         }
     }

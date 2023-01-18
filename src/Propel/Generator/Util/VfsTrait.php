@@ -67,7 +67,7 @@ trait VfsTrait
      */
     private function getDir(string $dirname): vfsStreamDirectory
     {
-        if ('.' === $dirname) {
+        if ($dirname === '.') {
             return $this->getRoot();
         }
 
@@ -75,7 +75,7 @@ trait VfsTrait
         $parent = $this->getRoot();
         foreach ($dirs as $dir) {
             $current = $parent->getChild($dir);
-            if (null === $current) {
+            if ($current === null) {
                 $current = vfsStream::newDirectory($dir)->at($parent);
             }
             $parent = $current;

@@ -507,7 +507,8 @@ abstract class AbstractManager
     {
         $properties = [];
 
-        if (false === $lines = @file($file)) {
+        $lines = @file($file);
+        if ($lines === false) {
             throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
         }
 

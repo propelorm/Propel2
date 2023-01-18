@@ -261,9 +261,9 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $type = $lock->getType();
 
-        if (Lock::SHARED === $type) {
+        if ($type === Lock::SHARED) {
             $sql .= ' FOR SHARE';
-        } elseif (Lock::EXCLUSIVE === $type) {
+        } elseif ($type === Lock::EXCLUSIVE) {
             $sql .= ' FOR UPDATE';
         }
 
