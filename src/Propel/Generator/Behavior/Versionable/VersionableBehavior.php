@@ -255,7 +255,8 @@ class VersionableBehavior extends Behavior
     public function getVersionableFks(): array
     {
         $versionableFKs = [];
-        if ($fks = $this->getTable()->getForeignKeys()) {
+        $fks = $this->getTable()->getForeignKeys();
+        if ($fks) {
             foreach ($fks as $fk) {
                 if ($fk->getForeignTable()->hasBehavior($this->getName()) && !$fk->isComposite()) {
                     $versionableFKs[] = $fk;
@@ -272,7 +273,8 @@ class VersionableBehavior extends Behavior
     public function getVersionableReferrers(): array
     {
         $versionableReferrers = [];
-        if ($fks = $this->getTable()->getReferrers()) {
+        $fks = $this->getTable()->getReferrers();
+        if ($fks) {
             foreach ($fks as $fk) {
                 if ($fk->getTable()->hasBehavior($this->getName()) && !$fk->isComposite()) {
                     $versionableReferrers[] = $fk;

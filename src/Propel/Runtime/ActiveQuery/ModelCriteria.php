@@ -1929,7 +1929,8 @@ class ModelCriteria extends BaseModelCriteria
         }
         try {
             return $con->transaction(function () use ($con) {
-                if (!$affectedRows = $this->basePreDelete($con)) {
+                $affectedRows = $this->basePreDelete($con);
+                if (!$affectedRows) {
                     $affectedRows = $this->doDeleteAll($con);
                 }
                 $this->basePostDelete($affectedRows, $con);
@@ -2567,7 +2568,8 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         // Maybe it's a magic call to a qualified joinWith method, e.g. 'leftJoinWith' or 'joinWithAuthor'
-        if (($pos = stripos($name, 'joinWith')) !== false) {
+        $pos = stripos($name, 'joinWith');
+        if ($pos !== false) {
             $joinType = null;
 
             $type = substr($name, 0, $pos);
@@ -2587,7 +2589,8 @@ class ModelCriteria extends BaseModelCriteria
         }
 
         // Maybe it's a magic call to a qualified join method, e.g. 'leftJoin'
-        if (($pos = strpos($name, 'Join')) > 0) {
+        $pos = strpos($name, 'Join');
+        if ($pos > 0) {
             $type = substr($name, 0, $pos);
             if (in_array($type, ['left', 'right', 'inner'])) {
                 $joinType = strtoupper($type) . ' JOIN';

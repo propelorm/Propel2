@@ -574,7 +574,8 @@ class ColumnMap
      */
     public static function normalizeName(string $name): string
     {
-        if (($pos = strrpos($name, '.')) !== false) {
+        $pos = strrpos($name, '.');
+        if ($pos !== false) {
             $name = substr($name, $pos + 1);
             $name = trim($name, " \t\n\r\0\x0B`'()\"[]~!-{}%^&.");
         }

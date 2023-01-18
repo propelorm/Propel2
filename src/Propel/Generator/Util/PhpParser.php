@@ -187,7 +187,8 @@ class PhpParser
      */
     public function removeMethod(string $methodName)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, '', $this->code);
             $this->knownMethodCache[$methodName] = false;
 
@@ -207,7 +208,8 @@ class PhpParser
      */
     public function replaceMethod(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $newCode, $this->code);
             $this->knownMethodCache[$methodName] = $newCode;
 
@@ -227,7 +229,8 @@ class PhpParser
      */
     public function addMethodAfter(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $methodCode . $newCode, $this->code);
 
             return $methodCode;
@@ -246,7 +249,8 @@ class PhpParser
      */
     public function addMethodBefore(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $newCode . $methodCode, $this->code);
 
             return $methodCode;

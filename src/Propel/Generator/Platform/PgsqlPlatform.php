@@ -446,7 +446,8 @@ COMMENT ON TABLE %s IS %s;
         $pattern = "
 COMMENT ON COLUMN %s.%s IS %s;
 ";
-        if ($description = $column->getDescription()) {
+        $description = $column->getDescription();
+        if ($description) {
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
@@ -517,13 +518,17 @@ DROP TABLE IF EXISTS %s CASCADE;
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+
+        $default = $this->getColumnDefaultValueDDL($col);
+        if ($default) {
             $ddl[] = $default;
         }
-        if ($notNull = $this->getNullString($col->isNotNull())) {
+        $notNull = $this->getNullString($col->isNotNull());
+        if ($notNull) {
             $ddl[] = $notNull;
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+        $autoIncrement = $col->getAutoIncrementString();
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
 
@@ -552,7 +557,8 @@ DROP TABLE IF EXISTS %s CASCADE;
      */
     public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
-        if (($pos = strpos($toTableName, '.')) !== false) {
+        $pos = strpos($toTableName, '.');
+        if ($pos !== false) {
             $toTableName = substr($toTableName, $pos + 1);
         }
 
@@ -698,7 +704,8 @@ DROP SEQUENCE %s CASCADE;
                 }
             }
 
-            if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
+            $using = $this->getUsingCast($fromColumn, $toColumn);
+            if ($using) {
                 $sqlType .= $using;
             }
             $ret .= sprintf(

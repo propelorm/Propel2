@@ -56,7 +56,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      */
     public function getNamespace(): ?string
     {
-        if ($namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if ($namespace) {
             return $namespace . '\\Base';
         }
 

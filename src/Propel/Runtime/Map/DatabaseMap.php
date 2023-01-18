@@ -317,7 +317,8 @@ class DatabaseMap
             return is_string($tableOrClassMap) ? $this->addTableFromMapClass($tableOrClassMap) : $tableOrClassMap;
         }
 
-        if (class_exists($tmClass = $phpName . 'TableMap')) {
+        $tmClass = $phpName . 'TableMap';
+        if (class_exists($tmClass)) {
             $this->addTableFromMapClass($tmClass);
 
             return $this->tablesByPhpName[$phpName];
