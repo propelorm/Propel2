@@ -1571,7 +1571,8 @@ if (is_resource($columnValueAccessor)) {
         if ($table->hasForeignKeys()) {
             foreach ($table->getForeignKeys() as $fk) {
                 if ($fk->getForeignTable() && !$fk->getForeignTable()->isUnique($fk->getForeignColumnObjects())) {
-                    $unique = (new Unique())->setColumns($fk->getForeignColumnObjects());
+                    $unique = new Unique();
+                    $unique->setColumns($fk->getForeignColumnObjects());
                     $fk->getForeignTable()->addUnique($unique);
                 }
             }
