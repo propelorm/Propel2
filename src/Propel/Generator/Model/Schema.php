@@ -238,7 +238,8 @@ class Schema
             $platform = null;
             $database->setParentSchema($this);
             if ($database->getPlatform() === null) {
-                if ($config = $this->getGeneratorConfig()) {
+                $config = $this->getGeneratorConfig();
+                if ($config) {
                     $platform = $config->getConfiguredPlatform(null, $database->getName());
                 }
 

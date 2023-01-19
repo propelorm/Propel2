@@ -1558,7 +1558,7 @@ class Criteria
      */
     public function removeSelectColumn(string $name)
     {
-        while (false !== ($key = array_search($name, $this->selectColumns, true))) {
+        while (($key = array_search($name, $this->selectColumns, true)) !== false) {
             unset($this->selectColumns[$key]);
         }
 

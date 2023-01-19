@@ -48,13 +48,14 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the namespace for the base class.
      *
-     * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
+     * @see \Propel\Generator\Builder\Om\AbstractOMBuilder::getNamespace()
      *
      * @return string|null
      */
     public function getNamespace(): ?string
     {
-        if ($namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if ($namespace) {
             return $namespace . '\\Base';
         }
 
@@ -270,7 +271,8 @@ class ObjectBuilder extends AbstractObjectBuilder
         $script .= "
 abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implements ActiveRecordInterface ';
 
-        if ($interface = $this->getInterface()) {
+        $interface = $this->getInterface();
+        if ($interface) {
             $script .= ', Child' . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
                 $this->declareClass($interface);
@@ -2037,7 +2039,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$dt = PropelDateTime::newInstance(\$v, null, '$dateTimeClass');
         if (\$this->$clo !== null || \$dt !== null) {";
 
-        if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+        $def = $col->getDefaultValue();
+        if ($def !== null && !$def->isExpression()) {
             $defaultValue = $this->getDefaultValueString($col);
             $script .= "
             if ( (\$dt != \$this->{$clo}) // normalized values don't match
@@ -4119,10 +4122,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addFKMutator(string &$script, ForeignKey $fk): void
     {
-        $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
 
-        if ($interface = $fk->getInterface()) {
+        $interface = $fk->getInterface();
+        if ($interface) {
             $className = $this->declareClass($interface);
         } else {
             $className = $this->getClassNameFromTable($fkTable);
@@ -4214,7 +4217,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
         $returnDesc = '';
-        if ($interface = $fk->getInterface()) {
+        $interface = $fk->getInterface();
+        if ($interface) {
             $className = $this->declareClass($interface);
         } else {
             $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
@@ -6044,7 +6048,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         [, $getSignature] = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
-        if (($pos = array_search($excludeSignatureItem, $getSignature)) !== false) {
+        $pos = array_search($excludeSignatureItem, $getSignature);
+        if ($pos !== false) {
             unset($getSignature[$pos]);
         }
 

@@ -150,17 +150,21 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $sql = 'SHOW FULL TABLES';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
             }
             $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+        } else {
+            $schema = $database->getSchema();
+            if ($schema) {
+                $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+            }
         }
 
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -226,7 +230,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
             if ($matches[2]) {
-                if (($cpos = strpos($matches[2], ',')) !== false) {
+                $cpos = strpos($matches[2], ',');
+                if ($cpos !== false) {
                     $size = (int)substr($matches[2], 0, $cpos);
                     $scale = (int)substr($matches[2], $cpos + 1);
                 } else {

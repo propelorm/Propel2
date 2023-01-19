@@ -372,7 +372,7 @@ public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
     }
 ";
             } else {
-                $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
+                $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, true);
                 $script .= "
     if (\$this->coll{$fkGetter}) {
 
