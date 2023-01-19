@@ -48,14 +48,13 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the namespace for the base class.
      *
-     * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
+     * @see \Propel\Generator\Builder\Om\AbstractOMBuilder::getNamespace()
      *
      * @return string|null
      */
     public function getNamespace(): ?string
     {
         $namespace = parent::getNamespace();
-
         if ($namespace) {
             return $namespace . '\\Base';
         }
@@ -271,8 +270,8 @@ class ObjectBuilder extends AbstractObjectBuilder
 
         $script .= "
 abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implements ActiveRecordInterface ';
-        $interface = $this->getInterface();
 
+        $interface = $this->getInterface();
         if ($interface) {
             $script .= ', Child' . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
@@ -2040,7 +2039,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$dt = PropelDateTime::newInstance(\$v, null, '$dateTimeClass');
         if (\$this->$clo !== null || \$dt !== null) {";
 
-        if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+        $def = $col->getDefaultValue();
+        if ($def !== null && !$def->isExpression()) {
             $defaultValue = $this->getDefaultValueString($col);
             $script .= "
             if ( (\$dt != \$this->{$clo}) // normalized values don't match
@@ -4122,7 +4122,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addFKMutator(string &$script, ForeignKey $fk): void
     {
-        $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
         $interface = $fk->getInterface();
 
@@ -4212,9 +4211,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addFKAccessor(string &$script, ForeignKey $fk): void
     {
         $table = $this->getTable();
-
         $varName = $this->getFKVarName($fk);
-
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
         $returnDesc = '';
@@ -4425,17 +4422,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addRefFKMethods(string &$script): void
     {
         $referrers = $this->getTable()->getReferrers();
-
         if (!$referrers) {
             return;
         }
 
         $this->addInitRelations($script, $referrers);
-
         foreach ($referrers as $refFK) {
             $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), 'Child');
             $this->declareClassFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-
             if ($refFK->isLocalPrimaryKey()) {
                 $this->addPKRefFKGet($script, $refFK);
                 $this->addPKRefFKSet($script, $refFK);
@@ -6055,7 +6049,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         [, $getSignature] = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
-        if (($pos = array_search($excludeSignatureItem, $getSignature)) !== false) {
+        $pos = array_search($excludeSignatureItem, $getSignature);
+        if ($pos !== false) {
             unset($getSignature[$pos]);
         }
 

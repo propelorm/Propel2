@@ -461,7 +461,6 @@ class Domain extends MappingModel
         }
 
         $def = $this->getDefaultValue();
-
         if ($def) {
             if ($def->isExpression()) {
                 $domainNode->setAttribute('defaultExpr', $def->getValue());

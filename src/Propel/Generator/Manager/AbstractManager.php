@@ -506,9 +506,9 @@ abstract class AbstractManager
     protected function getProperties(string $file): array
     {
         $properties = [];
-        $lines = @file($file);
 
-        if (false === $lines) {
+        $lines = @file($file);
+        if ($lines === false) {
             throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
         }
 

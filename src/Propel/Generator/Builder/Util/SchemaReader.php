@@ -465,7 +465,6 @@ class SchemaReader
 
         $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
         $col = xml_get_current_column_number($this->parser);
-
         if ($col) {
             $location .= sprintf(', column %d', $col);
         }

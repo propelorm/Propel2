@@ -102,37 +102,31 @@ class XmlDumper implements DumperInterface
         $databaseNode->setAttribute('defaultIdMethod', $database->getDefaultIdMethod());
 
         $package = $database->getPackage();
-
         if ($package) {
             $databaseNode->setAttribute('package', $package);
         }
 
         $schema = $database->getSchema();
-
         if ($schema) {
             $databaseNode->setAttribute('schema', $schema);
         }
 
         $absoluteNamespace = $database->getNamespace(true);
-
         if ($absoluteNamespace) {
             $databaseNode->setAttribute('namespace', $absoluteNamespace);
         }
 
         $baseClass = $database->getBaseClass();
-
         if ($baseClass) {
             $databaseNode->setAttribute('baseClass', $baseClass);
         }
 
         $baseQueryClass = $database->getBaseQueryClass();
-
         if ($baseQueryClass) {
             $databaseNode->setAttribute('baseQueryClass', $baseQueryClass);
         }
 
         $defaultNamingMethod = $database->getDefaultPhpNamingMethod();
-
         if ($defaultNamingMethod) {
             $databaseNode->setAttribute('defaultPhpNamingMethod', $defaultNamingMethod);
         }
@@ -157,7 +151,6 @@ class XmlDumper implements DumperInterface
         }
 
         $tablePrefix = $database->getTablePrefix();
-
         if ($tablePrefix) {
             $databaseNode->setAttribute('tablePrefix', $tablePrefix);
         }
@@ -264,19 +257,16 @@ class XmlDumper implements DumperInterface
         }
 
         $phpNamingMethod = $table->getPhpNamingMethod();
-
         if ($phpNamingMethod && $phpNamingMethod !== $database->getDefaultPhpNamingMethod()) {
             $tableNode->setAttribute('phpNamingMethod', $phpNamingMethod);
         }
 
         $baseClass = $table->getBaseClass();
-
         if ($baseClass) {
             $tableNode->setAttribute('baseClass', $baseClass);
         }
 
         $baseQueryClass = $table->getBaseQueryClass();
-
         if ($baseQueryClass) {
             $tableNode->setAttribute('baseQueryClass', $baseQueryClass);
         }
@@ -294,19 +284,16 @@ class XmlDumper implements DumperInterface
         }
 
         $referenceOnly = $table->isForReferenceOnly();
-
         if ($referenceOnly !== null) {
             $tableNode->setAttribute('forReferenceOnly', $referenceOnly ? 'true' : 'false');
         }
 
         $alias = $table->getAlias();
-
         if ($alias) {
             $tableNode->setAttribute('alias', $alias);
         }
 
         $description = $table->getDescription();
-
         if ($description) {
             $tableNode->setAttribute('description', $description);
         }
@@ -395,7 +382,6 @@ class XmlDumper implements DumperInterface
         $columnNode->setAttribute('name', $column->getName());
 
         $phpName = $column->getPhpName();
-
         if ($phpName) {
             $columnNode->setAttribute('phpName', $phpName);
         }
@@ -404,25 +390,21 @@ class XmlDumper implements DumperInterface
 
         $domain = $column->getDomain();
         $size = $domain->getSize();
-
         if ($size) {
             $columnNode->setAttribute('size', (string)$size);
         }
 
         $scale = $domain->getScale();
-
         if ($scale !== null) {
             $columnNode->setAttribute('scale', (string)$scale);
         }
 
         $platform = $column->getPlatform();
-
         if ($platform && !$column->isDefaultSqlType($platform)) {
             $columnNode->setAttribute('sqlType', $domain->getSqlType());
         }
 
         $description = $column->getDescription();
-
         if ($description) {
             $columnNode->setAttribute('description', $description);
         }
@@ -440,7 +422,6 @@ class XmlDumper implements DumperInterface
         }
 
         $defaultValue = $domain->getDefaultValue();
-
         if ($defaultValue) {
             $type = $defaultValue->isExpression() ? 'defaultExpr' : 'defaultValue';
             $columnNode->setAttribute($type, $defaultValue->getValue());
@@ -455,9 +436,9 @@ class XmlDumper implements DumperInterface
 
         if ($column->isNodeKey()) {
             $columnNode->setAttribute('nodeKey', 'true');
-
-            if ($column->getNodeKeySep()) {
-                $columnNode->setAttribute('nodeKeySep', $column->getNodeKeySep());
+            $nodeKeySeparator = $column->getNodeKeySep();
+            if ($nodeKeySeparator) {
+                $columnNode->setAttribute('nodeKeySep', $nodeKeySeparator);
             }
         }
 
@@ -481,8 +462,9 @@ class XmlDumper implements DumperInterface
         $inheritanceNode->setAttribute('key', $inheritance->getKey());
         $inheritanceNode->setAttribute('class', $inheritance->getClassName());
 
-        if ($inheritance->getAncestor()) {
-            $inheritanceNode->setAttribute('extends', $inheritance->getAncestor());
+        $ancestor = $inheritance->getAncestor();
+        if ($ancestor) {
+            $inheritanceNode->setAttribute('extends', $ancestor);
         }
     }
 
@@ -500,35 +482,39 @@ class XmlDumper implements DumperInterface
         $foreignKeyNode = $parentNode->appendChild($this->document->createElement('foreign-key'));
         $foreignKeyNode->setAttribute('foreignTable', $foreignKey->getForeignTableCommonName());
 
-        if ($foreignKey->getForeignSchemaName()) {
-            $foreignKeyNode->setAttribute('foreignSchema', $foreignKey->getForeignSchemaName());
+        $schema = $foreignKey->getForeignSchemaName();
+        if ($schema) {
+            $foreignKeyNode->setAttribute('foreignSchema', $schema);
         }
 
         $foreignKeyNode->setAttribute('name', $foreignKey->getName());
 
-        if ($foreignKey->getPhpName()) {
-            $foreignKeyNode->setAttribute('phpName', $foreignKey->getPhpName());
+        $phpName = $foreignKey->getPhpName();
+        if ($phpName) {
+            $foreignKeyNode->setAttribute('phpName', $phpName);
         }
 
-        if ($foreignKey->getRefPhpName()) {
-            $foreignKeyNode->setAttribute('refPhpName', $foreignKey->getRefPhpName());
+        $refPhpName = $foreignKey->getRefPhpName();
+        if ($refPhpName) {
+            $foreignKeyNode->setAttribute('refPhpName', $refPhpName);
         }
 
-        if ($foreignKey->getDefaultJoin()) {
-            $foreignKeyNode->setAttribute('defaultJoin', $foreignKey->getDefaultJoin());
+        $defaultJoin = $foreignKey->getDefaultJoin();
+        if ($defaultJoin) {
+            $foreignKeyNode->setAttribute('defaultJoin', $defaultJoin);
         }
 
-        if ($foreignKey->getOnDelete()) {
-            $foreignKeyNode->setAttribute('onDelete', $foreignKey->getOnDelete());
+        $onDeleteBehavior = $foreignKey->getOnDelete();
+        if ($onDeleteBehavior) {
+            $foreignKeyNode->setAttribute('onDelete', $onDeleteBehavior);
         }
 
-        if ($foreignKey->getOnUpdate()) {
-            $foreignKeyNode->setAttribute('onUpdate', $foreignKey->getOnUpdate());
+        $onUpdateBehavior = $foreignKey->getOnUpdate();
+        if ($onUpdateBehavior) {
+            $foreignKeyNode->setAttribute('onUpdate', $onUpdateBehavior);
         }
 
-        $size = count($foreignKey->getLocalColumns());
-
-        for ($i = 0, $size; $i < $size; $i++) {
+        for ($i = 0, $size = count($foreignKey->getLocalColumns()); $i < $size; $i++) {
             $refNode = $foreignKeyNode->appendChild($this->document->createElement('reference'));
             $refNode->setAttribute('local', $foreignKey->getLocalColumnName($i));
             $refNode->setAttribute('foreign', $foreignKey->getForeignColumnName($i));
@@ -551,8 +537,9 @@ class XmlDumper implements DumperInterface
     {
         /** @var \DOMElement $idMethodParameterNode */
         $idMethodParameterNode = $parentNode->appendChild($this->document->createElement('id-method-parameter'));
-        if ($parameter->getName()) {
-            $idMethodParameterNode->setAttribute('name', $parameter->getName());
+        $name = $parameter->getName();
+        if ($name) {
+            $idMethodParameterNode->setAttribute('name', $name);
         }
         $idMethodParameterNode->setAttribute('value', $parameter->getValue());
     }
@@ -603,7 +590,6 @@ class XmlDumper implements DumperInterface
             $indexColumnNode->setAttribute('name', $columnName);
 
             $size = $index->getColumnSize($columnName);
-
             if ($size) {
                 $indexColumnNode->setAttribute('size', $size);
             }

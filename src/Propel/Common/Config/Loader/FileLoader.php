@@ -189,7 +189,7 @@ abstract class FileLoader extends BaseFileLoader
             }
 
             $env = $this->parseEnvironmentParams($key);
-            if (null !== $env) {
+            if ($env !== null) {
                 return $env;
             }
 

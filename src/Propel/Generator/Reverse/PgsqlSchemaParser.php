@@ -154,9 +154,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND n.nspname NOT LIKE 'pg_toast%'";
 
         if ($filterTable) {
-            if ($filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $sql .= ' AND n.nspname = ?';
-                $params[] = $filterTable->getSchema();
+                $params[] = $schema;
             }
 
             $sql .= ' AND c.relname = ?';
@@ -191,7 +192,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $stmt->execute($params);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
             $namespaceName = $row['nspname'];
@@ -232,9 +233,10 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $searchPath = '?';
         $params = [$table->getDatabase()->getSchema()];
+        $schema = $table->getSchema();
 
-        if ($table->getSchema()) {
-            $params = [$table->getSchema()];
+        if ($schema) {
+            $params = [$schema];
         } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             $searchPathString = $stmt->fetchColumn();

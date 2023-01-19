@@ -35,18 +35,16 @@ class TableMapBuilder extends AbstractOMBuilder
     public function getNamespace(): ?string
     {
         $namespace = parent::getNamespace();
-
         if (!$namespace) {
             return 'Map';
         }
 
-        $omns = $this->getBuildProperty('generator.objectModel.namespaceMap');
-
-        if ($this->getGeneratorConfig() && $omns) {
-            return $namespace . '\\' . $omns;
+        $namespaceMap = $this->getBuildProperty('generator.objectModel.namespaceMap');
+        if (!$namespaceMap) {
+            return $namespace . 'Map';
         }
 
-        return $namespace . 'Map';
+        return $namespace . '\\' . $namespaceMap;
     }
 
     /**

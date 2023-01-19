@@ -28,7 +28,6 @@ class ColumnComparator
     public static function computeDiff(Column $fromColumn, Column $toColumn)
     {
         $changedProperties = self::compareColumns($fromColumn, $toColumn);
-
         if ($changedProperties) {
             if ($fromColumn->hasPlatform() || $toColumn->hasPlatform()) {
                 $platform = $fromColumn->hasPlatform() ? $fromColumn->getPlatform() : $toColumn->getPlatform();

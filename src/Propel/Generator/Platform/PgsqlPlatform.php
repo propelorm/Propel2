@@ -519,19 +519,16 @@ DROP TABLE IF EXISTS %s CASCADE;
         }
 
         $default = $this->getColumnDefaultValueDDL($col);
-
         if ($default) {
             $ddl[] = $default;
         }
 
         $notNull = $this->getNullString($col->isNotNull());
-
         if ($notNull) {
             $ddl[] = $notNull;
         }
 
         $autoIncrement = $col->getAutoIncrementString();
-
         if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
@@ -561,7 +558,8 @@ DROP TABLE IF EXISTS %s CASCADE;
      */
     public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
-        if (($pos = strpos($toTableName, '.')) !== false) {
+        $pos = strpos($toTableName, '.');
+        if ($pos !== false) {
             $toTableName = substr($toTableName, $pos + 1);
         }
 
@@ -708,7 +706,6 @@ DROP SEQUENCE %s CASCADE;
             }
 
             $using = $this->getUsingCast($fromColumn, $toColumn);
-
             if ($using) {
                 $sqlType .= $using;
             }

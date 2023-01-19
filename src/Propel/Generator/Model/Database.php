@@ -643,7 +643,8 @@ class Database extends ScopedMappingModel
     public function removeSequence(string $sequence): void
     {
         if ($this->sequences) {
-            if (($idx = array_search($sequence, $this->sequences)) !== false) {
+            $idx = array_search($sequence, $this->sequences);
+            if ($idx !== false) {
                 unset($this->sequences[$idx]);
             }
         }

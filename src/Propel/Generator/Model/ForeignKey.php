@@ -702,9 +702,9 @@ class ForeignKey extends MappingModel
     public function getMapping(): array
     {
         $mapping = [];
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
+        $size = count($this->localColumns);
+        for ($i = 0; $i < $size; $i++) {
             $right = $this->foreignColumns[$i];
-
             if ($right) {
                 $right = $this->getForeignTable()->getColumn($right);
             } else {
@@ -741,7 +741,8 @@ class ForeignKey extends MappingModel
     {
         $mapping = [];
         $foreignTable = $this->getForeignTable();
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
+        $size = count($this->localColumns);
+        for ($i = 0; $i < $size; $i++) {
             $mapping[] = [
                 'local' => $this->parentTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),

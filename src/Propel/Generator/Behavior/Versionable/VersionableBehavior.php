@@ -255,7 +255,6 @@ class VersionableBehavior extends Behavior
     public function getVersionableFks(): array
     {
         $versionableForeignKeys = [];
-
         if (!$this->getTable()) {
             return $versionableForeignKeys;
         }
@@ -275,7 +274,6 @@ class VersionableBehavior extends Behavior
     public function getVersionableReferrers(): array
     {
         $versionableReferrers = [];
-
         if (!$this->getTable()) {
             return $versionableReferrers;
         }
