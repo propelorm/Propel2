@@ -150,12 +150,13 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $sql = 'SHOW FULL TABLES';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
-                $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+            if ($filterTable->getSchema()) {
+                $sql .= ' FROM ' . $database->getPlatform()->doQuoting($filterTable->getSchema());
             }
+
             $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+        } elseif ($database->getSchema()) {
+            $sql .= ' FROM ' . $database->getPlatform()->doQuoting($database->getSchema());
         }
 
         $dataFetcher = $this->dbh->query($sql);

@@ -87,14 +87,14 @@ class MysqlPlatform extends DefaultPlatform
 
         $mysqlConfig = $generatorConfig->get()['database']['adapters']['mysql'];
 
-        if ($defaultTableEngine = $mysqlConfig['tableType']) {
-            $this->defaultTableEngine = $defaultTableEngine;
+        if ($mysqlConfig['tableType']) {
+            $this->defaultTableEngine = $mysqlConfig['tableType'];
         }
-        if ($tableEngineKeyword = $mysqlConfig['tableEngineKeyword']) {
-            $this->tableEngineKeyword = $tableEngineKeyword;
+        if ($mysqlConfig['tableEngineKeyword']) {
+            $this->tableEngineKeyword = $mysqlConfig['tableEngineKeyword'];
         }
-        if ($uuidColumnType = $mysqlConfig['uuidColumnType']) {
-            $enable = strtolower($uuidColumnType) === 'native';
+        if ($mysqlConfig['uuidColumnType']) {
+            $enable = strtolower($mysqlConfig['uuidColumnType']) === 'native';
             $this->setUuidNativeType($enable);
         }
     }
@@ -509,9 +509,12 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $ddl[] = $notNullString;
             }
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
+
         if ($col->getDescription()) {
             $ddl[] = 'COMMENT ' . $this->quote($col->getDescription());
         }

@@ -136,12 +136,13 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $filter = '';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
-                $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+            if ($filterTable->getSchema()) {
+                $filter = sprintf(" AND name LIKE '%s§%%'", $filterTable->getSchema());
             }
+
             $filter .= sprintf(" AND (name = '%s' OR name LIKE '%%§%1\$s')", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+        } elseif ($database->getSchema()) {
+            $filter = sprintf(" AND name LIKE '%s§%%'", $database->getSchema());
         }
 
         $sql = str_replace('%filter%', $filter, $sql);

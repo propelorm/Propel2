@@ -76,12 +76,15 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $this->addClassClose($script);
 
         $ignoredNamespace = ltrim((string)$this->getNamespace(), '\\');
+        $useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace');
 
-        if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
+        if ($useStatements) {
             $script = $useStatements . $script;
         }
 
-        if ($namespaceStatement = $this->getNamespaceStatement()) {
+        $namespaceStatement = $this->getNamespaceStatement();
+
+        if ($namespaceStatement) {
             $script = $namespaceStatement . $script;
         }
 
@@ -146,7 +149,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getQualifiedClassName(): string
     {
-        if ($namespace = $this->getNamespace()) {
+        $namespace = $this->getNamespace();
+
+        if ($namespace) {
             return $namespace . '\\' . $this->getUnqualifiedClassName();
         }
 
@@ -634,7 +639,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected function getJoinType(ForeignKey $fk): string
     {
-        if ($defaultJoin = $fk->getDefaultJoin()) {
+        $defaultJoin = $fk->getDefaultJoin();
+
+        if ($defaultJoin) {
             return "'" . $defaultJoin . "'";
         }
 

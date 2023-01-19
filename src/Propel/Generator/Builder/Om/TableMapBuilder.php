@@ -34,14 +34,15 @@ class TableMapBuilder extends AbstractOMBuilder
      */
     public function getNamespace(): ?string
     {
-        if (!$namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+
+        if (!$namespace) {
             return 'Map';
         }
 
-        if (
-            $this->getGeneratorConfig()
-            && $omns = $this->getBuildProperty('generator.objectModel.namespaceMap')
-        ) {
+        $omns = $this->getBuildProperty('generator.objectModel.namespaceMap');
+
+        if ($this->getGeneratorConfig() && $omns) {
             return $namespace . '\\' . $omns;
         }
 
@@ -343,11 +344,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     public function addInheritanceColumnConstants(string &$script): void
     {
-        if (!$col = $this->getTable()->getChildrenColumn()) {
-            return;
-        }
+        $col = $this->getTable()->getChildrenColumn();
 
-        if (!$col->isEnumeratedClasses()) {
+        if (!$col || !$col->isEnumeratedClasses()) {
             return;
         }
 

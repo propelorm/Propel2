@@ -447,8 +447,9 @@ class Behavior extends MappingModel
     protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
+        $id = $this->getAttribute('id');
 
-        if (!$this->allowMultiple() && $id = $this->getAttribute('id')) {
+        if (!$this->allowMultiple() && $id) {
             throw new LogicException(sprintf('Defining an ID (%s) on a behavior which does not allow multiple instances makes no sense', $id));
         }
 

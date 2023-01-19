@@ -446,12 +446,12 @@ COMMENT ON TABLE %s IS %s;
         $pattern = "
 COMMENT ON COLUMN %s.%s IS %s;
 ";
-        if ($description = $column->getDescription()) {
+        if ($column->getDescription()) {
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
                 $this->quoteIdentifier($column->getName()),
-                $this->quote($description),
+                $this->quote($column->getDescription()),
             );
         }
 
@@ -517,13 +517,22 @@ DROP TABLE IF EXISTS %s CASCADE;
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+
+        $default = $this->getColumnDefaultValueDDL($col);
+
+        if ($default) {
             $ddl[] = $default;
         }
-        if ($notNull = $this->getNullString($col->isNotNull())) {
+
+        $notNull = $this->getNullString($col->isNotNull());
+
+        if ($notNull) {
             $ddl[] = $notNull;
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
 
@@ -698,9 +707,12 @@ DROP SEQUENCE %s CASCADE;
                 }
             }
 
-            if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
+            $using = $this->getUsingCast($fromColumn, $toColumn);
+
+            if ($using) {
                 $sqlType .= $using;
             }
+
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),

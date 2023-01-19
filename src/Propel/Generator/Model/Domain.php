@@ -460,7 +460,9 @@ class Domain extends MappingModel
             $domainNode->setAttribute('sqlType', $this->sqlType);
         }
 
-        if ($def = $this->getDefaultValue()) {
+        $def = $this->getDefaultValue();
+
+        if ($def) {
             if ($def->isExpression()) {
                 $domainNode->setAttribute('defaultExpr', $def->getValue());
             } else {

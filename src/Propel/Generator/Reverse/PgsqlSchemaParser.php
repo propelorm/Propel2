@@ -154,9 +154,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND n.nspname NOT LIKE 'pg_toast%'";
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            if ($filterTable->getSchema()) {
                 $sql .= ' AND n.nspname = ?';
-                $params[] = $schema;
+                $params[] = $filterTable->getSchema();
             }
 
             $sql .= ' AND c.relname = ?';
@@ -233,9 +233,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $searchPath = '?';
         $params = [$table->getDatabase()->getSchema()];
 
-        if ($schema = $table->getSchema()) {
-            $searchPath = '?';
-            $params = [$schema];
+        if ($table->getSchema()) {
+            $params = [$table->getSchema()];
         } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             $searchPathString = $stmt->fetchColumn();

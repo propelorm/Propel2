@@ -1929,7 +1929,8 @@ class ModelCriteria extends BaseModelCriteria
         }
         try {
             return $con->transaction(function () use ($con) {
-                if (!$affectedRows = $this->basePreDelete($con)) {
+                $affectedRows = $this->basePreDelete($con);
+                if (!$affectedRows) {
                     $affectedRows = $this->doDeleteAll($con);
                 }
                 $this->basePostDelete($affectedRows, $con);
@@ -2282,8 +2283,8 @@ class ModelCriteria extends BaseModelCriteria
             $tableMap = $this->joins[$shortClass]->getTableMap();
         } elseif ($this->hasSelectQuery($prefix)) {
             return $this->getColumnFromSubQuery($prefix, $columnName, $failSilently);
-        } elseif ($modelJoin = $this->getModelJoinByTableName($prefix)) {
-            $tableMap = $modelJoin->getTableMap();
+        } elseif ($this->getModelJoinByTableName($prefix)) {
+            $tableMap = $this->getModelJoinByTableName($prefix)->getTableMap();
         } elseif ($failSilently) {
             return [null, null];
         } else {

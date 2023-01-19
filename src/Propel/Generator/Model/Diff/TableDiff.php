@@ -1082,81 +1082,234 @@ class TableDiff
      */
     public function __toString(): string
     {
-        $ret = '';
-        $ret .= sprintf("  %s:\n", $this->fromTable->getName());
-        if ($addedColumns = $this->getAddedColumns()) {
+        $ret = sprintf("  %s:\n", $this->fromTable->getName());
+        $ret = $this->appendAddedColumnsToString($ret);
+        $ret = $this->appendRemovedColumnsToString($ret);
+        $ret = $this->appendModifiedColumnsToString($ret);
+        $ret = $this->appendRenamedColumnsToString($ret);
+        $ret = $this->appendAddedIndicesToString($ret);
+        $ret = $this->appendRemovedIndicesToString($ret);
+        $ret = $this->appendModifiedIndicesToString($ret);
+        $ret = $this->appendAddedFksToString($ret);
+        $ret = $this->appendRemovedFksToString($ret);
+
+        return $this->appendModifiedFksToString($ret);
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendAddedColumnsToString(string $ret): string
+    {
+        $addedColumns = $this->getAddedColumns();
+
+        if ($addedColumns) {
             $ret .= "    addedColumns:\n";
+
             foreach ($addedColumns as $colname => $column) {
                 $ret .= sprintf("      - %s\n", $colname);
             }
         }
-        if ($removedColumns = $this->getRemovedColumns()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRemovedColumnsToString(string $ret): string
+    {
+        $removedColumns = $this->getRemovedColumns();
+
+        if ($removedColumns) {
             $ret .= "    removedColumns:\n";
+
             foreach ($removedColumns as $colname => $column) {
                 $ret .= sprintf("      - %s\n", $colname);
             }
         }
-        if ($modifiedColumns = $this->getModifiedColumns()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendModifiedColumnsToString(string $ret): string
+    {
+        $modifiedColumns = $this->getModifiedColumns();
+
+        if ($modifiedColumns) {
             $ret .= "    modifiedColumns:\n";
+
             foreach ($modifiedColumns as $colDiff) {
                 $ret .= (string)$colDiff;
             }
         }
-        if ($renamedColumns = $this->getRenamedColumns()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRenamedColumnsToString(string $ret): string
+    {
+        $renamedColumns = $this->getRenamedColumns();
+
+        if ($renamedColumns) {
             $ret .= "    renamedColumns:\n";
+
             foreach ($renamedColumns as $columnRenaming) {
                 [$fromColumn, $toColumn] = $columnRenaming;
                 $ret .= sprintf("      %s: %s\n", $fromColumn->getName(), $toColumn->getName());
             }
         }
-        if ($addedIndices = $this->getAddedIndices()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendAddedIndicesToString(string $ret): string
+    {
+        $addedIndices = $this->getAddedIndices();
+
+        if ($addedIndices) {
             $ret .= "    addedIndices:\n";
+
             foreach ($addedIndices as $indexName => $index) {
                 $ret .= sprintf("      - %s\n", $indexName);
             }
         }
-        if ($removedIndices = $this->getRemovedIndices()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRemovedIndicesToString(string $ret): string
+    {
+        $removedIndices = $this->getRemovedIndices();
+
+        if ($removedIndices) {
             $ret .= "    removedIndices:\n";
+
             foreach ($removedIndices as $indexName => $index) {
                 $ret .= sprintf("      - %s\n", $indexName);
             }
         }
-        if ($modifiedIndices = $this->getModifiedIndices()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendModifiedIndicesToString(string $ret): string
+    {
+        $modifiedIndices = $this->getModifiedIndices();
+
+        if ($modifiedIndices) {
             $ret .= "    modifiedIndices:\n";
+
             foreach ($modifiedIndices as $indexName => $indexDiff) {
                 $ret .= sprintf("      - %s\n", $indexName);
             }
         }
-        if ($addedFks = $this->getAddedFks()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendAddedFksToString(string $ret): string
+    {
+        $addedFks = $this->getAddedFks();
+
+        if ($addedFks) {
             $ret .= "    addedFks:\n";
+
             foreach ($addedFks as $fkName => $fk) {
                 $ret .= sprintf("      - %s\n", $fkName);
             }
         }
-        if ($removedFks = $this->getRemovedFks()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRemovedFksToString(string $ret): string
+    {
+        $removedFks = $this->getRemovedFks();
+
+        if ($removedFks) {
             $ret .= "    removedFks:\n";
+
             foreach ($removedFks as $fkName => $fk) {
                 $ret .= sprintf("      - %s\n", $fkName);
             }
         }
-        if ($modifiedFks = $this->getModifiedFks()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendModifiedFksToString(string $ret): string
+    {
+        $modifiedFks = $this->getModifiedFks();
+
+        if ($modifiedFks) {
             $ret .= "    modifiedFks:\n";
+
             foreach ($modifiedFks as $fkName => $fkFromTo) {
                 $ret .= sprintf("      %s:\n", $fkName);
                 [$fromFk, $toFk] = $fkFromTo;
                 $fromLocalColumns = json_encode($fromFk->getLocalColumns());
                 $toLocalColumns = json_encode($toFk->getLocalColumns());
+
                 if ($fromLocalColumns != $toLocalColumns) {
                     $ret .= sprintf("          localColumns: from %s to %s\n", $fromLocalColumns, $toLocalColumns);
                 }
+
                 $fromForeignColumns = json_encode($fromFk->getForeignColumns());
                 $toForeignColumns = json_encode($toFk->getForeignColumns());
+
                 if ($fromForeignColumns != $toForeignColumns) {
                     $ret .= sprintf("          foreignColumns: from %s to %s\n", $fromForeignColumns, $toForeignColumns);
                 }
+
                 if ($fromFk->normalizeFKey($fromFk->getOnUpdate()) != $toFk->normalizeFKey($toFk->getOnUpdate())) {
                     $ret .= sprintf("          onUpdate: from %s to %s\n", $fromFk->getOnUpdate(), $toFk->getOnUpdate());
                 }
+
                 if ($fromFk->normalizeFKey($fromFk->getOnDelete()) != $toFk->normalizeFKey($toFk->getOnDelete())) {
                     $ret .= sprintf("          onDelete: from %s to %s\n", $fromFk->getOnDelete(), $toFk->getOnDelete());
                 }

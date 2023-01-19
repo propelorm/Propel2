@@ -703,7 +703,9 @@ class ForeignKey extends MappingModel
     {
         $mapping = [];
         for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            if ($right = $this->foreignColumns[$i]) {
+            $right = $this->foreignColumns[$i];
+
+            if ($right) {
                 $right = $this->getForeignTable()->getColumn($right);
             } else {
                 $right = $this->localValues[$i];

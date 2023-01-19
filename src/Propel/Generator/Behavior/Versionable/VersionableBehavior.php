@@ -254,16 +254,19 @@ class VersionableBehavior extends Behavior
      */
     public function getVersionableFks(): array
     {
-        $versionableFKs = [];
-        if ($fks = $this->getTable()->getForeignKeys()) {
-            foreach ($fks as $fk) {
-                if ($fk->getForeignTable()->hasBehavior($this->getName()) && !$fk->isComposite()) {
-                    $versionableFKs[] = $fk;
-                }
+        $versionableForeignKeys = [];
+
+        if (!$this->getTable()) {
+            return $versionableForeignKeys;
+        }
+
+        foreach ($this->getTable()->getForeignKeys() as $foreignKey) {
+            if ($foreignKey->getForeignTable()->hasBehavior($this->getName()) && !$foreignKey->isComposite()) {
+                $versionableForeignKeys[] = $foreignKey;
             }
         }
 
-        return $versionableFKs;
+        return $versionableForeignKeys;
     }
 
     /**
@@ -272,11 +275,14 @@ class VersionableBehavior extends Behavior
     public function getVersionableReferrers(): array
     {
         $versionableReferrers = [];
-        if ($fks = $this->getTable()->getReferrers()) {
-            foreach ($fks as $fk) {
-                if ($fk->getTable()->hasBehavior($this->getName()) && !$fk->isComposite()) {
-                    $versionableReferrers[] = $fk;
-                }
+
+        if (!$this->getTable()) {
+            return $versionableReferrers;
+        }
+
+        foreach ($this->getTable()->getReferrers() as $foreignKey) {
+            if ($foreignKey->getTable()->hasBehavior($this->getName()) && !$foreignKey->isComposite()) {
+                $versionableReferrers[] = $foreignKey;
             }
         }
 
