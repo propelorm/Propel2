@@ -466,7 +466,8 @@ class ForeignKey extends MappingModel
         }
 
         $database = $this->getDatabase();
-        if ($database && ($schema = $this->parentTable->guessSchemaName()) && $platform && $platform->supportsSchemas()) {
+        $schema = $this->parentTable->guessSchemaName();
+        if ($database && $schema && $platform && $platform->supportsSchemas()) {
             return $schema
                 . $platform->getSchemaDelimiter()
                 . $this->foreignTableCommonName;
