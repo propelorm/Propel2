@@ -9,23 +9,46 @@ use Propel\Generator\Manager\MigrationManager;
  */
 class <?= $migrationClassName ?>
 {
+    /**
+     * @var string
+     */
     public $comment = '<?= $commentString ?>';
 
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return null|false|void
+     */
     public function preUp(MigrationManager $manager)
     {
         // add the pre-migration code here
     }
 
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return null|false|void
+     */
     public function postUp(MigrationManager $manager)
     {
         // add the post-migration code here
     }
 
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return null|false|void
+     */
     public function preDown(MigrationManager $manager)
     {
         // add the pre-migration code here
     }
 
+    /**
+     * @param \Propel\Generator\Manager\MigrationManager $manager
+     *
+     * @return null|false|void
+     */
     public function postDown(MigrationManager $manager)
     {
         // add the post-migration code here
@@ -37,7 +60,7 @@ class <?= $migrationClassName ?>
      * @return array list of the SQL strings to execute for the Up migration
      *               the keys being the datasources
      */
-    public function getUpSQL()
+    public function getUpSQL(): array
     {
 <?php foreach($migrationsUp as $connectionName => $sql): ?>
         <?= $connectionToVariableName[$connectionName] ?> = <<< 'EOT'
@@ -58,7 +81,7 @@ EOT;
      * @return array list of the SQL strings to execute for the Down migration
      *               the keys being the datasources
      */
-    public function getDownSQL()
+    public function getDownSQL(): array
     {
 <?php foreach($migrationsDown as $connectionName => $sql): ?>
         <?= $connectionToVariableName[$connectionName] ?> = <<< 'EOT'
