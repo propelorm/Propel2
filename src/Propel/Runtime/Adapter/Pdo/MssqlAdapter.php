@@ -15,6 +15,7 @@ use Propel\Runtime\Adapter\Exception\MalformedClauseException;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Map\DatabaseMap;
+use RuntimeException;
 
 /**
  * This is used to connect to a MSSQL database.
@@ -287,6 +288,8 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param \Propel\Runtime\ActiveQuery\Criteria $values
      * @param \Propel\Runtime\Map\DatabaseMap $dbMap
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
@@ -304,7 +307,10 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
                     // we always need to make sure that the stream is rewound, otherwise nothing will
                     // get written to database.
                     rewind($param['value']);
-                    $hexArr = unpack('H*hex', stream_get_contents($param['value']));
+                    $hexArr = unpack('H*hex', (string)stream_get_contents($param['value']));
+                    if (!$hexArr) {
+                        throw new RuntimeException('Cannot unpack value `' . $param['value'] . '`');
+                    }
                     $sql = str_replace(":p$i", '0x' . $hexArr['hex'], $sql);
                     unset($hexArr);
                     fclose($param['value']);

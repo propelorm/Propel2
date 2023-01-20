@@ -64,7 +64,7 @@ class XmlDumper implements DumperInterface
     {
         $this->appendDatabaseNode($database, $this->document);
 
-        return trim($this->document->saveXML());
+        return trim((string)$this->document->saveXML());
     }
 
     /**
@@ -83,7 +83,7 @@ class XmlDumper implements DumperInterface
             $this->appendDatabaseNode($database, $rootNode);
         }
 
-        return trim($this->document->saveXML());
+        return trim((string)$this->document->saveXML());
     }
 
     /**
