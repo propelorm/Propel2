@@ -243,7 +243,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
             if ($stmt === false) {
-                throw new RuntimeException('Query returned no statement.');
+                throw new RuntimeException('Could not retrieve search_path from database.');
             }
             $searchPathString = $stmt->fetchColumn();
 
