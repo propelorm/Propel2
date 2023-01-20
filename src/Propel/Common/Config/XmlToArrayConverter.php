@@ -62,7 +62,7 @@ class XmlToArrayConverter
         libxml_clear_errors();
         libxml_use_internal_errors($currentInternalErrors);
 
-        if (count($errors) > 0) {
+        if ($xml === false || count($errors) > 0) {
             throw new XmlParseException($errors);
         }
 

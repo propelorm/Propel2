@@ -193,7 +193,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
     public function objectFilter(string &$script): void
     {
         $p = new PhpParser($script, true);
-        $text = $p->findMethod('toArray');
+        $text = (string)$p->findMethod('toArray');
         $matches = [];
         preg_match('/(\$result = \[([^;]+)\];)/U', $text, $matches);
         if (!$matches) {

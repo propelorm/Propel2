@@ -121,28 +121,51 @@ class PropelDateTime extends DateTime
             // because DateTime('') == DateTime('now') -- which is unexpected
             return null;
         }
-        try {
-            if (static::isTimestamp($value)) { // if it's a unix timestamp
-                $format = 'U';
-                if (strpos($value, '.')) {
-                    //with milliseconds
-                    $format = 'U.u';
-                }
 
-                $dateTimeObject = DateTime::createFromFormat($format, $value, new DateTimeZone('UTC'));
-                // timezone must be explicitly specified and then changed
-                // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
-                $dateTimeObject->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-            } else {
-                if ($timeZone === null) {
-                    // stupid DateTime constructor signature
-                    $dateTimeObject = new $dateTimeClass($value);
-                } else {
-                    $dateTimeObject = new $dateTimeClass($value, $timeZone);
-                }
-            }
+        try {
+            $dateTimeObject = static::createDateTime($value, $timeZone, $dateTimeClass);
         } catch (Exception $e) {
-            throw new PropelException('Error parsing date/time value: ' . var_export($value, true), 0, $e);
+            $value = var_export($value, true);
+
+            throw new PropelException('Error parsing date/time value `' . $value . '`: ' . $e->getMessage(), 0, $e);
+        }
+
+        return $dateTimeObject;
+    }
+
+    /**
+     * @param mixed $value
+     * @param \DateTimeZone|null $timeZone
+     * @param string $dateTimeClass
+     *
+     * @throws \Exception
+     *
+     * @return mixed
+     */
+    protected static function createDateTime($value, ?DateTimeZone $timeZone = null, string $dateTimeClass = 'DateTime')
+    {
+        if (static::isTimestamp($value)) { // if it's a unix timestamp
+            $format = 'U';
+            if (strpos($value, '.')) {
+                //with milliseconds
+                $format = 'U.u';
+            }
+
+            $dateTimeObject = DateTime::createFromFormat($format, $value, new DateTimeZone('UTC'));
+            if ($dateTimeObject === false) {
+                throw new Exception(sprintf('Cannot create DateTime from format `%s`', $format));
+            }
+
+            // timezone must be explicitly specified and then changed
+            // because of a DateTime bug: http://bugs.php.net/bug.php?id=43003
+            $dateTimeObject->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+        } else {
+            if ($timeZone === null) {
+                // stupid DateTime constructor signature
+                $dateTimeObject = new $dateTimeClass($value);
+            } else {
+                $dateTimeObject = new $dateTimeClass($value, $timeZone);
+            }
         }
 
         return $dateTimeObject;
