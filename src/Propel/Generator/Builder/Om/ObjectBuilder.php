@@ -4123,8 +4123,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addFKMutator(string &$script, ForeignKey $fk): void
     {
         $fkTable = $fk->getForeignTable();
-
         $interface = $fk->getInterface();
+
         if ($interface) {
             $className = $this->declareClass($interface);
         } else {
@@ -4211,13 +4211,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addFKAccessor(string &$script, ForeignKey $fk): void
     {
         $table = $this->getTable();
-
         $varName = $this->getFKVarName($fk);
-
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
         $returnDesc = '';
         $interface = $fk->getInterface();
+
         if ($interface) {
             $className = $this->declareClass($interface);
         } else {
@@ -4324,7 +4323,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $joinBehavior = $this->getBuildProperty('generator.objectModel.useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
 
         $className = $this->getClassNameFromTable($tblFK);
 
@@ -4422,9 +4421,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFKMethods(string &$script): void
     {
-        if (!$referrers = $this->getTable()->getReferrers()) {
+        $referrers = $this->getTable()->getReferrers();
+        if (!$referrers) {
             return;
         }
+
         $this->addInitRelations($script, $referrers);
         foreach ($referrers as $refFK) {
             $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), 'Child');
@@ -4575,7 +4576,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = true)) . 'ScheduledForDeletion';
+        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, true)) . 'ScheduledForDeletion';
 
         $script .= "
     /**
@@ -4588,7 +4589,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function add" . $this->getRefFKPhpNameAffix($refFK, false) . "($className \$l)
     {
         if (\$this->$collName === null) {
-            \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+            \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "();
             \$this->{$collName}Partial = true;
         }
 
@@ -4616,7 +4617,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addRefFKCount(string &$script, ForeignKey $refFK): void
     {
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
@@ -4670,7 +4671,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addRefFKGet(string &$script, ForeignKey $refFK): void
     {
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $className = $this->getClassNameFromTable($refFK->getTable());
@@ -4698,7 +4699,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if (\$this->isNew()) {
                 // return empty collection
                 if (null === \$this->$collName) {
-                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "();
                 } else {
                     \$collectionClassName = " . $this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable())) . "::getTableMap()->getCollectionClassName();
 
@@ -4714,7 +4715,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
                 if (null !== \$criteria) {
                     if (false !== \$this->{$collName}Partial && count(\$$collName)) {
-                        \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "(false);
+                        \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "(false);
 
                         foreach (\$$collName as \$obj) {
                             if (false == \$this->{$collName}->contains(\$obj)) {
@@ -4862,7 +4863,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $className = $this->getClassNameFromTable($refFK->getTable());
         }
 
-        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
         $inputCollection = lcfirst($relatedName . 'ScheduledForDeletion');
         $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
@@ -5277,7 +5278,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFkScheduledForDeletion(string &$script, ForeignKey $refFK): void
     {
-        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $lowerRelatedName = lcfirst($relatedName);
         $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
         $queryClassName = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
@@ -5373,7 +5374,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFKPartial(string &$script, ForeignKey $refFK): void
     {
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $script .= "

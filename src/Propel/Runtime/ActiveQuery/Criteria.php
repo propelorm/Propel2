@@ -2168,7 +2168,8 @@ class Criteria
         }
 
         //find table name and ask tableMap if quoting is enabled
-        if (!$tableName && ($pos = strrpos($string, '.')) !== false) {
+        $pos = strrpos($string, '.');
+        if (!$tableName && $pos !== false) {
             $tableName = substr($string, 0, $pos);
         }
 

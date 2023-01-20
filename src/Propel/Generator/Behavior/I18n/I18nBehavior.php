@@ -132,6 +132,7 @@ class I18nBehavior extends Behavior
         $columns = [];
         $i18nTable = $this->getI18nTable();
         $columnNames = $this->getI18nColumnNamesFromConfig();
+
         if ($columnNames) {
             // Strategy 1: use the i18n_columns parameter
             foreach ($columnNames as $columnName) {
@@ -386,8 +387,10 @@ class I18nBehavior extends Behavior
     protected function getI18nColumnNamesFromConfig(): array
     {
         $columnNames = explode(',', $this->getParameter('i18n_columns'));
+
         foreach ($columnNames as $key => $columnName) {
             $columnName = trim($columnName);
+
             if ($columnName) {
                 $columnNames[$key] = $columnName;
             } else {

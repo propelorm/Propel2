@@ -233,10 +233,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $searchPath = '?';
         $params = [$table->getDatabase()->getSchema()];
-
         $schema = $table->getSchema();
+
         if ($schema) {
-            $searchPath = '?';
             $params = [$schema];
         } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');

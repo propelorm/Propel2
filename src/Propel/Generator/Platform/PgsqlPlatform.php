@@ -446,13 +446,12 @@ COMMENT ON TABLE %s IS %s;
         $pattern = "
 COMMENT ON COLUMN %s.%s IS %s;
 ";
-        $description = $column->getDescription();
-        if ($description) {
+        if ($column->getDescription()) {
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
                 $this->quoteIdentifier($column->getName()),
-                $this->quote($description),
+                $this->quote($column->getDescription()),
             );
         }
 
@@ -523,10 +522,12 @@ DROP TABLE IF EXISTS %s CASCADE;
         if ($default) {
             $ddl[] = $default;
         }
+
         $notNull = $this->getNullString($col->isNotNull());
         if ($notNull) {
             $ddl[] = $notNull;
         }
+
         $autoIncrement = $col->getAutoIncrementString();
         if ($autoIncrement) {
             $ddl[] = $autoIncrement;
@@ -708,6 +709,7 @@ DROP SEQUENCE %s CASCADE;
             if ($using) {
                 $sqlType .= $using;
             }
+
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),

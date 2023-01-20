@@ -154,6 +154,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             if ($schema) {
                 $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
             }
+
             $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
         } else {
             $schema = $database->getSchema();

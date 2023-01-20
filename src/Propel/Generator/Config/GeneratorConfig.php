@@ -196,19 +196,22 @@ class GeneratorConfig extends ConfigurationManager implements GeneratorConfigInt
      */
     public function getBuildConnections(): array
     {
-        if ($this->buildConnections === null) {
-            $connectionNames = $this->get()['generator']['connections'];
+        if ($this->buildConnections !== null) {
+            return $this->buildConnections;
+        }
 
-            $reverseConnection = $this->getConfigProperty('reverse.connection');
-            if ($reverseConnection !== null && !in_array($reverseConnection, $connectionNames, true)) {
-                $connectionNames[] = $reverseConnection;
-            }
+        $connectionNames = $this->get()['generator']['connections'];
+        $reverseConnection = $this->getConfigProperty('reverse.connection');
 
-            foreach ($connectionNames as $name) {
-                $definition = $this->getConfigProperty('database.connections.' . $name);
-                if ($definition) {
-                    $this->buildConnections[$name] = $definition;
-                }
+        if ($reverseConnection !== null && !in_array($reverseConnection, $connectionNames, true)) {
+            $connectionNames[] = $reverseConnection;
+        }
+
+        foreach ($connectionNames as $name) {
+            $definition = $this->getConfigProperty('database.connections.' . $name);
+
+            if ($definition) {
+                $this->buildConnections[$name] = $definition;
             }
         }
 

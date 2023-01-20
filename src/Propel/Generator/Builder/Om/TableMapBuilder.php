@@ -343,11 +343,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     public function addInheritanceColumnConstants(string &$script): void
     {
         $col = $this->getTable()->getChildrenColumn();
-        if (!$col) {
-            return;
-        }
 
-        if (!$col->isEnumeratedClasses()) {
+        if (!$col || !$col->isEnumeratedClasses()) {
             return;
         }
 

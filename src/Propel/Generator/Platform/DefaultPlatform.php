@@ -416,13 +416,22 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+
+        $default = $this->getColumnDefaultValueDDL($col);
+
+        if ($default) {
             $ddl[] = $default;
         }
-        if ($notNull = $this->getNullString($col->isNotNull())) {
+
+        $notNull = $this->getNullString($col->isNotNull());
+
+        if ($notNull) {
             $ddl[] = $notNull;
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
 
@@ -890,12 +899,19 @@ ALTER TABLE %s RENAME TO %s;
         foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
             $columnChangeString .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
-        if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+
+        $modifiedColumns = $tableDiff->getModifiedColumns();
+
+        if ($modifiedColumns) {
             $columnChangeString .= $this->getModifyColumnsDDL($modifiedColumns);
         }
-        if ($addedColumns = $tableDiff->getAddedColumns()) {
+
+        $addedColumns = $tableDiff->getAddedColumns();
+
+        if ($addedColumns) {
             $columnChangeString .= $this->getAddColumnsDDL($addedColumns);
         }
+
         foreach ($tableDiff->getRemovedColumns() as $column) {
             $columnChangeString .= $this->getRemoveColumnDDL($column);
         }
@@ -946,11 +962,15 @@ ALTER TABLE %s RENAME TO %s;
             $ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
 
-        if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+        $modifiedColumns = $tableDiff->getModifiedColumns();
+
+        if ($modifiedColumns) {
             $ret .= $this->getModifyColumnsDDL($modifiedColumns);
         }
 
-        if ($addedColumns = $tableDiff->getAddedColumns()) {
+        $addedColumns = $tableDiff->getAddedColumns();
+
+        if ($addedColumns) {
             $ret .= $this->getAddColumnsDDL($addedColumns);
         }
 
@@ -1566,7 +1586,9 @@ if (is_resource($columnValueAccessor)) {
         }
 
         foreach ($table->getColumns() as $column) {
-            if ($column->getSize() && $defaultSize = $this->getDefaultTypeSize($column->getType())) {
+            $defaultSize = $this->getDefaultTypeSize($column->getType());
+
+            if ($column->getSize() && $defaultSize) {
                 if ($column->getScale() === null && (int)$column->getSize() === $defaultSize) {
                     $column->setSize(null);
                 }

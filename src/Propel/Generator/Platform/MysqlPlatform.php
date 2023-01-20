@@ -91,10 +91,12 @@ class MysqlPlatform extends DefaultPlatform
         if ($defaultTableEngine) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
+
         $tableEngineKeyword = $mysqlConfig['tableEngineKeyword'];
         if ($tableEngineKeyword) {
             $this->tableEngineKeyword = $tableEngineKeyword;
         }
+
         $uuidColumnType = $mysqlConfig['uuidColumnType'];
         if ($uuidColumnType) {
             $enable = strtolower($uuidColumnType) === 'native';
@@ -519,6 +521,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
+
         if ($col->getDescription()) {
             $ddl[] = 'COMMENT ' . $this->quote($col->getDescription());
         }

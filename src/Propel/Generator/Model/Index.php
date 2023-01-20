@@ -93,8 +93,8 @@ class Index extends MappingModel
     {
         $this->doNaming();
 
-        if ($this->table && ($database = $this->table->getDatabase())) {
-            return substr($this->name, 0, $database->getMaxColumnNameLength());
+        if ($this->table && $this->table->getDatabase()) {
+            return substr($this->name, 0, $this->table->getDatabase()->getMaxColumnNameLength());
         }
 
         return $this->name;

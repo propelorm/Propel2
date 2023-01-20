@@ -468,9 +468,9 @@ class QuickBuilder
             $script .= $this->fixNamespaceDeclarations($class);
         }
 
-        $col = $table->getChildrenColumn();
-        if ($col && $col->isEnumeratedClasses()) {
-            foreach ($col->getChildren() as $child) {
+        $column = $table->getChildrenColumn();
+        if ($column && $column->isEnumeratedClasses()) {
+            foreach ($column->getChildren() as $child) {
                 if (!$child->getAncestor()) {
                     continue;
                 }
