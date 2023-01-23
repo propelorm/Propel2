@@ -121,13 +121,14 @@ class TableMapLoaderScriptBuilder
     /**
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return class-string<\Propel\Runtime\Map\TableMap>
      */
     protected function getFullyQualifiedTableMapClassName(Table $table): string
     {
         $builder = new TableMapBuilder($table);
         $builder->setGeneratorConfig($this->generatorConfig);
 
+        /** @var class-string<\Propel\Runtime\Map\TableMap> */
         return $builder->getFullyQualifiedClassName();
     }
 

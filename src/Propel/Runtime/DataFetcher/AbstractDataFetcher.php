@@ -49,6 +49,7 @@ abstract class AbstractDataFetcher implements DataFetcherInterface
      */
     public function fetchColumn($index = null)
     {
+        /** @var array|null $next */
         $next = $this->fetch();
 
         if (!$next) {
