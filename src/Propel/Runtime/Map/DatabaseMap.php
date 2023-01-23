@@ -302,8 +302,6 @@ class DatabaseMap
     /**
      * @param string $phpName
      *
-     * @throws \Propel\Runtime\Map\Exception\TableNotFoundException
-     *
      * @return \Propel\Runtime\Map\TableMap
      */
     public function getTableByPhpName(string $phpName): TableMap
@@ -311,35 +309,48 @@ class DatabaseMap
         if ($phpName[0] !== '\\') {
             $phpName = '\\' . $phpName;
         }
-        if (isset($this->tablesByPhpName[$phpName])) {
-            $tableOrClassMap = $this->tablesByPhpName[$phpName];
 
-            return is_string($tableOrClassMap) ? $this->addTableFromMapClass($tableOrClassMap) : $tableOrClassMap;
+        $tableMapOrTableMapClassName = (isset($this->tablesByPhpName[$phpName]))
+            ? $this->tablesByPhpName[$phpName]
+            : $this->determineTableMapClassNameByPhpName($phpName);
+
+        if (is_string($tableMapOrTableMapClassName)) {
+            return $this->addTableFromMapClass($tableMapOrTableMapClassName);
         }
 
-        $tmClass = $phpName . 'TableMap';
-        if (class_exists($tmClass)) {
-            $this->addTableFromMapClass($tmClass);
+        return $tableMapOrTableMapClassName;
+    }
 
-            return $this->tablesByPhpName[$phpName];
-        }
-
-        if (
-            class_exists($tmClass = substr_replace($phpName, '\\Map\\', (int)strrpos($phpName, '\\'), 1) . 'TableMap')
-            || class_exists($tmClass = '\\Map\\' . $phpName . 'TableMap')
-        ) {
-            $this->addTableFromMapClass($tmClass);
-
-            if (isset($this->tablesByPhpName[$phpName])) {
-                return $this->tablesByPhpName[$phpName];
-            }
-
-            if (isset($this->tablesByPhpName[$phpName])) {
-                return $this->tablesByPhpName[$phpName];
+    /**
+     * @param string $phpName
+     *
+     * @throws \Propel\Runtime\Map\Exception\TableNotFoundException
+     *
+     * @return string
+     */
+    protected function determineTableMapClassNameByPhpName(string $phpName): string
+    {
+        foreach ($this->buildTableMapClassNamesByPhpName($phpName) as $tableMapClassName) {
+            if (class_exists($tableMapClassName)) {
+                return $tableMapClassName;
             }
         }
 
         throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table phpName: %s in database %s.', $phpName, $this->getName()));
+    }
+
+    /**
+     * @param string $phpName
+     *
+     * @return list<string>
+     */
+    protected function buildTableMapClassNamesByPhpName(string $phpName): array
+    {
+        return [
+            $phpName . 'TableMap',
+            substr_replace($phpName, '\\Map\\', (int)strrpos($phpName, '\\'), 1) . 'TableMap',
+            '\\Map\\' . $phpName . 'TableMap',
+        ];
     }
 
     /**

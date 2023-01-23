@@ -359,8 +359,9 @@ class InitCommand extends AbstractCommand
         } catch (ConnectionException $e) {
             // get the "real" wrapped exception message
             do {
+                $e = $e->getPrevious() ?? $e;
                 $message = $e->getMessage();
-            } while (($e = $e->getPrevious()) !== null);
+            } while ($e->getPrevious() !== null);
 
             $consoleHelper->writeBlock('Unable to connect to the specific sql server: ' . $message, 'error');
             $consoleHelper->writeSection('Make sure the specified credentials are correct and try it again.');
