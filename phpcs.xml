@@ -26,19 +26,4 @@
             <property name="phpVersion" value="7.4"/>
         </properties>
     </rule>
-
-    <!-- exclude for now -->
-    <rule ref="Spryker.ControlStructures.NoInlineAssignment">
-        <severity>0</severity>
-    </rule>
-    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Generic.PHP.NoSilencedErrors">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.PHP.Eval">
-        <severity>0</severity>
-    </rule>
-
 </ruleset>
