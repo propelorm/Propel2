@@ -150,6 +150,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
         $sql = str_replace('%filter%', $filter, $sql);
 
+        /** @var \Traversable $dataFetcher */
         $dataFetcher = $this->dbh->query($sql);
 
         // First load the tables (important that this happens before filling out details of tables)
