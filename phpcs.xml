@@ -26,10 +26,4 @@
             <property name="phpVersion" value="7.4"/>
         </properties>
     </rule>
-
-    <rule ref="Spryker.ControlStructures.NoInlineAssignment"/>
-    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition"/>
-    <rule ref="Generic.PHP.NoSilencedErrors"/>
-    <rule ref="Squiz.PHP.Eval"/>
-
 </ruleset>
