@@ -142,8 +142,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      */
     protected function parseTables(array &$tableWraps, Database $database, ?Table $filterTable = null): void
     {
-        $stmt = null;
-
         $params = [];
 
         $sql = "

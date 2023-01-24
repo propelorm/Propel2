@@ -78,7 +78,7 @@ class PhpNameGenerator implements NameGeneratorInterface
     /**
      * Converts a database schema name to php object name by Camelization.
      * Removes <code>STD_SEPARATOR_CHAR</code>, capitalizes first letter
-     * of name and each letter after the <code>STD_SEPERATOR</code>,
+     * of name and each letter after the <code>STD_SEPARATOR</code>,
      * converts the rest of the letters to lowercase.
      *
      * This method should be named camelizeMethod() for clarity

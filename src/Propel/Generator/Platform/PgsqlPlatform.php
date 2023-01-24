@@ -141,7 +141,6 @@ class PgsqlPlatform extends DefaultPlatform
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
             if (!$idMethodParams) {
-                $result = null;
                 // We're going to ignore a check for max length (mainly
                 // because I'm not sure how Postgres would handle this w/ SERIAL anyway)
                 foreach ($table->getColumns() as $col) {
@@ -656,12 +655,12 @@ ALTER TABLE %s RENAME TO %s;
 ALTER TABLE %s ALTER COLUMN %s;
 ";
 
-        if (isset($changedProperties['autoIncrement'])) {
+        if ($table && isset($changedProperties['autoIncrement'])) {
             $tableName = $table->getName();
             $colPlainName = $toColumn->getName();
             $seqName = "{$tableName}_{$colPlainName}_seq";
 
-            if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+            if ($toColumn->isAutoIncrement() && $table->getIdMethodParameters() == null) {
                 $defaultValue = "nextval('$seqName'::regclass)";
                 $toColumn->setDefaultValue($defaultValue);
                 $changedProperties['defaultValueValue'] = [null, $defaultValue];

@@ -60,7 +60,7 @@ class Behavior extends MappingModel
     protected $parameters = [];
 
     /**
-     * Wether or not the table has been
+     * Whether the table has been
      * modified by the behavior.
      *
      * @var bool

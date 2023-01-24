@@ -2353,7 +2353,7 @@ class ModelCriteria extends BaseModelCriteria
      *
      * @return string
      */
-    public function createSelectSql(&$params): string
+    public function createSelectSql(array &$params): string
     {
         $this->configureSelectColumns();
 

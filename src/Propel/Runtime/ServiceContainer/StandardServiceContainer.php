@@ -670,7 +670,7 @@ class StandardServiceContainer implements ServiceContainerInterface
      * Enable or disable debug output.
      *
      * Sets connections in debug mode. This only works when the default
-     * ConnectionWrapper is used, and it does not overrice instance-specific
+     * ConnectionWrapper is used, and it does not override instance-specific
      * settings.
      *
      * @see \Propel\Runtime\Connection\ConnectionWrapper::useDebug()

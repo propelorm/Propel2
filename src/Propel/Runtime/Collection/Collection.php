@@ -561,15 +561,15 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return mixed The current object, for fluid interface
+     * @return void
      */
-    public function importFrom($parser, string $data)
+    public function importFrom($parser, string $data): void
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), TableMap::TYPE_PHPNAME);
+        $this->fromArray($parser->listToArray($data, $this->getPluralModelName()));
     }
 
     /**
@@ -616,15 +616,17 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      *
      * @throws \Propel\Runtime\Exception\BadMethodCallException
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function __call(string $name, $params)
     {
         if (strpos($name, 'from') === 0) {
             $format = substr($name, 4);
+            $this->importFrom($format, reset($params));
 
-            return $this->importFrom($format, reset($params));
+            return null;
         }
+
         if (strpos($name, 'to') === 0) {
             $format = substr($name, 2);
             $usePrefix = $params[0] ?? false;

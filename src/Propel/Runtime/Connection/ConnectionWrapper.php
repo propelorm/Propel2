@@ -403,8 +403,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function prepare(string $statement, array $driverOptions = [])
     {
-        $statementWrapper = null;
-
         if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$statement])) {
             $statementWrapper = $this->cachedPreparedStatements[$statement];
         } else {

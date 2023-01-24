@@ -136,7 +136,7 @@ class TestPrepareCommand extends AbstractCommand
 
             file_put_contents('propel.yaml', $content);
         } else {
-            $output->writeln(sprintf('<comment>No "propel.yaml.dist" file found, skipped.</comment>'));
+            $output->writeln('<comment>No "propel.yaml.dist" file found, skipped.</comment>');
         }
 
         if (is_file('propel.yaml')) {
