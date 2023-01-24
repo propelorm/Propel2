@@ -808,7 +808,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
             if ($foreignTable !== null) {
                 $referrers = $foreignTable->getReferrers();
-                if ($referrers === null || !in_array($foreignKey, $referrers, true)) {
+                if (!$referrers || !in_array($foreignKey, $referrers, true)) {
                     $foreignTable->addReferrer($foreignKey);
                 }
             } elseif ($throwErrors) {
@@ -1712,7 +1712,7 @@ class Table extends ScopedMappingModel implements IdMethod
             }
         }
 
-        // check if there is a unique constrains that contains exactly the $keys
+        // check if there is a unique constraints that contains exactly the $keys
         if ($this->unices) {
             foreach ($this->unices as $unique) {
                 if (count($unique->getColumns()) === count($keys)) {
@@ -1727,8 +1727,6 @@ class Table extends ScopedMappingModel implements IdMethod
                     if ($allAvailable) {
                         return true;
                     }
-                } else {
-                    continue;
                 }
             }
         }

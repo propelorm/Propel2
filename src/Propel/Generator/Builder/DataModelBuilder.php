@@ -117,7 +117,7 @@ abstract class DataModelBuilder
     /**
      * The platform class
      *
-     * @var \Propel\Generator\Platform\PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface|null
      */
     protected ?PlatformInterface $platform = null;
 

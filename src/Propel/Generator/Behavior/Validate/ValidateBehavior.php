@@ -163,11 +163,11 @@ class ValidateBehavior extends Behavior
             $parameters = $this->getParameters();
             $out = [];
             $i = 1;
-            foreach ($parameters as $key => $parameter) {
+            foreach ($parameters as $parameter) {
                 $out["rule$i"] = $parameter;
                 $i++;
             }
-            foreach ($params as $key => $param) {
+            foreach ($params as $param) {
                 $out["rule$i"] = $param;
                 $i++;
             }
@@ -206,7 +206,7 @@ class ValidateBehavior extends Behavior
         $params = $this->getParameters();
         $constraints = [];
 
-        foreach ($params as $key => $properties) {
+        foreach ($params as $properties) {
             if (!isset($properties['column'])) {
                 throw new InvalidArgumentException('Please, define the column to validate.');
             }

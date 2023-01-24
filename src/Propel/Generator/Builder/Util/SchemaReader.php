@@ -567,7 +567,7 @@ class SchemaReader
     }
 
     /**
-     * Add a paramter to the last added item in the paramter list.
+     * Add a parameter to the last added item in the parameter list.
      *
      * @param array $attributes
      *
@@ -584,7 +584,7 @@ class SchemaReader
     }
 
     /**
-     * Feeds the current paramter list to its parent and clears the collector.
+     * Feeds the current parameter list to its parent and clears the collector.
      *
      * @return void
      */
@@ -601,7 +601,7 @@ class SchemaReader
     }
 
     /**
-     * Checks if the givn array contains the given key with a non-empty value.
+     * Checks if the given array contains the given key with a non-empty value.
      *
      * @param array $attributes
      * @param string $key

@@ -175,8 +175,8 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getDatabaseType(): string
     {
-        $platformReflectionClass = new ReflectionClass($this);
-        $platformShortName = $platformReflectionClass->getShortName();
+        $reflectionClass = new ReflectionClass($this);
+        $platformShortName = $reflectionClass->getShortName();
         $length = strpos($platformShortName, 'Platform') ?: null;
 
         return strtolower(substr($platformShortName, 0, $length));
@@ -497,7 +497,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      *
      * @return string
      */
-    public function getColumnListDDL($columns, $delimiter = ','): string
+    public function getColumnListDDL(array $columns, string $delimiter = ','): string
     {
         $list = [];
         foreach ($columns as $column) {
@@ -1367,11 +1367,7 @@ ALTER TABLE %s ADD
      */
     public function getBooleanString($value): string
     {
-        if (is_bool($value) && $value === true) {
-            return '1';
-        }
-
-        if (is_int($value) && $value === 1) {
+        if ($value === true || $value === 1) {
             return '1';
         }
 
@@ -1533,7 +1529,7 @@ if (is_resource($columnValueAccessor)) {
     }
 
     /**
-     * Returns a integer indexed array of default type sizes.
+     * Returns an integer indexed array of default type sizes.
      *
      * @return array<int> type indexed array of integers
      */

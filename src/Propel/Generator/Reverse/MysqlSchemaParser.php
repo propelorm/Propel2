@@ -469,7 +469,7 @@ EOT;
 
                 $localColumns = [];
                 $foreignColumns = [];
-                if ($table->guessSchemaName() != $database->getSchema() && strpos($ftbl, $database->getPlatform()->getSchemaDelimiter()) == false) {
+                if ($table->guessSchemaName() != $database->getSchema() && strpos($ftbl, $database->getPlatform()->getSchemaDelimiter()) === false) {
                     $ftbl = $table->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
                 }
 

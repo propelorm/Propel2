@@ -43,9 +43,6 @@ trait BehaviorableTrait
             $config = $this->getGeneratorConfig();
             if ($config !== null) {
                 $this->behaviorLocator = $config->getBehaviorLocator();
-                if ($this->behaviorLocator === null) {
-                    $this->behaviorLocator = new BehaviorLocator();
-                }
             } else {
                 $this->behaviorLocator = new BehaviorLocator();
             }

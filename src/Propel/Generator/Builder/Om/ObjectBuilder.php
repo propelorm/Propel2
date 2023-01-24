@@ -982,7 +982,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-    " . $visibility . " function get$cfc(\$format = " . $format . '';
+    " . $visibility . " function get$cfc(\$format = " . $format;
         if ($column->isLazyLoad()) {
             $script .= ', $con = null';
         }
@@ -1974,7 +1974,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addMutatorCloseClose(string &$script, Column $col): void
     {
-        $cfc = $col->getPhpName();
         $script .= "
         return \$this;
     }
@@ -3013,7 +3012,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $referrers = $this->getTable()->getReferrers();
         $hasFks = count($fks) > 0 || count($referrers) > 0;
         $objectClassName = $this->getUnqualifiedClassName();
-        $pkGetter = $this->getTable()->hasCompositePrimaryKey() ? 'serialize($this->getPrimaryKey())' : '$this->getPrimaryKey()';
         $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
     /**
@@ -4210,7 +4208,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addFKAccessor(string &$script, ForeignKey $fk): void
     {
-        $table = $this->getTable();
         $varName = $this->getFKVarName($fk);
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
@@ -6065,7 +6062,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addCrossFKDoAdd(string &$script, CrossForeignKeys $crossFKs): void
     {
-        $selfRelationName = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
         $selfRelationNamePlural = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), true);
         $relatedObjectClassName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
         $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());

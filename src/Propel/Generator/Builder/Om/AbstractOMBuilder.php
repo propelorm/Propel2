@@ -912,7 +912,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
-            if (!$localColumn) {
+            if (!$localColumnName) {
                 throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
 
@@ -975,7 +975,7 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             [$localColumn, $foreignValueOrColumn] = $mapping;
             $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
-            if (!$localColumn) {
+            if (!$localColumnName) {
                 throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
             }
 

@@ -571,7 +571,7 @@ class XmlDumper implements DumperInterface
     }
 
     /**
-     * Appends a generice <index> or <unique> XML node to its parent node.
+     * Appends a generic <index> or <unique> XML node to its parent node.
      *
      * @param string $nodeType The node type (index or unique)
      * @param \Propel\Generator\Model\Index $index The Index model instance

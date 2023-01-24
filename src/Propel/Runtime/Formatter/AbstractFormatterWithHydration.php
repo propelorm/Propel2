@@ -80,9 +80,9 @@ abstract class AbstractFormatterWithHydration extends AbstractFormatter
             if ($modelWith->isSingleTableInheritance()) {
                 /** @var class-string<object>|object $class */
                 $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
-                $refl = new ReflectionClass($class);
-                $class = $refl->getName();
-                if ($refl->isAbstract()) {
+                $reflectionClass = new ReflectionClass($class);
+                $class = $reflectionClass->getName();
+                if ($reflectionClass->isAbstract()) {
                     $tableMapClass = "Map\\{$class}TableMap";
                     $col += $tableMapClass::NUM_COLUMNS;
 
