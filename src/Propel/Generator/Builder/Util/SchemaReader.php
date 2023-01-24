@@ -39,7 +39,7 @@ class SchemaReader
     private $schema;
 
     /**
-     * @var \XMLParser
+     * @var \XMLParser|resource
      */
     private $parser;
 
@@ -450,15 +450,26 @@ class SchemaReader
     }
 
     /**
-     * Builds a human readable description of the current location in the parser, i.e. "file schema.xml line 42, column 43"
+     * Builds a human-readable description of the current location in the parser, i.e. "file schema.xml line 42, column 43"
      *
      * @return string
      */
     private function getLocationDescription(): string
     {
-        $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
-        $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
 
+        $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
+
+        /**
+         * @phpstan-ignore-next-line
+         */
+        $currentLineNumber = xml_get_current_line_number($this->parser);
+        if ($currentLineNumber) {
+            $location .= sprintf('line %d', $currentLineNumber);
+        }
+
+        /**
+         * @phpstan-ignore-next-line
+         */
         $currentColumnNumber = xml_get_current_column_number($this->parser);
         if ($currentColumnNumber) {
             $location .= sprintf(', column %d', $currentColumnNumber);

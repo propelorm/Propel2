@@ -355,7 +355,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function fetchObject($className = 'stdClass', array $ctorArgs = [])
+    public function fetchObject($className, array $ctorArgs = [])
     {
         return $this->statement->fetchObject($className, $ctorArgs);
     }

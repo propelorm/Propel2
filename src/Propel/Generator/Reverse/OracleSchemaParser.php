@@ -209,6 +209,7 @@ class OracleSchemaParser extends AbstractSchemaParser
 
         foreach ($indicesIndexedByIndexName as $indexName => $columnNames) {
             $index = new Index((string)$indexName);
+            /** @phpstan-var string $columnName */
             foreach ($columnNames as $columnName) {
                 // Oracle deals with complex indices using an internal reference, so...
                 // let's ignore this kind of index
@@ -226,7 +227,7 @@ class OracleSchemaParser extends AbstractSchemaParser
     /**
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return array
+     * @return array<scalar, non-empty-list<null|scalar>>
      */
     protected function getIndiciesIndexedByIndexName(Table $table): array
     {

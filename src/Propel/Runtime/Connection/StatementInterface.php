@@ -112,7 +112,7 @@ interface StatementInterface
      *
      * @return mixed
      */
-    public function fetchObject(string $className = 'stdClass', array $ctorArgs = []);
+    public function fetchObject(string $className, array $ctorArgs = []);
 
     /**
      * Fetch the SQLSTATE associated with the last operation on the statement handle.
