@@ -250,7 +250,7 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function asort($flags = SORT_REGULAR): bool
+    public function asort(int $flags = SORT_REGULAR): bool
     {
         parent::asort();
         $this->refreshPositions();
@@ -263,7 +263,7 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function ksort($flags = SORT_REGULAR): bool
+    public function ksort(int $flags = SORT_REGULAR): bool
     {
         parent::ksort();
         $this->refreshPositions();

@@ -260,7 +260,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
         $platform = $this->platform;
         if ($platform === null) {
-            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existance first.');
+            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existence first.');
         }
 
         return $platform;

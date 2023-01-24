@@ -168,11 +168,11 @@ class Domain extends MappingModel
     /**
      * Sets the domain description.
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return void
      */
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -190,11 +190,11 @@ class Domain extends MappingModel
     /**
      * Sets the domain name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return void
      */
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
@@ -212,13 +212,13 @@ class Domain extends MappingModel
     /**
      * Sets the scale value.
      *
-     * @param int $scale
+     * @param int|null $scale
      *
      * @return void
      */
-    public function setScale(int $scale): void
+    public function setScale(?int $scale): void
     {
-        $this->scale = $scale === null ? null : (int)$scale;
+        $this->scale = $scale;
     }
 
     /**
@@ -254,7 +254,7 @@ class Domain extends MappingModel
      */
     public function setSize(?int $size): void
     {
-        $this->size = $size === null ? null : (int)$size;
+        $this->size = $size;
     }
 
     /**

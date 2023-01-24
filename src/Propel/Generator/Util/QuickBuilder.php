@@ -551,7 +551,7 @@ class QuickBuilder
                 while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], $cooperativeLexems)) {
                     $output .= $t[1];
                 }
-                if (is_string($t) && $t === '{') {
+                if ($t === '{') {
                     $inNamespace = false;
                     --$i;
                 } else {

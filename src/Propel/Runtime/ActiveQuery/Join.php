@@ -834,8 +834,7 @@ class Join
         $parametersOfThisClauses = [];
         $parametersOfJoinClauses = [];
 
-        return $join instanceof Join
-            && $this->getJoinType() === $join->getJoinType()
+        return $this->getJoinType() === $join->getJoinType()
             && $this->getConditions() == $join->getConditions()
             && $this->getClause($parametersOfThisClauses) == $join->getClause($parametersOfJoinClauses);
     }

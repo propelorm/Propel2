@@ -61,7 +61,7 @@ class PropelConditionalProxy
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param mixed $cond
-     * @param \Propel\Runtime\Util\PropelConditionalProxy|self|null $proxy
+     * @param self|null $proxy
      */
     public function __construct(Criteria $criteria, $cond, ?self $proxy = null)
     {

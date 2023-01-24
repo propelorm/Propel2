@@ -397,8 +397,6 @@ public function getScopeValue(): int
      */
     protected function addSetRight(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the right value of the nested set model.
@@ -423,8 +421,6 @@ public function setRightValue(int \$v)
      */
     protected function addSetLevel(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the level value of the nested set model.
@@ -449,8 +445,6 @@ public function setLevel(int \$v)
      */
     protected function addSetScope(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the scope value of the nested set model.
@@ -475,8 +469,6 @@ public function setScopeValue(int \$v)
      */
     protected function addMakeRoot(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Creates the supplied node as the root node.

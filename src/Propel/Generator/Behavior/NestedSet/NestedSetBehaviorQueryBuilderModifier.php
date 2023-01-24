@@ -883,7 +883,7 @@ static public function updateLoadedNodes(\$prune = null, ?ConnectionInterface \$
             \$criteria->add(" . $this->builder->getColumnConstant($col) . ', $keys, Criteria::IN);';
         } else {
             $fields = [];
-            foreach ($this->table->getPrimaryKey() as $k => $col) {
+            foreach ($this->table->getPrimaryKey() as $col) {
                 $fields[] = $this->builder->getColumnConstant($col);
             }
             $script .= "

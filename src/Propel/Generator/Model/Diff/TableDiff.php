@@ -646,7 +646,7 @@ class TableDiff
      *
      * Array must be [ [ Index $fromIndex, Index $toIndex ], [ ... ] ]
      *
-     * @param array<array<\Propel\Generator\Model\Index>> $modifiedIndices An aray of modified indices
+     * @param array<array<\Propel\Generator\Model\Index>> $modifiedIndices An array of modified indices
      *
      * @return void
      */

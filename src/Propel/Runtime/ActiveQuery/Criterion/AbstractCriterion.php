@@ -323,7 +323,7 @@ abstract class AbstractCriterion
         $params = [];
         $this->appendPsTo($sb, $params);
 
-        return '' . $sb;
+        return $sb;
     }
 
     /**

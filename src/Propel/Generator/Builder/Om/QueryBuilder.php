@@ -38,7 +38,7 @@ class QueryBuilder extends AbstractOMBuilder
     }
 
     /**
-     * Returns the namepace for the query object classes.
+     * Returns the namespace for the query object classes.
      *
      * @return string|null
      */
@@ -1263,7 +1263,6 @@ class QueryBuilder extends AbstractOMBuilder
             '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException',
         );
-        $queryClass = $this->getQueryClassName();
         $fkTable = $fk->getForeignTable();
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
@@ -1350,7 +1349,6 @@ class QueryBuilder extends AbstractOMBuilder
             '\Propel\Runtime\Collection\ObjectCollection',
             '\Propel\Runtime\Exception\PropelException',
         );
-        $queryClass = $this->getQueryClassName();
         $fkTable = $this->getTable()->getDatabase()->getTable($fk->getTableName());
         $fkStubObjectBuilder = $this->getNewStubObjectBuilder($fkTable);
         $this->declareClassFromBuilder($fkStubObjectBuilder);
@@ -1700,7 +1698,6 @@ class QueryBuilder extends AbstractOMBuilder
         $relationName = $this->getRefFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
 
         foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
-            $queryClass = $this->getQueryClassName();
             $crossRefTable = $crossFK->getTable();
             $foreignTable = $crossFK->getForeignTable();
             $fkPhpName = $foreignTable->getPhpName();
