@@ -898,7 +898,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return array<string>|string|null
+     * @return string
      */
     public function getIdentifierPhp(
         string $columnValueMutator,
@@ -906,7 +906,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
         string $sequenceName = '',
         string $tab = '            ',
         ?string $phpType = null
-    ) {
+    ): string {
         if (!$sequenceName) {
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }

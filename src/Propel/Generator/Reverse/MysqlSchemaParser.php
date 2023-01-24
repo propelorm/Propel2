@@ -19,6 +19,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Mysql database schema parser.
@@ -143,6 +144,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Database $database
      * @param \Propel\Generator\Model\Table|null $filterTable
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function parseTables(Database $database, ?Table $filterTable = null): void
@@ -164,6 +167,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
 
         $dataFetcher = $this->dbh->query($sql);
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('query() did not return a result set as a statement object.');
+        }
 
         // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
@@ -342,6 +349,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Table $table
      *
+     * @throws \RuntimeException
+     *
      * @return string|null
      */
     protected function loadTableDescription(Table $table): ?string
@@ -354,14 +363,21 @@ WHERE table_schema=DATABASE()
   AND table_name=($tableName)
 EOT;
 
+        $dataFetcher = $this->dbh->query($query);
+        if ($dataFetcher === false) {
+            throw new RuntimeException('query() did not return a result set as a statement object.');
+        }
+
         /** @phpstan-var string|null */
-        return $this->dbh->query($query)->fetchColumn();
+        return $dataFetcher->fetchColumn();
     }
 
     /**
      * Load a comment for this column.
      *
      * @param \Propel\Generator\Model\Column $column
+     *
+     * @throws \RuntimeException
      *
      * @return string|null
      */
@@ -377,14 +393,21 @@ WHERE table_schema=DATABASE()
   AND column_name=($columnName)
 EOT;
 
+        $dataFetcher = $this->dbh->query($query);
+        if ($dataFetcher === false) {
+            throw new RuntimeException('query() did not return a result set as a statement object.');
+        }
+
         /** @phpstan-var string|null */
-        return $this->dbh->query($query)->fetchColumn();
+        return $dataFetcher->fetchColumn();
     }
 
     /**
      * Load foreign keys for this table.
      *
      * @param \Propel\Generator\Model\Table $table
+     *
+     * @throws \RuntimeException
      *
      * @return void
      */
@@ -393,8 +416,12 @@ EOT;
         $database = $table->getDatabase();
 
         $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
-        $row = $dataFetcher->fetch();
 
+        if ($dataFetcher === false) {
+            throw new RuntimeException('query() did not return a result set as a statement object.');
+        }
+
+        $row = $dataFetcher->fetch();
         $foreignKeys = []; // local store to avoid duplicates
 
         // Get the information on all the foreign keys

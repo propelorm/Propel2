@@ -101,13 +101,15 @@ class BehaviorLocator
     /**
      * Returns the directories to search the composer lock file in
      *
-     * @return array<string>
+     * @return list<string>
      */
     private function getSearchDirs(): array
     {
+        $workingDirectory = (string)getcwd();
+
         return [
-            getcwd(),
-            getcwd() . '/../', // cwd is a subfolder
+            $workingDirectory,
+            $workingDirectory . '/../', // cwd is a subfolder
             __DIR__ . '/../../../../../../../', // vendor/propel/propel
             __DIR__ . '/../../../../', // propel development environment
         ];

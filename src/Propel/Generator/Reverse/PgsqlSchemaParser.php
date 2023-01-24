@@ -271,7 +271,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             table_schema IN ($searchPath) AND table_name = ?
         ");
         if ($stmt === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
 
         $params[] = $table->getCommonName();
@@ -411,7 +411,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     GROUP BY conname, confupdtype, confdeltype, fktab, reftab
                     ORDER BY conname");
         if ($stmt === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
         $stmt->bindValue(1, $oid);
         $stmt->execute();
@@ -526,7 +526,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             WHERE indrelid = ? AND NOT indisprimary
             ORDER BY cls.relname");
         if ($stmt === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
 
         $stmt->bindValue(1, $oid);
@@ -537,7 +537,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
             ORDER BY a.attnum");
         if ($stmt2 === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
 
         $indexes = [];
@@ -600,7 +600,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             WHERE indrelid = ? AND indisprimary
             ORDER BY cls.relname");
         if ($stmt === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
         $stmt->bindValue(1, $oid);
         $stmt->execute();
@@ -615,7 +615,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
                     ORDER BY a.attnum");
                 if ($stmt2 === false) {
-                    throw new RuntimeException('prepare() returned no statement.');
+                    throw new RuntimeException('prepare() failed and did not return statement object for execution.');
                 }
                 $stmt2->bindValue(1, $oid);
                 $stmt2->bindValue(2, $intColNum);
@@ -669,7 +669,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND n.nspname IN ($searchPath);
         ");
         if ($stmt === false) {
-            throw new RuntimeException('prepare() returned no statement.');
+            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
         }
         $stmt->execute($params);
 

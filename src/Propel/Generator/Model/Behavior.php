@@ -226,7 +226,7 @@ class Behavior extends MappingModel
     public function addParameter(array $parameter): void
     {
         $parameter = array_change_key_case($parameter, CASE_LOWER);
-        $this->parameters[$parameter['name']] = $parameter['value'];
+        $this->parameters[(string)$parameter['name']] = $parameter['value'];
     }
 
     /**
@@ -419,8 +419,9 @@ class Behavior extends MappingModel
     protected function getDirname(): string
     {
         if ($this->dirname === null) {
-            $r = new ReflectionObject($this);
-            $this->dirname = dirname($r->getFileName());
+            $behaviorReflectionObject = new ReflectionObject($this);
+            $behaviorFileName = (string)$behaviorReflectionObject->getFileName();
+            $this->dirname = dirname($behaviorFileName);
         }
 
         return $this->dirname;

@@ -127,7 +127,7 @@ class TestPrepareCommand extends AbstractCommand
         chdir($this->root . '/' . $fixturesDir);
 
         if (is_file('propel.yaml.dist')) {
-            $content = file_get_contents('propel.yaml.dist');
+            $content = (string)file_get_contents('propel.yaml.dist');
 
             $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
             $content = str_replace('##DATABASE_URL##', $input->getOption('dsn'), $content);

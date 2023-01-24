@@ -121,8 +121,10 @@ class OnDemandFormatter extends ObjectFormatter
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
+                /** @var class-string<object>|object $class */
                 $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
                 $refl = new ReflectionClass($class);
+                $class = $refl->getName();
                 if ($refl->isAbstract()) {
                     $tableMapClass = "Map\\{$class}TableMap";
                     $col += $tableMapClass::NUM_COLUMNS;

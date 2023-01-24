@@ -89,7 +89,7 @@ class ColumnComparator
         } elseif (!$fromDefaultValue && $toDefaultValue) {
             $changedProperties['defaultValueType'] = [null, $toDefaultValue->getType()];
             $changedProperties['defaultValueValue'] = [null, $toDefaultValue->getValue()];
-        } elseif ($fromDefaultValue && $toDefaultValue) {
+        } elseif ($fromDefaultValue) {
             if (!$fromDefaultValue->equals($toDefaultValue)) {
                 if ($fromDefaultValue->getType() !== $toDefaultValue->getType()) {
                     $changedProperties['defaultValueType'] = [$fromDefaultValue->getType(), $toDefaultValue->getType()];

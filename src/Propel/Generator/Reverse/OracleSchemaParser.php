@@ -163,7 +163,8 @@ class OracleSchemaParser extends AbstractSchemaParser
                 $type = 'DOUBLE';
             }
             if (strpos($type, 'TIMESTAMP(') !== false) {
-                $type = substr($type, 0, strpos($type, '('));
+                $length = strpos($type, '(') ?: null;
+                $type = substr($type, 0, $length);
                 $default = '0000-00-00 00:00:00';
                 $size = null;
                 $scale = null;
@@ -204,16 +205,10 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table): void
     {
-        /** @var \PDOStatement $stmt */
-        $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+        $indicesIndexedByIndexName = $this->getIndiciesIndexedByIndexName($table);
 
-        $indices = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $indices[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
-        }
-
-        foreach ($indices as $indexName => $columnNames) {
-            $index = new Index($indexName);
+        foreach ($indicesIndexedByIndexName as $indexName => $columnNames) {
+            $index = new Index((string)$indexName);
             foreach ($columnNames as $columnName) {
                 // Oracle deals with complex indices using an internal reference, so...
                 // let's ignore this kind of index
@@ -226,6 +221,24 @@ class OracleSchemaParser extends AbstractSchemaParser
                 $table->addIndex($index);
             }
         }
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return array
+     */
+    protected function getIndiciesIndexedByIndexName(Table $table): array
+    {
+        /** @var \PDOStatement $stmt */
+        $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+
+        $indicesIndexedByIndexName = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $indicesIndexedByIndexName[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
+        }
+
+        return $indicesIndexedByIndexName;
     }
 
     /**

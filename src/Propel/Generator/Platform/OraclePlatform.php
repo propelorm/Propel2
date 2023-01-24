@@ -476,7 +476,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return array<string>|string|null
+     * @return string
      */
     public function getIdentifierPhp(
         string $columnValueMutator,
@@ -484,7 +484,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
         string $sequenceName = '',
         string $tab = '            ',
         ?string $phpType = null
-    ) {
+    ): string {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }

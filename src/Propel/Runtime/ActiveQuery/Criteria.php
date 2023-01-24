@@ -748,7 +748,7 @@ class Criteria
     {
         $tables = [];
         foreach ($this->keys() as $key) {
-            $tableName = substr($key, 0, strrpos($key, '.'));
+            $tableName = substr($key, 0, strrpos($key, '.') ?: null);
             $tables[$tableName][] = $key;
         }
 
@@ -1047,7 +1047,7 @@ class Criteria
      */
     public function addJoin($left, $right, ?string $joinType = null)
     {
-        if (is_array($left)) {
+        if (is_array($left) && is_array($right)) {
             $conditions = [];
             foreach ($left as $key => $value) {
                 $condition = [$value, $right[$key]];
@@ -1063,15 +1063,17 @@ class Criteria
         $join->setIdentifierQuoting($this->isIdentifierQuotingEnabled());
 
         // is the left table an alias ?
-        $dotpos = strrpos($left, '.');
-        $leftTableAlias = substr($left, 0, $dotpos);
-        $leftColumnName = substr($left, $dotpos + 1);
+        /** @phpstan-var string $left */
+        $length = strrpos($left, '.') ?: null;
+        $leftTableAlias = substr($left, 0, $length);
+        $leftColumnName = substr($left, $length + 1);
         [$leftTableName, $leftTableAlias] = $this->getTableNameAndAlias($leftTableAlias);
 
         // is the right table an alias ?
-        $dotpos = strrpos($right, '.');
-        $rightTableAlias = substr($right, 0, $dotpos);
-        $rightColumnName = substr($right, $dotpos + 1);
+        /** @phpstan-var string $right */
+        $length = strrpos($right, '.') ?: null;
+        $rightTableAlias = substr($right, 0, $length);
+        $rightColumnName = substr($right, $length + 1);
         [$rightTableName, $rightTableAlias] = $this->getTableNameAndAlias($rightTableAlias);
 
         $join->addExplicitCondition(
@@ -2441,7 +2443,7 @@ class Criteria
      *
      * @param mixed $cond Casts to bool for variable evaluation
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _if($cond)
     {
@@ -2460,7 +2462,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _elseif($cond)
     {
@@ -2479,7 +2481,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|static
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _else()
     {
@@ -2496,7 +2498,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _endif()
     {

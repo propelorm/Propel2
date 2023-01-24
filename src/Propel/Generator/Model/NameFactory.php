@@ -42,18 +42,19 @@ class NameFactory
     /**
      * Factory method which retrieves an instance of the named generator.
      *
-     * @param string $name The fully qualified class name of the name
-     *                     generation algorithm to retrieve.
+     * @param string $nameGeneratorClassName The fully qualified class name of the name generation algorithm to retrieve.
      *
      * @return \Propel\Generator\Model\NameGeneratorInterface
      */
-    protected static function getAlgorithm(string $name): NameGeneratorInterface
+    protected static function getAlgorithm(string $nameGeneratorClassName): NameGeneratorInterface
     {
-        if (!isset(self::$algorithms[$name])) {
-            self::$algorithms[$name] = new $name();
+        if (!isset(self::$algorithms[$nameGeneratorClassName])) {
+            /** @var \Propel\Generator\Model\NameGeneratorInterface $nameGenerator */
+            $nameGenerator = new $nameGeneratorClassName();
+            self::$algorithms[$nameGeneratorClassName] = $nameGenerator;
         }
 
-        return self::$algorithms[$name];
+        return self::$algorithms[$nameGeneratorClassName];
     }
 
     /**

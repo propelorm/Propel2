@@ -107,7 +107,7 @@ interface StatementInterface
     /**
      * Fetches the next row and returns it as an object.
      *
-     * @param string $className Name of the created class.
+     * @param class-string $className Name of the created class.
      * @param array $ctorArgs Elements of this array are passed to the constructor.
      *
      * @return mixed

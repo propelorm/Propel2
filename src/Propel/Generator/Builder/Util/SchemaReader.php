@@ -39,9 +39,7 @@ class SchemaReader
     private $schema;
 
     /**
-     * @psalm-suppress UndefinedDocblockClass
-     * @phpstan-ignore-next-line
-     * @var \XMLParser|resource|null
+     * @var \XMLParser
      */
     private $parser;
 
@@ -158,7 +156,7 @@ class SchemaReader
             return null;
         }
 
-        return $this->parseString(file_get_contents($xmlFile), $xmlFile);
+        return $this->parseString((string)file_get_contents($xmlFile), $xmlFile);
     }
 
     /**
@@ -184,7 +182,7 @@ class SchemaReader
         $this->currentXmlFile = $xmlFile;
 
         $parserStash = $this->parser;
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
+
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
         xml_set_object($this->parser, $this);
@@ -247,7 +245,7 @@ class SchemaReader
                     }
 
                     if ($xmlFile[0] !== '/') {
-                        $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
+                        $xmlFile = (string)realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
                             throw new SchemaException(sprintf('Unknown include external `%s`', $xmlFile));
                         }
@@ -458,15 +456,12 @@ class SchemaReader
      */
     private function getLocationDescription(): string
     {
-        $location = '';
-        if ($this->currentXmlFile !== null) {
-            $location .= sprintf('file %s,', $this->currentXmlFile);
-        }
-
+        $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
         $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
-        $col = xml_get_current_column_number($this->parser);
-        if ($col) {
-            $location .= sprintf(', column %d', $col);
+
+        $currentColumnNumber = xml_get_current_column_number($this->parser);
+        if ($currentColumnNumber) {
+            $location .= sprintf(', column %d', $currentColumnNumber);
         }
 
         return $location;

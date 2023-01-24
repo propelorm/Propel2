@@ -341,10 +341,10 @@ class Domain extends MappingModel
         }
 
         if ($this->mappingType === PropelTypes::PHP_ARRAY) {
-            return $this->getDefaultValueForArray($this->defaultValue->getValue());
+            return $this->getDefaultValueForArray((string)$this->defaultValue->getValue());
         }
         if ($this->mappingType === PropelTypes::SET) {
-            return $this->getDefaultValueForSet($this->defaultValue->getValue());
+            return $this->getDefaultValueForSet((string)$this->defaultValue->getValue());
         }
 
         return $this->defaultValue->getValue();
@@ -462,11 +462,10 @@ class Domain extends MappingModel
 
         $def = $this->getDefaultValue();
         if ($def) {
-            if ($def->isExpression()) {
-                $domainNode->setAttribute('defaultExpr', $def->getValue());
-            } else {
-                $domainNode->setAttribute('defaultValue', $def->getValue());
-            }
+            $domainNode->setAttribute(
+                $def->isExpression() ? 'defaultExpr' : 'defaultValue',
+                (string)$def->getValue(),
+            );
         }
 
         if ($this->size) {

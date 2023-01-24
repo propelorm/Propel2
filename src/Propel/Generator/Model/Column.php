@@ -1499,7 +1499,7 @@ class Column extends MappingModel
         }
 
         if ($this->isTextType() || $this->getDefaultValue()->isExpression()) {
-            return sprintf("'%s'", str_replace("'", "\'", $defaultValue->getValue()));
+            return sprintf("'%s'", str_replace("'", "\'", (string)$defaultValue->getValue()));
         }
 
         if ($this->getType() === PropelTypes::BOOLEAN) {

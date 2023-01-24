@@ -17,6 +17,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Schema;
+use RuntimeException;
 use XSLTProcessor;
 
 /**
@@ -292,6 +293,7 @@ abstract class AbstractManager
      * class.
      *
      * @throws \Propel\Generator\Exception\EngineException
+     * @throws \RuntimeException
      * @throws \Propel\Generator\Exception\BuildException
      *
      * @return void
@@ -326,6 +328,10 @@ abstract class AbstractManager
                     $xsl = new XSLTProcessor();
                     $xsl->importStyleSheet($xslDom);
                     $dom = $xsl->transformToDoc($dom);
+
+                    if ($dom === false) {
+                        throw new RuntimeException('XSLTProcessor transformation to a DOMDocument failed.');
+                    }
                 }
             }
 
@@ -340,7 +346,7 @@ abstract class AbstractManager
 
             $xmlParser = new SchemaReader($defaultPlatform, $this->dbEncoding);
             $xmlParser->setGeneratorConfig($this->getGeneratorConfig());
-            $schema = $xmlParser->parseString($dom->saveXML(), $dmFilename);
+            $schema = $xmlParser->parseString((string)$dom->saveXML(), $dmFilename);
             $nbTables = $schema->getDatabase(null, false)->countTables();
             $totalNbTables += $nbTables;
 
@@ -519,8 +525,8 @@ abstract class AbstractManager
                 continue;
             }
 
-            $pos = strpos($line, '=');
-            $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+            $length = strpos($line, '=') ?: null;
+            $properties[trim(substr($line, 0, $length))] = trim(substr($line, $length + 1));
         }
 
         return $properties;
