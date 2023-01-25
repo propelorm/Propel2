@@ -15,6 +15,7 @@ use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
+use RuntimeException;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -95,6 +96,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string|null $name
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return int
      */
@@ -103,7 +105,12 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
+
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
 
         return $dataFetcher->fetchColumn();
     }
@@ -214,6 +221,8 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con propel connection
      * @param \Propel\Runtime\ActiveQuery\Criteria|string $query query the criteria or the query string
      *
+     * @throws \RuntimeException
+     *
      * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|false A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
@@ -226,7 +235,12 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $sql = $query;
         }
 
+        /** @var \Propel\Runtime\Connection\StatementInterface|false $stmt */
         $stmt = $con->prepare($this->getExplainPlanQuery($sql));
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
 
         if ($query instanceof Criteria) {
             $this->bindValues($stmt, $params, $dbMap);

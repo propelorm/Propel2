@@ -32,7 +32,7 @@ class OnDemandIterator implements IteratorInterface
     protected $dataFetcher;
 
     /**
-     * @var array|null
+     * @var array|bool|null
      */
     protected $currentRow;
 
@@ -100,6 +100,10 @@ class OnDemandIterator implements IteratorInterface
     #[\ReturnTypeWillChange]
     public function current(): ActiveRecordInterface
     {
+        if (!is_array($this->currentRow)) {
+            $this->currentRow = [];
+        }
+
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
     }
 

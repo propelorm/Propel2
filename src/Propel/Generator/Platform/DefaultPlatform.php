@@ -176,10 +176,10 @@ class DefaultPlatform implements PlatformInterface
     public function getDatabaseType(): string
     {
         $reflectionClass = new ReflectionClass($this);
-        $clazz = $reflectionClass->getShortName();
-        $pos = strpos($clazz, 'Platform');
+        $platformShortName = $reflectionClass->getShortName();
+        $length = strpos($platformShortName, 'Platform') ?: null;
 
-        return strtolower(substr($clazz, 0, $pos));
+        return strtolower(substr($platformShortName, 0, $length));
     }
 
     /**
@@ -455,20 +455,20 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $default .= $defaultValue->getValue();
             } else {
                 if ($col->isTextType()) {
-                    $default .= $this->quote($defaultValue->getValue());
+                    $default .= $this->quote((string)$defaultValue->getValue());
                 } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
                 } elseif ($col->isSetType()) {
-                    $val = trim($defaultValue->getValue());
+                    $val = trim((string)$defaultValue->getValue());
                     $values = [];
                     foreach (explode(',', $val) as $v) {
                         $values[] = trim($v);
                     }
                     $default .= SetColumnConverter::convertToInt($values, $col->getValueSet());
                 } elseif ($col->isPhpArrayType()) {
-                    $value = $this->getPhpArrayString($defaultValue->getValue());
+                    $value = $this->getPhpArrayString((string)$defaultValue->getValue());
                     if ($value === null) {
                         $default = '';
                     } else {
@@ -1367,11 +1367,7 @@ ALTER TABLE %s ADD
      */
     public function getBooleanString($value): string
     {
-        if ($value === true) {
-            return '1';
-        }
-
-        if ($value === 1) {
+        if ($value === true || $value === 1) {
             return '1';
         }
 
@@ -1512,7 +1508,7 @@ if (is_resource($columnValueAccessor)) {
      * @param string $tab
      * @param string|null $phpType
      *
-     * @return array<string>|string|null
+     * @return string
      */
     public function getIdentifierPhp(
         string $columnValueMutator,
@@ -1520,7 +1516,7 @@ if (is_resource($columnValueAccessor)) {
         string $sequenceName = '',
         string $tab = '            ',
         ?string $phpType = null
-    ) {
+    ): string {
         return sprintf(
             "
 %s%s = %s%s->lastInsertId(%s);",

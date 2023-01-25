@@ -27,7 +27,7 @@ class ColumnDefaultValue
     public const TYPE_EXPR = 'expr';
 
     /**
-     * @var string|null The default value, as specified in the schema.
+     * @var string|int|null The default value, as specified in the schema.
      */
     private $value;
 
@@ -118,10 +118,9 @@ class ColumnDefaultValue
 
         // special case for current timestamp
         $equivalents = ['CURRENT_TIMESTAMP', 'NOW()'];
-        if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
-            return true;
-        }
+        $value = strtoupper((string)$this->getValue());
+        $otherValue = strtoupper((string)$other->getValue());
 
-        return false; // Can't help, they are different
+        return in_array($value, $equivalents, true) && in_array($otherValue, $equivalents, true);
     }
 }

@@ -39,9 +39,7 @@ class SchemaReader
     private $schema;
 
     /**
-     * @psalm-suppress UndefinedDocblockClass
-     * @phpstan-ignore-next-line
-     * @var \XMLParser|resource|null
+     * @var \XMLParser|resource
      */
     private $parser;
 
@@ -158,7 +156,7 @@ class SchemaReader
             return null;
         }
 
-        return $this->parseString(file_get_contents($xmlFile), $xmlFile);
+        return $this->parseString((string)file_get_contents($xmlFile), $xmlFile);
     }
 
     /**
@@ -184,7 +182,7 @@ class SchemaReader
         $this->currentXmlFile = $xmlFile;
 
         $parserStash = $this->parser;
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
+
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
         xml_set_object($this->parser, $this);
@@ -247,7 +245,7 @@ class SchemaReader
                     }
 
                     if ($xmlFile[0] !== '/') {
-                        $xmlFile = realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
+                        $xmlFile = (string)realpath(dirname($this->currentXmlFile) . DIRECTORY_SEPARATOR . $xmlFile);
                         if (!file_exists($xmlFile)) {
                             throw new SchemaException(sprintf('Unknown include external `%s`', $xmlFile));
                         }
@@ -452,21 +450,28 @@ class SchemaReader
     }
 
     /**
-     * Builds a human readable description of the current location in the parser, i.e. "file schema.xml line 42, column 43"
+     * Builds a human-readable description of the current location in the parser, i.e. "file schema.xml line 42, column 43"
      *
      * @return string
      */
     private function getLocationDescription(): string
     {
-        $location = '';
-        if ($this->currentXmlFile !== null) {
-            $location .= sprintf('file %s,', $this->currentXmlFile);
+        $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
+
+        /**
+         * @phpstan-ignore-next-line PHPStan is expecting XMLParser only, while resource is valid too.
+         */
+        $currentLineNumber = xml_get_current_line_number($this->parser);
+        if ($currentLineNumber) {
+            $location .= sprintf('line %d', $currentLineNumber);
         }
 
-        $location .= sprintf('line %d', xml_get_current_line_number($this->parser));
-        $col = xml_get_current_column_number($this->parser);
-        if ($col) {
-            $location .= sprintf(', column %d', $col);
+        /**
+         * @phpstan-ignore-next-line PHPStan is expecting XMLParser only, while resource is valid too.
+         */
+        $currentColumnNumber = xml_get_current_column_number($this->parser);
+        if ($currentColumnNumber) {
+            $location .= sprintf(', column %d', $currentColumnNumber);
         }
 
         return $location;

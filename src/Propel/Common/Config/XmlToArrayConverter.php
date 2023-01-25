@@ -101,9 +101,10 @@ class XmlToArrayConverter
                     }
                 } else {
                     // otherwise, just add the attribute like a child element
-                    if (is_string($child)) {
+                    if (!is_array($child)) {
                         $child = [];
                     }
+
                     $child[$ak] = self::getConvertedXmlValue($av);
                 }
             }

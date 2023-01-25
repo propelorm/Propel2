@@ -14,6 +14,7 @@ use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Service class for managing SQL.
@@ -190,6 +191,11 @@ class SqlManager extends AbstractManager
                 foreach ($sqls as $sql) {
                     try {
                         $stmt = $con->prepare($sql);
+
+                        if ($stmt === false) {
+                            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+                        }
+
                         $stmt->execute();
                     } catch (Exception $e) {
                         $message = sprintf('SQL insert failed: %s', $sql);

@@ -188,7 +188,7 @@ class ObjectCollection extends Collection
      * )
      * </code>
      *
-     * @return array<string, mixed>
+     * @return array<int|string, array>
      */
     public function toArray(
         ?string $keyColumn = null,
@@ -235,7 +235,7 @@ class ObjectCollection extends Collection
      * )
      * </code>
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
@@ -265,7 +265,7 @@ class ObjectCollection extends Collection
      * @param string $keyColumn
      * @param string|null $valueColumn
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     public function toKeyValue(string $keyColumn = 'PrimaryKey', ?string $valueColumn = null): array
     {
@@ -295,7 +295,7 @@ class ObjectCollection extends Collection
      *
      * @param string $keyColumn
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     public function toKeyIndex(string $keyColumn = 'PrimaryKey'): array
     {

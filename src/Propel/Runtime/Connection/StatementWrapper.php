@@ -93,6 +93,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     public function query(): DataFetcherInterface
     {
         if ($this->connection->isInDebugMode()) {
+            /** @var callable $callback */
             $callback = [$this->connection->getWrappedConnection(), 'query'];
             $statement = $this->connection->callUserFunctionWithLogging($callback, [$this->sql], $this->sql);
         } else {
@@ -123,7 +124,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
         if ($this->connection->isInDebugMode()) {
             $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = (int)$length > 100 ? '[Large value]' : var_export($variable, true);
-            $this->boundValues[$parameter] = $valuestr;
+            $this->boundValues[(string)$parameter] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
@@ -147,7 +148,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
         if ($this->connection->isInDebugMode()) {
             $typestr = self::$typeMap[$dataType] ?? '(default)';
             $valuestr = $dataType == PDO::PARAM_LOB ? '[LOB value]' : var_export($value, true);
-            $this->boundValues[$parameter] = $valuestr;
+            $this->boundValues[(string)$parameter] = $valuestr;
             $msg = sprintf('Binding %s at position %s w/ PDO type %s', $valuestr, $parameter, $typestr);
             $this->connection->log($msg);
         }
@@ -354,7 +355,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function fetchObject($className = 'stdClass', array $ctorArgs = [])
+    public function fetchObject($className, array $ctorArgs = [])
     {
         return $this->statement->fetchObject($className, $ctorArgs);
     }
@@ -410,6 +411,7 @@ class StatementWrapper implements StatementInterface, IteratorAggregate
             case 2:
                 return $this->statement->setFetchMode($mode, $classNameObject);
             case 3:
+                /** @phpstan-var string $classNameObject */
                 return $this->statement->setFetchMode($mode, $classNameObject, $ctorarfg);
             default:
                 return $this->statement->setFetchMode(...func_get_args());

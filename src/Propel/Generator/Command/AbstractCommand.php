@@ -144,12 +144,12 @@ abstract class AbstractCommand extends Command
      */
     protected function parseConnection(string $connection): array
     {
-        $pos = strpos($connection, '=');
-        $name = substr($connection, 0, $pos);
-        $dsn = substr($connection, $pos + 1, strlen($connection));
+        $length = strpos($connection, '=') ?: null;
+        $name = substr($connection, 0, $length);
+        $dsn = substr($connection, $length + 1, strlen($connection));
 
-        $pos = strpos($dsn, ':');
-        $adapter = substr($dsn, 0, $pos);
+        $length = strpos($dsn, ':') ?: null;
+        $adapter = substr($dsn, 0, $length);
 
         $extras = [];
         foreach (explode(';', $dsn) as $element) {

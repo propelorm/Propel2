@@ -50,10 +50,13 @@ trait VfsTrait
      */
     public function newFile(string $filename, string $content = ''): vfsStreamFile
     {
-        $path = pathinfo($filename);
-        $dir = $this->getDir($path['dirname']);
+        $pathinfo = pathinfo($filename);
+        $dirname = $pathinfo['dirname'] ?? '';
+        $vfsStreamDirectory = $this->getDir($dirname);
 
-        return vfsStream::newFile($path['basename'])->at($dir)->setContent($content);
+        return vfsStream::newFile($pathinfo['basename'])
+            ->at($vfsStreamDirectory)
+            ->setContent($content);
     }
 
     /**

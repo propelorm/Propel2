@@ -424,7 +424,7 @@ class XmlDumper implements DumperInterface
         $defaultValue = $domain->getDefaultValue();
         if ($defaultValue) {
             $type = $defaultValue->isExpression() ? 'defaultExpr' : 'defaultValue';
-            $columnNode->setAttribute($type, $defaultValue->getValue());
+            $columnNode->setAttribute($type, (string)$defaultValue->getValue());
         }
 
         if ($column->isInheritance()) {

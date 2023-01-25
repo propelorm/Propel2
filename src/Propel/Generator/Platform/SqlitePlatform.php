@@ -21,6 +21,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Runtime\Connection\PdoConnection;
+use RuntimeException;
 use SQLite3;
 
 /**
@@ -188,7 +189,7 @@ ALTER TABLE %s ADD %s;
                         ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'],
                         true,
                     ))
-                    || substr(trim($column->getDefaultValue() ? $column->getDefaultValue()->getValue() : ''), 0, 1) === '('
+                    || substr(trim($column->getDefaultValue() ? (string)$column->getDefaultValue()->getValue() : ''), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
                     || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL');
@@ -630,6 +631,8 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
+     * @throws \RuntimeException
+     *
      * @return string
      */
     protected function getVersion(): string
@@ -640,7 +643,12 @@ PRAGMA foreign_keys = ON;
 
         //if php_sqlite3 extension is not installed, we need to query the database
         $connection = new PdoConnection('sqlite::memory:');
+        $pdoStatement = $connection->query('SELECT sqlite_version()');
 
-        return (string)$connection->query('SELECT sqlite_version()')->fetch(PDO::FETCH_NUM)[0];
+        if ($pdoStatement === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
+        return (string)$pdoStatement->fetch(PDO::FETCH_NUM)[0];
     }
 }

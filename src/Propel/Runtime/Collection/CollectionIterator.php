@@ -272,7 +272,7 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @param string $callback
+     * @param callable $callback
      *
      * @return bool
      */
@@ -285,7 +285,7 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @param string $callback
+     * @param callable $callback
      *
      * @return bool
      */

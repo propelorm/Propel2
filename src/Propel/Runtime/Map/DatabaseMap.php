@@ -310,6 +310,7 @@ class DatabaseMap
             $phpName = '\\' . $phpName;
         }
 
+        /** @var \Propel\Runtime\Map\TableMap|class-string<\Propel\Runtime\Map\TableMap> $tableMapOrTableMapClassName */
         $tableMapOrTableMapClassName = (isset($this->tablesByPhpName[$phpName]))
             ? $this->tablesByPhpName[$phpName]
             : $this->determineTableMapClassNameByPhpName($phpName);

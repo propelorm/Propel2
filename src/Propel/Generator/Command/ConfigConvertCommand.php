@@ -156,8 +156,8 @@ require_once __DIR__ . '$loaderScriptLocation';
      */
     protected function getRelativePathToLoaderScript(string $loaderDir, string $outputDir): string
     {
-        $absoluteLoaderDir = realpath($loaderDir);
-        $absoluteOutputDir = realpath($outputDir);
+        $absoluteLoaderDir = (string)realpath($loaderDir);
+        $absoluteOutputDir = (string)realpath($outputDir);
         $fs = new Filesystem();
 
         return $fs->makePathRelative($absoluteLoaderDir, $absoluteOutputDir);

@@ -309,7 +309,7 @@ class ArchivableBehavior extends Behavior
     }
 
     /**
-     * @psalm-param array{local_column: string, foreign_table: string, foreign_column: string, relation_only?: string} $fkParameterData
+     * @psalm-param array{name?: string, localColumn: string, foreignTable: string, foreignColumn: string, relationOnly?: string} $fkParameterData
      *
      * @param \Propel\Generator\Model\Table $table
      * @param array $fkParameterData
@@ -328,6 +328,7 @@ class ArchivableBehavior extends Behavior
 
             throw new SchemaException("Table `$tableName`: Archivable behavior misses foreign key parameters. Please supply `localColumn`, `foreignTable` and `foreignColumn` for every entry");
         }
+
         $fk = new ForeignKey($fkParameterData['name'] ?? null);
         $fk->addReference($fkParameterData['localColumn'], $fkParameterData['foreignColumn']);
         $table->addForeignKey($fk);

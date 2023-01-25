@@ -18,6 +18,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use RuntimeException;
 
 /**
  * Microsoft SQL Server database schema parser.
@@ -86,11 +87,17 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Database $database
      * @param array $additionalTables
      *
+     * @throws \RuntimeException
+     *
      * @return int
      */
     public function parse(Database $database, array $additionalTables = []): int
     {
         $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
 
         // First load the tables (important that this happens before filling out details of tables)
         $tables = [];
@@ -267,6 +274,8 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Table $table
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addPrimaryKey(Table $table): void
@@ -277,6 +286,10 @@ class MssqlSchemaParser extends AbstractSchemaParser
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
             WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
             (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '" . $table->getName() . "')");
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.

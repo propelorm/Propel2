@@ -22,6 +22,7 @@ use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Service class for preparing and executing migrations
@@ -123,12 +124,14 @@ class MigrationManager extends AbstractManager
      */
     public function getPlatform(string $datasource): PlatformInterface
     {
-        $params = $this->getConnection($datasource);
-        $adapter = $params['adapter'];
+        $connection = $this->getConnection($datasource);
+        $adapter = ucfirst($connection['adapter']);
+        $class = '\\Propel\\Generator\\Platform\\' . $adapter . 'Platform';
 
-        $class = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
+        /** @var \Propel\Generator\Platform\PlatformInterface $platform */
+        $platform = new $class();
 
-        return new $class();
+        return $platform;
     }
 
     /**
@@ -191,6 +194,8 @@ class MigrationManager extends AbstractManager
     /**
      * @param string $datasource
      *
+     * @throws \RuntimeException
+     *
      * @return bool
      */
     public function migrationTableExists(string $datasource): bool
@@ -199,6 +204,11 @@ class MigrationManager extends AbstractManager
         $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
         try {
             $stmt = $conn->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
             $stmt->execute();
 
             return true;
@@ -255,6 +265,11 @@ class MigrationManager extends AbstractManager
                 $platform->doQuoting('version'),
             );
             $stmt = $conn->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
             $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
             $stmt->execute();
         });
@@ -263,6 +278,8 @@ class MigrationManager extends AbstractManager
     /**
      * @param string $datasource
      * @param int $timestamp
+     *
+     * @throws \RuntimeException
      *
      * @return void
      */
@@ -283,6 +300,11 @@ class MigrationManager extends AbstractManager
         $executionDatetime = date(static::EXECUTION_DATETIME_FORMAT);
 
         $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
         $stmt->bindParam(2, $executionDatetime);
         $stmt->execute();
@@ -298,9 +320,12 @@ class MigrationManager extends AbstractManager
 
         if (is_dir($path)) {
             $files = scandir($path);
-            foreach ($files as $file) {
-                if (preg_match('/^PropelMigration_(\d+).*\.php$/', $file, $matches)) {
-                    $migrationTimestamps[] = (int)$matches[1];
+
+            if ($files) {
+                foreach ($files as $file) {
+                    if (preg_match('/^PropelMigration_(\d+).*\.php$/', $file, $matches)) {
+                        $migrationTimestamps[] = (int)$matches[1];
+                    }
                 }
             }
         }
@@ -340,7 +365,7 @@ class MigrationManager extends AbstractManager
             return $migrationTimestamps;
         }
 
-        return array_slice($migrationTimestamps, 0, $versionIndex + 1);
+        return array_slice($migrationTimestamps, 0, (int)$versionIndex + 1);
     }
 
     /**
@@ -438,7 +463,7 @@ class MigrationManager extends AbstractManager
         $suffix = '';
         $path = $this->getWorkingDirectory();
         if ($path && is_dir($path)) {
-            $files = scandir($path);
+            $files = scandir($path) ?: [];
             foreach ($files as $file) {
                 if (preg_match('/^PropelMigration_' . $timestamp . '(_)?(.*)\.php$/', $file, $matches)) {
                     $suffix = (string)$matches[2];
@@ -575,6 +600,8 @@ class MigrationManager extends AbstractManager
     /**
      * @param string $datasource
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     public function modifyMigrationTableIfOutdated(string $datasource): void
@@ -593,8 +620,12 @@ class MigrationManager extends AbstractManager
 
         /** @phpstan-var \Propel\Generator\Platform\DefaultPlatform $platform */
         $sql = $platform->getAddColumnDDL($column);
-
         $stmt = $connection->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
         $stmt->execute();
     }
 
@@ -610,6 +641,8 @@ class MigrationManager extends AbstractManager
 
     /**
      * @param string $connectionName
+     *
+     * @throws \RuntimeException
      *
      * @return array
      */
@@ -631,6 +664,11 @@ class MigrationManager extends AbstractManager
         );
 
         $stmt = $connection->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
         $stmt->execute();
 
         return $stmt->fetchAll();
@@ -667,18 +705,20 @@ class MigrationManager extends AbstractManager
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection
      * @param string $columnName
      *
+     * @throws \RuntimeException
+     *
      * @return bool
      */
     protected function columnExists(ConnectionInterface $connection, string $columnName): bool
     {
-        $sql = sprintf(
-            'SELECT %s FROM %s',
-            $columnName,
-            $this->getMigrationTable(),
-        );
-
         try {
+            $sql = sprintf('SELECT %s FROM %s', $columnName, $this->getMigrationTable());
             $stmt = $connection->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
             $stmt->execute();
 
             return true;
