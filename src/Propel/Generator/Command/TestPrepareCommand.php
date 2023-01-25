@@ -151,7 +151,7 @@ class TestPrepareCommand extends AbstractCommand
             $command->run($in, $output);
         }
 
-        if (0 < count((array)$this->getSchemas('.'))) {
+        if (0 < count($this->getSchemas('.'))) {
             $in = new ArrayInput([
                 'command' => 'model:build',
                 '--schema-dir' => '.',

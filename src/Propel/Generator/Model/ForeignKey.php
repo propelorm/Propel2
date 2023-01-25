@@ -1025,7 +1025,7 @@ class ForeignKey extends MappingModel
      */
     public function setSkipSql(bool $skip): void
     {
-        $this->skipSql = (bool)$skip;
+        $this->skipSql = $skip;
     }
 
     /**
