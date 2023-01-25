@@ -230,7 +230,7 @@ class ColumnMap
             PropelTypes::BLOB,
             PropelTypes::VARBINARY,
             PropelTypes::LONGVARBINARY,
-        ]);
+        ], true);
     }
 
     /**
@@ -247,7 +247,7 @@ class ColumnMap
             PropelTypes::TIME,
             PropelTypes::BU_DATE,
             PropelTypes::BU_TIMESTAMP,
-        ]);
+        ], true);
     }
 
     /**
@@ -267,7 +267,7 @@ class ColumnMap
             PropelTypes::REAL,
             PropelTypes::FLOAT,
             PropelTypes::DOUBLE,
-        ]);
+        ], true);
     }
 
     /**
@@ -291,7 +291,7 @@ class ColumnMap
             PropelTypes::VARCHAR,
             PropelTypes::LONGVARCHAR,
             PropelTypes::CHAR,
-        ]);
+        ], true);
     }
 
     /**
