@@ -166,6 +166,6 @@ class OnDemandIterator implements IteratorInterface
      */
     public function valid(): bool
     {
-        return (bool)$this->isValid;
+        return $this->isValid;
     }
 }

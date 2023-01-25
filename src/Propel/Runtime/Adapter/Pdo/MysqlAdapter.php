@@ -128,9 +128,6 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
-        $offset = (int)$offset;
-        $limit = (int)$limit;
-
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
         } elseif ($offset > 0) {

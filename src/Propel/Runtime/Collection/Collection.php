@@ -648,7 +648,7 @@ class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializa
      */
     public function __toString(): string
     {
-        return (string)$this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
+        return $this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
     }
 
     /**
