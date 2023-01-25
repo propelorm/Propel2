@@ -137,12 +137,14 @@ class Join
      */
     public function __construct($leftColumn = null, $rightColumn = null, ?string $joinType = null)
     {
-        if (is_array($leftColumn) && is_array($rightColumn)) {
-            $this->addConditions($leftColumn, $rightColumn);
-        }
-
-        if (!is_array($leftColumn) && !is_array($rightColumn)) {
-            $this->addCondition((string)$leftColumn, (string)$rightColumn);
+        if ($leftColumn !== null) {
+            if (is_array($leftColumn)) {
+                // join with multiple conditions
+                $this->addConditions($leftColumn, $rightColumn);
+            } else {
+                // simple join
+                $this->addCondition($leftColumn, $rightColumn);
+            }
         }
 
         if ($joinType !== null) {
