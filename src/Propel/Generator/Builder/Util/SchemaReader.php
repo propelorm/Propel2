@@ -456,7 +456,6 @@ class SchemaReader
      */
     private function getLocationDescription(): string
     {
-
         $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
 
         /**
