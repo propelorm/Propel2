@@ -1064,16 +1064,16 @@ class Criteria
 
         // is the left table an alias ?
         /** @phpstan-var string $left */
-        $length = strrpos($left, '.') ?: null;
-        $leftTableAlias = substr($left, 0, $length);
-        $leftColumnName = substr($left, $length + 1);
+        $dotpos = strrpos($left, '.') ?: null;
+        $leftTableAlias = substr($left, 0, $dotpos);
+        $leftColumnName = substr($left, $dotpos + 1);
         [$leftTableName, $leftTableAlias] = $this->getTableNameAndAlias($leftTableAlias);
 
         // is the right table an alias ?
         /** @phpstan-var string $right */
-        $length = strrpos($right, '.') ?: null;
-        $rightTableAlias = substr($right, 0, $length);
-        $rightColumnName = substr($right, $length + 1);
+        $dotpos = strrpos($right, '.') ?: null;
+        $rightTableAlias = substr($right, 0, $dotpos);
+        $rightColumnName = substr($right, $dotpos + 1);
         [$rightTableName, $rightTableAlias] = $this->getTableNameAndAlias($rightTableAlias);
 
         $join->addExplicitCondition(

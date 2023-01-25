@@ -27,7 +27,7 @@ class ColumnDefaultValue
     public const TYPE_EXPR = 'expr';
 
     /**
-     * @var string|null The default value, as specified in the schema.
+     * @var string|int|null The default value, as specified in the schema.
      */
     private $value;
 
@@ -94,7 +94,7 @@ class ColumnDefaultValue
      */
     public function setValue($value): void
     {
-        $this->value = (string)$value;
+        $this->value = $value;
     }
 
     /**
@@ -121,6 +121,6 @@ class ColumnDefaultValue
         $value = strtoupper((string)$this->getValue());
         $otherValue = strtoupper((string)$other->getValue());
 
-        return in_array($value, $equivalents) && in_array($otherValue, $equivalents);
+        return in_array($value, $equivalents, true) && in_array($otherValue, $equivalents, true);
     }
 }

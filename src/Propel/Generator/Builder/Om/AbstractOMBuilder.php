@@ -910,10 +910,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         foreach ($fk->getMapping() as $mapping) {
             [$localColumn, $foreignValueOrColumn] = $mapping;
-            $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
-            if (!$localColumnName) {
-                throw new RuntimeException(sprintf('Could not fetch column of table %s.', $localTable->getName()));
+            if (!$localColumn) {
+                throw new RuntimeException(sprintf('Could not resolve column of foreign key `%s` on table `%s`', $fk->getName(), $localTable->getName()));
             }
 
             $tableName = $fk->getTableName();
@@ -973,10 +972,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $relCol = '';
         foreach ($fk->getMapping() as $mapping) {
             [$localColumn, $foreignValueOrColumn] = $mapping;
-            $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
-            if (!$localColumnName) {
-                throw new RuntimeException(sprintf('Could not fetch column of table %s.', $localTable->getName()));
+            if (!$localColumn) {
+                throw new RuntimeException(sprintf('Could not resolve column of foreign key `%s` on table `%s`', $fk->getName(), $localTable->getName()));
             }
 
             $tableName = $fk->getTableName();

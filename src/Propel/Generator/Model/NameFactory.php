@@ -42,7 +42,7 @@ class NameFactory
     /**
      * Factory method which retrieves an instance of the named generator.
      *
-     * @param string $nameGeneratorClassName The fully qualified class name of the name generation algorithm to retrieve.
+     * @param class-string<\Propel\Generator\Model\NameGeneratorInterface> $nameGeneratorClassName The fully qualified class name of the name generation algorithm to retrieve.
      *
      * @return \Propel\Generator\Model\NameGeneratorInterface
      */
@@ -61,7 +61,7 @@ class NameFactory
      * Given a list of <code>String</code> objects, implements an
      * algorithm which produces a name.
      *
-     * @param string $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
+     * @param class-string<\Propel\Generator\Model\NameGeneratorInterface> $algorithmName The fully qualified class name of the {@link NameGeneratorInterface}
      *                                        implementation to use to generate names.
      * @param array<string> $inputs Inputs used to generate a name.
      *

@@ -459,7 +459,7 @@ class SchemaReader
         $location = ($this->currentXmlFile !== null) ? sprintf('file %s,', $this->currentXmlFile) : '';
 
         /**
-         * @phpstan-ignore-next-line
+         * @phpstan-ignore-next-line PHPStan is expecting XMLParser only, while resource is valid too.
          */
         $currentLineNumber = xml_get_current_line_number($this->parser);
         if ($currentLineNumber) {
@@ -467,7 +467,7 @@ class SchemaReader
         }
 
         /**
-         * @phpstan-ignore-next-line
+         * @phpstan-ignore-next-line PHPStan is expecting XMLParser only, while resource is valid too.
          */
         $currentColumnNumber = xml_get_current_column_number($this->parser);
         if ($currentColumnNumber) {

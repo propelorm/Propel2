@@ -463,12 +463,10 @@ class MigrationManager extends AbstractManager
         $suffix = '';
         $path = $this->getWorkingDirectory();
         if ($path && is_dir($path)) {
-            $files = scandir($path);
-            if ($files) {
-                foreach ($files as $file) {
-                    if (preg_match('/^PropelMigration_' . $timestamp . '(_)?(.*)\.php$/', $file, $matches)) {
-                        $suffix = (string)$matches[2];
-                    }
+            $files = scandir($path) ?: [];
+            foreach ($files as $file) {
+                if (preg_match('/^PropelMigration_' . $timestamp . '(_)?(.*)\.php$/', $file, $matches)) {
+                    $suffix = (string)$matches[2];
                 }
             }
         }
@@ -714,7 +712,8 @@ class MigrationManager extends AbstractManager
     protected function columnExists(ConnectionInterface $connection, string $columnName): bool
     {
         try {
-            $stmt = $connection->prepare(sprintf('SELECT %s FROM %s', $columnName, $this->getMigrationTable()));
+            $sql = sprintf('SELECT %s FROM %s', $columnName, $this->getMigrationTable());
+            $stmt = $connection->prepare($sql);
 
             if ($stmt === false) {
                 throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
