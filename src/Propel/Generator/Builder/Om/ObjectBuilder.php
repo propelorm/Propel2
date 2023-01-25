@@ -200,7 +200,7 @@ class ObjectBuilder extends AbstractObjectBuilder
             }
             $defaultValue = (string)array_search($val, $valueSet);
         } elseif ($column->isSetType()) {
-            $defaultValue = (string)SetColumnConverter::convertToInt($val, $column->getValueSet());
+            $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);

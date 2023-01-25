@@ -652,7 +652,7 @@ class Criteria
      */
     public function setUseTransaction(bool $v)
     {
-        $this->useTransaction = (bool)$v;
+        $this->useTransaction = $v;
 
         return $this;
     }
@@ -1444,7 +1444,7 @@ class Criteria
      */
     public function setIgnoreCase(bool $b)
     {
-        $this->ignoreCase = (bool)$b;
+        $this->ignoreCase = $b;
 
         return $this;
     }
@@ -1474,7 +1474,7 @@ class Criteria
      */
     public function setSingleRecord(bool $b)
     {
-        $this->singleRecord = (bool)$b;
+        $this->singleRecord = $b;
 
         return $this;
     }

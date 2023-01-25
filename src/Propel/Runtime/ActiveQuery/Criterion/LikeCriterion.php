@@ -44,7 +44,7 @@ class LikeCriterion extends AbstractCriterion
      */
     public function setIgnoreCase(bool $b)
     {
-        $this->ignoreStringCase = (bool)$b;
+        $this->ignoreStringCase = $b;
 
         return $this;
     }

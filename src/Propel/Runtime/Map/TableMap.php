@@ -401,7 +401,7 @@ class TableMap
      */
     public function setUseIdGenerator(bool $bit): void
     {
-        $this->useIdGenerator = (bool)$bit;
+        $this->useIdGenerator = $bit;
     }
 
     /**
