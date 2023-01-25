@@ -103,7 +103,7 @@ abstract class AbstractQueryExecutor
             $stmt = $this->con->prepare($sql);
 
             if ($stmt === false) {
-                throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
             }
 
             if ($params) {

@@ -109,7 +109,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
 
         if ($dataFetcher === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         return $dataFetcher->fetchColumn();
@@ -239,7 +239,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         $stmt = $con->prepare($this->getExplainPlanQuery($sql));
 
         if ($stmt === false) {
-            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
         }
 
         if ($query instanceof Criteria) {

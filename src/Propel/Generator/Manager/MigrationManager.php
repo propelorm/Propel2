@@ -206,7 +206,7 @@ class MigrationManager extends AbstractManager
             $stmt = $conn->prepare($sql);
 
             if ($stmt === false) {
-                throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
             }
 
             $stmt->execute();
@@ -267,7 +267,7 @@ class MigrationManager extends AbstractManager
             $stmt = $conn->prepare($sql);
 
             if ($stmt === false) {
-                throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
             }
 
             $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
@@ -302,7 +302,7 @@ class MigrationManager extends AbstractManager
         $stmt = $conn->prepare($sql);
 
         if ($stmt === false) {
-            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
         }
 
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
@@ -625,7 +625,7 @@ class MigrationManager extends AbstractManager
         $stmt = $connection->prepare($sql);
 
         if ($stmt === false) {
-            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
         }
 
         $stmt->execute();
@@ -668,7 +668,7 @@ class MigrationManager extends AbstractManager
         $stmt = $connection->prepare($sql);
 
         if ($stmt === false) {
-            throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
         }
 
         $stmt->execute();
@@ -717,7 +717,7 @@ class MigrationManager extends AbstractManager
             $stmt = $connection->prepare(sprintf('SELECT %s FROM %s', $columnName, $this->getMigrationTable()));
 
             if ($stmt === false) {
-                throw new RuntimeException('prepare() failed and did not return statement object for execution.');
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
             }
 
             $stmt->execute();

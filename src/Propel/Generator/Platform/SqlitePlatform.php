@@ -646,7 +646,7 @@ PRAGMA foreign_keys = ON;
         $pdoStatement = $connection->query('SELECT sqlite_version()');
 
         if ($pdoStatement === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         return (string)$pdoStatement->fetch(PDO::FETCH_NUM)[0];

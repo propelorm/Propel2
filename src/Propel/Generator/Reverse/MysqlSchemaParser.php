@@ -169,7 +169,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $dataFetcher = $this->dbh->query($sql);
 
         if ($dataFetcher === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         // First load the tables (important that this happens before filling out details of tables)
@@ -365,7 +365,7 @@ EOT;
 
         $dataFetcher = $this->dbh->query($query);
         if ($dataFetcher === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         /** @phpstan-var string|null */
@@ -395,7 +395,7 @@ EOT;
 
         $dataFetcher = $this->dbh->query($query);
         if ($dataFetcher === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         /** @phpstan-var string|null */
@@ -418,7 +418,7 @@ EOT;
         $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
 
         if ($dataFetcher === false) {
-            throw new RuntimeException('query() did not return a result set as a statement object.');
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
         $row = $dataFetcher->fetch();

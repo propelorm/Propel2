@@ -320,7 +320,10 @@ class ArchivableBehavior extends Behavior
      */
     protected function createForeignKeyFromParameters(Table $table, array $fkParameterData): void
     {
-        if (empty($fkParameterData['localColumn']) || empty($fkParameterData['foreignColumn'])) {
+        if (
+            empty($fkParameterData['localColumn']) ||
+            empty($fkParameterData['foreignColumn'])
+        ) {
             $tableName = $this->table->getName();
 
             throw new SchemaException("Table `$tableName`: Archivable behavior misses foreign key parameters. Please supply `localColumn`, `foreignTable` and `foreignColumn` for every entry");
