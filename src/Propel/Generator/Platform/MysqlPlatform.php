@@ -989,7 +989,7 @@ ALTER TABLE %s ADD %s %s;
             'BLOB',
             'MEDIUMBLOB',
             'LONGBLOB',
-        ]);
+        ], true);
     }
 
     /**

@@ -170,7 +170,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $asSelects = $criteria->getAsColumns();
 
             foreach ($selected as $colName) {
-                if (!in_array($colName, $groupBy)) {
+                if (!in_array($colName, $groupBy, true)) {
                     // is a alias there that is grouped?
                     $alias = array_search($colName, $asSelects);
                     if ($alias) {

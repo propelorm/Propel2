@@ -1363,7 +1363,7 @@ class Criteria
      */
     public function hasSelectModifier(string $modifier): bool
     {
-        return in_array($modifier, $this->selectModifiers);
+        return in_array($modifier, $this->selectModifiers, true);
     }
 
     /**

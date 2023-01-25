@@ -283,7 +283,7 @@ END
     {
         $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
 
-        return !(in_array($sqlType, $nosize));
+        return !(in_array($sqlType, $nosize, true));
     }
 
     /**

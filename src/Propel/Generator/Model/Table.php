@@ -1338,7 +1338,7 @@ class Table extends ScopedMappingModel implements IdMethod
         $formats = Database::getSupportedStringFormats();
 
         $format = strtoupper($format);
-        if (!in_array($format, $formats)) {
+        if (!in_array($format, $formats, true)) {
             throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
         }
 
@@ -1693,7 +1693,7 @@ class Table extends ScopedMappingModel implements IdMethod
             $stringArray = is_string($keys[0]);
             foreach ($this->getPrimaryKey() as $pk) {
                 if ($stringArray) {
-                    if (!in_array($pk->getName(), $keys)) {
+                    if (!in_array($pk->getName(), $keys, true)) {
                         $allPk = false;
 
                         break;

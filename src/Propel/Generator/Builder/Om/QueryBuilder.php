@@ -1152,7 +1152,7 @@ class QueryBuilder extends AbstractOMBuilder
         } elseif ($col->isBooleanType()) {
             $script .= "
         if (is_string(\$$variableName)) {
-            \$$variableName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            \$$variableName = in_array(strtolower(\$$variableName), array('false', 'off', '-', 'no', 'n', '0', ''), true) ? false : true;
         }";
         } elseif ($col->isUuidBinaryType()) {
             $uuidSwapFlag = $this->getUuidSwapFlagLiteral();

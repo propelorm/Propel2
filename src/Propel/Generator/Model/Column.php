@@ -651,7 +651,7 @@ class Column extends MappingModel
     public function setAccessorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
-        if (!in_array($visibility, self::$validVisibilities)) {
+        if (!in_array($visibility, self::$validVisibilities, true)) {
             $visibility = self::DEFAULT_VISIBILITY;
         }
 
@@ -682,7 +682,7 @@ class Column extends MappingModel
     public function setMutatorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
-        if (!in_array($visibility, self::$validVisibilities)) {
+        if (!in_array($visibility, self::$validVisibilities, true)) {
             $visibility = self::DEFAULT_VISIBILITY;
         }
 

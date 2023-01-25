@@ -213,7 +213,7 @@ class Index extends MappingModel
      */
     public function hasColumn(string $name): bool
     {
-        return in_array($name, $this->columns);
+        return in_array($name, $this->columns, true);
     }
 
     /**
