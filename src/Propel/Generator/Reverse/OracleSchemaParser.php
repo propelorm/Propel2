@@ -205,9 +205,9 @@ class OracleSchemaParser extends AbstractSchemaParser
      */
     protected function addIndexes(Table $table): void
     {
-        $indicesIndexedByIndexName = $this->getIndiciesIndexedByIndexName($table);
+        $columnNamesIndexedByIndexName = $this->getColumnNamesIndexedByIndexName($table);
 
-        foreach ($indicesIndexedByIndexName as $indexName => $columnNames) {
+        foreach ($columnNamesIndexedByIndexName as $indexName => $columnNames) {
             $index = new Index((string)$indexName);
             /** @phpstan-var string $columnName */
             foreach ($columnNames as $columnName) {
@@ -229,17 +229,17 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return array<scalar, non-empty-list<null|scalar>>
      */
-    protected function getIndiciesIndexedByIndexName(Table $table): array
+    protected function getColumnNamesIndexedByIndexName(Table $table): array
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
 
-        $indicesIndexedByIndexName = [];
+        $columnNamesIndexedByIndexName = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $indicesIndexedByIndexName[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
+            $columnNamesIndexedByIndexName[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
         }
 
-        return $indicesIndexedByIndexName;
+        return $columnNamesIndexedByIndexName;
     }
 
     /**
