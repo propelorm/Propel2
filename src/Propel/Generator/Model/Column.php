@@ -1739,8 +1739,7 @@ class Column extends MappingModel
     public function isContent(string $content): bool
     {
         $contentAttribute = $this->getAttribute('content');
-        // @todo: expression below has same operands - fix or kick?
 
-        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($contentAttribute);
+        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($content);
     }
 }

@@ -127,7 +127,7 @@ abstract class AbstractSqlQueryBuilder
      * Build sql statement from a criteria and add it to the given statement collector.
      *
      * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion $criterion
-     * @param array|null $params
+     * @param array<mixed>|null $params
      *
      * @return string
      */

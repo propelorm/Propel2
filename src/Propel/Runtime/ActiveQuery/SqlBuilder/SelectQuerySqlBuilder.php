@@ -19,7 +19,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
 {
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param array $params
+     * @param array<mixed> $params
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -38,7 +38,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
      * to be set before the statement is executed. The reason we do it this way
      * is to let the PDO layer handle all escaping & value formatting.
      *
-     * @param array $params
+     * @param array<mixed> $params
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */

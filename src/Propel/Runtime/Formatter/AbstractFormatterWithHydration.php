@@ -15,7 +15,7 @@ use ReflectionClass;
 abstract class AbstractFormatterWithHydration extends AbstractFormatter
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $alreadyHydratedObjects = [];
 

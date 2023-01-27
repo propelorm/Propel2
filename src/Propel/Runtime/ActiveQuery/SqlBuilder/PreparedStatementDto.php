@@ -16,7 +16,7 @@ class PreparedStatementDto
     private $sqlStatement;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $parameters;
 
@@ -39,7 +39,7 @@ class PreparedStatementDto
     }
 
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function getParameters(): array
     {
