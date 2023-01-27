@@ -201,7 +201,7 @@ class MssqlAdapter extends PdoAdapter implements SqlAdapterInterface
 
             $nbOrders = count($orders);
             for ($i = 0; $i < $nbOrders; $i++) {
-                $orderArr[trim(preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = [
+                $orderArr[trim((string)preg_replace('/\s+(ASC|DESC)$/i', '', $orders[$i]))] = [
                     'sort' => (stripos($orders[$i], ' DESC') !== false) ? 'DESC' : 'ASC',
                     'key' => $i,
                 ];

@@ -98,8 +98,7 @@ class I18nBehaviorObjectBuilderModifier
     {
         $this->builder = $builder;
 
-        $script = '';
-        $script .= $this->addSetLocale();
+        $script = $this->addSetLocale();
         $script .= $this->addGetLocale();
 
         $alias = $this->behavior->getParameter('locale_alias');
@@ -175,7 +174,6 @@ class I18nBehaviorObjectBuilderModifier
      */
     protected function addGetTranslation(): string
     {
-        $plural = false;
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -185,7 +183,7 @@ class I18nBehaviorObjectBuilderModifier
             'i18nListVariable' => $this->builder->getRefFKCollVarName($fk),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
             'i18nQueryName' => $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
-            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk, $plural),
+            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk),
         ]);
     }
 
@@ -262,13 +260,14 @@ class I18nBehaviorObjectBuilderModifier
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';
+
         if ($this->isDateType($column->getType())) {
             $objectBuilder->addTemporalMutatorComment($comment, $column);
-            $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         } else {
             $objectBuilder->addMutatorComment($comment, $column);
-            $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         }
+
+        $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         $comment = preg_replace('/^\t/m', '', $comment);
         $comment = str_replace('@return $this|' . $i18nTablePhpName, '@return $this|' . $tablePhpName, $comment);
         $functionStatement = preg_replace('/^\t/m', '', $functionStatement);

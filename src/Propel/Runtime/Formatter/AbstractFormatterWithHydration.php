@@ -15,7 +15,7 @@ use ReflectionClass;
 abstract class AbstractFormatterWithHydration extends AbstractFormatter
 {
     /**
-     * @var array<mixed>
+     * @var array
      */
     protected $alreadyHydratedObjects = [];
 
@@ -65,7 +65,7 @@ abstract class AbstractFormatterWithHydration extends AbstractFormatter
         $mainKey = $tableMap::getPrimaryKeyHashFromRow($row, 0, $indexType);
         // we hydrate the main object even in case of a one-to-many relationship
         // in order to get the $col variable increased anyway
-        $obj = $this->getSingleObjectFromRow($row, $this->class, $col);
+        $obj = $this->getSingleObjectFromRow($row, (string)$this->class, $col);
 
         if (!isset($this->alreadyHydratedObjects[$this->class][$mainKey])) {
             $this->alreadyHydratedObjects[$this->class][$mainKey] = $obj->toArray();

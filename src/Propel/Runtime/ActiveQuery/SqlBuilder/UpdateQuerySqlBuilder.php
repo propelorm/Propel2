@@ -144,7 +144,7 @@ class UpdateQuerySqlBuilder extends AbstractSqlQueryBuilder
 
     /**
      * @param array<string> $qualifiedTableColumnNames
-     * @param array<mixed>|null $params
+     * @param array|null $params
      *
      * @return string|null
      */

@@ -78,10 +78,9 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // these classes are only generated if they don't already exist
-                        $overwrite = false;
                         foreach (['objectstub', 'querystub'] as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                            $nbWrittenFiles += $this->doBuild($builder, false);
                         }
 
                         // -----------------------------------------------------------------------------------------
@@ -93,7 +92,6 @@ class ModelManager extends AbstractManager
                         if ($col) {
                             if ($col->isEnumeratedClasses()) {
                                 foreach ($col->getChildren() as $child) {
-                                    $overwrite = true;
                                     foreach (['queryinheritance'] as $target) {
                                         if (!$child->getAncestor() && $child->getClassName() === $table->getPhpName()) {
                                             continue;
@@ -101,14 +99,14 @@ class ModelManager extends AbstractManager
                                         /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                                        $nbWrittenFiles += $this->doBuild($builder);
                                     }
-                                    $overwrite = false;
+
                                     foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
                                         /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                                        $nbWrittenFiles += $this->doBuild($builder, false);
                                     }
                                 }
                             }
@@ -119,10 +117,9 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // Create [empty] interface if it does not already exist
-                        $overwrite = false;
                         if ($table->getInterface()) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                            $nbWrittenFiles += $this->doBuild($builder, false);
                         }
 
                         // ----------------------------------

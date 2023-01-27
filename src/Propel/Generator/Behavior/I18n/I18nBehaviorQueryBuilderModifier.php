@@ -50,8 +50,7 @@ class I18nBehaviorQueryBuilderModifier
     public function queryMethods(QueryBuilder $builder): string
     {
         $this->builder = $builder;
-        $script = '';
-        $script .= $this->addJoinI18n();
+        $script = $this->addJoinI18n();
         $script .= $this->addJoinWithI18n();
         $script .= $this->addUseI18nQuery();
 

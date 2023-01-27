@@ -351,7 +351,7 @@ abstract class AbstractCriterion
             return true;
         }
 
-        if (($obj === null) || !($obj instanceof AbstractCriterion)) {
+        if (!$obj instanceof AbstractCriterion) {
             return false;
         }
 

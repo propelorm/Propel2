@@ -19,7 +19,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
 {
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param array<mixed> $params
+     * @param array $params
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -38,7 +38,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
      * to be set before the statement is executed. The reason we do it this way
      * is to let the PDO layer handle all escaping & value formatting.
      *
-     * @param array<mixed> $params
+     * @param array $params
      *
      * @return \Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto
      */
@@ -105,7 +105,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param array<mixed>|null $params
+     * @param array|null $params
      * @param array<string> $sourceTableNames
      * @param array<string> $joinClause
      *
@@ -175,7 +175,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
      *  joins with a null join type will be added to the FROM clause and the condition added to the WHERE clause.
      *  joins of a specified type: the LEFT side will be added to the fromClause and the RIGHT to the joinClause
      *
-     * @param array<mixed>|null $params
+     * @param array|null $params
      * @param array<string> $sourceTableNamesCollector
      *
      * @return array<string>
@@ -215,7 +215,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     /**
      * this will also add the table names to the FROM clause if they are not already included via a LEFT JOIN
      *
-     * @param array<mixed>|null $params
+     * @param array|null $params
      * @param array<string> $sourceTableNamesCollector
      *
      * @return string|null
@@ -274,7 +274,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param array<mixed> $params
+     * @param array $params
      *
      * @return array<string>
      */
@@ -344,7 +344,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param array<mixed> $params
+     * @param array $params
      *
      * @return string|null
      */

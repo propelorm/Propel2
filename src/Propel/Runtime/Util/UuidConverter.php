@@ -31,7 +31,7 @@ class UuidConverter
                 $uuid,
             );
 
-        return (string)hex2bin($rawHex);
+        return hex2bin((string)$rawHex) ?: '';
     }
 
     /**
@@ -47,7 +47,7 @@ class UuidConverter
         $rawHex = bin2hex($bin);
         $recombineFormat = $swapFlag ? '$3$4-$2-$1-$5-$6' : '$1$2-$3-$4-$5-$6';
 
-        return preg_replace(
+        return (string)preg_replace(
             '/(\w{4})(\w{4})(\w{4})(\w{4})(\w{4})(\w{12})/',
             $recombineFormat,
             $rawHex,
