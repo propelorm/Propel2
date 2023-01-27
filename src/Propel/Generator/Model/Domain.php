@@ -336,7 +336,7 @@ class Domain extends MappingModel
             throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
         }
 
-        if (in_array($this->mappingType, [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
+        if (in_array($this->mappingType, [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU], true)) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
 

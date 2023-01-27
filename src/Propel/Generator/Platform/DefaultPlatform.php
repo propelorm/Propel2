@@ -177,9 +177,9 @@ class DefaultPlatform implements PlatformInterface
     {
         $reflectionClass = new ReflectionClass($this);
         $platformShortName = $reflectionClass->getShortName();
-        $length = strpos($platformShortName, 'Platform') ?: null;
+        $pos = strpos($platformShortName, 'Platform') ?: null;
 
-        return strtolower(substr($platformShortName, 0, $length));
+        return strtolower(substr($platformShortName, 0, $pos));
     }
 
     /**
@@ -456,7 +456,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             } else {
                 if ($col->isTextType()) {
                     $default .= $this->quote((string)$defaultValue->getValue());
-                } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
+                } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU], true)) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
@@ -1373,7 +1373,7 @@ ALTER TABLE %s ADD
 
         if (
             is_string($value)
-            && in_array(strtolower($value), ['1', 'true', 'y', 'yes'])
+            && in_array(strtolower($value), ['1', 'true', 'y', 'yes'], true)
         ) {
             return '1';
         }

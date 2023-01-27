@@ -80,7 +80,7 @@ class SqlManager extends AbstractManager
      */
     public function setOverwriteSqlMap(bool $overwriteSqlMap): void
     {
-        $this->overwriteSqlMap = (bool)$overwriteSqlMap;
+        $this->overwriteSqlMap = $overwriteSqlMap;
     }
 
     /**

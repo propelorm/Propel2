@@ -90,7 +90,7 @@ class ConnectionManagerPrimaryReplica implements ConnectionManagerInterface
      */
     public function setForcePrimaryConnection(bool $isForceMasterConnection): void
     {
-        $this->isForcePrimaryConnection = (bool)$isForceMasterConnection;
+        $this->isForcePrimaryConnection = $isForceMasterConnection;
     }
 
     /**

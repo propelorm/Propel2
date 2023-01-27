@@ -651,7 +651,7 @@ class Column extends MappingModel
     public function setAccessorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
-        if (!in_array($visibility, self::$validVisibilities)) {
+        if (!in_array($visibility, self::$validVisibilities, true)) {
             $visibility = self::DEFAULT_VISIBILITY;
         }
 
@@ -682,7 +682,7 @@ class Column extends MappingModel
     public function setMutatorVisibility(string $visibility): void
     {
         $visibility = strtolower($visibility);
-        if (!in_array($visibility, self::$validVisibilities)) {
+        if (!in_array($visibility, self::$validVisibilities, true)) {
             $visibility = self::DEFAULT_VISIBILITY;
         }
 
@@ -928,7 +928,7 @@ class Column extends MappingModel
      */
     public function setPrimaryString(bool $isPrimaryString): void
     {
-        $this->isPrimaryString = (bool)$isPrimaryString;
+        $this->isPrimaryString = $isPrimaryString;
     }
 
     /**
@@ -973,7 +973,7 @@ class Column extends MappingModel
      */
     public function setNodeKey(bool $isNodeKey): void
     {
-        $this->isNodeKey = (bool)$isNodeKey;
+        $this->isNodeKey = $isNodeKey;
     }
 
     /**
@@ -995,7 +995,7 @@ class Column extends MappingModel
      */
     public function setNodeKeySep(string $sep): void
     {
-        $this->nodeKeySep = (string)$sep;
+        $this->nodeKeySep = $sep;
     }
 
     /**
@@ -1017,7 +1017,7 @@ class Column extends MappingModel
      */
     public function setNestedSetLeftKey(bool $isNestedSetLeftKey): void
     {
-        $this->isNestedSetLeftKey = (bool)$isNestedSetLeftKey;
+        $this->isNestedSetLeftKey = $isNestedSetLeftKey;
     }
 
     /**
@@ -1039,7 +1039,7 @@ class Column extends MappingModel
      */
     public function setNestedSetRightKey(bool $isNestedSetRightKey): void
     {
-        $this->isNestedSetRightKey = (bool)$isNestedSetRightKey;
+        $this->isNestedSetRightKey = $isNestedSetRightKey;
     }
 
     /**
@@ -1061,7 +1061,7 @@ class Column extends MappingModel
      */
     public function setTreeScopeKey(bool $isTreeScopeKey): void
     {
-        $this->isTreeScopeKey = (bool)$isTreeScopeKey;
+        $this->isTreeScopeKey = $isTreeScopeKey;
     }
 
     /**

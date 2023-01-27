@@ -38,7 +38,7 @@ class CustomCriterion extends AbstractCriterion
     protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         if ($this->value !== '') {
-            $sb .= (string)$this->value;
+            $sb .= $this->value;
         }
     }
 }

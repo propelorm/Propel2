@@ -2573,7 +2573,7 @@ class ModelCriteria extends BaseModelCriteria
             $joinType = null;
 
             $type = substr($name, 0, $pos);
-            if (in_array($type, ['left', 'right', 'inner'])) {
+            if (in_array($type, ['left', 'right', 'inner'], true)) {
                 $joinType = strtoupper($type) . ' JOIN';
             }
 
@@ -2592,7 +2592,7 @@ class ModelCriteria extends BaseModelCriteria
         $pos = strpos($name, 'Join');
         if ($pos > 0) {
             $type = substr($name, 0, $pos);
-            if (in_array($type, ['left', 'right', 'inner'])) {
+            if (in_array($type, ['left', 'right', 'inner'], true)) {
                 $joinType = strtoupper($type) . ' JOIN';
                 // Test if first argument is supplied, else don't provide an alias to joinXXX (default value)
                 if (!isset($arguments[0])) {

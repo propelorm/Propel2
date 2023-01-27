@@ -205,7 +205,7 @@ class Table extends ScopedMappingModel implements IdMethod
         // retrieves the method for converting from specified name to a PHP name.
         $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
 
-        $this->phpName = $this->getAttribute('phpName', $this->buildPhpName((string)$this->getStdSeparatedName()));
+        $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
 
         if ($this->database->getTablePrefix()) {
             $this->commonName = $this->database->getTablePrefix() . $this->commonName;
@@ -944,7 +944,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setContainsForeignPK(bool $containsForeignPK): void
     {
-        $this->containsForeignPK = (bool)$containsForeignPK;
+        $this->containsForeignPK = $containsForeignPK;
     }
 
     /**
@@ -1248,7 +1248,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getPhpName(): string
     {
         if ($this->phpName === null) {
-            $this->phpName = $this->buildPhpName((string)$this->getStdSeparatedName());
+            $this->phpName = $this->buildPhpName($this->getStdSeparatedName());
         }
 
         return $this->phpName;
@@ -1338,7 +1338,7 @@ class Table extends ScopedMappingModel implements IdMethod
         $formats = Database::getSupportedStringFormats();
 
         $format = strtoupper($format);
-        if (!in_array($format, $formats)) {
+        if (!in_array($format, $formats, true)) {
             throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
         }
 
@@ -1416,7 +1416,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setSkipSql(bool $skip): void
     {
-        $this->skipSql = (bool)$skip;
+        $this->skipSql = $skip;
     }
 
     /**
@@ -1693,7 +1693,7 @@ class Table extends ScopedMappingModel implements IdMethod
             $stringArray = is_string($keys[0]);
             foreach ($this->getPrimaryKey() as $pk) {
                 if ($stringArray) {
-                    if (!in_array($pk->getName(), $keys)) {
+                    if (!in_array($pk->getName(), $keys, true)) {
                         $allPk = false;
 
                         break;

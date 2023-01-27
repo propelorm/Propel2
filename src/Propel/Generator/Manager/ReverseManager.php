@@ -150,7 +150,7 @@ class ReverseManager extends AbstractManager
      */
     public function setSamePhpName(bool $samePhpName): void
     {
-        $this->samePhpName = (bool)$samePhpName;
+        $this->samePhpName = $samePhpName;
     }
 
     /**
@@ -162,7 +162,7 @@ class ReverseManager extends AbstractManager
      */
     public function setAddVendorInfo(bool $addVendorInfo): void
     {
-        $this->addVendorInfo = (bool)$addVendorInfo;
+        $this->addVendorInfo = $addVendorInfo;
     }
 
     /**

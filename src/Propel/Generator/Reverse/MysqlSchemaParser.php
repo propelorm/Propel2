@@ -293,7 +293,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $default = 'false';
                 }
             }
-            if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'])) {
+            if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
                 $default = 'CURRENT_TIMESTAMP';
                 $type = ColumnDefaultValue::TYPE_EXPR;
             } else {
