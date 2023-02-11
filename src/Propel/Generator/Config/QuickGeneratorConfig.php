@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Config;
@@ -13,22 +11,27 @@ namespace Propel\Generator\Config;
 use Propel\Common\Config\ConfigurationManager;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
-use Propel\Generator\Builder\DataModelBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Table;
-use \Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Reverse\SchemaParserInterface;
 use Propel\Generator\Util\BehaviorLocator;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConfigInterface
 {
     /**
-     * @var BehaviorLocator
+     * @var \Propel\Generator\Util\BehaviorLocator|null
      */
-    protected $behaviorLocator = null;
+    protected $behaviorLocator;
 
-    public function __construct($extraConf = [])
+    /**
+     * @param array|null $extraConf
+     */
+    public function __construct(?array $extraConf = [])
     {
-        if (null === $extraConf) {
+        if ($extraConf === null) {
             $extraConf = [];
         }
 
@@ -42,19 +45,19 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
                            'classname' => 'Propel\Runtime\Connection\DebugPDO',
                            'dsn' => 'sqlite::memory:',
                            'user' => '',
-                           'password' => ''
-                       ]
-                   ]
+                           'password' => '',
+                       ],
+                   ],
                ],
                'runtime' => [
                    'defaultConnection' => 'default',
-                   'connections' => ['default']
+                   'connections' => ['default'],
                ],
                'generator' => [
                    'defaultConnection' => 'default',
-                   'connections' => ['default']
-               ]
-           ]
+                   'connections' => ['default'],
+               ],
+           ],
         ];
 
         $configs = array_replace_recursive($configs, $extraConf);
@@ -65,18 +68,22 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
      * Gets a configured data model builder class for specified table and based
      * on type ('ddl', 'sql', etc.).
      *
-     * @param  Table            $table
-     * @param  string           $type
-     * @return DataModelBuilder
+     * @param \Propel\Generator\Model\Table $table
+     * @param string $type
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
-    public function getConfiguredBuilder(Table $table, $type)
+    public function getConfiguredBuilder(Table $table, string $type): AbstractOMBuilder
     {
         $class = $this->getConfigProperty('generator.objectModel.builders.' . $type);
 
-        if (null === $class) {
+        if ($class === null) {
             throw new InvalidArgumentException("Invalid data model builder type `$type`");
         }
 
+        /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $builder */
         $builder = new $class($table);
         $builder->setGeneratorConfig($this);
 
@@ -86,30 +93,33 @@ class QuickGeneratorConfig extends ConfigurationManager implements GeneratorConf
     /**
      * Returns a configured Pluralizer class.
      *
-     * @return PluralizerInterface
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    public function getConfiguredPluralizer()
+    public function getConfiguredPluralizer(): PluralizerInterface
     {
         return new StandardEnglishPluralizer();
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getConfiguredPlatform(ConnectionInterface $con = null, $database = null)
+    public function getConfiguredPlatform(?ConnectionInterface $con = null, ?string $database = null): ?PlatformInterface
     {
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getConfiguredSchemaParser(ConnectionInterface $con = null, $database = null)
+    public function getConfiguredSchemaParser(?ConnectionInterface $con = null, ?string $database = null): ?SchemaParserInterface
     {
         return null;
     }
 
-    public function getBehaviorLocator()
+    /**
+     * @return \Propel\Generator\Util\BehaviorLocator
+     */
+    public function getBehaviorLocator(): BehaviorLocator
     {
         if (!$this->behaviorLocator) {
             $this->behaviorLocator = new BehaviorLocator($this);

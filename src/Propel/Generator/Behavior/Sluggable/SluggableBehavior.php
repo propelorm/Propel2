@@ -1,16 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Sluggable;
 
-use Propel\Generator\Builder\Om\ObjectBuilder;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
@@ -24,54 +22,57 @@ use Propel\Generator\Model\Unique;
 class SluggableBehavior extends Behavior
 {
     /**
-     * @var ObjectBuilder
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
      */
     private $builder;
-    
+
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
-        'slug_column'     => 'slug',
-        'slug_pattern'    => '',
+        'slug_column' => 'slug',
+        'slug_pattern' => '',
         'replace_pattern' => '/\W+/',
-        'replacement'     => '-',
-        'separator'       => '-',
-        'permanent'       => 'false',
-        'scope_column'    => '',
+        'replacement' => '-',
+        'separator' => '-',
+        'permanent' => 'false',
+        'scope_column' => '',
         'unique_constraint' => 'true',
     ];
 
     /**
      * Adds the slug_column to the current table.
      *
+     * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
         if (!$table->hasColumn($this->getParameter('slug_column'))) {
             $table->addColumn([
-                'name'     => $this->getParameter('slug_column'),
-                'type'     => 'VARCHAR',
-                'size'     => 255,
+                'name' => $this->getParameter('slug_column'),
+                'type' => 'VARCHAR',
+                'size' => 255,
                 'required' => false,
             ]);
             // add a unique to column
-            if ('true' === $this->getParameter('unique_constraint')) {
+            if ($this->getParameter('unique_constraint') === 'true') {
                 $this->addUniqueConstraint($table);
             }
         }
     }
-    
+
     /**
      * Adds a unique constraint to the table to enforce uniqueness of the slug_column
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
-    protected function addUniqueConstraint(Table $table)
+    protected function addUniqueConstraint(Table $table): void
     {
-        $unique = new Unique($this->getColumnForParameter('slug_column'));
+        $unique = new Unique();
         $unique->setName($table->getCommonName() . '_slug');
         $unique->addColumn($table->getColumn($this->getParameter('slug_column')));
         if ($this->getParameter('scope_column')) {
@@ -85,7 +86,7 @@ class SluggableBehavior extends Behavior
      *
      * @return string The related getter, e.g. 'getSlug'
      */
-    protected function getColumnGetter()
+    protected function getColumnGetter(): string
     {
         return 'get' . $this->getColumnForParameter('slug_column')->getPhpName();
     }
@@ -95,7 +96,7 @@ class SluggableBehavior extends Behavior
      *
      * @return string The related setter, e.g. 'setSlug'
      */
-    protected function getColumnSetter()
+    protected function getColumnSetter(): string
     {
         return 'set' . $this->getColumnForParameter('slug_column')->getPhpName();
     }
@@ -103,15 +104,17 @@ class SluggableBehavior extends Behavior
     /**
      * Add code in ObjectBuilder::preSave
      *
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
      * @return string The code to put at the hook
      */
-    public function preSave($builder)
+    public function preSave(AbstractOMBuilder $builder): string
     {
         $const = $builder->getColumnConstant($this->getColumnForParameter('slug_column'));
         $script = "
 if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
     \$this->{$this->getColumnSetter()}(\$this->makeSlugUnique(\$this->{$this->getColumnGetter()}()));";
-        if ('true' === $this->getParameter('permanent')) {
+        if ($this->getParameter('permanent') === 'true') {
             $script .= "
 } elseif (!\$this->{$this->getColumnGetter()}()) {
     \$this->{$this->getColumnSetter()}(\$this->createSlug());
@@ -126,11 +129,16 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
         return $script;
     }
 
-    public function objectMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function objectMethods(AbstractOMBuilder $builder): string
     {
         $this->builder = $builder;
         $script = '';
-        if ('slug' !== $this->getParameter('slug_column')) {
+        if ($this->getParameter('slug_column') !== 'slug') {
             $this->addSlugSetter($script);
             $this->addSlugGetter($script);
         }
@@ -143,29 +151,41 @@ if (\$this->isColumnModified($const) && \$this->{$this->getColumnGetter()}()) {
         return $script;
     }
 
-    protected function addSlugSetter(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addSlugSetter(string &$script): void
     {
         $script .= "
 /**
  * Wrap the setter for slug value
  *
- * @param   string
- * @return  \$this|" . $this->getTable()->getPhpName() . "
+ * @param string
+ * @return \$this
  */
 public function setSlug(\$v)
 {
-    return \$this->" . $this->getColumnSetter() . "(\$v);
+    \$this->" . $this->getColumnSetter() . "(\$v);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addSlugGetter(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addSlugGetter(string &$script): void
     {
         $script .= "
 /**
  * Wrap the getter for slug value
  *
- * @return  string
+ * @return string
  */
 public function getSlug()
 {
@@ -174,7 +194,12 @@ public function getSlug()
 ";
     }
 
-    protected function addCreateSlug(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addCreateSlug(string &$script): void
     {
         $script .= "
 /**
@@ -182,7 +207,7 @@ public function getSlug()
  *
  * @return string The object slug
  */
-protected function createSlug()
+protected function createSlug(): string
 {
     \$slug = \$this->createRawSlug();
     \$slug = \$this->limitSlugSize(\$slug);
@@ -193,7 +218,12 @@ protected function createSlug()
 ";
     }
 
-    protected function addCreateRawSlug(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addCreateRawSlug(string &$script): void
     {
         $pattern = $this->getParameter('slug_pattern');
         $script .= "
@@ -202,34 +232,41 @@ protected function createSlug()
  *
  * @return string
  */
-protected function createRawSlug()
+protected function createRawSlug(): string
 {
     ";
         if ($pattern) {
-            $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart($this->get', '()) . \''], $pattern). "';";
+            $script .= "return '" . str_replace(['{', '}'], ['\' . $this->cleanupSlugPart((string)$this->get', '()) . \''], $pattern) . "';";
         } else {
-            $script .= "return \$this->cleanupSlugPart(\$this->__toString());";
+            $script .= 'return $this->cleanupSlugPart($this->__toString());';
         }
         $script .= "
 }
 ";
-
-        return $script;
     }
 
-    public function addCleanupSlugPart(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    public function addCleanupSlugPart(string &$script): void
     {
         $script .= "
 /**
  * Cleanup a string to make a slug of it
  * Removes special characters, replaces blanks with a separator, and trim it
  *
- * @param     string \$slug        the text to slugify
- * @param     string \$replacement the separator used by slug
- * @return    string               the slugified text
+ * @param string \$slug        the text to slugify
+ * @param string \$replacement the separator used by slug
+ * @return string the slugified text
  */
-protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->getParameter('replacement') . "')
+protected static function cleanupSlugPart(string \$slug, string \$replacement = '" . $this->getParameter('replacement') . "'): string
 {
+    // set locale explicitly
+    \$localeOrigin = setlocale(LC_CTYPE, 0);
+    setlocale(LC_CTYPE, 'C.UTF-8');
+
     // transliterate
     if (function_exists('iconv')) {
         \$slug = iconv('utf-8', 'us-ascii//TRANSLIT', \$slug);
@@ -251,6 +288,8 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
     // trim
     \$slug = trim(\$slug, \$replacement);
 
+    setlocale(LC_CTYPE, \$localeOrigin);
+
     if (empty(\$slug)) {
         return 'n-a';
     }
@@ -260,7 +299,12 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 ";
     }
 
-    public function addLimitSlugSize(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    public function addLimitSlugSize(string &$script): void
     {
         $size = $this->getColumnForParameter('slug_column')->getSize();
         $script .= "
@@ -268,11 +312,12 @@ protected static function cleanupSlugPart(\$slug, \$replacement = '" . $this->ge
 /**
  * Make sure the slug is short enough to accommodate the column size
  *
- * @param    string \$slug            the slug to check
+ * @param string \$slug The slug to check
+ * @param int \$incrementReservedSpace Space to reserve
  *
- * @return string                        the truncated slug
+ * @return string The truncated slug
  */
-protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
+protected static function limitSlugSize(string \$slug, int \$incrementReservedSpace = 3): string
 {
     // check length, as suffix could put it over maximum
     if (strlen(\$slug) > ($size - \$incrementReservedSpace)) {
@@ -284,19 +329,24 @@ protected static function limitSlugSize(\$slug, \$incrementReservedSpace = 3)
 ";
     }
 
-    public function addMakeSlugUnique(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    public function addMakeSlugUnique(string &$script): void
     {
         $script .= "
 
 /**
  * Get the slug, ensuring its uniqueness
  *
- * @param    string \$slug            the slug to check
- * @param    string \$separator       the separator used by slug
- * @param    int    \$alreadyExists   false for the first try, true for the second, and take the high count + 1
- * @return   string                   the unique slug
+ * @param string \$slug            the slug to check
+ * @param string \$separator       the separator used by slug
+ * @param bool \$alreadyExists   false for the first try, true for the second, and take the high count + 1
+ * @return string the unique slug
  */
-protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter('separator') . "', \$alreadyExists = false)
+protected function makeSlugUnique(string \$slug, string \$separator = '" . $this->getParameter('separator') . "', bool \$alreadyExists = false)
 {";
         $getter = $this->getColumnGetter();
         $script .= "
@@ -305,7 +355,7 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     } else {
         \$slug2 = \$slug . \$separator;";
 
-        if (null == $this->getParameter('slug_pattern')) {
+        if ($this->getParameter('slug_pattern') == null) {
             $script .= "
 
         \$count = " . $this->builder->getStubQueryBuilder()->getClassname() . "::create()
@@ -330,9 +380,9 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         ->prune(\$this)";
 
         if ($this->getParameter('scope_column')) {
-            $scope_column = $this->getColumnForParameter('scope_column')->getPhpName();
+            $scopeColumn = $this->getColumnForParameter('scope_column')->getPhpName();
             $script .= "
-            ->filterBy('{$scope_column}', \$this->get{$scope_column}())";
+            ->filterBy('{$scopeColumn}', \$this->get{$scopeColumn}())";
         }
         // watch out: some of the columns may be hidden by the soft_delete behavior
         if ($this->table->hasBehavior('soft_delete')) {
@@ -359,12 +409,12 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
     ->findOne();
 
     // First duplicate slug
-    if (null == \$object) {
+    if (\$object === null) {
         return \$slug2 . '1';
     }
 
     \$slugNum = substr(\$object->" . $getter . "(), strlen(\$slug) + 1);
-    if (0 == \$slugNum[0]) {
+    if (\$slugNum[0] == 0) {
         \$slugNum[0] = 1;
     }
 
@@ -373,12 +423,17 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
 ";
     }
 
-    public function queryMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $this->builder = $builder;
         $script = '';
 
-        if ($this->getParameter('slug_column') != 'slug') {
+        if ($this->getParameter('slug_column') !== 'slug') {
             $this->addFilterBySlug($script);
             $this->addFindOneBySlug($script);
         }
@@ -386,35 +441,47 @@ protected function makeSlugUnique(\$slug, \$separator = '" . $this->getParameter
         return $script;
     }
 
-    protected function addFilterBySlug(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFilterBySlug(string &$script): void
     {
         $script .= "
 /**
  * Filter the query on the slug column
  *
- * @param     string \$slug The value to use as filter.
+ * @param string \$slug The value to use as filter.
  *
- * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
-public function filterBySlug(\$slug)
+public function filterBySlug(string \$slug)
 {
-    return \$this->addUsingAlias(" . $this->builder->getColumnConstant($this->getColumnForParameter('slug_column')) . ", \$slug, Criteria::EQUAL);
+    \$this->addUsingAlias(" . $this->builder->getColumnConstant($this->getColumnForParameter('slug_column')) . ", \$slug, Criteria::EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addFindOneBySlug(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFindOneBySlug(string &$script): void
     {
         $script .= "
 /**
  * Find one object based on its slug
  *
- * @param     string \$slug The value to use as filter.
- * @param     ConnectionInterface \$con The optional connection object
+ * @param string \$slug The value to use as filter.
+ * @param ConnectionInterface \$con The optional connection object
  *
- * @return    " . $this->builder->getObjectClassName() . " the result, formatted by the current formatter
+ * @return " . $this->builder->getObjectClassName() . " the result, formatted by the current formatter
  */
-public function findOneBySlug(\$slug, \$con = null)
+public function findOneBySlug(string \$slug, ?ConnectionInterface \$con = null)
 {
     return \$this->filterBySlug(\$slug)->findOne(\$con);
 }

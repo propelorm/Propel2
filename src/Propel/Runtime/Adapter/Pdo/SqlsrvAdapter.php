@@ -1,19 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Adapter\SqlAdapterInterface;
-use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
-use Propel\Runtime\Connection\ConnectionInterface;
+use PDO;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Adapter\Exception\UnsupportedEncodingException;
+use Propel\Runtime\Adapter\SqlAdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 
@@ -27,13 +27,15 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     /**
      * @see parent::initConnection()
      *
-     * @param ConnectionInterface $con
-     * @param array               $settings An array of settings.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param array $settings An array of settings.
+     *
+     * @return void
      */
-    public function initConnection(ConnectionInterface $con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings): void
     {
-        $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $con->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+        $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $con->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 
         parent::initConnection($con, $settings);
     }
@@ -41,19 +43,23 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     /**
      * @see parent::setCharset()
      *
-     * @param ConnectionInterface $con
-     * @param string              $charset
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string $charset
      *
      * @throws \Propel\Runtime\Adapter\Exception\UnsupportedEncodingException
+     *
+     * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset)
+    public function setCharset(ConnectionInterface $con, string $charset): void
     {
         switch (strtolower($charset)) {
             case 'utf-8':
-                $con->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_UTF8);
+                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_UTF8);
+
                 break;
             case 'system':
-                $con->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
+                $con->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
+
                 break;
             default:
                 throw new UnsupportedEncodingException('only utf-8 or system encoding are supported by the pdo_sqlsrv driver');
@@ -63,12 +69,14 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     /**
      * @see parent::cleanupSQL()
      *
-     * @param string      $sql
-     * @param array       $params
-     * @param Criteria    $values
-     * @param DatabaseMap $dbMap
+     * @param string $sql
+     * @param array $params
+     * @param \Propel\Runtime\ActiveQuery\Criteria $values
+     * @param \Propel\Runtime\Map\DatabaseMap $dbMap
+     *
+     * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap)
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void
     {
         $i = 1;
         foreach ($params as $param) {
@@ -78,9 +86,9 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
 
             // this is to workaround for a bug with pdo_sqlsrv inserting or updating blobs with null values
             // http://social.msdn.microsoft.com/Forums/en-US/sqldriverforphp/thread/5a755bdd-41e9-45cb-9166-c9da4475bb94
-            if (null !== $tableName) {
+            if ($tableName !== null) {
                 $cMap = $dbMap->getTable($tableName)->getColumn($columnName);
-                if (null === $value && $cMap->isLob()) {
+                if ($value === null && $cMap->isLob()) {
                     $sql = str_replace(":p$i", "CONVERT(VARBINARY(MAX), :p$i)", $sql);
                 }
             }
@@ -89,17 +97,17 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::bindValue()
+     * @see SqlAdapterInterface::bindValue()
      *
-     * @param \PDOStatement $stmt
-     * @param string        $parameter
-     * @param mixed         $value
-     * @param ColumnMap     $cMap
-     * @param null|integer  $position
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
+     * @param string $parameter
+     * @param mixed $value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
+     * @param int|null $position
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         if ($cMap->isTemporal()) {
             $value = $this->formatTemporalValue($value, $cMap);
@@ -111,10 +119,10 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
             // driver option can be utilized. This requires a unique blob parameter because the bindParam
             // value is passed by reference and if we didn't do this then the referenced parameter value
             // would change on the next loop
-            $blob = 'blob'.$position;
+            $blob = 'blob' . $position;
             $$blob = $value;
 
-            return $stmt->bindParam($parameter, ${$blob}, \PDO::PARAM_LOB, 0, \PDO::SQLSRV_ENCODING_BINARY);
+            return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
         }
 
         return $stmt->bindValue($parameter, $value, $cMap->getPdoType());

@@ -1,127 +1,123 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config;
 
+use org\bovigo\vfs\vfsStream;
 use Propel\Common\Config\ConfigurationManager;
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Tests\TestCase;
+use Propel\Generator\Util\VfsTrait;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class ConfigurationManagerTest extends ConfigTestCase
+class ConfigurationManagerTest extends TestCase
 {
+    use VfsTrait;
     use DataProviderTrait;
 
     /**
-     * Current working directory
+     * @return void
      */
-    private $currentDir;
-
-    /**
-     * Directory in which to create temporary fixtures
-     */
-    private $fixturesDir;
-
-    public function setUp()
-    {
-        $this->currentDir = getcwd();
-        $this->fixturesDir = realpath( __DIR__ . '/../../../../Fixtures') . '/Configuration';
-
-        $this->getFilesystem()->mkdir($this->fixturesDir);
-        chdir($this->fixturesDir);
-    }
-
-    public function tearDown()
-    {
-        chdir($this->currentDir);
-        $this->getFileSystem()->remove($this->fixturesDir);
-    }
-
     public function testLoadConfigFileInCurrentDirectory()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadConfigFileInConfigSubdirectory()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('config/propel.yaml', $yamlConf);
-
-        $manager = new TestableConfigurationManager();
+        $this->newFile('config/propel.yaml', $yamlConf);
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadConfigFileInConfSubdirectory()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('conf/propel.yaml', $yamlConf);
-
-        $manager = new TestableConfigurationManager();
+        $this->newFile('conf/propel.yaml', $yamlConf);
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
     }
 
+    /**
+     * @return void
+     */
     public function testNotExistingConfigFileLoadsDefaultSettingsAndDoesNotThrowExceptions()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('doctrine.yaml', $yamlConf);
+        $this->newFile('doctrine.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
+        $this->assertNull($manager->getConfigProperty('general.version'));
     }
 
+    /**
+     * @return void
+     */
     public function testBackupConfigFilesAreIgnored()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml.bak', $yamlConf);
-        $this->getFilesystem()->dumpFile('propel.yaml~', $yamlConf);
+        $this->newFile('propel.yaml.bak', $yamlConf);
+        $this->newFile('propel.yaml~', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertArrayNotHasKey('bar', $actual);
         $this->assertArrayNotHasKey('baz', $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testUnsupportedExtensionsAreIgnored()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.log', $yamlConf);
+        $this->newFile('propel.log', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertArrayNotHasKey('bar', $actual);
@@ -129,11 +125,13 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
-     * @exceptionMessage Propel expects only one configuration file
+     * @return void
      */
     public function testMoreThanOneConfigurationFileInSameDirectoryThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Propel expects only one configuration file');
+
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
@@ -142,18 +140,20 @@ EOF;
 foo = bar
 bar = baz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $this->getFilesystem()->dumpFile('propel.ini', $iniConf);
+        $this->newFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.ini', $iniConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
-     * @exceptionMessage Propel expects only one configuration file
+     * @return void
      */
     public function testMoreThanOneConfigurationFileInDifferentDirectoriesThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Propel expects only one configuration file');
+
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
@@ -162,12 +162,15 @@ EOF;
 foo = bar
 bar = baz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $this->getFilesystem()->dumpFile('conf/propel.ini', $iniConf);
+        $this->newFile('propel.yaml', $yamlConf);
+        $this->newFile('conf/propel.ini', $iniConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
     }
 
+    /**
+     * @return void
+     */
     public function testGetSection()
     {
         $yamlConf = <<<EOF
@@ -178,29 +181,35 @@ buildtime:
     bfoo: bbar
     bbar: bbaz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->getSection('buildtime');
 
         $this->assertEquals('bbar', $actual['bfoo']);
         $this->assertEquals('bbaz', $actual['bbar']);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadGivenConfigFile()
     {
         $yamlConf = <<<EOF
 foo: bar
 bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/myConfigFile.yaml', $yamlConf);
+        $file = $this->newFile('myDir/mySubdir/myConfigFile.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml');
+        $manager = new TestableConfigurationManager($file->url());
         $actual = $manager->get();
 
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadAlsoDistConfigFile()
     {
         $yamlConf = <<<EOF
@@ -214,16 +223,19 @@ runtime:
     bar: baz
 EOF;
 
-        $this->getFilesystem()->dumpFile('propel.yaml.dist', $yamlDistConf);
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml.dist', $yamlDistConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadOnlyDistFile()
     {
         $yamlDistConf = <<<EOF
@@ -232,14 +244,17 @@ runtime:
     bar: baz
 EOF;
 
-        $this->getFilesystem()->dumpFile('propel.yaml.dist', $yamlDistConf);
+        $this->newFile('propel.yaml.dist', $yamlDistConf);
 
-        $manager = new TestableConfigurationManager();
+        $manager = new TestableConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertEquals(['runtime' => ['foo' => 'bar', 'bar' => 'baz']], $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadGivenFileAndDist()
     {
         $yamlConf = <<<EOF
@@ -252,16 +267,19 @@ runtime:
     foo: bar
     bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/myConfigFile.yaml', $yamlConf);
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/myConfigFile.yaml.dist', $yamlDistConf);
+        $file = $this->newFile('myDir/mySubdir/myConfigFile.yaml', $yamlConf);
+        $this->newFile('myDir/mySubdir/myConfigFile.yaml.dist', $yamlDistConf);
 
-        $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml');
+        $manager = new TestableConfigurationManager($file->url());
         $actual = $manager->get();
 
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
         $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadDistGivenFileOnly()
     {
         $yamlDistConf = <<<EOF
@@ -269,14 +287,17 @@ runtime:
     foo: bar
     bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/myConfigFile.yaml.dist', $yamlDistConf);
+        $file = $this->newFile('myDir/mySubdir/myConfigFile.yaml.dist', $yamlDistConf);
 
-        $manager = new TestableConfigurationManager('myDir/mySubdir/myConfigFile.yaml.dist');
+        $manager = new TestableConfigurationManager($file->url());
         $actual = $manager->get();
 
         $this->assertEquals(['runtime' => ['foo' => 'bar', 'bar' => 'baz']], $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testLoadInGivenDirectory()
     {
         $yamlConf = <<<EOF
@@ -289,26 +310,28 @@ runtime:
     foo: bar
     bar: baz
 EOF;
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/propel.yaml', $yamlConf);
-        $this->getFilesystem()->dumpFile('myDir/mySubdir/propel.yaml.dist', $yamlDistConf);
-
-        $manager = new TestableConfigurationManager('myDir/mySubdir/');
+        $this->newFile('myDir/mySubdir/propel.yaml', $yamlConf);
+        $this->newFile('myDir/mySubdir/propel.yaml.dist', $yamlDistConf);
+        $manager = new TestableConfigurationManager(vfsStream::url('root/myDir/mySubdir/'));
         $actual = $manager->get();
 
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz'], $actual['runtime']);
         $this->assertEquals(['bfoo' => 'bbar', 'bbar' => 'bbaz'], $actual['buildtime']);
     }
 
+    /**
+     * @return void
+     */
     public function testMergeExtraProperties()
     {
         $extraConf = [
             'buildtime' => [
-                'bfoo' => 'extrabar'
+                'bfoo' => 'extrabar',
             ],
             'extralevel' => [
                 'extra1' => 'val1',
-                'extra2' => 'val2'
-            ]
+                'extra2' => 'val2',
+            ],
         ];
 
         $yamlConf = <<<EOF
@@ -319,9 +342,9 @@ buildtime:
     bfoo: bbar
     bbar: bbaz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new TestableConfigurationManager(null, $extraConf);
+        $manager = new TestableConfigurationManager($this->getRoot()->url(), $extraConf);
         $actual = $manager->get();
 
         $this->assertEquals($actual['runtime'], ['foo' => 'bar', 'bar' => 'baz']);
@@ -330,11 +353,13 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unrecognized options "foo, bar" under "propel"
+     * @return void
      */
     public function testInvalidHierarchyTrowsException()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Unrecognized options "foo, bar" under "propel"');
+
         $yamlConf = <<<EOF
 runtime:
     foo: bar
@@ -343,11 +368,14 @@ buildtime:
     bfoo: bbar
     bbar: bbaz
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
     }
 
+    /**
+     * @return void
+     */
     public function testNotDefineRuntimeAndGeneratorSectionUsesDefaultConnections()
     {
         $yamlConf = <<<EOF
@@ -364,9 +392,9 @@ propel:
             user:
             password:
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
 
         $this->assertArrayHasKey('runtime', $manager->get());
         $this->assertArrayHasKey('generator', $manager->get());
@@ -379,28 +407,33 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "database" at path "propel" must be configured
+     * @return void
      */
     public function testNotDefineDatabaseSectionTrowsException()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        //Starting from Symfony Config 5.2, the following message changed
+        //$this->expectExceptionMessage('The child node "database" at path "propel" must be configured');
+
         $yamlConf = <<<EOF
 propel:
   general:
       project: MyAwesomeProject
       version: 2.0.0-dev
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
     }
 
     /**
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Dots are not allowed in connection names
+     * @return void
      */
     public function testDotInConnectionNamesArentAccepted()
     {
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Dots are not allowed in connection names');
+
         $yamlConf = <<<EOF
 propel:
   database:
@@ -421,35 +454,40 @@ propel:
       connections:
           - mysource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
     }
 
     /**
      * @dataProvider providerForInvalidConnections
+     *
+     * @return void
      */
     public function testRuntimeOrGeneratorConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
-            "`wrongsource` isn't a valid configured connection (Section: propel.$section.connections).");
+        $this->expectException(InvalidConfigurationException::class);
 
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $manager = new ConfigurationManager();
+        $this->newFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager($this->getRoot()->url());
     }
 
     /**
      * @dataProvider providerForInvalidDefaultConnection
+     *
+     * @return void
      */
     public function testRuntimeOrGeneratorDefaultConnectionIsNotInConfiguredConnectionsThrowsException($yamlConf, $section)
     {
-        $this->setExpectedException("Propel\Common\Config\Exception\InvalidConfigurationException",
-            "`wrongsource` isn't a valid configured connection (Section: propel.$section.defaultConnection).");
+        $this->expectException(InvalidConfigurationException::class);
 
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $manager = new ConfigurationManager();
+        $this->newFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager($this->getRoot()->url());
     }
 
+    /**
+     * @return void
+     */
     public function testLoadValidConfigurationFile()
     {
         $yamlConf = <<<EOF
@@ -481,15 +519,18 @@ propel:
           - mysource
           - yoursource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
         $actual = $manager->getSection('runtime');
 
         $this->assertEquals($actual['defaultConnection'], 'mysource');
         $this->assertEquals($actual['connections'], ['mysource', 'yoursource']);
     }
 
+    /**
+     * @return void
+     */
     public function testSomeDeafults()
     {
         $yamlConf = <<<EOF
@@ -521,9 +562,9 @@ propel:
           - mysource
           - yoursource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
         $actual = $manager->get();
 
         $this->assertTrue($actual['generator']['namespaceAutoPackage']);
@@ -533,6 +574,9 @@ EOF;
         $this->assertEquals($actual['generator']['objectModel']['builders']['objectstub'], '\Propel\Generator\Builder\Om\ExtensionObjectBuilder');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfigProperty()
     {
         $yamlConf = <<<EOF
@@ -564,20 +608,22 @@ propel:
           - mysource
           - yoursource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
         $this->assertEquals('mysource', $manager->getConfigProperty('runtime.defaultConnection'));
         $this->assertEquals('yoursource', $manager->getConfigProperty('runtime.connections.1'));
         $this->assertEquals('root', $manager->getConfigProperty('database.connections.mysource.user'));
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid configuration property name
+     * @return void
      */
     public function testGetConfigPropertyBadNameThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid empty configuration property name');
+
         $yamlConf = <<<EOF
 propel:
   database:
@@ -607,12 +653,15 @@ propel:
           - mysource
           - yoursource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
         $manager = new ConfigurationManager();
-        $value = $manager->getConfigProperty(10);
+        $manager->getConfigProperty('');
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfigPropertyBadName()
     {
         $yamlConf = <<<EOF
@@ -644,14 +693,17 @@ propel:
           - mysource
           - yoursource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
         $value = $manager->getConfigProperty('database.connections.adapter');
 
         $this->assertNull($value);
     }
 
+    /**
+     * @return void
+     */
     public function testProcessWithParam()
     {
         $configs = [
@@ -666,35 +718,41 @@ EOF;
                             'password' => '',
                             'model_paths' => [
                                 'src',
-                                'vendor'
-                            ]
-                        ]
-                    ]
+                                'vendor',
+                            ],
+                        ],
+                    ],
                 ],
                 'runtime' => [
                     'defaultConnection' => 'default',
-                    'connections' => ['default']
+                    'connections' => ['default'],
                 ],
                 'generator' => [
                     'defaultConnection' => 'default',
-                    'connections' => ['default']
-                ]
-            ]
+                    'connections' => ['default'],
+                ],
+            ],
         ];
 
-        $manager = new NotLoadingConfigurationManager($configs);
+        $manager = new NotLoadingConfigurationManager(null, $configs);
         $actual = $manager->GetSection('database')['connections'];
 
         $this->assertEquals($configs['propel']['database']['connections'], $actual);
     }
 
+    /**
+     * @return void
+     */
     public function testProcessWrongParameter()
     {
-        $manager = new NotLoadingConfigurationManager(null);
+        $manager = new NotLoadingConfigurationManager(null, null);
 
         $this->assertEmpty($manager->get());
     }
 
+    /**
+     * @return void
+     */
     public function testGetConfigurationParametersArrayTest()
     {
         $yamlConf = <<<EOF
@@ -725,7 +783,7 @@ propel:
       connections:
           - mysource
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
+        $this->newFile('propel.yaml', $yamlConf);
 
         $expectedRuntime = [
             'mysource' => [
@@ -735,8 +793,8 @@ EOF;
                 'user' => 'root',
                 'password' => '',
                 'model_paths' => [
-                    'src'
-                ]
+                    'src',
+                ],
             ],
             'yoursource' => [
                 'adapter' => 'mysql',
@@ -746,9 +804,9 @@ EOF;
                 'password' => '',
                 'model_paths' => [
                     'src',
-                    'vendor'
-                ]
-            ]
+                    'vendor',
+                ],
+            ],
         ];
 
         $expectedGenerator = [
@@ -759,18 +817,21 @@ EOF;
                 'user' => 'root',
                 'password' => '',
                 'model_paths' => [
-                    'src'
-                ]
-            ]
+                    'src',
+                ],
+            ],
         ];
 
-        $manager = new ConfigurationManager();
+        $manager = new ConfigurationManager($this->getRoot()->url());
         $this->assertEquals($expectedRuntime, $manager->getConnectionParametersArray('runtime'));
         $this->assertEquals($expectedRuntime, $manager->getConnectionParametersArray()); //default `runtime`
         $this->assertEquals($expectedGenerator, $manager->getConnectionParametersArray('generator'));
         $this->assertNull($manager->getConnectionParametersArray('bad_section'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionsIfNotDefined()
     {
         $yamlConf = <<<EOF
@@ -790,8 +851,8 @@ propel:
               user: root
               password:
 EOF;
-        $this->getFilesystem()->dumpFile('propel.yaml', $yamlConf);
-        $manager = new ConfigurationManager();
+        $this->newFile('propel.yaml', $yamlConf);
+        $manager = new ConfigurationManager($this->getRoot()->url());
 
         $this->assertEquals('mysource', $manager->getSection('generator')['defaultConnection']);
         $this->assertEquals('mysource', $manager->getSection('runtime')['defaultConnection']);
@@ -802,16 +863,15 @@ EOF;
 
 class TestableConfigurationManager extends ConfigurationManager
 {
-    public function __construct($filename = 'propel', $extraConf = null)
+    protected function process(array $extraConf = []): void
     {
-        $this->load($filename, $extraConf);
     }
 }
 
 class NotLoadingConfigurationManager extends ConfigurationManager
 {
-    public function __construct($configs = null)
+    protected function loadConfig(string $path, array $extraConf = []): array
     {
-        $this->process($configs);
+        return $extraConf;
     }
 }

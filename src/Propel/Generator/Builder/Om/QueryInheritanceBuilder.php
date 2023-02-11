@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -14,20 +12,20 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Inheritance;
 
 /**
- * Generates the empty PHP5 stub query class for use with single table
+ * Generates the empty stub query class for use with single table
  * inheritance.
  *
  * This class produces the empty stub class that can be customized with
  * application business logic, custom behavior, etc.
  *
- *
  * @author François Zaninotto
  */
 class QueryInheritanceBuilder extends AbstractOMBuilder
 {
-
     /**
      * The current child "object" we are operating on.
+     *
+     * @var \Propel\Generator\Model\Inheritance|null
      */
     protected $child;
 
@@ -36,7 +34,7 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getNewStubQueryInheritanceBuilder($this->getChild())->getUnprefixedClassName();
     }
@@ -46,19 +44,20 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getPackage()
+    public function getPackage(): string
     {
-        return ($this->getChild()->getPackage() ? $this->getChild()->getPackage() : parent::getPackage()) . '.Base';
+        return ($this->getChild()->getPackage() ?: parent::getPackage()) . '.Base';
     }
 
     /**
      * Gets the namespace for the [base] object classes.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
-        if ($namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if ($namespace) {
             return $namespace . '\\Base';
         }
 
@@ -68,9 +67,11 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Sets the child object that we're operating on currently.
      *
-     * @param Inheritance $child
+     * @param \Propel\Generator\Model\Inheritance $child
+     *
+     * @return void
      */
-    public function setChild(Inheritance $child)
+    public function setChild(Inheritance $child): void
     {
         $this->child = $child;
     }
@@ -78,13 +79,14 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Returns the child object we're operating on currently.
      *
-     * @return Inheritance
-     * @throws BuildException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Inheritance
      */
-    public function getChild()
+    public function getChild(): Inheritance
     {
         if (!$this->child) {
-            throw new BuildException("The PHP5MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
         }
 
         return $this->child;
@@ -93,11 +95,11 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
     /**
      * Returns classpath to parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClassName()
+    protected function getParentClassName(): ?string
     {
-        if (is_null($this->getChild()->getAncestor())) {
+        if ($this->getChild()->getAncestor() === null) {
             return $this->getNewStubQueryBuilder($this->getTable())->getUnqualifiedClassName();
         }
 
@@ -112,14 +114,18 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
                 return $this->getNewStubQueryInheritanceBuilder($child)->getUnqualifiedClassName();
             }
         }
+
+        return null;
     }
 
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
@@ -147,9 +153,8 @@ class QueryInheritanceBuilder extends AbstractOMBuilder
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
- *
  */
-class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
+class " . $this->getUnqualifiedClassName() . ' extends ' . $baseClassName . "
 {
 ";
     }
@@ -160,15 +165,18 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      * By default there are no methods for the empty stub classes; override this
      * method if you want to change that behavior.
      *
-     * @param string $script
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(string &$script): void
     {
         $this->declareClassFromBuilder($this->getTableMapBuilder());
         $this->declareClasses(
             '\Propel\Runtime\Connection\ConnectionInterface',
-            '\Propel\Runtime\ActiveQuery\Criteria'
+            '\Propel\Runtime\ActiveQuery\Criteria',
         );
         $this->addFactory($script);
         $this->addPreSelect($script);
@@ -180,9 +188,11 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Adds the factory for this object.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addFactory(&$script)
+    protected function addFactory(string &$script): void
     {
         $builder = $this->getNewStubQueryInheritanceBuilder($this->getChild());
         $this->declareClassFromBuilder($builder, 'Child');
@@ -191,21 +201,21 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Returns a new " . $classname . " object.
      *
-     * @param     string \$modelAlias The alias of a model in the query
-     * @param     Criteria \$criteria Optional Criteria to build the query from
+     * @param string \$modelAlias The alias of a model in the query
+     * @param Criteria \$criteria Optional Criteria to build the query from
      *
      * @return " . $classname . "
      */
-    public static function create(\$modelAlias = null, Criteria \$criteria = null)
+    public static function create(?string \$modelAlias = null, ?Criteria \$criteria = null): Criteria
     {
         if (\$criteria instanceof " . $classname . ") {
             return \$criteria;
         }
         \$query = new " . $classname . "();
-        if (null !== \$modelAlias) {
+        if (\$modelAlias !== null) {
             \$query->setModelAlias(\$modelAlias);
         }
-        if (\$criteria instanceof Criteria) {
+        if (\$criteria !== null) {
             \$query->mergeWith(\$criteria);
         }
 
@@ -214,7 +224,12 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
 ";
     }
 
-    protected function addPreSelect(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addPreSelect(string &$script): void
     {
         $child = $this->getChild();
 
@@ -222,52 +237,78 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Filters the query to target only " . $child->getClassName() . " objects.
      */
-    public function preSelect(ConnectionInterface \$con)
+    public function preSelect(ConnectionInterface \$con): void
     {
         " . $this->getClassKeyCondition() . "
     }
 ";
     }
 
-    protected function addPreUpdate(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addPreUpdate(string &$script): void
     {
         $child = $this->getChild();
 
         $script .= "
     /**
      * Filters the query to target only " . $child->getClassName() . " objects.
+     *
+     * @return int|null
      */
-    public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false)
+    public function preUpdate(&\$values, ConnectionInterface \$con, \$forceIndividualSaves = false): ?int
     {
         " . $this->getClassKeyCondition() . "
+
+        return null;
     }
 ";
     }
 
-    protected function addPreDelete(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addPreDelete(string &$script): void
     {
         $child = $this->getChild();
 
         $script .= "
     /**
      * Filters the query to target only " . $child->getClassName() . " objects.
+     *
+     * @return int|null
      */
-    public function preDelete(ConnectionInterface \$con)
+    public function preDelete(ConnectionInterface \$con): ?int
     {
         " . $this->getClassKeyCondition() . "
+
+        return null;
     }
 ";
     }
 
-    protected function getClassKeyCondition()
+    /**
+     * @return string
+     */
+    protected function getClassKeyCondition(): string
     {
         $child = $this->getChild();
         $col = $child->getColumn();
 
-        return "\$this->addUsingAlias(" . $col->getFQConstantName() . ", " . $this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");";
+        return '$this->addUsingAlias(' . $col->getFQConstantName() . ', ' . $this->getTableMapClassName() . '::CLASSKEY_' . $child->getConstantSuffix() . ');';
     }
 
-    protected function addDoDeleteAll(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addDoDeleteAll(string &$script): void
     {
         $child = $this->getChild();
 
@@ -279,9 +320,9 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
      *
      * @param ConnectionInterface \$con a connection object
      *
-     * @return integer the number of deleted rows
+     * @return int The number of deleted rows
      */
-    public function doDeleteAll(ConnectionInterface \$con = null)
+    public function doDeleteAll(?ConnectionInterface \$con = null): int
     {
         // condition on class key is already added in preDelete()
         return parent::delete(\$con);
@@ -292,12 +333,14 @@ class "  .$this->getUnqualifiedClassName() . " extends " . $baseClassName . "
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script
+     *
+     * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(string &$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

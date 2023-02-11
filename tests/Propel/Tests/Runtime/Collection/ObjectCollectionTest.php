@@ -1,25 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Runtime\Collection\ObjectCollection;
-use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
-use Propel\Tests\Bookstore\Author;
-use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\Country;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Exception\BadMethodCallException;
+use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Formatter\ObjectFormatter;
 use Propel\Runtime\Propel;
+use Propel\Tests\Bookstore\Author;
+use Propel\Tests\Bookstore\AuthorQuery;
+use Propel\Tests\Bookstore\Book;
+use Propel\Tests\Bookstore\Country;
+use Propel\Tests\Bookstore\Map\AuthorTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
+use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
+
 /**
  * Test class for ObjectCollection.
  *
@@ -29,6 +31,9 @@ use Propel\Runtime\Propel;
  */
 class ObjectCollectionTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testContains()
     {
         $col = new ObjectCollection();
@@ -39,47 +44,54 @@ class ObjectCollectionTest extends BookstoreTestBase
         $col = new ObjectCollection();
         $this->assertFalse($col->contains($book1));
         $this->assertFalse($col->contains($book2));
-        $col []= $book1;
+        $col[] = $book1;
         $this->assertTrue($col->contains($book1));
         $this->assertFalse($col->contains($book2));
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @return void
      */
     public function testSaveOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
-        $col []= $cv;
+        $col[] = $cv;
         $col->save();
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\BadMethodCallException
+     * @return void
      */
     public function testDeleteOnReadOnlyEntityThrowsException()
     {
+        $this->expectException(BadMethodCallException::class);
+
         $col = new ObjectCollection();
         $col->setModel('Propel\Tests\Bookstore\Country');
         $cv = new Country();
         $cv->setNew(false);
-        $col []= $cv;
+        $col[] = $cv;
         $col->delete();
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeys()
     {
         $books = new ObjectCollection();
         $books->setModel('Propel\Tests\Bookstore\Book');
-        for ($i=0; $i < 4; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $book = new Book();
             $book->setTitle('Title' . $i);
             $book->setISBN($i);
             $book->save($this->con);
 
-            $books []= $book;
+            $books[] = $book;
         }
 
         $pks = $books->getPrimaryKeys();
@@ -89,7 +101,7 @@ class ObjectCollectionTest extends BookstoreTestBase
             'Book_0',
             'Book_1',
             'Book_2',
-            'Book_3'
+            'Book_3',
         ];
         $this->assertEquals($keys, array_keys($pks));
 
@@ -102,6 +114,9 @@ class ObjectCollectionTest extends BookstoreTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayDeep()
     {
         $author = new Author();
@@ -117,7 +132,7 @@ class ObjectCollectionTest extends BookstoreTestBase
 
         $coll = new ObjectCollection();
         $coll->setModel('Propel\Tests\Bookstore\Book');
-        $coll[]= $book;
+        $coll[] = $book;
         $expected = [[
             'Id' => 9012,
             'Title' => 'Don Juan',
@@ -132,13 +147,16 @@ class ObjectCollectionTest extends BookstoreTestBase
                 'Email' => null,
                 'Age' => null,
                 'Books' => [
-                    0 => '*RECURSION*',
-                ]
+                    0 => ['*RECURSION*'],
+                ],
             ],
         ]];
         $this->assertEquals($expected, $coll->toArray());
     }
 
+    /**
+     * @return void
+     */
     public function testPopulateRelationOneToManyWithEmptyCollection()
     {
         $author = new Author();
@@ -149,7 +167,7 @@ class ObjectCollectionTest extends BookstoreTestBase
         BookTableMap::clearInstancePool();
         $coll = new ObjectCollection();
         $coll->setFormatter(new ObjectFormatter(new ModelCriteria(null, '\Propel\Tests\Bookstore\Author')));
-        $coll []= $author;
+        $coll[] = $author;
         $books = $coll->populateRelation('Book', null, $this->con);
         $this->assertEquals(0, $books->count());
         $count = $this->con->getQueryCount();
@@ -158,23 +176,52 @@ class ObjectCollectionTest extends BookstoreTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
-     * @expectedExceptionMessage Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection
+     * @return void
      */
     public function testPopulateRelationWhenInstancePoolingIsDisabled()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Propel\Runtime\Collection\ObjectCollection::populateRelation needs instance pooling to be enabled prior to populating the collection');
+
         $coll = new ObjectCollection();
 
         Propel::disableInstancePooling();
         $coll->populateRelation('Book');
     }
 
+    /**
+     * @return void
+     */
+    public function testPopulateRelationResetsPartialFlag()
+    {
+        Propel::enableInstancePooling();
+        $partialAccessor = new class extends Author{
+            public static function getIsPartial(Author $a)
+            {
+                return $a->collBooksPartial;
+            }
+        };
+        $authors = AuthorQuery::create()->limit(1)->find($this->con);
+
+        $author = $authors[0];
+        $author->resetPartialBooks(true);
+        $isPartial = $partialAccessor::getIsPartial($author);
+        $this->assertTrue($isPartial);
+
+        $authors->populateRelation('Book', null, $this->con);
+        $isPartial = $partialAccessor::getIsPartial($author);
+        $this->assertFalse($isPartial, 'Populating a relation should reset it');
+    }
+
+    /**
+     * @return void
+     */
     public function testContainsWithClassicBehavior()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
-        $b2  = new Book();
+        $b2 = new Book();
         $b2->setTitle('Foo');
 
         $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
@@ -185,12 +232,15 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertFalse($col->contains($b2), 'contains() returns false when the key does not exist');
     }
 
+    /**
+     * @return void
+     */
     public function testSearchWithClassicBehavior()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
-        $b2  = new Book();
+        $b2 = new Book();
         $b2->setTitle('Foo');
 
         $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
@@ -200,15 +250,18 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertFalse($col->search($b2), 'search() returns false when the element does not exist');
     }
 
+    /**
+     * @return void
+     */
     public function testContainsMatchesSimilarObjects()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
         $b1->setISBN('012345');
         $b1->save();
 
-        $b2  = clone $b1;
+        $b2 = clone $b1;
 
         $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
 
@@ -218,15 +271,18 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertTrue($col->contains($b2));
     }
 
+    /**
+     * @return void
+     */
     public function testSearchMatchesSimilarObjects()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
         $b1->setISBN('012345');
         $b1->save();
 
-        $b2  = clone $b1;
+        $b2 = clone $b1;
 
         $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
 
@@ -235,13 +291,16 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertTrue(0 === $col->search($b2));
     }
 
+    /**
+     * @return void
+     */
     public function testContainsMatchesNotSimilarNewObjects()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
         $b1->setISBN('012345');
-        $b2  = clone $b1;
+        $b2 = clone $b1;
 
         $this->assertFalse($col->contains($b1), 'contains() returns false on an empty collection');
 
@@ -251,13 +310,16 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertFalse($col->contains($b2));
     }
 
+    /**
+     * @return void
+     */
     public function testSearchMatchesNotSimilarNewObjects()
     {
         $col = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
         $b1->setISBN('012345');
-        $b2  = clone $b1;
+        $b2 = clone $b1;
 
         $this->assertFalse($col->search($b1), 'search() returns false on an empty collection');
 
@@ -266,13 +328,16 @@ class ObjectCollectionTest extends BookstoreTestBase
         $this->assertFalse(0 === $col->search($b2));
     }
 
+    /**
+     * @return void
+     */
     public function testObjectCollectionOfObjectCollections()
     {
         $col1 = new ObjectCollection();
-        $b1  = new Book();
+        $b1 = new Book();
         $b1->setTitle('Bar');
         $b1->setISBN('012345');
-        $col2  = clone $b1;
+        $col2 = clone $b1;
 
         $col = new ObjectCollection([$col1]);
 
@@ -282,6 +347,8 @@ class ObjectCollectionTest extends BookstoreTestBase
 
     /**
      * @afterClass
+     *
+     * @return void
      */
     public static function enableInstancePooling()
     {

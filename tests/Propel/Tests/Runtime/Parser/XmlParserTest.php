@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Parser;
 
+use DateTime;
 use Propel\Runtime\Parser\XmlParser;
 use Propel\Tests\TestCase;
 
@@ -77,16 +76,18 @@ class XmlParserTest extends TestCase
   <b2>2</b2>
 </data>
 ", 'keys with numbers'],
-            [['time' => new \DateTime('2014-07-23T22:27:17+0200')], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+            [['time' => new DateTime('2014-07-23T22:27:17+02:00')], "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <data>
-  <time type=\"xsd:dateTime\">2014-07-23T22:27:17+0200</time>
+  <time type=\"xsd:dateTime\">2014-07-23T22:27:17+02:00</time>
 </data>
-", '\\DateTime objects']
+", '\\DateTime objects'],
         ];
     }
 
     /**
      * @dataProvider arrayXmlConversionDataProvider
+     *
+     * @return void
      */
     public function testFromArray($arrayData, $xmlData, $type)
     {
@@ -96,6 +97,8 @@ class XmlParserTest extends TestCase
 
     /**
      * @dataProvider arrayXmlConversionDataProvider
+     *
+     * @return void
      */
     public function testToXML($arrayData, $xmlData, $type)
     {
@@ -105,6 +108,8 @@ class XmlParserTest extends TestCase
 
     /**
      * @dataProvider arrayXmlConversionDataProvider
+     *
+     * @return void
      */
     public function testToArray($arrayData, $xmlData, $type)
     {
@@ -114,6 +119,8 @@ class XmlParserTest extends TestCase
 
     /**
      * @dataProvider arrayXmlConversionDataProvider
+     *
+     * @return void
      */
     public function testFromXML($arrayData, $xmlData, $type)
     {
@@ -121,6 +128,9 @@ class XmlParserTest extends TestCase
         $this->assertEquals($arrayData, $parser->fromXML($xmlData), 'XmlParser::fromXML() converts to ' . $type . ' correctly');
     }
 
+    /**
+     * @return void
+     */
     public function testToArrayRespectsNullValues()
     {
         $xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -186,6 +196,8 @@ EOF;
 
     /**
      * @dataProvider listToXMLDataProvider
+     *
+     * @return void
      */
     public function testListToXML($list, $xml)
     {
@@ -195,6 +207,8 @@ EOF;
 
     /**
      * @dataProvider listToXMLDataProvider
+     *
+     * @return void
      */
     public function testXMLToList($list, $xml)
     {

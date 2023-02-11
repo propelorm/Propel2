@@ -1,24 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config;
 
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use InvalidArgumentException;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Class PropelConfiguration
  *
  * This class performs validation of configuration array and assign default values
- *
  */
 class PropelConfiguration implements ConfigurationInterface
 {
@@ -27,9 +25,11 @@ class PropelConfiguration implements ConfigurationInterface
      *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('propel');
+
+        /** @var \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         $this->addGeneralSection($rootNode);
@@ -44,7 +44,12 @@ class PropelConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    protected function addGeneralSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addGeneralSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -55,11 +60,15 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('version')->defaultValue('2.0.0-dev')->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addPathsSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addPathsSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -69,18 +78,23 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('projectDir')->defaultValue(getcwd())->end()
                         ->scalarNode('schemaDir')->defaultValue(getcwd())->end()
                         ->scalarNode('outputDir')->defaultValue(getcwd())->end()
-                        ->scalarNode('phpDir')->defaultValue(getcwd().'/generated-classes')->end()
-                        ->scalarNode('phpConfDir')->defaultValue(getcwd().'/generated-conf')->end()
-                        ->scalarNode('sqlDir')->defaultValue(getcwd().'/generated-sql')->end()
-                        ->scalarNode('migrationDir')->defaultValue(getcwd().'/generated-migrations')->end()
+                        ->scalarNode('phpDir')->defaultValue(getcwd() . '/generated-classes')->end()
+                        ->scalarNode('phpConfDir')->defaultValue(getcwd() . '/generated-conf')->end()
+                        ->scalarNode('loaderScriptDir')->end()
+                        ->scalarNode('sqlDir')->defaultValue(getcwd() . '/generated-sql')->end()
+                        ->scalarNode('migrationDir')->defaultValue(getcwd() . '/generated-migrations')->end()
                         ->scalarNode('composerDir')->defaultNull()->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addDatabaseSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addDatabaseSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -95,7 +109,7 @@ class PropelConfiguration implements ConfigurationInterface
                                 ->then(function ($connections) {
                                     foreach ($connections as $name => $connection) {
                                         if (strpos($name, '.') !== false) {
-                                            throw new \InvalidArgumentException('Dots are not allowed in connection names');
+                                            throw new InvalidArgumentException('Dots are not allowed in connection names');
                                         }
                                     }
 
@@ -123,6 +137,7 @@ class PropelConfiguration implements ConfigurationInterface
                                             ->scalarNode('MYSQL_ATTR_SSL_CA')->end()
                                             ->scalarNode('MYSQL_ATTR_SSL_CERT')->end()
                                             ->scalarNode('MYSQL_ATTR_SSL_KEY')->end()
+                                            ->booleanNode('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')->end()
                                             ->scalarNode('MYSQL_ATTR_MAX_BUFFER_SIZE')->end()
                                         ->end()
                                     ->end()
@@ -165,6 +180,7 @@ class PropelConfiguration implements ConfigurationInterface
                                     ->children()
                                         ->scalarNode('tableType')->defaultValue('InnoDB')->treatNullLike('InnoDB')->end()
                                         ->scalarNode('tableEngineKeyword')->defaultValue('ENGINE')->end()
+                                        ->scalarNode('uuidColumnType')->defaultValue('binary')->end()
                                     ->end()
                                 ->end()
                                 ->arrayNode('sqlite')
@@ -184,11 +200,15 @@ class PropelConfiguration implements ConfigurationInterface
                         ->end() //adapters
                     ->end()
                 ->end() //database
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addMigrationsSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addMigrationsSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -201,11 +221,15 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('parserClass')->defaultNull()->end()
                     ->end()
                 ->end() //migrations
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addReverseSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addReverseSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -215,22 +239,30 @@ class PropelConfiguration implements ConfigurationInterface
                         ->scalarNode('parserClass')->end()
                     ->end()
                 ->end() //reverse
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addExcludeTablesSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addExcludeTablesSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
                 ->arrayNode('exclude_tables')
                     ->prototype('scalar')->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addRuntimeSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addRuntimeSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -257,7 +289,7 @@ class PropelConfiguration implements ConfigurationInterface
                         ->arrayNode('profiler')
                             ->children()
                                 ->scalarNode('classname')->defaultValue('\Propel\Runtime\Util\Profiler')->end()
-                                ->floatNode('slowTreshold')->defaultValue(0.1)->end()
+                                ->floatNode('slowThreshold')->defaultValue(0.1)->end()
                                 ->arrayNode('details')
                                     ->children()
                                         ->arrayNode('time')
@@ -300,11 +332,15 @@ class PropelConfiguration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() //runtime
-            ->end()
-        ;
+            ->end();
     }
 
-    protected function addGeneratorSection(ArrayNodeDefinition $node)
+    /**
+     * @param \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition $node
+     *
+     * @return void
+     */
+    protected function addGeneratorSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -377,7 +413,6 @@ class PropelConfiguration implements ConfigurationInterface
                         ->end() //objectModel
                     ->end()
                 ->end() //generator
-            ->end()
-        ;
+            ->end();
     }
 }

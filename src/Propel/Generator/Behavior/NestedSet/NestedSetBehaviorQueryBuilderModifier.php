@@ -1,17 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\NestedSet;
 
 use Propel\Generator\Builder\Om\QueryBuilder;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Model\Column;
 
 /**
  * Behavior to adds nested set tree structure columns and abilities
@@ -20,46 +18,84 @@ use Propel\Generator\Model\Table;
  */
 class NestedSetBehaviorQueryBuilderModifier
 {
-    /** @var NestedSetBehavior */
+    /**
+     * @var \Propel\Generator\Behavior\NestedSet\NestedSetBehavior
+     */
     protected $behavior;
 
-    /** @var Table */
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
-    /** @var QueryBuilder */
+    /**
+     * @var \Propel\Generator\Builder\Om\QueryBuilder
+     */
     protected $builder;
 
+    /**
+     * @var string
+     */
     protected $objectClassName;
 
+    /**
+     * @var string
+     */
     protected $queryClassName;
 
+    /**
+     * @var string
+     */
     protected $tableMapClassName;
 
+    /**
+     * @param \Propel\Generator\Behavior\NestedSet\NestedSetBehavior $behavior
+     */
     public function __construct(NestedSetBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
     }
 
-    protected function getParameter($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumn($name)
+    /**
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    protected function getColumn(string $name): Column
     {
         return $this->behavior->getColumnForParameter($name);
     }
 
-    protected function setBuilder(QueryBuilder $builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\QueryBuilder $builder
+     *
+     * @return void
+     */
+    protected function setBuilder(QueryBuilder $builder): void
     {
-        $this->builder           = $builder;
-        $this->objectClassName   = $builder->getObjectClassName();
-        $this->queryClassName    = $builder->getQueryClassName();
+        $this->builder = $builder;
+        $this->objectClassName = $builder->getObjectClassName();
+        $this->queryClassName = $builder->getQueryClassName();
         $this->tableMapClassName = $builder->getTableMapClassName();
     }
 
-    public function queryMethods(QueryBuilder $builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\QueryBuilder $builder
+     *
+     * @return string
+     */
+    public function queryMethods(QueryBuilder $builder): string
     {
         $this->setBuilder($builder);
         $script = '';
@@ -107,52 +143,71 @@ class NestedSetBehaviorQueryBuilderModifier
         return $script;
     }
 
-    protected function addTreeRoots(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addTreeRoots(string &$script): void
     {
         $script .= "
 /**
  * Filter the query to restrict the result to root objects
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function treeRoots()
 {
-    return \$this->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL);
+    \$this->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addInTree(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addInTree(string &$script): void
     {
         $script .= "
 /**
  * Returns the objects in a certain tree, from the tree scope
  *
- * @param     int \$scope        Scope to determine which objects node to return
+ * @param int|null \$scope Scope to determine which objects node to return
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
-public function inTree(\$scope = null)
+public function inTree(?int \$scope = null)
 {
-    return \$this->addUsingAlias({$this->objectClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
+    \$this->addUsingAlias({$this->objectClassName}::SCOPE_COL, \$scope, Criteria::EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addDescendantsOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addDescendantsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to descendants of an object
  *
- * @param     {$this->objectClassName} $objectName The object to use for descendant search
+ * @param {$this->objectClassName} $objectName The object to use for descendant search
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function descendantsOf($this->objectClassName $objectName)
 {
-    return \$this";
+    \$this";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree({$objectName}->getScopeValue())";
@@ -160,11 +215,18 @@ public function descendantsOf($this->objectClassName $objectName)
         $script .= "
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_THAN)
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_THAN);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addBranchOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addBranchOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -172,13 +234,13 @@ public function descendantsOf($this->objectClassName $objectName)
  * Filter the query to restrict the result to the branch of an object.
  * Same as descendantsOf(), except that it includes the object passed as parameter in the result
  *
- * @param     {$this->objectClassName} $objectName The object to use for branch search
+ * @param {$this->objectClassName} $objectName The object to use for branch search
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function branchOf($this->objectClassName $objectName)
 {
-    return \$this";
+    \$this";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree({$objectName}->getScopeValue())";
@@ -186,31 +248,45 @@ public function branchOf($this->objectClassName $objectName)
         $script .= "
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::GREATER_EQUAL)
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getRightValue(), Criteria::LESS_EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addChildrenOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addChildrenOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to children of an object
  *
- * @param     {$this->objectClassName} $objectName The object to use for child search
+ * @param {$this->objectClassName} $objectName The object to use for child search
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function childrenOf($this->objectClassName $objectName)
 {
-    return \$this
+    \$this
         ->descendantsOf($objectName)
         ->addUsingAlias({$this->objectClassName}::LEVEL_COL, {$objectName}->getLevel() + 1, Criteria::EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addSiblingsOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addSiblingsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -218,39 +294,46 @@ public function childrenOf($this->objectClassName $objectName)
  * Filter the query to restrict the result to siblings of an object.
  * The result does not include the object passed as parameter.
  *
- * @param     {$this->objectClassName} $objectName The object to use for sibling search
- * @param      ConnectionInterface \$con Connection to use.
+ * @param {$this->objectClassName} $objectName The object to use for sibling search
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
-public function siblingsOf($this->objectClassName $objectName, ConnectionInterface \$con = null)
+public function siblingsOf($this->objectClassName $objectName, ?ConnectionInterface \$con = null)
 {
     if ({$objectName}->isRoot()) {
-        return \$this->
+        \$this->
             add({$this->objectClassName}::LEVEL_COL, '1<>1', Criteria::CUSTOM);
     } else {
-        return \$this
+        \$this
             ->childrenOf({$objectName}->getParent(\$con))
             ->prune($objectName);
     }
+
+    return \$this;
 }
 ";
     }
 
-    protected function addAncestorsOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addAncestorsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
 /**
  * Filter the query to restrict the result to ancestors of an object
  *
- * @param     {$this->objectClassName} $objectName The object to use for ancestors search
+ * @param {$this->objectClassName} $objectName The object to use for ancestors search
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function ancestorsOf($this->objectClassName $objectName)
 {
-    return \$this";
+    \$this";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree({$objectName}->getScopeValue())";
@@ -258,11 +341,18 @@ public function ancestorsOf($this->objectClassName $objectName)
         $script .= "
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_THAN)
         ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_THAN);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addRootsOf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addRootsOf(string &$script): void
     {
         $objectName = '$' . $this->table->getCamelCaseName();
         $script .= "
@@ -270,13 +360,13 @@ public function ancestorsOf($this->objectClassName $objectName)
  * Filter the query to restrict the result to roots of an object.
  * Same as ancestorsOf(), except that it includes the object passed as parameter in the result
  *
- * @param     {$this->objectClassName} $objectName The object to use for roots search
+ * @param {$this->objectClassName} $objectName The object to use for roots search
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function rootsOf($this->objectClassName $objectName)
 {
-    return \$this";
+    \$this";
         if ($this->behavior->useScope()) {
             $script .= "
         ->inTree({$objectName}->getScopeValue())";
@@ -284,76 +374,97 @@ public function rootsOf($this->objectClassName $objectName)
         $script .= "
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, {$objectName}->getLeftValue(), Criteria::LESS_EQUAL)
         ->addUsingAlias({$this->objectClassName}::RIGHT_COL, {$objectName}->getRightValue(), Criteria::GREATER_EQUAL);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addOrderByBranch(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addOrderByBranch(string &$script): void
     {
         $script .= "
 /**
  * Order the result by branch, i.e. natural tree order
  *
- * @param     bool \$reverse if true, reverses the order
+ * @param bool \$reverse if true, reverses the order
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function orderByBranch(\$reverse = false)
 {
     if (\$reverse) {
-        return \$this
+        \$this
             ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     } else {
-        return \$this
+        \$this
             ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     }
+
+    return \$this;
 }
 ";
     }
 
-    protected function addOrderByLevel(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addOrderByLevel(string &$script): void
     {
         $script .= "
 /**
  * Order the result by level, the closer to the root first
  *
- * @param     bool \$reverse if true, reverses the order
+ * @param bool \$reverse if true, reverses the order
  *
- * @return    \$this|{$this->queryClassName} The current query, for fluid interface
+ * @return \$this The current query, for fluid interface
  */
 public function orderByLevel(\$reverse = false)
 {
     if (\$reverse) {
-        return \$this
+        \$this
             ->addDescendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
             ->addDescendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     } else {
-        return \$this
+        \$this
             ->addAscendingOrderByColumn({$this->objectClassName}::LEVEL_COL)
             ->addAscendingOrderByColumn({$this->objectClassName}::LEFT_COL);
     }
+
+    return \$this;
 }
 ";
     }
 
-    protected function addFindRoot(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFindRoot(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
- * Returns " . ($useScope ? 'a' : 'the') ." root node for the tree
+ * Returns " . ($useScope ? 'a' : 'the') . " root node for the tree
  *";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which root node to return";
+ * @param int \$scope        Scope to determine which root node to return";
         }
 
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return     {$this->objectClassName} The tree root object
+ * @return {$this->objectClassName} The tree root object
  */
-public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+public function findRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     return \$this
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
@@ -367,17 +478,22 @@ public function findRoot(" . ($useScope ? "\$scope = null, " : "") . "Connection
 ";
     }
 
-    protected function addFindRoots(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFindRoots(string &$script): void
     {
         $script .= "
 /**
  * Returns the root objects for all trees.
  *
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return    {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
+ * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findRoots(ConnectionInterface \$con = null)
+public function findRoots(?ConnectionInterface \$con = null)
 {
     return \$this
         ->treeRoots()
@@ -386,24 +502,29 @@ public function findRoots(ConnectionInterface \$con = null)
 ";
     }
 
-    protected function addFindTree(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFindTree(string &$script): void
     {
         $useScope = $this->behavior->useScope();
         $script .= "
 /**
- * Returns " . ($useScope ? 'a' : 'the') ." tree of objects
+ * Returns " . ($useScope ? 'a' : 'the') . " tree of objects
  *";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which tree node to return";
+ * @param int \$scope        Scope to determine which tree node to return";
         }
 
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
+ * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+public function findTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     return \$this";
         if ($useScope) {
@@ -417,21 +538,26 @@ public function findTree(" . ($useScope ? "\$scope = null, " : "") . "Connection
 ";
     }
 
-    protected function addRetrieveRoots(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addRetrieveRoots(string &$script): void
     {
-        $queryClassName     = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
 /**
  * Returns the root nodes for the tree
  *
- * @param      Criteria \$criteria    Optional Criteria to filter the query
- * @param      ConnectionInterface \$con    Connection to use.
- * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
+ * @param Criteria \$criteria    Optional Criteria to filter the query
+ * @param ConnectionInterface \$con Connection to use.
+ * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-static public function retrieveRoots(Criteria \$criteria = null, ConnectionInterface \$con = null)
+static public function retrieveRoots(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (null === \$criteria) {
         \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -443,11 +569,16 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
 ";
     }
 
-    protected function addRetrieveRoot(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addRetrieveRoot(string &$script): void
     {
-        $queryClassName    = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -456,13 +587,13 @@ static public function retrieveRoots(Criteria \$criteria = null, ConnectionInter
  *";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which root node to return";
+ * @param int \$scope        Scope to determine which root node to return";
         }
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
- * @return     {$this->objectClassName}            Propel object for root node
+ * @param ConnectionInterface \$con Connection to use.
+ * @return {$this->objectClassName}            Propel object for root node
  */
-static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {
     \$c = new Criteria($tableMapClassName::DATABASE_NAME);
     \$c->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);";
@@ -477,11 +608,16 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
 ";
     }
 
-    protected function addRetrieveTree(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addRetrieveTree(string &$script): void
     {
-        $queryClassName     = $this->queryClassName;
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $queryClassName = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -490,14 +626,14 @@ static public function retrieveRoot(" . ($useScope ? "\$scope = null, " : "") . 
  *";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which root node to return";
+ * @param int \$scope        Scope to determine which root node to return";
         }
         $script .= "
- * @param      Criteria \$criteria    Optional Criteria to filter the query
- * @param      ConnectionInterface \$con    Connection to use.
- * @return     {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
+ * @param Criteria \$criteria    Optional Criteria to filter the query
+ * @param ConnectionInterface \$con Connection to use.
+ * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . "Criteria \$criteria = null, ConnectionInterface \$con = null)
+static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (null === \$criteria) {
         \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -514,7 +650,12 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
 ";
     }
 
-    protected function addIsValid(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addIsValid(string &$script): void
     {
         $objectClassName = $this->objectClassName;
 
@@ -522,8 +663,8 @@ static public function retrieveTree(" . ($useScope ? "\$scope = null, " : "") . 
 /**
  * Tests if node is valid
  *
- * @param      $objectClassName \$node    Propel object for src node
- * @return     bool
+ * @param $objectClassName \$node    Propel object for src node
+ * @return bool
  */
 static public function isValid($objectClassName \$node = null)
 {
@@ -536,10 +677,15 @@ static public function isValid($objectClassName \$node = null)
 ";
     }
 
-    protected function addDeleteTree(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addDeleteTree(string &$script): void
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $script .= "
@@ -548,14 +694,14 @@ static public function isValid($objectClassName \$node = null)
  * ";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to determine which tree to delete";
+ * @param int \$scope        Scope to determine which tree to delete";
         }
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  *
- * @return     int  The number of deleted nodes
+ * @return int The number of deleted nodes
  */
-static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "ConnectionInterface \$con = null)
+static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $script .= "
@@ -573,10 +719,15 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
 ";
     }
 
-    protected function addShiftRLValues(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addShiftRLValues(string &$script): void
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
@@ -596,7 +747,7 @@ static public function deleteTree(" . ($useScope ? "\$scope = null, " : "") . "C
         $script .= "
  * @param ConnectionInterface \$con Connection to use.
  */
-static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useScope ? ', $scope = null' : '') . ", ?ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
@@ -641,10 +792,15 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
 ";
     }
 
-    protected function addShiftLevel(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addShiftLevel(string &$script): void
     {
-        $objectClassName   = $this->objectClassName;
-        $useScope          = $this->behavior->useScope();
+        $objectClassName = $this->objectClassName;
+        $useScope = $this->behavior->useScope();
         $tableMapClassName = $this->builder->getTableMapClass();
 
         $this->builder->declareClass('Propel\\Runtime\Map\\TableMap');
@@ -654,17 +810,17 @@ static public function shiftRLValues(\$delta, \$first, \$last = null" . ($useSco
  * Adds \$delta to level for nodes having left value >= \$first and right value <= \$last.
  * '\$delta' can also be negative.
  *
- * @param      int \$delta        Value to be shifted by, can be negative
- * @param      int \$first        First node to be shifted
- * @param      int \$last            Last node to be shifted";
+ * @param int \$delta        Value to be shifted by, can be negative
+ * @param int \$first        First node to be shifted
+ * @param int \$last            Last node to be shifted";
         if ($useScope) {
             $script .= "
- * @param      int \$scope        Scope to use for the shift";
+ * @param int \$scope        Scope to use for the shift";
         }
         $script .= "
- * @param      ConnectionInterface \$con        Connection to use.
+ * @param ConnectionInterface \$con Connection to use.
  */
-static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$scope = null" : ""). ", ConnectionInterface \$con = null)
+static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ', $scope = null' : '') . ", ?ConnectionInterface \$con = null)
 {
     if (\$con === null) {
         \$con = Propel::getServiceContainer()->getWriteConnection($tableMapClassName::DATABASE_NAME);
@@ -687,9 +843,14 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 ";
     }
 
-    protected function addUpdateLoadedNodes(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addUpdateLoadedNodes(string &$script): void
     {
-        $queryClassName  = $this->queryClassName;
+        $queryClassName = $this->queryClassName;
         $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->tableMapClassName;
 
@@ -697,13 +858,13 @@ static public function shiftLevel(\$delta, \$first, \$last" . ($useScope ? ", \$
 /**
  * Reload all already loaded nodes to sync them with updated db
  *
- * @param      $objectClassName \$prune        Object to prune from the update
- * @param      ConnectionInterface \$con        Connection to use.
+ * @param $objectClassName \$prune Object to prune from the update
+ * @param ConnectionInterface \$con Connection to use.
  */
-static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$con = null)
+static public function updateLoadedNodes(\$prune = null, ?ConnectionInterface \$con = null)
 {
     if (Propel::isInstancePoolingEnabled()) {
-        \$keys = array();
+        \$keys = [];
         /** @var \$obj $objectClassName */
         foreach ($tableMapClassName::\$instances as \$obj) {
             if (!\$prune || !\$prune->equals(\$obj)) {
@@ -715,22 +876,22 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             // We don't need to alter the object instance pool; we're just modifying these ones
             // already in the pool.
             \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);";
-        if (1 === count($this->table->getPrimaryKey())) {
+        if (count($this->table->getPrimaryKey()) === 1) {
             $pkey = $this->table->getPrimaryKey();
             $col = array_shift($pkey);
             $script .= "
-            \$criteria->add(".$this->builder->getColumnConstant($col).", \$keys, Criteria::IN);";
+            \$criteria->add(" . $this->builder->getColumnConstant($col) . ', $keys, Criteria::IN);';
         } else {
             $fields = [];
-            foreach ($this->table->getPrimaryKey() as $k => $col) {
+            foreach ($this->table->getPrimaryKey() as $col) {
                 $fields[] = $this->builder->getColumnConstant($col);
-            };
+            }
             $script .= "
 
             // Loop on each instances in pool
             foreach (\$keys as \$values) {
               // Create initial Criterion
-                \$cton = \$criteria->getNewCriterion(" . $fields[0] . ", \$values[0]);";
+                \$cton = \$criteria->getNewCriterion(" . $fields[0] . ', $values[0]);';
             unset($fields[0]);
             foreach ($fields as $k => $col) {
                 $script .= "
@@ -758,16 +919,16 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
             if ($col->isLazyLoad()) {
                 continue;
             }
-            if ($col->getPhpName() == $this->getColumnPhpName('left_column')) {
+            if ($col->getPhpName() === $this->getColumnPhpName('left_column')) {
                 $script .= "
                     \$object->setLeftValue(\$row[$n]);";
-            } elseif ($col->getPhpName() == $this->getColumnPhpName('right_column')) {
+            } elseif ($col->getPhpName() === $this->getColumnPhpName('right_column')) {
                 $script .= "
                     \$object->setRightValue(\$row[$n]);";
-            } elseif ($this->getParameter('use_scope') == 'true' && $col->getPhpName() == $this->getColumnPhpName('scope_column')) {
+            } elseif ($this->getParameter('use_scope') == 'true' && $col->getPhpName() === $this->getColumnPhpName('scope_column')) {
                 $script .= "
                     \$object->setScopeValue(\$row[$n]);";
-            } elseif ($col->getPhpName() == $this->getColumnPhpName('level_column')) {
+            } elseif ($col->getPhpName() === $this->getColumnPhpName('level_column')) {
                 $script .= "
                     \$object->setLevel(\$row[$n]);
                     \$object->clearNestedSetChildren();";
@@ -784,28 +945,33 @@ static public function updateLoadedNodes(\$prune = null, ConnectionInterface \$c
 ";
     }
 
-    protected function addMakeRoomForLeaf(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addMakeRoomForLeaf(string &$script): void
     {
         $queryClassName = $this->queryClassName;
-        $useScope       = $this->behavior->useScope();
+        $useScope = $this->behavior->useScope();
 
         $script .= "
 /**
  * Update the tree to allow insertion of a leaf at the specified position
  *
- * @param      int \$left    left column value";
+ * @param int \$left    left column value";
         if ($useScope) {
             $script .= "
- * @param      integer \$scope    scope column value";
+ * @param int \$scope    scope column value";
         }
         $script .= "
- * @param      mixed \$prune    Object to prune from the shift
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param mixed \$prune    Object to prune from the shift
+ * @param ConnectionInterface|null \$con Connection to use.
  */
-static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : ""). ", \$prune = null, ConnectionInterface \$con = null)
+static public function makeRoomForLeaf(\$left" . ($useScope ? ', $scope' : '') . ", \$prune = null, ?ConnectionInterface \$con = null)
 {
     // Update database nodes
-    $queryClassName::shiftRLValues(2, \$left, null" . ($useScope ? ", \$scope" : "") . ", \$con);
+    $queryClassName::shiftRLValues(2, \$left, null" . ($useScope ? ', $scope' : '') . ", \$con);
 
     // Update all loaded nodes
     $queryClassName::updateLoadedNodes(\$prune, \$con);
@@ -813,12 +979,17 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
 ";
     }
 
-    protected function addFixLevels(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFixLevels(string &$script): void
     {
-        $objectClassName   = $this->objectClassName;
-        $queryClassName    = $this->queryClassName;
+        $objectClassName = $this->objectClassName;
+        $queryClassName = $this->queryClassName;
         $tableMapClassName = $this->tableMapClassName;
-        $useScope          = $this->behavior->useScope();
+        $useScope = $this->behavior->useScope();
 
         $script .= "
 /**
@@ -826,12 +997,13 @@ static public function makeRoomForLeaf(\$left" . ($useScope ? ", \$scope" : "").
  *";
         if ($useScope) {
             $script .= "
- * @param      integer \$scope    scope column value";
+ * @param int \$scope    scope column value";
         }
         $script .= "
- * @param      ConnectionInterface \$con    Connection to use.
+ * @param ConnectionInterface|null \$con Connection to use.
+ * @return void
  */
-static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "ConnectionInterface \$con = null)
+static public function fixLevels(" . ($useScope ? '$scope, ' : '') . "?ConnectionInterface \$con = null): void
 {
     \$c = new Criteria();";
         if ($useScope) {
@@ -880,7 +1052,7 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
         if (\$level === null) {
             \$level = 0;
             \$i = 0;
-            \$prev = array(\$obj->getRightValue());
+            \$prev = [\$obj->getRightValue()];
         } else {
             while (\$obj->getRightValue() > \$prev[\$i]) {
                 \$i--;
@@ -900,18 +1072,24 @@ static public function fixLevels(" . ($useScope ? "\$scope, " : ""). "Connection
 ";
     }
 
-    protected function addSetNegativeScope(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addSetNegativeScope(string &$script): void
     {
-        $objectClassName   = $this->objectClassName;
+        $objectClassName = $this->objectClassName;
         $tableMapClassName = $this->tableMapClassName;
         $script .= "
 /**
  * Updates all scope values for items that has negative left (<=0) values.
  *
- * @param      mixed     \$scope
- * @param      ConnectionInterface \$con  Connection to use.
+ * @param mixed \$scope
+ * @param ConnectionInterface|null \$con Connection to use.
+ * @return void
  */
-public static function setNegativeScope(\$scope, ConnectionInterface \$con = null)
+public static function setNegativeScope(\$scope, ?ConnectionInterface \$con = null): void
 {
     //adjust scope value to \$scope
     \$whereCriteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -925,7 +1103,12 @@ public static function setNegativeScope(\$scope, ConnectionInterface \$con = nul
 ";
     }
 
-    protected function getColumnPhpName($columnName)
+    /**
+     * @param string $columnName
+     *
+     * @return string
+     */
+    protected function getColumnPhpName(string $columnName): string
     {
         return $this->behavior->getColumnForParameter($columnName)->getPhpName();
     }

@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\ForeignKey;
-
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
- * Generates the PHP5 table map class for user object model (OM).
+ * Generates the table map class for user object model (OM).
  *
  * @author Hans Lellelid <hans@xmpl.org>
  */
@@ -24,52 +21,64 @@ class TableMapBuilder extends AbstractOMBuilder
 {
     /**
      * Gets the package for the map builder classes.
+     *
      * @return string
      */
-    public function getPackage()
+    public function getPackage(): string
     {
         return parent::getPackage() . '.Map';
     }
 
-    public function getNamespace()
+    /**
+     * @return string|null
+     */
+    public function getNamespace(): ?string
     {
-        if (!$namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if (!$namespace) {
             return 'Map';
         }
 
-        if ($this->getGeneratorConfig()
-            && $omns = $this->getBuildProperty('generator.objectModel.namespaceMap')) {
-            return $namespace . '\\' . $omns;
+        $namespaceMap = $this->getBuildProperty('generator.objectModel.namespaceMap');
+        if (!$namespaceMap) {
+            return $namespace . 'Map';
         }
 
-        return $namespace .'Map';
+        return $namespace . '\\' . $namespaceMap;
     }
 
-    public function getBaseTableMapClassName()
+    /**
+     * @return string
+     */
+    public function getBaseTableMapClassName(): string
     {
-        return "TableMap";
+        return 'TableMap';
     }
 
     /**
      * Returns the name of the current class being built.
+     *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getTable()->getPhpName() . 'TableMap';
     }
 
     /**
      * Adds class phpdoc comment and opening of class.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
 
 /**
- * This class defines the structure of the '".$table->getName()."' table.
+ * This class defines the structure of the '" . $table->getName() . "' table.
  *
  *";
         if ($this->getBuildProperty('generator.objectModel.addTimeStamp')) {
@@ -86,9 +95,8 @@ class TableMapBuilder extends AbstractOMBuilder
  * For example, the createSelectSql() method checks the type of a given column used in an
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
- *
  */
-class ".$this->getUnqualifiedClassName()." extends TableMap
+class " . $this->getUnqualifiedClassName() . " extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -99,9 +107,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Specifies the methods that are added as part of the map builder class.
      * This can be overridden by subclasses that wish to add more methods.
+     *
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(string &$script): void
     {
         $table = $this->getTable();
 
@@ -114,7 +127,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             '\Propel\Runtime\Connection\ConnectionInterface',
             '\Propel\Runtime\Exception\PropelException',
             '\Propel\Runtime\DataFetcher\DataFetcherInterface',
-            '\Propel\Runtime\Propel'
+            '\Propel\Runtime\Propel',
         );
 
         $script .= $this->addConstants();
@@ -125,13 +138,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         }
 
         // apply behaviors
-        $this->applyBehaviorModifier('staticConstants', $script, "    ");
-        $this->applyBehaviorModifier('staticAttributes', $script, "    ");
-        $this->applyBehaviorModifier('staticMethods', $script, "    ");
+        $this->applyBehaviorModifier('staticConstants', $script, '    ');
+        $this->applyBehaviorModifier('staticAttributes', $script, '    ');
+        $this->applyBehaviorModifier('staticMethods', $script, '    ');
 
         $this->addAttributes($script);
 
         $script .= $this->addFieldsAttributes();
+        $this->addNormalizedColumnNameMap($script);
 
         if ($table->hasValueSetColumns()) {
             $this->addValueSetColumnAttributes($script);
@@ -158,8 +172,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $this->addGetTableMap($script);
         }
 
-        $this->addBuildTableMap($script);
-
         $this->addDoDelete($script);
         $this->addDoDeleteAll($script);
 
@@ -168,11 +180,15 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the addSelectColumns(), doCount(), etc. methods.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addSelectMethods(&$script)
+    protected function addSelectMethods(string &$script): void
     {
         $this->addAddSelectColumns($script);
+        $this->addRemoveSelectColumns($script);
     }
 
     /**
@@ -180,51 +196,58 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      *
      * @return string
      */
-    protected function addConstants()
+    protected function addConstants(): string
     {
         return $this->renderTemplate('tableMapConstants', [
-            'className'         => $this->getClasspath(),
-            'dbName'            => $this->getDatabase()->getName(),
-            'tableName'         => $this->getTable()->getName(),
-            'tablePhpName'      => $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()),
-            'classPath'         => $this->getStubObjectBuilder()->getClasspath(),
-            'nbColumns'         => $this->getTable()->getNumColumns(),
+            'className' => $this->getClasspath(),
+            'dbName' => $this->getDatabase()->getName(),
+            'tableName' => $this->getTable()->getName(),
+            'tablePhpName' => $this->getTable()->getPhpName(),
+            'omClassName' => $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()),
+            'classPath' => $this->getStubObjectBuilder()->getClasspath(),
+            'nbColumns' => $this->getTable()->getNumColumns(),
             'nbLazyLoadColumns' => $this->getTable()->getNumLazyLoadColumns(),
-            'nbHydrateColumns'  => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
-            'columns'           => $this->getTable()->getColumns(),
-            'stringFormat'      => $this->getTable()->getDefaultStringFormat(),
+            'nbHydrateColumns' => $this->getTable()->getNumColumns() - $this->getTable()->getNumLazyLoadColumns(),
+            'columns' => $this->getTable()->getColumns(),
+            'stringFormat' => $this->getTable()->getDefaultStringFormat(),
         ]);
     }
 
     /**
      * Adds the COLUMN_NAME constant to the class definition.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addColumnNameConstants(&$script)
+    protected function addColumnNameConstants(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             $script .= "
     /**
-     * the column name for the " . $col->getName() ." field
+     * The column name for the " . $col->getName() . " field
      */
-    const ".$col->getConstantName() ." = '" . $this->getTable()->getName() . ".".$col->getName()."';
+    public const " . $col->getConstantName() . " = '" . $this->getTable()->getName() . '.' . $col->getName() . "';
 ";
-        } // foreach
+        }
     }
 
     /**
      * Adds the valueSet constants for ENUM and SET columns.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addValueSetColumnConstants(&$script)
+    protected function addValueSetColumnConstants(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isValueSetType()) {
                 $script .= "
-    /** The enumerated values for the " . $col->getName() . " field */";
+    /** The enumerated values for the " . $col->getName() . ' field */';
                 foreach ($col->getValueSet() as $value) {
                     $script .= "
-    const " . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . " = '" . $value . "';";
+    public const " . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . " = '" . $value . "';";
                 }
                 $script .= "
 ";
@@ -234,42 +257,52 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the valueSet attributes for ENUM columns.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addValueSetColumnAttributes(&$script)
+    protected function addValueSetColumnAttributes(string &$script): void
     {
         $script .= "
-    /** The enumerated values for this table */
-    protected static \$enumValueSets = array(";
+    /**
+     * The enumerated values for this table
+     *
+     * @var array<string, array<string>>
+     */
+    protected static \$enumValueSets = [";
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->isValueSetType()) {
                 $script .= "
-                {$col->getFQConstantName()} => array(
+                {$col->getFQConstantName()} => [
                 ";
                 foreach ($col->getValueSet() as $value) {
-                    $script .= "            self::" . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . ",
+                    $script .= '            self::' . $col->getConstantName() . '_' . $this->getValueSetConstant($value) . ",
 ";
                 }
-                $script .= "        ),";
+                $script .= '        ],';
             }
         }
         $script .= "
-    );
+    ];
 ";
     }
 
     /**
      * Adds the getValueSets() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetValueSets(&$script)
+    protected function addGetValueSets(string &$script): void
     {
         $script .= "
     /**
      * Gets the list of values for all ENUM and SET columns
      * @return array
      */
-    public static function getValueSets()
+    public static function getValueSets(): array
     {
       return static::\$enumValueSets;
     }
@@ -278,9 +311,12 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the getValueSet() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetValueSet(&$script)
+    protected function addGetValueSet(string &$script): void
     {
         $script .= "
     /**
@@ -288,7 +324,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * @param string \$colname
      * @return array list of possible values for the column
      */
-    public static function getValueSet(\$colname)
+    public static function getValueSet(string \$colname): array
     {
         \$valueSets = self::getValueSets();
 
@@ -299,15 +335,16 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the CLASSKEY_* and CLASSNAME_* constants used for inheritance.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    public function addInheritanceColumnConstants(&$script)
+    public function addInheritanceColumnConstants(string &$script): void
     {
-        if (!$col = $this->getTable()->getChildrenColumn()) {
-            return;
-        }
+        $col = $this->getTable()->getChildrenColumn();
 
-        if (!$col->isEnumeratedClasses()) {
+        if (!$col || !$col->isEnumeratedClasses()) {
             return;
         }
 
@@ -318,134 +355,164 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
             $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".$child->getConstantSuffix()." = '" . $child->getKey() . "';
+    public const CLASSKEY_" . $child->getConstantSuffix() . " = '" . $child->getKey() . "';
 ";
 
             if (strtoupper($child->getClassName()) != $child->getConstantSuffix()) {
                 $script .= "
     /** A key representing a particular subclass */
-    const CLASSKEY_".strtoupper($child->getClassname())." = '" . $fqcn . "';
+    public const CLASSKEY_" . strtoupper($child->getClassname()) . " = '" . $fqcn . "';
 ";
             }
 
             $script .= "
     /** A class that can be returned by this tableMap. */
-    const CLASSNAME_".$child->getConstantSuffix()." = '". $fqcn . "';
+    public const CLASSNAME_" . $child->getConstantSuffix() . " = '" . $fqcn . "';
 ";
         }
     }
 
     /**
-     * @param  string $value
+     * @param string $value
+     *
      * @return string
      */
-    protected function getValueSetConstant($value)
+    protected function getValueSetConstant(string $value): string
     {
         return strtoupper(preg_replace('/[^a-zA-Z0-9_\x7f-\xff]/', '_', $value));
     }
 
     /**
      * Adds any attributes needed for this TableMap class.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addAttributes(&$script)
+    protected function addAttributes(string &$script): void
     {
     }
 
-    protected function addFieldsAttributes()
+    /**
+     * @return string
+     */
+    protected function addFieldsAttributes(): string
     {
         $tableColumns = $this->getTable()->getColumns();
 
-        $fieldNamesPhpName       = '';
+        $fieldNamesPhpName = '';
         $fieldNamesCamelCaseName = '';
-        $fieldNamesColname       = '';
-        $fieldNamesRawColname    = '';
-        $fieldNamesFieldName     = '';
-        $fieldNamesNum           = '';
+        $fieldNamesColname = '';
+        $fieldNamesRawColname = '';
+        $fieldNamesFieldName = '';
+        $fieldNamesNum = '';
 
-        $fieldKeysPhpName        = '';
-        $fieldKeysCamelCaseName  = '';
-        $fieldKeysColname        = '';
-        $fieldKeysRawColname     = '';
-        $fieldKeysFieldName      = '';
-        $fieldKeysNum            = '';
+        $fieldKeysPhpName = '';
+        $fieldKeysCamelCaseName = '';
+        $fieldKeysColname = '';
+        $fieldKeysRawColname = '';
+        $fieldKeysFieldName = '';
+        $fieldKeysNum = '';
 
         foreach ($tableColumns as $num => $col) {
-            $fieldNamesPhpName       .= "'" . $col->getPhpName() . "', ";
+            $fieldNamesPhpName .= "'" . $col->getPhpName() . "', ";
             $fieldNamesCamelCaseName .= "'" . $col->getCamelCaseName() . "', ";
-            $fieldNamesColname       .= $this->getColumnConstant($col, $this->getTableMapClass()) . ", ";
-            $fieldNamesRawColname    .= "'" . $col->getConstantName() . "', ";
-            $fieldNamesFieldName     .= "'" . $col->getName() . "', ";
-            $fieldNamesNum           .= "$num, ";
+            $fieldNamesColname .= $this->getColumnConstant($col, $this->getTableMapClass()) . ', ';
+            $fieldNamesRawColname .= "'" . $col->getConstantName() . "', ";
+            $fieldNamesFieldName .= "'" . $col->getName() . "', ";
+            $fieldNamesNum .= "$num, ";
 
-            $fieldKeysPhpName        .= "'" . $col->getPhpName() . "' => $num, ";
-            $fieldKeysCamelCaseName  .= "'" . $col->getCamelCaseName() . "' => $num, ";
-            $fieldKeysColname        .= $this->getColumnConstant($col, $this->getTableMapClass())." => $num, ";
-            $fieldKeysRawColname     .= "'" . $col->getConstantName() . "' => $num, ";
-            $fieldKeysFieldName      .= "'" . $col->getName() . "' => $num, ";
-            $fieldKeysNum            .= "$num, ";
+            $fieldKeysPhpName .= "'" . $col->getPhpName() . "' => $num, ";
+            $fieldKeysCamelCaseName .= "'" . $col->getCamelCaseName() . "' => $num, ";
+            $fieldKeysColname .= $this->getColumnConstant($col, $this->getTableMapClass()) . " => $num, ";
+            $fieldKeysRawColname .= "'" . $col->getConstantName() . "' => $num, ";
+            $fieldKeysFieldName .= "'" . $col->getName() . "' => $num, ";
+            $fieldKeysNum .= "$num, ";
         }
 
         return $this->renderTemplate('tableMapFields', [
-                'fieldNamesPhpName'       => $fieldNamesPhpName,
+                'fieldNamesPhpName' => $fieldNamesPhpName,
                 'fieldNamesCamelCaseName' => $fieldNamesCamelCaseName,
-                'fieldNamesColname'       => $fieldNamesColname,
-                'fieldNamesRawColname'    => $fieldNamesRawColname,
-                'fieldNamesFieldName'     => $fieldNamesFieldName,
-                'fieldNamesNum'           => $fieldNamesNum,
-                'fieldKeysPhpName'        => $fieldKeysPhpName,
-                'fieldKeysCamelCaseName'  => $fieldKeysCamelCaseName,
-                'fieldKeysColname'        => $fieldKeysColname,
-                'fieldKeysRawColname'     => $fieldKeysRawColname,
-                'fieldKeysFieldName'      => $fieldKeysFieldName,
-                'fieldKeysNum'            => $fieldKeysNum,
+                'fieldNamesColname' => $fieldNamesColname,
+                'fieldNamesRawColname' => $fieldNamesRawColname,
+                'fieldNamesFieldName' => $fieldNamesFieldName,
+                'fieldNamesNum' => $fieldNamesNum,
+                'fieldKeysPhpName' => $fieldKeysPhpName,
+                'fieldKeysCamelCaseName' => $fieldKeysCamelCaseName,
+                'fieldKeysColname' => $fieldKeysColname,
+                'fieldKeysRawColname' => $fieldKeysRawColname,
+                'fieldKeysFieldName' => $fieldKeysFieldName,
+                'fieldKeysNum' => $fieldKeysNum,
         ]);
     }
 
     /**
-     * Closes class.
-     * @param string &$script The script will be modified in this method.
+     * @param string $script
+     *
+     * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addNormalizedColumnNameMap(string &$script): void
     {
-        $script .= "
-} // " . $this->getUnqualifiedClassName() . "
-// This is the static code needed to register the TableMap for this table with the main Propel class.
-//
-".$this->getUnqualifiedClassName()."::buildTableMap();
-";
-        $this->applyBehaviorModifier('tableMapFilter', $script, "");
-    }
-
-    /**
-     * Adds the buildTableMap() method.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addBuildTableMap(&$script)
-    {
-        $this->declareClassFromBuilder($this->getTableMapBuilder());
-        $script .= "
-    /**
-     * Add a TableMap instance to the database for this tableMap class.
-     */
-    public static function buildTableMap()
-    {
-        \$dbMap = Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME);
-        if (!\$dbMap->hasTable(" . $this->getTableMapClass() . "::TABLE_NAME)) {
-            \$dbMap->addTableObject(new ".$this->getTableMapClass()."());
-        }
-    }
-";
-    }
-
-    /**
-     * Adds the addInitialize() method to the  table map class.
-     * @param string &$script The script will be modified in this method.
-     */
-    protected function addInitialize(&$script)
-    {
-
         $table = $this->getTable();
+        $tableColumns = $table->getColumns();
+
+        $arrayString = '';
+        foreach ($tableColumns as $column) {
+            $variants = [
+                $column->getPhpName(), // ColumnName => COLUMN_NAME
+                $table->getPhpName() . '.' . $column->getPhpName(), // TableName.ColumnName => COLUMN_NAME
+                $column->getCamelCaseName(), // columnName => COLUMN_NAME
+                $table->getCamelCaseName() . '.' . $column->getCamelCaseName(), // tableName.columnName => COLUMN_NAME
+                $this->getColumnConstant($column, $this->getTableMapClass()), // TableNameTableMap::COL_COLUMN_NAME => COLUMN_NAME
+                $column->getConstantName(), // COL_COLUMN_NAME => COLUMN_NAME
+                $column->getName(), // column_name => COLUMN_NAME
+                $table->getName() . '.' . $column->getName(), // table_name.column_name => COLUMN_NAME
+            ];
+
+            $variants = array_unique($variants);
+
+            $normalizedName = strtoupper($column->getName());
+            array_walk($variants, static function ($variant) use (&$arrayString, $normalizedName): void {
+                $arrayString .= PHP_EOL . "        '{$variant}' => '{$normalizedName}',";
+            });
+        }
+
+        $script .= '
+    /**
+     * Holds a list of column names and their normalized version.
+     *
+     * @var array<string>
+     */
+    protected $normalizedColumnNameMap = [' . $arrayString . PHP_EOL
+            . '    ];' . PHP_EOL;
+    }
+
+    /**
+     * Closes class.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
+    protected function addClassClose(string &$script): void
+    {
+        $script .= "
+}
+";
+        $this->applyBehaviorModifier('tableMapFilter', $script, '');
+    }
+
+    /**
+     * Adds the addInitialize() method to the table map class.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
+    protected function addInitialize(string &$script): void
+    {
+        $table = $this->getTable();
+        /** @var \Propel\Generator\Platform\DefaultPlatform $platform */
         $platform = $this->getPlatform();
 
         $script .= "
@@ -454,17 +521,17 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * Relations are not initialized by this method since they are lazy loaded
      *
      * @return void
-     * @throws PropelException
+     * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function initialize()
+    public function initialize(): void
     {
         // attributes
-        \$this->setName('".$table->getName()."');
-        \$this->setPhpName('".$table->getPhpName()."');
-        \$this->setIdentifierQuoting(".($table->isIdentifierQuotingEnabled() ? 'true' : 'false').");
+        \$this->setName('" . $table->getName() . "');
+        \$this->setPhpName('" . $table->getPhpName() . "');
+        \$this->setIdentifierQuoting(" . ($table->isIdentifierQuotingEnabled() ? 'true' : 'false') . ");
         \$this->setClassName('" . addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()) . "');
         \$this->setPackage('" . parent::getPackage() . "');";
-        if ($table->getIdMethod() == "native") {
+        if ($table->getIdMethod() === 'native') {
             $script .= "
         \$this->setUseIdGenerator(true);";
         } else {
@@ -476,10 +543,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $params = $table->getIdMethodParameters();
             $imp = $params[0];
             $script .= "
-        \$this->setPrimaryKeyMethodInfo('".$imp->getValue()."');";
+        \$this->setPrimaryKeyMethodInfo('" . $imp->getValue() . "');";
         } elseif ($table->getIdMethod() == IdMethod::NATIVE && ($platform->getNativeIdMethod() == PlatformInterface::SEQUENCE || $platform->getNativeIdMethod() == PlatformInterface::SERIAL)) {
             $script .= "
-        \$this->setPrimaryKeyMethodInfo('".$platform->getSequenceName($table)."');";
+        \$this->setPrimaryKeyMethodInfo('" . $platform->getSequenceName($table) . "');";
         }
 
         if ($this->getTable()->getChildrenColumn()) {
@@ -499,7 +566,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $columnName = $col->getName();
             $cfc = $col->getPhpName();
             if (!$col->getSize()) {
-                $size = "null";
+                $size = 'null';
             } else {
                 $size = $col->getSize();
             }
@@ -508,50 +575,54 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 if ($col->isForeignKey()) {
                     foreach ($col->getForeignKeys() as $fk) {
                         $script .= "
-        \$this->addForeignPrimaryKey('$columnName', '$cfc', '".$col->getType()."' , '".$fk->getForeignTableName()."', '".$fk->getMappedForeignColumn($col->getName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
+        \$this->addForeignPrimaryKey('$columnName', '$cfc', '" . $col->getType() . "' , '" . $fk->getForeignTableName() . "', '" . $fk->getMappedForeignColumn($col->getName()) . "', " . ($col->isNotNull() ? 'true' : 'false') . ', ' . $size . ", $default);";
                     }
                 } else {
                     $script .= "
-        \$this->addPrimaryKey('$columnName', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
+        \$this->addPrimaryKey('$columnName', '$cfc', '" . $col->getType() . "', " . var_export($col->isNotNull(), true) . ', ' . $size . ", $default);";
                 }
             } else {
                 if ($col->isForeignKey()) {
                     foreach ($col->getForeignKeys() as $fk) {
                         $script .= "
-        \$this->addForeignKey('$columnName', '$cfc', '".$col->getType()."', '".$fk->getForeignTableName()."', '".$fk->getMappedForeignColumn($col->getName())."', ".($col->isNotNull() ? 'true' : 'false').", ".$size.", $default);";
+        \$this->addForeignKey('$columnName', '$cfc', '" . $col->getType() . "', '" . $fk->getForeignTableName() . "', '" . $fk->getMappedForeignColumn($col->getName()) . "', " . ($col->isNotNull() ? 'true' : 'false') . ', ' . $size . ", $default);";
                     }
                 } else {
                     $script .= "
-        \$this->addColumn('$columnName', '$cfc', '".$col->getType()."', ".var_export($col->isNotNull(), true).", ".$size.", $default);";
+        \$this->addColumn('$columnName', '$cfc', '" . $col->getType() . "', " . var_export($col->isNotNull(), true) . ', ' . $size . ", $default);";
                 }
             } // if col-is prim key
             if ($col->isValueSetType()) {
                 $script .= "
-        \$this->getColumn('$columnName')->setValueSet(" . var_export($col->getValueSet(), true). ");";
+        \$this->getColumn('$columnName')->setValueSet(" . var_export($col->getValueSet(), true) . ');';
             }
             if ($col->isPrimaryString()) {
                 $script .= "
         \$this->getColumn('$columnName')->setPrimaryString(true);";
             }
-        } // foreach
+        }
 
         $script .= "
-    } // initialize()
+    }
 ";
-
     }
 
     /**
      * Adds the method that build the RelationMap objects
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addBuildRelations(&$script)
+    protected function addBuildRelations(string &$script): void
     {
         $script .= "
     /**
      * Build the RelationMap objects for this table relationships
+     *
+     * @return void
      */
-    public function buildRelations()
+    public function buildRelations(): void
     {";
         foreach ($this->getTable()->getForeignKeys() as $fkey) {
             $joinCondition = var_export($fkey->getNormalizedMap($fkey->getMapping()), true);
@@ -569,9 +640,9 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             $onUpdate = $fkey->hasOnUpdate() ? "'" . $fkey->getOnUpdate() . "'" : 'null';
             $isPolymorphic = $fkey->isPolymorphic() ? 'true' : 'false';
             $script .= "
-        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassName()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? "ONE" : "MANY") .", $joinCondition, $onDelete, $onUpdate";
+        \$this->addRelation('$relationName', '" . addslashes($this->getNewStubObjectBuilder($fkey->getTable())->getFullyQualifiedClassName()) . "', RelationMap::ONE_TO_" . ($fkey->isLocalPrimaryKey() ? 'ONE' : 'MANY') . ", $joinCondition, $onDelete, $onUpdate";
             if ($fkey->isLocalPrimaryKey()) {
-                 $script .= ", null";
+                 $script .= ', null';
             } else {
                 $script .= ", '" . $this->getRefFKPhpNameAffix($fkey, true) . "'";
             }
@@ -590,68 +661,88 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             }
         }
         $script .= "
-    } // buildRelations()
+    }
 ";
     }
 
     /**
      * Adds the behaviors getter
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetBehaviors(&$script)
+    protected function addGetBehaviors(string &$script): void
     {
         $behaviors = $this->getTable()->getBehaviors();
-        if ($behaviors) {
-            $script .= "
+        if (!$behaviors) {
+            return;
+        }
+
+        $stringifiedBehaviors = [];
+        foreach ($behaviors as $behavior) {
+            $id = $behavior->getId();
+            $params = $this->stringify($behavior->getParameters());
+            $stringifiedBehaviors[] = "'$id' => $params,";
+        }
+        $itemsString = implode(PHP_EOL . '            ', $stringifiedBehaviors);
+
+        $script .= "
     /**
      *
      * Gets the list of behaviors registered for this table
      *
-     * @return array Associative array (name => parameters) of behaviors
+     * @return array<string, array> Associative array (name => parameters) of behaviors
      */
-    public function getBehaviors()
+    public function getBehaviors(): array
     {
-        return array(";
-            foreach ($behaviors as $behavior) {
-                $script .= "
-            '{$behavior->getId()}' => array(";
-                foreach ($behavior->getParameters() as $key => $value) {
-                    $script .= "'$key' => ";
-                    if (is_array($value)) {
-                        $string = var_export($value, true);
-                        $string = str_replace("\n", '', $string);
-                        $string = str_replace('  ', '', $string);
-                        $script .= $string.", ";
-                    } else {
-                        $script .= "'$value', ";
-                    }
-                }
-                $script .= "),";
-            }
-            $script .= "
-        );
-    } // getBehaviors()
+        return [
+            $itemsString
+        ];
+    }
 ";
+    }
+
+    /**
+     * @param array|string|float|int|bool|null $value
+     *
+     * @return string
+     */
+    protected function stringify($value): string
+    {
+        if (!is_array($value)) {
+            return var_export($value, true);
         }
+
+        $items = [];
+        foreach ($value as $key => $arrayValue) {
+            $keyString = var_export($key, true);
+            $valString = $this->stringify($arrayValue);
+            $items[] = "$keyString => $valString";
+        }
+        $itemsCsv = implode(', ', $items);
+
+        return "[$itemsCsv]";
     }
 
     /**
      * Adds the PHP code to return a instance pool key for the passed-in primary key variable names.
      *
-     * @param  array  $pkphp An array of PHP var names / method calls representing complete pk.
+     * @param array<string>|string $pkphp An array of PHP var names / method calls representing complete pk.
+     *
      * @return string
      */
-    public function getInstancePoolKeySnippet($pkphp)
+    public function getInstancePoolKeySnippet($pkphp): string
     {
-        $pkphp = (array) $pkphp; // make it an array if it is not.
+        $pkphp = (array)$pkphp; // make it an array if it is not.
         $script = '';
         if (count($pkphp) > 1) {
-            $script .= "serialize([";
+            $script .= 'serialize([';
             $i = 0;
             foreach ($pkphp as $pkvar) {
                 $script .= ($i++ ? ', ' : '') . "(null === {$pkvar} || is_scalar({$pkvar}) || is_callable([{$pkvar}, '__toString']) ? (string) {$pkvar} : {$pkvar})";
             }
-            $script .= "])";
+            $script .= '])';
         } else {
             $script .= "null === {$pkphp[0]} || is_scalar({$pkphp[0]}) || is_callable([{$pkphp[0]}, '__toString']) ? (string) {$pkphp[0]} : {$pkphp[0]}";
         }
@@ -659,7 +750,10 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         return $script;
     }
 
-    public function addInstancePool()
+    /**
+     * @return string
+     */
+    public function addInstancePool(): string
     {
         // No need to override instancePool if the PK is not composite
         if (!$this->getTable()->hasCompositePrimaryKey()) {
@@ -669,7 +763,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $pks = $this->getTable()->getPrimaryKey();
 
         if (!count($pks)) {
-            return;
+            return '';
         }
 
         $add = [];
@@ -689,15 +783,18 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $removeInstancePoolKeySnippetPks = $this->getInstancePoolKeySnippet($removePks);
 
         return $this->renderTemplate('tableMapInstancePool', [
-                'objectClassName'                     => $this->getStubObjectBuilder()->getClassName(),
-                'addInstancePoolKeySnippet'           => $addInstancePoolKeySnippet,
+                'objectClassName' => $this->getStubObjectBuilder()->getClassName(),
+                'addInstancePoolKeySnippet' => $addInstancePoolKeySnippet,
                 'removeInstancePoolKeySnippetObjects' => $removeInstancePoolKeySnippetObjects,
-                'removeInstancePoolKeySnippetPks'     => $removeInstancePoolKeySnippetPks,
-                'countPks'                            => count($pks)
+                'removeInstancePoolKeySnippetPks' => $removeInstancePoolKeySnippetPks,
+                'countPks' => count($pks),
         ]);
     }
 
-    public function addClearRelatedInstancePool()
+    /**
+     * @return string
+     */
+    public function addClearRelatedInstancePool(): string
     {
         $table = $this->getTable();
         $relatedClassNames = [];
@@ -715,40 +812,45 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 // we can't perform operations on tables that are
                 // not within the schema (i.e. that we have no map for, etc.)
 
-                if (ForeignKey::CASCADE === $fk->getOnDelete()  || ForeignKey::SETNULL === $fk->getOnDelete()) {
+                if ($fk->getOnDelete() === ForeignKey::CASCADE || $fk->getOnDelete() === ForeignKey::SETNULL) {
                     $relatedClassNames[$tableMapClassName] = $tableMapClassName;
                 }
             }
         }
 
-        if (0 == count($relatedClassNames)) {
+        if (count($relatedClassNames) == 0) {
             return '';
         }
 
         return $this->renderTemplate('tableMapClearRelatedInstancePool', [
-            'tableName'           => $table->getName(),
-            'relatedClassNames'   => $relatedClassNames,
+            'tableName' => $table->getName(),
+            'relatedClassNames' => $relatedClassNames,
         ]);
     }
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
-     * @param  string  $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param  null    $modifier
-     * @return boolean
+     *
+     * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
+     * @param string $modifier
+     *
+     * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = null)
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
         return parent::hasBehaviorModifier($hookName, 'TableMapBuilderModifier');
     }
 
     /**
      * Checks whether any registered behavior on that table has a modifier for a hook
+     *
      * @param string $hookName The name of the hook as called from one of this class methods, e.g. "preSave"
-     * @param string &$script  The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
      * @param string $tab
+     *
+     * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = "        ")
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'TableMapBuilderModifier', $script, $tab);
     }
@@ -756,9 +858,11 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     /**
      * Adds method to get a version of the primary key that can be used as a unique key for identifier map.
      *
-     * @param string &$script The script will be modified in this method.
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetPrimaryKeyHash(&$script)
+    protected function addGetPrimaryKeyHash(string &$script): void
     {
         // We have to iterate through all the columns so that we know the offset of the primary
         // key columns.
@@ -769,7 +873,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             if (!$col->isLazyLoad()) {
                 if ($col->isPrimaryKey()) {
                     $part = "\$row[TableMap::TYPE_NUM == \$indexType ? $n + \$offset : static::translateFieldName('{$col->getPhpName()}', TableMap::TYPE_PHPNAME, \$indexType)]";
-                    $cond[] = $part . " === null";
+                    $cond[] = $part . ' === null';
                     $pk[] = $part;
                 }
                 $n++;
@@ -783,23 +887,23 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, a serialize()d version of the primary key will be returned.
      *
-     * @param array  \$row       resultset row.
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Resultset row.
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
-     * @return string The primary key hash of the row
+     * @return string|null The primary key hash of the row
      */
-    public static function getPrimaryKeyHashFromRow(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
+    public static function getPrimaryKeyHashFromRow(array \$row, int \$offset = 0, string \$indexType = TableMap::TYPE_NUM): ?string
     {";
         if (count($pk) > 0) {
             $script .= "
         // If the PK cannot be derived from the row, return NULL.
-        if (".implode(' && ', $cond).") {
+        if (" . implode(' && ', $cond) . ") {
             return null;
         }
 
-        return ".$this->getInstancePoolKeySnippet($pk).";
+        return " . $this->getInstancePoolKeySnippet($pk) . ";
     }
 ";
         } else {
@@ -812,9 +916,12 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds method to get the primary key from a row
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetPrimaryKeyFromRow(&$script)
+    protected function addGetPrimaryKeyFromRow(string &$script): void
     {
         $script .= "
     /**
@@ -822,14 +929,14 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
      * a multi-column primary key, an array of the primary key columns will be returned.
      *
-     * @param array  \$row       resultset row.
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Resultset row.
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM
      *
      * @return mixed The primary key of the row
      */
-    public static function getPrimaryKeyFromRow(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
+    public static function getPrimaryKeyFromRow(array \$row, int \$offset = 0, string \$indexType = TableMap::TYPE_NUM)
     {";
 
         // We have to iterate through all the columns so that we
@@ -842,7 +949,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             \$pks = [];
             ";
 
-            $pks = [];
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
                     if ($col->isPrimaryKey()) {
@@ -861,7 +967,6 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
         return \$pks;";
         } else {
-
             $pk = "''";
             foreach ($table->getColumns() as $col) {
                 if (!$col->isLazyLoad()) {
@@ -877,7 +982,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             }
 
             $script .= "
-        return " . $pk . ";";
+        return " . $pk . ';';
         }
 
         $script .= "
@@ -887,27 +992,33 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the correct getOMClass() method, depending on whether this table uses inheritance.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetOMClassMethod(&$script)
+    protected function addGetOMClassMethod(string &$script): void
     {
         $table = $this->getTable();
         if ($table->getChildrenColumn()) {
-            $this->addGetOMClass_Inheritance($script);
+            $this->addGetOMClassInheritance($script);
         } else {
             if ($table->isAbstract()) {
-                $this->addGetOMClass_NoInheritance_Abstract($script);
+                $this->addGetOMClassNoInheritanceAbstract($script);
             } else {
-                $this->addGetOMClass_NoInheritance($script);
+                $this->addGetOMClassNoInheritance($script);
             }
         }
     }
 
     /**
      * Adds a getOMClass() for non-abstract tables that have inheritance.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetOMClass_Inheritance(&$script)
+    protected function addGetOMClassInheritance(string &$script): void
     {
         $col = $this->getTable()->getChildrenColumn();
         $script .= "
@@ -915,35 +1026,37 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * The returned Class will contain objects of the default type or
      * objects that inherit from the default.
      *
-     * @param array   \$row ConnectionInterface result row.
-     * @param int     \$colnum Column to examine for OM class information (first is 0).
-     * @param boolean \$withPrefix Whether or not to return the path with the class name
-     * @throws PropelException Any exceptions caught during processing will be
+     * @param array \$row ConnectionInterface result row.
+     * @param int \$colNum Column to examine for OM class information (first is 0).
+     * @param bool \$withPrefix Whether to return the path with the class name
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      *
      * @return string The OM class
      */
-    public static function getOMClass(\$row, \$colnum, \$withPrefix = true)
+    public static function getOMClass(array \$row, int \$colNum, bool \$withPrefix = true): string
     {
         try {
 ";
         if ($col->isEnumeratedClasses()) {
             $script .= "
             \$omClass = null;
-            \$classKey = \$row[\$colnum + " . ($col->getPosition() - 1) . "];
+            \$classKey = \$row[\$colNum + " . ($col->getPosition() - 1) . "];
 
             switch (\$classKey) {
 ";
             foreach ($col->getChildren() as $child) {
                 $script .= "
-                case {$this->getTableMapClassName()}::CLASSKEY_".$child->getConstantSuffix().":
-                    \$omClass = {$this->getTableMapClassName()}::CLASSNAME_".$child->getConstantSuffix().";
+                case {$this->getTableMapClassName()}::CLASSKEY_" . $child->getConstantSuffix() . ":
+                    \$omClass = {$this->getTableMapClassName()}::CLASSNAME_" . $child->getConstantSuffix() . ";
                     break;
 ";
             } /* foreach */
             $script .= "
                 default:
-                    \$omClass = {$this->getTableMapClassName()}::CLASS_DEFAULT;
+                    \$omClass = \$withPrefix
+                        ? {$this->getTableMapClassName()}::CLASS_DEFAULT
+                        : {$this->getTableMapClassName()}::OM_CLASS;
 ";
             $script .= "
             } // switch
@@ -953,13 +1066,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 ";
         } else { /* if not enumerated */
             $script .= "
-            \$omClass = \$row[\$colnum + ".($col->getPosition()-1)."];
+            \$omClass = \$row[\$colNum + " . ($col->getPosition() - 1) . "];
             \$omClass = preg_replace('#\.#', '\\\\', '.'.\$omClass);
 ";
         }
         $script .= "
         } catch (\Exception \$e) {
-            throw new PropelException('Unable to get OM class.', \$e);
+            throw new PropelException('Unable to get OM class.', 0, \$e);
         }
 
         return \$omClass;
@@ -968,10 +1081,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 
     /**
-     * Adds a getOMClass() for non-abstract tables that do note use inheritance.
-     * @param string &$script The script will be modified in this method.
+     * Adds a getOMClass() for non-abstract tables that do not use inheritance.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetOMClass_NoInheritance(&$script)
+    protected function addGetOMClassNoInheritance(string &$script): void
     {
         $script .= "
     /**
@@ -982,79 +1098,89 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * relative to a location on the PHP include_path.
      * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
      *
-     * @param boolean \$withPrefix Whether or not to return the path with the class name
+     * @param bool \$withPrefix Whether to return the path with the class name
      * @return string path.to.ClassName
      */
-    public static function getOMClass(\$withPrefix = true)
+    public static function getOMClass(bool \$withPrefix = true): string
     {
-        return \$withPrefix ? " . $this->getTableMapClass() . "::CLASS_DEFAULT : " . $this->getTableMapClass() . "::OM_CLASS;
+        return \$withPrefix ? " . $this->getTableMapClass() . '::CLASS_DEFAULT : ' . $this->getTableMapClass() . "::OM_CLASS;
     }
 ";
     }
 
     /**
      * Adds a getOMClass() signature for abstract tables that do not have inheritance.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetOMClass_NoInheritance_Abstract(&$script)
+    protected function addGetOMClassNoInheritanceAbstract(string &$script): void
     {
+        $objectClassName = $this->getObjectClassName();
+
         $script .= "
     /**
      * The class that the tableMap will make instances of.
      *
      * This method must be overridden by the stub subclass, because
-     * ".$this->getObjectClassName()." is declared abstract in the schema.
+     * $objectClassName is declared abstract in the schema.
      *
-     * @param boolean \$withPrefix
+     * @param bool \$withPrefix
+     * @return string
      */
-    abstract public static function getOMClass(\$withPrefix = true);
+    public static function getOMClass(bool \$withPrefix = true): string
+    {
+        throw new PropelException('$objectClassName is declared abstract, it cannot be instantiated.');
+    }
 ";
     }
 
-
-
     /**
      * Adds the populateObject() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addPopulateObject(&$script)
+    protected function addPopulateObject(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
     /**
      * Populates an object of the default type or an object that inherit from the default.
      *
-     * @param array  \$row       row returned by DataFetcher->fetch().
-     * @param int    \$offset    The 0-based offset for reading from the resultset row.
+     * @param array \$row Row returned by DataFetcher->fetch().
+     * @param int \$offset The 0-based offset for reading from the resultset row.
      * @param string \$indexType The index type of \$row. Mostly DataFetcher->getIndexType().
                                  One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                           TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *
-     * @throws PropelException Any exceptions caught during processing will be
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (" . $this->getObjectClassName(). " object, last column rank)
+     * @return array (" . $this->getObjectClassName() . " object, last column rank)
      */
-    public static function populateObject(\$row, \$offset = 0, \$indexType = TableMap::TYPE_NUM)
+    public static function populateObject(array \$row, int \$offset = 0, string \$indexType = TableMap::TYPE_NUM): array
     {
         \$key = {$this->getTableMapClassName()}::getPrimaryKeyHashFromRow(\$row, \$offset, \$indexType);
         if (null !== (\$obj = {$this->getTableMapClassName()}::getInstanceFromPool(\$key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // \$obj->hydrate(\$row, \$offset, true); // rehydrate
-            \$col = \$offset + " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;";
+            \$col = \$offset + " . $this->getTableMapClass() . '::NUM_HYDRATE_COLUMNS;';
         if ($table->isAbstract()) {
             $script .= "
         } elseif (null == \$key) {
             // empty resultset, probably from a left join
             // since this table is abstract, we can't hydrate an empty object
             \$obj = null;
-            \$col = \$offset + " . $this->getTableMapClass() . "::NUM_HYDRATE_COLUMNS;";
+            \$col = \$offset + " . $this->getTableMapClass() . '::NUM_HYDRATE_COLUMNS;';
         }
         $script .= "
         } else {";
         if (!$table->getChildrenColumn()) {
             $script .= "
-            \$cls = " . $this->getTableMapClass() . "::OM_CLASS;";
+            \$cls = " . $this->getTableMapClass() . '::OM_CLASS;';
         } else {
             $script .= "
             \$cls = static::getOMClass(\$row, \$offset, false);";
@@ -1066,16 +1192,19 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);
         }
 
-        return array(\$obj, \$col);
+        return [\$obj, \$col];
     }
 ";
     }
 
     /**
      * Adds the populateObjects() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addPopulateObjects(&$script)
+    protected function addPopulateObjects(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
@@ -1084,13 +1213,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * objects that inherit from the default.
      *
      * @param DataFetcherInterface \$dataFetcher
-     * @return array
-     * @throws PropelException Any exceptions caught during processing will be
+     * @return array<object>
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public static function populateObjects(DataFetcherInterface \$dataFetcher)
+    public static function populateObjects(DataFetcherInterface \$dataFetcher): array
     {
-        \$results = array();
+        \$results = [];
     ";
         if (!$table->getChildrenColumn()) {
             $script .= "
@@ -1107,8 +1236,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 // See http://www.propelorm.org/ticket/509
                 // \$obj->hydrate(\$row, 0, true); // rehydrate
                 \$results[] = \$obj;
-            } else {"
-        ;
+            } else {";
 
         if ($table->getChildrenColumn()) {
             $script .= "
@@ -1138,9 +1266,12 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the addSelectColumns() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addAddSelectColumns(&$script)
+    protected function addAddSelectColumns(string &$script): void
     {
         $script .= "
     /**
@@ -1150,12 +1281,13 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
      * XML schema will not be added to the select list and only loaded
      * on demand.
      *
-     * @param Criteria \$criteria object containing the columns to add.
-     * @param string   \$alias    optional table alias
-     * @throws PropelException Any exceptions caught during processing will be
+     * @param Criteria \$criteria Object containing the columns to add.
+     * @param string|null \$alias Optional table alias
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
+     * @return void
      */
-    public static function addSelectColumns(Criteria \$criteria, \$alias = null)
+    public static function addSelectColumns(Criteria \$criteria, ?string \$alias = null): void
     {
         if (null === \$alias) {";
         foreach ($this->getTable()->getColumns() as $col) {
@@ -1163,58 +1295,114 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
                 $script .= "
             \$criteria->addSelectColumn({$col->getFQConstantName()});";
             } // if !col->isLazyLoad
+        }
+        $script .= "
+        } else {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->addSelectColumn(\$alias . '." . $col->getName() . "');";
+            } // if !col->isLazyLoad
+        }
+        $script .= "
+        }";
+        $script .= "
+    }
+";
+    }
+
+ // addAddSelectColumns()
+
+    /**
+     * Adds the removeSelectColumns() method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
+     */
+    protected function addRemoveSelectColumns(string &$script): void
+    {
+        $script .= "
+    /**
+     * Remove all the columns needed to create a new object.
+     *
+     * Note: any columns that were marked with lazyLoad=\"true\" in the
+     * XML schema will not be removed as they are only loaded on demand.
+     *
+     * @param Criteria \$criteria Object containing the columns to remove.
+     * @param string|null \$alias Optional table alias
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
+     *                         rethrown wrapped into a PropelException.
+     * @return void
+     */
+    public static function removeSelectColumns(Criteria \$criteria, ?string \$alias = null): void
+    {
+        if (null === \$alias) {";
+        foreach ($this->getTable()->getColumns() as $col) {
+            if (!$col->isLazyLoad()) {
+                $script .= "
+            \$criteria->removeSelectColumn({$col->getFQConstantName()});";
+            } // if !col->isLazyLoad
         } // foreach
         $script .= "
         } else {";
         foreach ($this->getTable()->getColumns() as $col) {
             if (!$col->isLazyLoad()) {
                 $script .= "
-            \$criteria->addSelectColumn(\$alias . '." . $col->getName()."');";
+            \$criteria->removeSelectColumn(\$alias . '." . $col->getName() . "');";
             } // if !col->isLazyLoad
         } // foreach
         $script .= "
         }";
-        $script .="
+        $script .= "
     }
 ";
-    } // addAddSelectColumns()
+    }
+
+ // addRemoveSelectColumns()
 
     /**
      * Adds the getTableMap() method which is a convenience method for apps to get DB metadata.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addGetTableMap(&$script)
+    protected function addGetTableMap(string &$script): void
     {
         $script .= "
     /**
      * Returns the TableMap related to this object.
      * This method is not needed for general use but a specific application could have a need.
      * @return TableMap
-     * @throws PropelException Any exceptions caught during processing will be
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public static function getTableMap()
+    public static function getTableMap(): TableMap
     {
-        return Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . "::DATABASE_NAME)->getTable(" . $this->getTableMapClass() . "::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(" . $this->getTableMapClass() . '::DATABASE_NAME)->getTable(' . $this->getTableMapClass() . "::TABLE_NAME);
     }
 ";
     }
 
     /**
      * Adds the doDeleteAll() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addDoDeleteAll(&$script)
+    protected function addDoDeleteAll(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
     /**
-     * Deletes all rows from the ".$table->getName()." table.
+     * Deletes all rows from the " . $table->getName() . " table.
      *
      * @param ConnectionInterface \$con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
-    public static function doDeleteAll(ConnectionInterface \$con = null)
+    public static function doDeleteAll(?ConnectionInterface \$con = null): int
     {
         return " . $this->getQueryClassName() . "::create()->doDeleteAll(\$con);
     }
@@ -1223,24 +1411,27 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the doDelete() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addDoDelete(&$script)
+    protected function addDoDelete(string &$script): void
     {
         $table = $this->getTable();
         $script .= "
     /**
-     * Performs a DELETE on the database, given a ".$this->getObjectClassName()." or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a " . $this->getObjectClassName() . " or Criteria object OR a primary key value.
      *
-     * @param mixed               \$values Criteria or ".$this->getObjectClassName()." object or primary key or array of primary keys
+     * @param mixed \$values Criteria or " . $this->getObjectClassName() . " object or primary key or array of primary keys
      *              which is used to create the DELETE statement
-     * @param  ConnectionInterface \$con the connection to use
-     * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
+     * @param ConnectionInterface \$con the connection to use
+     * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
      *                         if supported by native driver or if emulated using Propel.
-     * @throws PropelException Any exceptions caught during processing will be
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-     public static function doDelete(\$values, ConnectionInterface \$con = null)
+     public static function doDelete(\$values, ?ConnectionInterface \$con = null): int
      {
         if (null === \$con) {
             \$con = Propel::getServiceContainer()->getWriteConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
@@ -1250,7 +1441,7 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
         $script .= "
             // rename for clarity
             \$criteria = \$values;
-        } elseif (\$values instanceof \\".$this->getStubObjectBuilder()->getQualifiedClassName().") { // it's a model object";
+        } elseif (\$values instanceof \\" . $this->getStubObjectBuilder()->getQualifiedClassName() . ") { // it's a model object";
         if (count($table->getPrimaryKey()) > 0) {
             $script .= "
             // create criteria based on pk values
@@ -1271,30 +1462,30 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
             throw new LogicException('The $class object has no primary key');";
         } else {
             $script .= "
-            \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);";
+            \$criteria = new Criteria(" . $this->getTableMapClass() . '::DATABASE_NAME);';
 
-            if (1 === count($table->getPrimaryKey())) {
+            if (count($table->getPrimaryKey()) === 1) {
                 $pkey = $table->getPrimaryKey();
                 $col = array_shift($pkey);
                 $script .= "
-            \$criteria->add(".$this->getColumnConstant($col).", (array) \$values, Criteria::IN);";
+            \$criteria->add(" . $this->getColumnConstant($col) . ', (array) $values, Criteria::IN);';
             } else {
                 $script .= "
             // primary key is composite; we therefore, expect
             // the primary key passed to be an array of pkey values
             if (count(\$values) == count(\$values, COUNT_RECURSIVE)) {
                 // array is not multi-dimensional
-                \$values = array(\$values);
+                \$values = [\$values];
             }
             foreach (\$values as \$value) {";
                 $i = 0;
                 foreach ($table->getPrimaryKey() as $col) {
-                    if (0 === $i) {
+                    if ($i === 0) {
                         $script .= "
-                \$criterion = \$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]);";
+                \$criterion = \$criteria->getNewCriterion(" . $this->getColumnConstant($col) . ", \$value[$i]);";
                     } else {
                         $script .= "
-                \$criterion->addAnd(\$criteria->getNewCriterion(".$this->getColumnConstant($col).", \$value[$i]));";
+                \$criterion->addAnd(\$criteria->getNewCriterion(" . $this->getColumnConstant($col) . ", \$value[$i]));";
                     }
                     $i++;
                 }
@@ -1325,63 +1516,68 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
 
     /**
      * Adds the doInsert() method.
-     * @param string &$script The script will be modified in this method.
+     *
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addDoInsert(&$script)
+    protected function addDoInsert(string &$script): void
     {
         $table = $this->getTable();
         $tableMapClass = $this->getTableMapClass();
 
         $script .= "
     /**
-     * Performs an INSERT on the database, given a ".$this->getObjectClassName()." or Criteria object.
+     * Performs an INSERT on the database, given a " . $this->getObjectClassName() . " or Criteria object.
      *
-     * @param mixed               \$criteria Criteria or ".$this->getObjectClassName()." object containing data that is used to create the INSERT statement.
+     * @param mixed \$criteria Criteria or " . $this->getObjectClassName() . " object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface \$con the ConnectionInterface connection to use
-     * @return mixed           The new primary key.
-     * @throws PropelException Any exceptions caught during processing will be
+     * @return mixed The new primary key.
+     * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
      */
-    public static function doInsert(\$criteria, ConnectionInterface \$con = null)
+    public static function doInsert(\$criteria, ?ConnectionInterface \$con = null)
     {
         if (null === \$con) {
-            \$con = Propel::getServiceContainer()->getWriteConnection(" . $tableMapClass  . "::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getWriteConnection(" . $tableMapClass . "::DATABASE_NAME);
         }
 
         if (\$criteria instanceof Criteria) {
             \$criteria = clone \$criteria; // rename for clarity
         } else {
-            \$criteria = \$criteria->buildCriteria(); // build Criteria from ".$this->getObjectClassName()." object
+            \$criteria = \$criteria->buildCriteria(); // build Criteria from " . $this->getObjectClassName() . " object
         }
 ";
 
         foreach ($table->getColumns() as $col) {
-            if ($col->isPrimaryKey()
+            if (
+                $col->isPrimaryKey()
                 && $col->isAutoIncrement()
-                && 'none' !== $table->getIdMethod()
+                && $table->getIdMethod() !== 'none'
                 && !$table->isAllowPkInsert()
             ) {
                 $script .= "
-        if (\$criteria->containsKey(".$this->getColumnConstant($col).") && \$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.".$this->getColumnConstant($col).".')');
+        if (\$criteria->containsKey(" . $this->getColumnConstant($col) . ') && $criteria->keyContainsValue(' . $this->getColumnConstant($col) . ") ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('." . $this->getColumnConstant($col) . ".')');
         }
 ";
                 if (!$this->getPlatform()->supportsInsertNullPk()) {
                     $script .= "
         // remove pkey col since this table uses auto-increment and passing a null value for it is not valid
-        \$criteria->remove(".$this->getColumnConstant($col).");
+        \$criteria->remove(" . $this->getColumnConstant($col) . ");
 ";
                 }
-            } elseif ($col->isPrimaryKey()
+            } elseif (
+                $col->isPrimaryKey()
                 && $col->isAutoIncrement()
-                && 'none' !== $table->getIdMethod()
+                && $table->getIdMethod() !== 'none'
                 && $table->isAllowPkInsert()
                 && !$this->getPlatform()->supportsInsertNullPk()
             ) {
                 $script .= "
         // remove pkey col if it is null since this table does not accept that
-        if (\$criteria->containsKey(".$this->getColumnConstant($col).") && !\$criteria->keyContainsValue(" . $this->getColumnConstant($col) . ") ) {
-            \$criteria->remove(".$this->getColumnConstant($col).");
+        if (\$criteria->containsKey(" . $this->getColumnConstant($col) . ') && !$criteria->keyContainsValue(' . $this->getColumnConstant($col) . ") ) {
+            \$criteria->remove(" . $this->getColumnConstant($col) . ");
         }
 ";
             }
@@ -1400,5 +1596,4 @@ class ".$this->getUnqualifiedClassName()." extends TableMap
     }
 ";
     }
-
 }

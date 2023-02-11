@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -14,7 +12,7 @@ use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Model\Inheritance;
 
 /**
- * Generates the empty PHP5 stub object class for use with inheritance in the
+ * Generates the empty stub object class for use with inheritance in the
  * user object model (OM).
  *
  * This class produces the empty stub class that can be customized with
@@ -27,7 +25,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * The current child "object" we are operating on.
      *
-     * @var Inheritance $child
+     * @var \Propel\Generator\Model\Inheritance|null
      */
     private $child;
 
@@ -36,7 +34,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getChild()->getClassName();
     }
@@ -44,19 +42,21 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Overrides method to return child package, if specified.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
-        return ($this->child->getPackage() ? $this->child->getPackage() : parent::getPackage());
+        return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
 
     /**
      * Sets the child object that we're operating on currently.
      *
-     * @param Inheritance $child Inheritance
+     * @param \Propel\Generator\Model\Inheritance $child Inheritance
+     *
+     * @return void
      */
-    public function setChild(Inheritance $child)
+    public function setChild(Inheritance $child): void
     {
         $this->child = $child;
     }
@@ -64,13 +64,14 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the child object we're operating on currently.
      *
-     * @return Inheritance
-     * @throws BuildException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return \Propel\Generator\Model\Inheritance
      */
-    public function getChild()
+    public function getChild(): Inheritance
     {
         if (!$this->child) {
-            throw new BuildException("The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.");
+            throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
         }
 
         return $this->child;
@@ -79,9 +80,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classpath to parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClasspath()
+    protected function getParentClasspath(): ?string
     {
         if ($this->getChild()->getAncestor()) {
             return $this->getChild()->getAncestor();
@@ -93,9 +94,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classname of parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClassName()
+    protected function getParentClassName(): ?string
     {
         return ClassTools::classname($this->getParentClasspath());
     }
@@ -103,9 +104,11 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Adds class phpdoc comment and opening of class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(string &$script): void
     {
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
@@ -136,16 +139,15 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
  *
  * $now
  *";
-        }
+            }
             $script .= "
  * You should add additional methods to this class to meet the
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
- *
  */";
         }
         $script .= "
-class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()."
+class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClassName() . "
 {
 ";
     }
@@ -156,26 +158,29 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
      * By default there are no methods for the empty stub classes; override this
      * method if you want to change that behavior.
      *
-     * @param string &$script
      * @see ObjectBuilder::addClassBody()
+     *
+     * @param string $script
+     *
+     * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(string &$script): void
     {
         $child = $this->getChild();
         $col = $child->getColumn();
         $cfc = $col->getPhpName();
 
-        $const = "CLASSKEY_".$child->getConstantSuffix();
+        $const = 'CLASSKEY_' . $child->getConstantSuffix();
 
         $script .= "
     /**
-     * Constructs a new ".$this->getChild()->getClassName()." class, setting the ".$col->getName()." column to ".$this->getTableMapClassName()."::$const.
+     * Constructs a new " . $this->getChild()->getClassName() . ' class, setting the ' . $col->getName() . ' column to ' . $this->getTableMapClassName() . "::$const.
      */
     public function __construct()
     {";
         $script .= "
         parent::__construct();
-        \$this->set$cfc(".$this->getTableMapClassName()."::CLASSKEY_".$child->getConstantSuffix().");
+        \$this->set$cfc(" . $this->getTableMapClassName() . '::CLASSKEY_' . $child->getConstantSuffix() . ");
     }
 ";
     }
@@ -183,12 +188,14 @@ class ".$this->getUnqualifiedClassName()." extends ".$this->getParentClassName()
     /**
      * Closes class.
      *
-     * @param string &$script
+     * @param string $script The script will be modified in this method.
+     *
+     * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(string &$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

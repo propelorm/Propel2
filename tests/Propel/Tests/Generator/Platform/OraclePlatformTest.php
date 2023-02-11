@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -16,22 +14,23 @@ use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\OraclePlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
-/**
- *
- */
 class OraclePlatformTest extends PlatformTestProvider
 {
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\OraclePlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new OraclePlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
@@ -40,6 +39,9 @@ class OraclePlatformTest extends PlatformTestProvider
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
@@ -54,6 +56,8 @@ class OraclePlatformTest extends PlatformTestProvider
 
     /**
      * @dataProvider providerForTestGetAddTablesDDL
+     *
+     * @return void
      */
     public function testGetAddTablesDDL($schema)
     {
@@ -118,6 +122,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     *
+     * @return void
      */
     public function testGetAddTablesSkipSQLDDL($schema)
     {
@@ -131,6 +137,8 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSimplePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLSimplePK($schema)
     {
@@ -153,6 +161,8 @@ CREATE SEQUENCE foo_SEQ
 
     /**
      * @dataProvider providerForTestGetAddTableDDLCompositePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLCompositePK($schema)
     {
@@ -172,6 +182,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (foo,bar);
 
     /**
      * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     *
+     * @return void
      */
     public function testGetAddTableDDLUniqueIndex($schema)
     {
@@ -192,6 +204,9 @@ CREATE SEQUENCE foo_SEQ
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');
@@ -201,6 +216,9 @@ DROP TABLE foo CASCADE CONSTRAINTS;
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableWithSequenceDDL()
     {
         $table = new Table('foo');
@@ -216,6 +234,9 @@ DROP SEQUENCE foo_sequence;
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCustomSqlType()
     {
         $column = new Column('foo');
@@ -231,13 +252,18 @@ DROP SEQUENCE foo_sequence;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetPrimaryKeyDDLSimpleKey($table)
     {
-        $expected ='CONSTRAINT foo_pk PRIMARY KEY (bar)';
+        $expected = 'CONSTRAINT foo_pk PRIMARY KEY (bar)';
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLLongTableName()
     {
         $table = new Table('this_table_has_a_very_long_name');
@@ -248,6 +274,9 @@ DROP SEQUENCE foo_sequence;
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLCompositeKey()
     {
         $table = new Table('foo');
@@ -263,6 +292,8 @@ DROP SEQUENCE foo_sequence;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetDropPrimaryKeyDDL($table)
     {
@@ -274,6 +305,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_pk;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetAddPrimaryKeyDDL($table)
     {
@@ -285,6 +318,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (bar);
 
     /**
      * @dataProvider providerForTestGetIndicesDDL
+     *
+     * @return void
      */
     public function testAddIndicesDDL($table)
     {
@@ -298,6 +333,8 @@ CREATE INDEX foo_index ON foo (bar1);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testAddIndexDDL($index)
     {
@@ -309,6 +346,8 @@ CREATE INDEX babar ON foo (bar1,bar2);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testDropIndexDDL($index)
     {
@@ -320,6 +359,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testGetIndexDDL($index)
     {
@@ -329,6 +370,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetUniqueDDL
+     *
+     * @return void
      */
     public function testGetUniqueDDL($index)
     {
@@ -338,6 +381,8 @@ DROP INDEX babar;
 
     /**
      * @dataProvider providerForTestGetForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeysDDL($table)
     {
@@ -355,6 +400,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_baz_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeyDDL($fk)
     {
@@ -368,6 +415,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeySkipSqlDDL($fk)
     {
@@ -377,6 +426,8 @@ ALTER TABLE foo ADD CONSTRAINT foo_bar_fk
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeyDDL($fk)
     {
@@ -388,6 +439,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeySkipSqlDDL($fk)
     {
@@ -397,6 +450,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetForeignKeyDDL($fk)
     {
@@ -408,6 +463,8 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetForeignKeySkipSqlDDL($fk)
     {
@@ -415,6 +472,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         $this->assertEquals($expected, $this->getPLatform()->getForeignKeyDDL($fk));
     }
 
+    /**
+     * @return void
+     */
     public function testGetCommentBlockDDL()
     {
         $expected = "
@@ -425,15 +485,18 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         $this->assertEquals($expected, $this->getPLatform()->getCommentBlockDDL('foo bar'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetOracleBlockStorageDDL()
     {
         $schema = <<<EOF
 <database name="test" schema="x">
     <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="title" type="VARCHAR" size="255" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
             <vendor type="oracle">
                 <parameter name="PCTFree" value="20"/>
                 <parameter name="InitTrans" value="4"/>
@@ -445,7 +508,7 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         </index>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="author" foreignSchema="y">
-            <reference local="author_id" foreign="id" />
+            <reference local="author_id" foreign="id"/>
         </foreign-key>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
@@ -463,9 +526,9 @@ ALTER TABLE foo DROP CONSTRAINT foo_bar_fk;
         </vendor>
     </table>
     <table name="author" schema="y">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="first_name" type="VARCHAR" size="100"/>
+        <column name="last_name" type="VARCHAR" size="100"/>
         <vendor type="oracle">
             <parameter name="PCTFree" value="20"/>
             <parameter name="InitTrans" value="4"/>
@@ -590,4 +653,41 @@ EOF;
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
 
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $expected = "
+CREATE TABLE foo
+(
+    uuid UUID DEFAULT vendor_specific_default() NOT NULL,
+    other_uuid UUID
+);
+
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (uuid);
+";
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE foo
+(
+    uuid-bin RAW(16) DEFAULT vendor_specific_default() NOT NULL,
+    other_uuid-bin RAW(16)
+);
+
+ALTER TABLE foo ADD CONSTRAINT foo_pk PRIMARY KEY (uuid-bin);
+";
+        $this->assertCreateTableMatches($expected, $schema);
+    }
 }

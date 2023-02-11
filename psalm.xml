@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="6"
+    allowStringToStandInForClass="true"
+    usePhpDocMethodsWithoutMagicCall="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    autoloader="autoload.php.dist"
+    errorBaseline="psalm-baseline.xml"
+>
+    <projectFiles>
+        <directory name="src/Propel/"/>
+    </projectFiles>
+
+    <issueHandlers>
+        <RedundantConditionGivenDocblockType errorLevel="suppress"/>
+        <DocblockTypeContradiction errorLevel="suppress"/>
+        <MissingClosureParamType errorLevel="suppress"/>
+        <MissingClosureReturnType errorLevel="suppress"/>
+        <PropertyNotSetInConstructor errorLevel="suppress"/>
+        <UnresolvableInclude errorLevel="suppress"/>
+        <ImplementedReturnTypeMismatch errorLevel="suppress"/>
+        <ImplicitToStringCast errorLevel="suppress"/>
+        <UndefinedMagicMethod errorLevel="suppress"/>
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <referencedMethod name="Symfony\Component\Config\Definition\Builder\TreeBuilder::root"/>
+            </errorLevel>
+        </UndefinedMethod>
+        <!-- Workaround for https://github.com/vimeo/psalm/issues/7026 -->
+        <ReservedWord errorLevel="suppress">
+            <errorLevel type="suppress">
+                <file name="src/Propel/Common/Config/ConfigurationManager.php" />
+                <file name="src/Propel/Common/Config/Loader/YamlFileLoader.php" />
+                <file name="src/Propel/Common/Config/PropelConfiguration.php" />
+                <file name="src/Propel/Generator/Behavior/Validate/ValidateBehavior.php" />
+                <file name="src/Propel/Runtime/Parser/YamlParser.php" />
+            </errorLevel>
+        </ReservedWord>
+    </issueHandlers>
+</psalm>

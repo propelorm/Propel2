@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -14,26 +12,28 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\IdMethodParameter;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Generator\Platform\SqlitePlatform;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 
-/**
- *
- */
 class SqlitePlatformTest extends PlatformTestProvider
 {
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\SqlitePlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new SqlitePlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteConnected()
     {
         $p = $this->getPlatform();
@@ -46,6 +46,9 @@ class SqlitePlatformTest extends PlatformTestProvider
         $this->assertEquals($expected, $quoted);
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
@@ -54,6 +57,9 @@ class SqlitePlatformTest extends PlatformTestProvider
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
@@ -68,6 +74,8 @@ class SqlitePlatformTest extends PlatformTestProvider
 
     /**
      * @dataProvider providerForTestGetAddTablesDDL
+     *
+     * @return void
      */
     public function testGetAddTablesDDL($schema)
     {
@@ -111,6 +119,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     *
+     * @return void
      */
     public function testGetAddTablesSkipSQLDDL($schema)
     {
@@ -121,6 +131,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSimplePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLSimplePK($schema)
     {
@@ -138,6 +150,8 @@ CREATE TABLE [foo]
 
     /**
      * @dataProvider providerForTestGetAddTableDDLNonIntegerPK
+     *
+     * @return void
      */
     public function testGetAddTableDDLNonIntegerPK($schema)
     {
@@ -156,6 +170,8 @@ CREATE TABLE [foo]
 
     /**
      * @dataProvider providerForTestGetAddTableDDLCompositePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLCompositePK($schema)
     {
@@ -174,6 +190,8 @@ CREATE TABLE [foo]
 
     /**
      * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     *
+     * @return void
      */
     public function testGetAddTableDDLUniqueIndex($schema)
     {
@@ -189,6 +207,9 @@ CREATE TABLE [foo]
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');
@@ -198,6 +219,9 @@ DROP TABLE IF EXISTS [foo];
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDL()
     {
         $c = new Column('foo');
@@ -210,6 +234,9 @@ DROP TABLE IF EXISTS [foo];
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($c));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCustomSqlType()
     {
         $column = new Column('foo');
@@ -223,6 +250,9 @@ DROP TABLE IF EXISTS [foo];
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLCompositeKeyWithAutoIncrement()
     {
         $table = new Table('foo');
@@ -241,6 +271,9 @@ DROP TABLE IF EXISTS [foo];
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLCompositeKey()
     {
         $table = new Table('foo');
@@ -256,6 +289,8 @@ DROP TABLE IF EXISTS [foo];
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetDropPrimaryKeyDDL($table)
     {
@@ -266,6 +301,8 @@ DROP TABLE IF EXISTS [foo];
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetAddPrimaryKeyDDL($table)
     {
@@ -276,6 +313,8 @@ DROP TABLE IF EXISTS [foo];
 
     /**
      * @dataProvider providerForTestGetIndicesDDL
+     *
+     * @return void
      */
     public function testAddIndicesDDL($table)
     {
@@ -289,6 +328,8 @@ CREATE INDEX [foo_index] ON [foo] ([bar1]);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testAddIndexDDL($index)
     {
@@ -300,6 +341,8 @@ CREATE INDEX [babar] ON [foo] ([bar1],[bar2]);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testDropIndexDDL($index)
     {
@@ -311,6 +354,8 @@ DROP INDEX [babar];
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testGetIndexDDL($index)
     {
@@ -320,6 +365,8 @@ DROP INDEX [babar];
 
     /**
      * @dataProvider providerForTestGetUniqueDDL
+     *
+     * @return void
      */
     public function testGetUniqueDDL($index)
     {
@@ -329,24 +376,30 @@ DROP INDEX [babar];
 
     /**
      * @dataProvider providerForTestGetForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeysDDL($table)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeysDDL($table));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeyDDL($fk)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeyDDL($fk)
     {
@@ -356,6 +409,8 @@ DROP INDEX [babar];
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetForeignKeyDDL($fk)
     {
@@ -364,6 +419,9 @@ DROP INDEX [babar];
         $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
+    /**
+     * @return void
+     */
     public function testGetCommentBlockDDL()
     {
         $expected = "
@@ -374,4 +432,41 @@ DROP INDEX [babar];
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
 
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid] BLOB,
+    PRIMARY KEY ([uuid])
+);
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
+    }
+
+    /**
+     * @dataProvider providerForTestCreateSchemaWithUuidBinaryColumns
+     *
+     * @return void
+     */
+    public function testCreateSchemaWithUuidBinaryColumns($schema)
+    {
+        $expected = "
+CREATE TABLE [foo]
+(
+    [uuid-bin] BLOB DEFAULT vendor_specific_default() NOT NULL,
+    [other_uuid-bin] BLOB,
+    PRIMARY KEY ([uuid-bin])
+);
+";
+
+        $this->assertCreateTableMatches($expected, $schema);
+    }
 }

@@ -12,7 +12,7 @@ if "%mysql%" == "" (
 )       
 
 if "%mysql%" == "" (
-    echo Can not find mysql binary. Is it installed?
+    echo Cannot find mysql binary. Is it installed?
     exit /B 1
 )
 
@@ -43,6 +43,7 @@ call %DIR%\base.bat :check
 if "%errorlevel%" == "1" exit /B 1
 
 "%mysql%" --host="%DB_HOSTNAME%" -u"%DB_USER%" %pw_option% -e ^"^
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));^
 CREATE DATABASE test;^
 CREATE SCHEMA bookstore_schemas;^
 CREATE SCHEMA contest;^

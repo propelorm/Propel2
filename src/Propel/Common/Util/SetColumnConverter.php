@@ -1,16 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Util;
-use Propel\Common\Exception\SetColumnConverterException;
 
+use Propel\Common\Exception\SetColumnConverterException;
 
 /**
  * Class converts SET column values between integer and string/array representation.
@@ -23,57 +21,59 @@ class SetColumnConverter
      * Converts set column values to the corresponding integer.
      *
      * @param mixed $val
-     * @param array $valueSet
-     * @return int|null
+     * @param array<int, string> $valueSet
      *
-     * @throws SetColumnConverterException
+     * @throws \Propel\Common\Exception\SetColumnConverterException
+     *
+     * @return string Integer value as string.
      */
-    public static function convertToInt($val, array $valueSet)
+    public static function convertToInt($val, array $valueSet): string
     {
         if ($val === null) {
-
-            return 0;
+            return '0';
         }
         if (!is_array($val)) {
             $val = [$val];
         }
-        $bitValueArr = array_pad([], count($valueSet), '0');
+        $bitValue = str_repeat('0', count($valueSet));
         foreach ($val as $value) {
-            if (!in_array($value, $valueSet)) {
+            $index = array_search($value, $valueSet);
+            if ($index === false) {
                 throw new SetColumnConverterException(sprintf('Value "%s" is not among the valueSet', $value), $value);
             }
-            $bitValueArr[array_search($value, $valueSet)] = '1';
+            $bitValue[$index] = '1';
         }
-        
-        return base_convert(implode(array_reverse($bitValueArr)), 2, 10);
+
+        return base_convert(strrev($bitValue), 2, 10);
     }
 
     /**
-     * Converts set column integer value to corresponding array. 
-     * 
-     * @param mixed $val
-     * @param array $valueSet
-     * 
-     * @return array
+     * Converts set column integer value to corresponding array.
      *
-     * @throws SetColumnConverterException
+     * @param string|null $val
+     * @param array<int, string> $valueSet
+     *
+     * @throws \Propel\Common\Exception\SetColumnConverterException
+     *
+     * @return list<string>
      */
-    public static function convertIntToArray($val, array $valueSet)
+    public static function convertIntToArray(?string $val, array $valueSet): array
     {
         if ($val === null) {
-            
             return [];
         }
-        $bitValueArr = array_reverse(str_split(base_convert($val, 10, 2)));
+        $bitValueStr = strrev(base_convert($val, 10, 2));
+        $bitLength = strlen($bitValueStr);
         $valueArr = [];
-        foreach ($bitValueArr as $bit => $bitValue) {
+        for ($bit = 0; $bit < $bitLength; $bit++) {
             if (!isset($valueSet[$bit])) {
-                throw new SetColumnConverterException(sprintf('Unknown value key: "%s"', $bit), $bit);
+                throw new SetColumnConverterException(sprintf('Unknown value key `%s` for value `%s`', $bit, $val), $bit);
             }
-            if ($bitValue === '1') {
+            if ($bitValueStr[$bit] === '1') {
                 $valueArr[] = $valueSet[$bit];
             }
         }
+
         return $valueArr;
     }
 }

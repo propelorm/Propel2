@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config\Loader;
@@ -18,10 +16,10 @@ use Propel\Common\Config\Exception\InvalidArgumentException;
  * The configuration values are expected to be in form of array. I.e.
  * <code>
  *     <?php
- *         return array(
- *                    'property1' => 'value1',
- *                    .......................
- *                );
+ *         return [
+ *             'property1' => 'value1',
+ *             .......................
+ *         ];
  * </code>
  *
  * @author Cristiano Cinotti
@@ -31,18 +29,17 @@ class PhpFileLoader extends FileLoader
     /**
      * Loads a PHP file.
      *
-     * @param mixed  $file The resource
-     * @param string $type The resource type
+     * @param string $resource The resource
+     * @param string|null $type The resource type
+     *
+     * @throws \Propel\Common\Config\Exception\InvalidArgumentException if invalid json file
+     * @throws \InvalidArgumentException if configuration file not found
      *
      * @return array
-     *
-     * @throws \InvalidArgumentException                                if configuration file not found
-     * @throws \Propel\Common\Config\Exception\InvalidArgumentException if invalid json file
-     * @throws \Propel\Common\Config\Exception\InputOutputException     if configuration file is not readable
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null): array
     {
-        $path = $this->getPath($file);
+        $path = $this->getPath($resource);
 
         //Use output buffering because in case $file contains invalid non-php content (i.e. plain text), include() function
         //write it on stdoutput
@@ -51,25 +48,23 @@ class PhpFileLoader extends FileLoader
         ob_end_clean();
 
         if (!is_array($content)) {
-            throw new InvalidArgumentException("The configuration file '$file' has invalid content.");
+            throw new InvalidArgumentException("The configuration file '$resource' has invalid content.");
         }
 
-        $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
-
-        return $content;
+        return $this->resolveParams($content); //Resolve parameter placeholders (%name%)
     }
 
     /**
      * Returns true if this class supports the given resource.
      * It supports both .php and .inc extensions.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports(['php', 'inc'], $resource);
+        return static::checkSupports(['php', 'inc'], $resource);
     }
 }

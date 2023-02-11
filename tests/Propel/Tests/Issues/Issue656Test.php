@@ -1,19 +1,27 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
+use Issue656TestObject;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\TestCase;
-
 
 /**
  * Regression test for https://github.com/propelorm/Propel2/issues/656
  */
 class Issue656Test extends TestCase
 {
-
-    public function setUp()
+    /**
+     * @return void
+     */
+    public function setUp(): void
     {
         if (!class_exists('\Issue656TestObject')) {
             $schema = <<<EOF
@@ -40,12 +48,15 @@ EOF;
         }
     }
 
+    /**
+     * @return void
+     */
     public function testGetGetterRelatedBy()
     {
-        $objectA = new \Issue656TestObject();
+        $objectA = new Issue656TestObject();
         $objectA->setName('A');
 
-        $objectB = new \Issue656TestObject();
+        $objectB = new Issue656TestObject();
         $objectB->setName('B');
 
         $collection = new ObjectCollection();
@@ -55,5 +66,4 @@ EOF;
 
         $this->assertEquals($collection, $objectA->getIssue656TestObjectsRelatedByTo());
     }
-
 }

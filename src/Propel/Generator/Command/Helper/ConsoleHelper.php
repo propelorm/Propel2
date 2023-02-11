@@ -1,16 +1,36 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Generator\Command\Helper;
 
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\DialogHelper as Symfony23DialogHelper;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
-class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterface
+class ConsoleHelper extends QuestionHelper
 {
+    /**
+     * @var \Symfony\Component\Console\Input\InputInterface
+     */
     protected $input;
+
+    /**
+     * @var \Symfony\Component\Console\Output\OutputInterface
+     */
     protected $output;
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -18,37 +38,57 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @param string $questionText
+     * @param string|null $default
+     * @param array|null $autocomplete
+     *
+     * @return mixed
      */
-    public function askQuestion($question, $default = null, array $autocomplete = null)
+    public function askQuestion(string $questionText, ?string $default = null, ?array $autocomplete = null)
     {
-        return parent::ask($this->output, $this->formatQuestion($question, $default), $default, $autocomplete);
+        $question = new Question($this->formatQuestion($questionText, $default), $default);
+        $question->setAutocompleterValues($autocomplete);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
-     * @inheritdoc
+     * @param string $questionText
+     * @param bool $fallback
+     *
+     * @return mixed
      */
-    public function askHiddenResponse($question, $fallback = true)
+    public function askHiddenResponse(string $questionText, bool $fallback = true)
     {
-        return parent::askHiddenResponse($this->output, $this->formatQuestion($question), $fallback);
+        $question = new Question($this->formatQuestion($questionText));
+        $question->setHidden(true);
+        $question->setHiddenFallback($fallback);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
-     * @inheritdoc
+     * @param string $text
+     *
+     * @return void
      */
-    public function writeSection($text)
+    public function writeSection(string $text): void
     {
-        $this->writeln([
+        $this->output->writeln([
             '',
             $text,
         ]);
     }
 
     /**
-     * @inheritdoc
+     * @param string $text
+     * @param string $style
+     *
+     * @return void
      */
-    public function writeBlock($text, $style = 'bg=blue;fg=white')
+    public function writeBlock(string $text, string $style = 'bg=blue;fg=white'): void
     {
+        /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
         $formatter = $this->getHelperSet()->get('formatter');
         $block = $formatter->formatBlock($text, $style, true);
 
@@ -56,89 +96,120 @@ class ConsoleHelper extends Symfony23DialogHelper implements ConsoleHelperInterf
     }
 
     /**
-     * @inheritdoc
+     * @param array<string, string> $items
+     *
+     * @return void
      */
-    public function writeSummary($items)
+    public function writeSummary(array $items): void
     {
-        $this->writeln('');
+        $this->output->writeln('');
         foreach ($items as $name => $value) {
-            $this->writeln(sprintf('<info>%s</info>: <comment>%s</comment>', $name, $value));
+            $this->output->writeln(sprintf('<info>%s</info>: <comment>%s</comment>', $name, $value));
         }
     }
 
     /**
-     * @inheritdoc
+     * @param string $question
+     * @param array $choices
+     * @param string|null $default
+     * @param int|null $attempts
+     * @param string $errorMessage
+     * @param bool $multiselect
+     *
+     * @return mixed
      */
-    private function formatQuestion($question, $default = null)
-    {
-        if ($default) {
-            return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
-        } else {
-            return sprintf('<info>%s</info>: ', $question);
+    public function select(
+        string $question,
+        array $choices,
+        ?string $default = null,
+        ?int $attempts = null,
+        string $errorMessage = 'Value "%s" is invalid',
+        bool $multiselect = false
+    ) {
+        $choiceQuestion = new ChoiceQuestion($this->formatQuestion($question, $default), $choices, $default);
+
+        if ($attempts) {
+            $choiceQuestion->setMaxAttempts($attempts);
         }
+
+        $choiceQuestion->setErrorMessage($errorMessage);
+        $choiceQuestion->setMultiselect($multiselect);
+
+        return parent::ask($this->input, $this->output, $choiceQuestion);
     }
 
     /**
-     * @inheritdoc
+     * @param string $questionText
+     * @param bool $default
+     *
+     * @return mixed
      */
-    public function select($question, $choices, $default = null, $attempts = false, $errorMessage = 'Value "%s" is invalid', $multiselect = false)
+    public function askConfirmation(string $questionText, bool $default = true)
     {
-        return parent::select(
-                                $this->output,
-                                $this->formatQuestion($question, $default),
-                                $choices,
-                                $default,
-                                $attempts,
-                                $errorMessage,
-                                $multiselect
-                             );
+        $question = new ConfirmationQuestion($this->formatQuestion($questionText, $default ? 'yes' : 'no'), $default);
+
+        return parent::ask($this->input, $this->output, $question);
     }
 
     /**
-     * @inheritdoc
+     * @return \Symfony\Component\Console\Input\InputInterface
      */
-    public function askConfirmation($question, $default = true)
-    {
-        return parent::askConfirmation($this->output, $this->formatQuestion($question, $default ? 'yes' : 'no'), $default);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getInput()
+    public function getInput(): InputInterface
     {
         return $this->input;
     }
 
     /**
-     * @inheritdoc
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     *
+     * @return void
      */
-    public function setInput(InputInterface $input)
+    public function setInput(InputInterface $input): void
     {
         $this->input = $input;
     }
 
     /**
-     * @inheritdoc
+     * @return \Symfony\Component\Console\Output\OutputInterface
      */
-    public function getOutput()
+    public function getOutput(): OutputInterface
     {
         return $this->output;
     }
 
     /**
-     * @inheritdoc
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return void
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
     }
 
     /**
-     * @inheritdoc
+     * @param iterable|string $messages
+     * @param int $options
+     *
+     * @return void
      */
-    public function writeln($messages, $options = 0)
+    public function writeln($messages, int $options = 0): void
     {
         $this->output->writeln($messages, $options);
+    }
+
+    /**
+     * @param string $question
+     * @param string|null $default
+     *
+     * @return string
+     */
+    protected function formatQuestion(string $question, ?string $default = null): string
+    {
+        if ($default) {
+            return sprintf('<info>%s</info> [<comment>%s</comment>]: ', $question, $default);
+        }
+
+        return sprintf('<info>%s</info>: ', $question);
     }
 }

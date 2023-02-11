@@ -1,22 +1,23 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
 
+use Propel\Generator\Model\PropelTypes;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
-use Propel\Generator\Model\PropelTypes;
+use RuntimeException;
 
 /**
  * Oracle adapter.
@@ -37,16 +38,18 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see parent::initConnection()
      *
-     * @param \PDO  $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param array $settings
+     *
+     * @return void
      */
-    public function initConnection(ConnectionInterface $con, array $settings)
+    public function initConnection(ConnectionInterface $con, array $settings): void
     {
         $con->exec("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD'");
         $con->exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
         if (isset($settings['queries']) && is_array($settings['queries'])) {
             foreach ($settings['queries'] as $queries) {
-                foreach ((array) $queries as $query) {
+                foreach ((array)$queries as $query) {
                     $con->exec($query);
                 }
             }
@@ -61,29 +64,29 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString(string $s1, string $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function compareRegex($left, $right)
+    public function compareRegex($left, $right): string
     {
-        return sprintf("REGEXP_LIKE(%s, %s)", $left, $right);
+        return sprintf('REGEXP_LIKE(%s, %s)', $left, $right);
     }
 
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString(string $s, int $pos, int $len): string
     {
         return "SUBSTR($s, $pos, $len)";
     }
@@ -91,10 +94,11 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
-    public function strLength($s)
+    public function strLength(string $s): string
     {
         return "LENGTH($s)";
     }
@@ -102,12 +106,14 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::applyLimit()
      *
-     * @param string        $sql
-     * @param integer       $offset
-     * @param integer       $limit
-     * @param null|Criteria $criteria
+     * @param string $sql
+     * @param int $offset
+     * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
+     *
+     * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit, $criteria = null)
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         $params = [];
         if ($criteria && $criteria->needsSelectAliases()) {
@@ -132,34 +138,40 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @return int
      */
-    protected function getIdMethod()
+    protected function getIdMethod(): int
     {
         return AdapterInterface::ID_METHOD_SEQUENCE;
     }
 
     /**
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
-     * @return integer
+     * @throws \RuntimeException
+     *
+     * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null)
+    public function getId(ConnectionInterface $con, ?string $name = null): int
     {
-        if (null === $name) {
+        if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
 
         $dataFetcher = $con->query(sprintf('SELECT %s.nextval FROM dual', $name));
+        if ($dataFetcher === false) {
+            throw new RuntimeException('Query returned no statement.');
+        }
 
         return $dataFetcher->fetchColumn();
     }
 
     /**
-     * @param  string $seed
+     * @param string|null $seed
+     *
      * @return string
      */
-    public function random($seed = null)
+    public function random(?string $seed = null): string
     {
         return 'dbms_random.value';
     }
@@ -170,10 +182,11 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @see http://propel.phpdb.org/trac/ticket/795
      *
-     * @param  Criteria $criteria
-     * @return Criteria The input, with Select columns replaced by aliases
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
+     *
+     * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria)
+    public function turnSelectColumnsToAliases(Criteria $criteria): Criteria
     {
         $selectColumns = $criteria->getSelectColumns();
         // clearSelectColumns also clears the aliases, so get them too
@@ -183,7 +196,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         // add the select columns back
         foreach ($selectColumns as $id => $clause) {
             // Generate a unique alias
-            $baseAlias = "ORA_COL_ALIAS_".$id;
+            $baseAlias = 'ORA_COL_ALIAS_' . $id;
             $alias = $baseAlias;
             // If it already exists, add a unique suffix
             $i = 0;
@@ -206,18 +219,18 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @see AdapterInterface::bindValue()
      *
-     * @param \PDOStatement $stmt
-     * @param string        $parameter
-     * @param mixed         $value
-     * @param ColumnMap     $cMap
-     * @param null|integer  $position
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
+     * @param string $parameter
+     * @param mixed $value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
+     * @param int|null $position
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue(\PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
-        if (PropelTypes::CLOB_EMU === $cMap->getType()) {
-            return $stmt->bindParam(':p'.$position, $value, $cMap->getPdoType(), strlen($value));
+        if ($cMap->getType() === PropelTypes::CLOB_EMU) {
+            return $stmt->bindParam(':p' . $position, $value, $cMap->getPdoType(), strlen($value));
         }
 
         if ($cMap->isTemporal()) {
@@ -235,14 +248,34 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * We need to replace oracle: to oci: in connection's dsn.
      *
      * @param array $params
+     *
      * @return array
      */
-    protected function prepareParams($params)
+    protected function prepareParams(array $params): array
     {
         if (isset($params['dsn'])) {
             $params['dsn'] = str_replace('oracle:', 'oci:', $params['dsn']);
         }
 
         return parent::prepareParams($params);
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(string &$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if ($type === Lock::SHARED) {
+            $sql .= ' LOCK IN SHARE MODE';
+        } elseif ($type === Lock::EXCLUSIVE) {
+            $sql .= ' FOR UPDATE';
+        }
     }
 }

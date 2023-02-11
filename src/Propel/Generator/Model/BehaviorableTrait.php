@@ -1,45 +1,48 @@
 <?php
+
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Util\BehaviorLocator;
-use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Util\BehaviorLocator;
 
 /**
  * BehaviorableTrait use it on every model that can hold behaviors
- *
  */
 trait BehaviorableTrait
 {
     /**
-     * @var Behavior[]
+     * @var array<\Propel\Generator\Model\Behavior>
      */
-    protected $behaviors;
+    protected $behaviors = [];
 
     /**
-     * @var BehaviorLocator
+     * @var \Propel\Generator\Util\BehaviorLocator
      */
     private $behaviorLocator;
 
     /**
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    abstract protected function getGeneratorConfig();
+    abstract protected function getGeneratorConfig(): ?GeneratorConfigInterface;
 
     /**
      * Returns the behavior locator.
      *
-     * @return BehaviorLocator
+     * @return \Propel\Generator\Util\BehaviorLocator
      */
-    private function getBehaviorLocator()
+    private function getBehaviorLocator(): BehaviorLocator
     {
-        if (null === $this->behaviorLocator) {
+        if ($this->behaviorLocator === null) {
             $config = $this->getGeneratorConfig();
-            if (null !== $config) {
+            if ($config !== null) {
                 $this->behaviorLocator = $config->getBehaviorLocator();
-                if (null === $this->behaviorLocator) {
-                    $this->behaviorLocator = new BehaviorLocator();
-                }
             } else {
                 $this->behaviorLocator = new BehaviorLocator();
             }
@@ -51,11 +54,13 @@ trait BehaviorableTrait
     /**
      * Adds a new Behavior
      *
-     * @param $bdata
-     * @throws BuildException when the added behavior is not an instance of \Propel\Generator\Model\Behavior
-     * @return Behavior       $bdata
+     * @param \Propel\Generator\Model\Behavior|array $bdata
+     *
+     * @throws \Propel\Generator\Exception\BuildException when the added behavior is not an instance of \Propel\Generator\Model\Behavior
+     *
+     * @return \Propel\Generator\Model\Behavior
      */
-    public function addBehavior($bdata)
+    public function addBehavior($bdata): Behavior
     {
         if ($bdata instanceof Behavior) {
             $behavior = $bdata;
@@ -65,9 +70,10 @@ trait BehaviorableTrait
                 // the user probably just forgot to specify the "id" attribute
                 if ($behavior->getId() === $behavior->getName()) {
                     throw new BuildException(sprintf('Behavior "%s" is already registered. Specify a different ID attribute to register the same behavior several times.', $behavior->getName()));
-                } else { // or he copy-pasted it and forgot to update it.
-                    throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
                 }
+
+                // or he copy-pasted it and forgot to update it.
+                throw new BuildException(sprintf('A behavior with ID "%s" is already registered.', $behavior->getId()));
             }
 
             $this->registerBehavior($behavior);
@@ -80,22 +86,31 @@ trait BehaviorableTrait
         $class = $locator->getBehavior($bdata['name']);
         $behavior = new $class();
         if (!($behavior instanceof Behavior)) {
-            throw new BuildException(sprintf('Behavior [%s: %s] not instance of %s',
-                    $bdata['name'], $class, '\Propel\Generator\Model\Behavior'));
+            throw new BuildException(sprintf(
+                'Behavior [%s: %s] not instance of %s',
+                $bdata['name'],
+                $class,
+                '\Propel\Generator\Model\Behavior',
+            ));
         }
         $behavior->loadMapping($bdata);
 
         return $this->addBehavior($behavior);
     }
 
-    abstract protected function registerBehavior(Behavior $behavior);
+    /**
+     * @param \Propel\Generator\Model\Behavior $behavior
+     *
+     * @return void
+     */
+    abstract protected function registerBehavior(Behavior $behavior): void;
 
     /**
      * Returns the list of behaviors.
      *
-     * @return Behavior[]
+     * @return array<\Propel\Generator\Model\Behavior>
      */
-    public function getBehaviors()
+    public function getBehaviors(): array
     {
         return $this->behaviors;
     }
@@ -103,10 +118,11 @@ trait BehaviorableTrait
     /**
      * check if the given behavior exists
      *
-     * @param  string  $id the behavior id
-     * @return boolean True if the behavior exists
+     * @param string $id the behavior id
+     *
+     * @return bool True if the behavior exists
      */
-    public function hasBehavior($id)
+    public function hasBehavior(string $id): bool
     {
         return isset($this->behaviors[$id]);
     }
@@ -114,10 +130,11 @@ trait BehaviorableTrait
     /**
      * Get behavior by id
      *
-     * @param  string   $id the behavior id
-     * @return Behavior a behavior object or null if the behavior doesn't exist
+     * @param string $id the behavior id
+     *
+     * @return \Propel\Generator\Model\Behavior|null A behavior object or null if the behavior doesn't exist
      */
-    public function getBehavior($id)
+    public function getBehavior(string $id): ?Behavior
     {
         if ($this->hasBehavior($id)) {
             return $this->behaviors[$id];

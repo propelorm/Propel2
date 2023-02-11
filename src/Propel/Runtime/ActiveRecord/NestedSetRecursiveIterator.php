@@ -1,48 +1,77 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveRecord;
+
+use RecursiveIterator;
 
 /**
  * Pre-order node iterator for Node objects.
  *
  * @author Heltem <heltem@o2php.com>
+ *
+ * @implements \RecursiveIterator<(int|string), mixed>
  */
-class NestedSetRecursiveIterator implements \RecursiveIterator
+class NestedSetRecursiveIterator implements RecursiveIterator
 {
-    protected $topNode = null;
+    /**
+     * @var object
+     */
+    protected $topNode;
 
-    protected $curNode = null;
+    /**
+     * @var object
+     */
+    protected $curNode;
 
-    public function __construct($node)
+    /**
+     * @param object $node
+     */
+    public function __construct(object $node)
     {
         $this->topNode = $node;
         $this->curNode = $node;
     }
 
-    public function rewind()
+    /**
+     * @return void
+     */
+    public function rewind(): void
     {
         $this->curNode = $this->topNode;
     }
 
-    public function valid()
+    /**
+     * @return bool
+     */
+    public function valid(): bool
     {
-        return null !== $this->curNode;
+        return $this->curNode !== null;
     }
 
+    /**
+     * @psalm-suppress ReservedWord
+     *
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->curNode;
     }
 
-    public function key()
+    /**
+     * @psalm-suppress ReservedWord
+     *
+     * @return string
+     */
+    #[\ReturnTypeWillChange]
+    public function key(): string
     {
         $method = method_exists($this->curNode, 'getPath') ? 'getPath' : 'getAncestors';
         $key = [];
@@ -53,13 +82,16 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
         return implode('.', $key);
     }
 
-    public function next()
+    /**
+     * @return void
+     */
+    public function next(): void
     {
         $nextNode = null;
         $method = method_exists($this->curNode, 'retrieveNextSibling') ? 'retrieveNextSibling' : 'getNextSibling';
         if ($this->valid()) {
-            while (null === $nextNode) {
-                if (null === $this->curNode) {
+            while ($nextNode === null) {
+                if ($this->curNode === null) {
                     break;
                 }
 
@@ -71,19 +103,23 @@ class NestedSetRecursiveIterator implements \RecursiveIterator
             }
             $this->curNode = $nextNode;
         }
-
-        return $this->curNode;
     }
 
-    public function hasChildren()
+    /**
+     * @return bool
+     */
+    public function hasChildren(): bool
     {
         return $this->curNode->hasChildren();
     }
 
-    public function getChildren()
+    /**
+     * @return \Propel\Runtime\ActiveRecord\NestedSetRecursiveIterator|\RecursiveIterator<int|string, mixed>|null
+     */
+    public function getChildren(): ?RecursiveIterator
     {
         $method = method_exists($this->curNode, 'retrieveFirstChild') ? 'retrieveFirstChild' : 'getFirstChild';
 
-        return new NestedSetRecursiveIterator($this->curNode->$method());
+        return new self($this->curNode->$method());
     }
 }

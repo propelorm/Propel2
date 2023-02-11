@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -13,28 +11,27 @@ namespace Propel\Tests\Generator\Platform;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\ColumnComparator;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\PgsqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
-/**
- *
- */
 class PgsqlPlatformMigrationTest extends PlatformMigrationTestProvider
 {
-
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\PgsqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         return new PgsqlPlatform();
     }
 
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
+     *
+     * @return void
      */
     public function testGetModifyDatabaseDDL($databaseDiff)
     {
@@ -70,6 +67,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetRenameTableDDL
+     *
+     * @return void
      */
     public function testGetRenameTableDDL($fromName, $toName)
     {
@@ -81,6 +80,8 @@ ALTER TABLE "foo1" RENAME TO "foo2";
 
     /**
      * @dataProvider providerForTestGetModifyTableDDL
+     *
+     * @return void
      */
     public function testGetModifyTableDDL($tableDiff)
     {
@@ -116,6 +117,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyTableColumnsDDL($tableDiff)
     {
@@ -133,6 +136,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTablePrimaryKeysDDL($tableDiff)
     {
@@ -148,6 +153,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableIndicesDDL
+     *
+     * @return void
      */
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
@@ -155,7 +162,11 @@ END;
 
 DROP INDEX "bar_fk";
 
+ALTER TABLE "foo" DROP CONSTRAINT "bax_unique";
+
 CREATE INDEX "baz_fk" ON "foo" ("baz");
+
+ALTER TABLE "foo" ADD CONSTRAINT "bax_bay_unique" UNIQUE ("bax","bay");
 
 DROP INDEX "bar_baz_fk";
 
@@ -167,6 +178,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
@@ -190,6 +203,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSqlDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
@@ -211,6 +226,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
     {
@@ -222,6 +239,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetRemoveColumnDDL
+     *
+     * @return void
      */
     public function testGetRemoveColumnDDL($column)
     {
@@ -233,6 +252,8 @@ ALTER TABLE "foo" DROP COLUMN "bar";
 
     /**
      * @dataProvider providerForTestGetRenameColumnDDL
+     *
+     * @return void
      */
     public function testGetRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -244,6 +265,8 @@ ALTER TABLE "foo" RENAME COLUMN "bar1" TO "bar2";
 
     /**
      * @dataProvider providerForTestGetModifyColumnDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnDDL($columnDiff)
     {
@@ -253,6 +276,9 @@ ALTER TABLE "foo" ALTER COLUMN "bar" TYPE DOUBLE PRECISION;
         $this->assertEquals($expected, $this->getPlatform()->getModifyColumnDDL($columnDiff));
     }
 
+    /**
+     * @return void
+     */
     public function testGetModifyColumnDDLWithChangedTypeAndDefault()
     {
         $t1 = new Table('foo');
@@ -281,6 +307,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetModifyColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnsDDL($columnDiffs)
     {
@@ -296,6 +324,8 @@ END;
 
     /**
      * @dataProvider providerForTestGetAddColumnDDL
+     *
+     * @return void
      */
     public function testGetAddColumnDDL($column)
     {
@@ -307,6 +337,8 @@ ALTER TABLE "foo" ADD "bar" INTEGER;
 
     /**
      * @dataProvider providerForTestGetAddColumnsDDL
+     *
+     * @return void
      */
     public function testGetAddColumnsDDL($columns)
     {
@@ -320,6 +352,9 @@ END;
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
     }
 
+    /**
+     * @return void
+     */
     public function testGetModifyColumnDDLWithVarcharWithoutSize()
     {
         $t1 = new Table('foo');
@@ -334,8 +369,8 @@ END;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="VARCHAR" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="VARCHAR"/>
     </table>
 </database>
 EOF;
@@ -347,7 +382,10 @@ EOF;
         $this->assertSame($expected, $columnDiff);
     }
 
-public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
+    /**
+     * @return void
+     */
+    public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
     {
         $t1 = new Table('foo');
         $t1->setIdentifierQuoting(true);
@@ -361,7 +399,7 @@ public function testGetModifyColumnDDLWithVarcharWithoutSizeAndPlatform()
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <column name="bar"/>
     </table>
 </database>
@@ -379,6 +417,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyColumnRemoveDefaultValueDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnRemoveDefaultValueDDL($columnDiffs)
     {
@@ -392,6 +432,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql3DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql3DDL($databaseDiff)
     {
@@ -400,10 +442,45 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql4DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql4DDL($databaseDiff)
     {
         $this->assertFalse($databaseDiff);
     }
 
+    /**
+     * @dataProvider providerForTestMigrateToUUIDColumn
+     *
+     * @return void
+     */
+    public function testMigrateToUUIDColumn($tableDiff)
+    {
+        $expected = <<<END
+
+ALTER TABLE "foo" ALTER COLUMN "id" TYPE uuid USING id::uuid;
+
+ALTER TABLE "foo" ALTER COLUMN "id" SET DEFAULT vendor_specific_uuid_generator_function();
+
+END;
+        $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
+    }
+
+    /**
+     * @dataProvider providerForTestMigrateToUuidBinColumn
+     *
+     * @return void
+     */
+    public function testMigrateToUuidBinColumn($tableDiff)
+    {
+        $expected = <<<END
+
+ALTER TABLE "foo" ALTER COLUMN "id" TYPE BYTEA USING NULL;
+
+ALTER TABLE "foo" ALTER COLUMN "id" SET DEFAULT vendor_specific_uuid_generator_function();
+
+END;
+        $this->assertEquals($expected, $this->getPlatform()->getModifyTableColumnsDDL($tableDiff));
+    }
 }

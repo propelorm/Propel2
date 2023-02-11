@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -20,23 +18,25 @@ class JsonParser extends AbstractParser
     /**
      * Converts data from an associative array to JSON.
      *
-     * @param  array  $array Source data to convert
-     * @param string $rootKey
+     * @param array $array Source data to convert
+     * @param string|null $rootKey
+     *
      * @return string Converted data, as a JSON string
      */
-    public function fromArray($array, $rootKey = null)
+    public function fromArray(array $array, ?string $rootKey = null): string
     {
-        return json_encode($rootKey === null ? $array : [$rootKey => $array]);
+        return json_encode($rootKey === null ? $array : [$rootKey => $array], JSON_THROW_ON_ERROR);
     }
 
     /**
      * Alias for JsonParser::fromArray()
      *
-     * @param  array $array Source data to convert
-     * @param string $rootKey
+     * @param array $array Source data to convert
+     * @param string|null $rootKey
+     *
      * @return string Converted data, as a JSON string
      */
-    public function toJSON($array, $rootKey = null)
+    public function toJSON(array $array, ?string $rootKey = null): string
     {
         return $this->fromArray($array, $rootKey);
     }
@@ -44,11 +44,12 @@ class JsonParser extends AbstractParser
     /**
      * Converts data from JSON to an associative array.
      *
-     * @param  string $data Source data to convert, as a JSON string
-     * @param string $rootKey
-     * @return array  Converted data
+     * @param string $data Source data to convert, as a JSON string
+     * @param string|null $rootKey
+     *
+     * @return array Converted data
      */
-    public function toArray($data, $rootKey = null)
+    public function toArray(string $data, ?string $rootKey = null): array
     {
         $data = json_decode($data, true);
 
@@ -66,11 +67,12 @@ class JsonParser extends AbstractParser
     /**
      * Alias for JsonParser::toArray()
      *
-     * @param  string $data Source data to convert, as a JSON string
-     * @param string $rootKey
-     * @return array  Converted data
+     * @param string $data Source data to convert, as a JSON string
+     * @param string|null $rootKey
+     *
+     * @return array Converted data
      */
-    public function fromJSON($data, $rootKey = null)
+    public function fromJSON(string $data, ?string $rootKey = null): array
     {
         return $this->toArray($data, $rootKey);
     }

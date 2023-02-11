@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -21,17 +19,17 @@ use Propel\Generator\Model\Table;
 class DatabaseComparator
 {
     /**
-     * @var DatabaseDiff
+     * @var \Propel\Generator\Model\Diff\DatabaseDiff
      */
     protected $databaseDiff;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $fromDatabase;
 
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $toDatabase;
 
@@ -44,21 +42,27 @@ class DatabaseComparator
     protected $withRenaming = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $removeTable = true;
 
     /**
-     * @var array list of excluded tables
+     * @var array<string> list of excluded tables
      */
     protected $excludedTables = [];
 
-    public function __construct($databaseDiff = null)
+    /**
+     * @param \Propel\Generator\Model\Diff\DatabaseDiff|null $databaseDiff
+     */
+    public function __construct(?DatabaseDiff $databaseDiff = null)
     {
-        $this->databaseDiff = (null === $databaseDiff) ? new DatabaseDiff() : $databaseDiff;
+        $this->databaseDiff = ($databaseDiff === null) ? new DatabaseDiff() : $databaseDiff;
     }
 
-    public function getDatabaseDiff()
+    /**
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff
+     */
+    public function getDatabaseDiff(): DatabaseDiff
     {
         return $this->databaseDiff;
     }
@@ -66,9 +70,11 @@ class DatabaseComparator
     /**
      * Sets the fromDatabase property.
      *
-     * @param Database $fromDatabase
+     * @param \Propel\Generator\Model\Database $fromDatabase
+     *
+     * @return void
      */
-    public function setFromDatabase(Database $fromDatabase)
+    public function setFromDatabase(Database $fromDatabase): void
     {
         $this->fromDatabase = $fromDatabase;
     }
@@ -76,9 +82,9 @@ class DatabaseComparator
     /**
      * Returns the fromDatabase property.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
-    public function getFromDatabase()
+    public function getFromDatabase(): Database
     {
         return $this->fromDatabase;
     }
@@ -86,9 +92,11 @@ class DatabaseComparator
     /**
      * Sets the toDatabase property.
      *
-     * @param Database $toDatabase
+     * @param \Propel\Generator\Model\Database $toDatabase
+     *
+     * @return void
      */
-    public function setToDatabase(Database $toDatabase)
+    public function setToDatabase(Database $toDatabase): void
     {
         $this->toDatabase = $toDatabase;
     }
@@ -96,9 +104,9 @@ class DatabaseComparator
     /**
      * Returns the toDatabase property.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
-    public function getToDatabase()
+    public function getToDatabase(): Database
     {
         return $this->toDatabase;
     }
@@ -106,17 +114,19 @@ class DatabaseComparator
     /**
      * Set true to handle removed tables or false to ignore them
      *
-     * @param boolean $removeTable
+     * @param bool $removeTable
+     *
+     * @return void
      */
-    public function setRemoveTable($removeTable)
+    public function setRemoveTable(bool $removeTable): void
     {
         $this->removeTable = $removeTable;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function getRemoveTable()
+    public function getRemoveTable(): bool
     {
         return $this->removeTable;
     }
@@ -124,9 +134,11 @@ class DatabaseComparator
     /**
      * Set the list of tables excluded from the comparison
      *
-     * @param array $excludedTables set the list of table name
+     * @param array<string> $excludedTables set the list of table name
+     *
+     * @return void
      */
-    public function setExcludedTables(array $excludedTables)
+    public function setExcludedTables(array $excludedTables): void
     {
         $this->excludedTables = $excludedTables;
     }
@@ -134,9 +146,9 @@ class DatabaseComparator
     /**
      * Returns the list of tables excluded from the comparison
      *
-     * @return array
+     * @return array<string>
      */
-    public function getExcludedTables()
+    public function getExcludedTables(): array
     {
         return $this->excludedTables;
     }
@@ -144,13 +156,23 @@ class DatabaseComparator
     /**
      * Returns the computed difference between two database objects.
      *
-     * @param  Database             $fromDatabase
-     * @param  Database             $toDatabase
-     * @param  boolean              $caseInsensitive
-     * @return DatabaseDiff|Boolean
+     * @param \Propel\Generator\Model\Database $fromDatabase
+     * @param \Propel\Generator\Model\Database $toDatabase
+     * @param bool $caseInsensitive
+     * @param bool $withRenaming
+     * @param bool $removeTable
+     * @param array $excludedTables
+     *
+     * @return \Propel\Generator\Model\Diff\DatabaseDiff|false
      */
-    public static function computeDiff(Database $fromDatabase, Database $toDatabase, $caseInsensitive = false, $withRenaming = false, $removeTable = true, $excludedTables = [])
-    {
+    public static function computeDiff(
+        Database $fromDatabase,
+        Database $toDatabase,
+        bool $caseInsensitive = false,
+        bool $withRenaming = false,
+        bool $removeTable = true,
+        array $excludedTables = []
+    ) {
         $databaseComparator = new self();
         $databaseComparator->setFromDatabase($fromDatabase);
         $databaseComparator->setToDatabase($toDatabase);
@@ -176,17 +198,19 @@ class DatabaseComparator
     }
 
     /**
-     * @param boolean $withRenaming
+     * @param bool $withRenaming
+     *
+     * @return void
      */
-    public function setWithRenaming($withRenaming)
+    public function setWithRenaming(bool $withRenaming): void
     {
         $this->withRenaming = $withRenaming;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function getWithRenaming()
+    public function getWithRenaming(): bool
     {
         return $this->withRenaming;
     }
@@ -197,10 +221,11 @@ class DatabaseComparator
      * Compares the tables of the fromDatabase and the toDatabase, and modifies
      * the inner databaseDiff if necessary.
      *
-     * @param  boolean $caseInsensitive
-     * @return integer
+     * @param bool $caseInsensitive
+     *
+     * @return int
      */
-    public function compareTables($caseInsensitive = false)
+    public function compareTables(bool $caseInsensitive = false): int
     {
         $fromDatabaseTables = $this->fromDatabase->getTables();
         $toDatabaseTables = $this->toDatabase->getTables();
@@ -237,6 +262,10 @@ class DatabaseComparator
             }
             if ($this->toDatabase->hasTable($fromTable->getName(), $caseInsensitive)) {
                 $toTable = $this->toDatabase->getTable($fromTable->getName(), $caseInsensitive);
+                if ($toTable->isSkipSql()) {
+                    continue;
+                }
+
                 $databaseDiff = TableComparator::computeDiff($fromTable, $toTable, $caseInsensitive);
                 if ($databaseDiff) {
                     $this->databaseDiff->addModifiedTable($fromTable->getName(), $databaseDiff);
@@ -258,6 +287,7 @@ class DatabaseComparator
                     } else {
                         $this->databaseDiff->addPossibleRenamedTable($removedTableName, $addedTableName);
                     }
+
                     // skip to the next added table
                     break;
                 }
@@ -268,21 +298,23 @@ class DatabaseComparator
     }
 
     /**
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
      * @return bool
      */
-    protected function isTableExcluded(Table $table)
+    protected function isTableExcluded(Table $table): bool
     {
-        $tablename = $table->getName();
-        if (in_array($tablename, $this->excludedTables)) {
+        $tableName = $table->getName();
+        if (in_array($tableName, $this->excludedTables, true)) {
             return true;
         }
 
-        foreach ($this->excludedTables as $exclude_tablename) {
-            if (preg_match('/^'.str_replace('*', '.*', $exclude_tablename).'$/', $tablename)) {
+        foreach ($this->excludedTables as $excludedTableName) {
+            if (preg_match('/^' . str_replace('*', '.*', $excludedTableName) . '$/', $tableName)) {
                 return true;
             }
         }
 
         return false;
-    }}
+    }
+}

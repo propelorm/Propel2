@@ -1,21 +1,24 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
 
+use Closure;
+use DOMDocument;
+use Exception;
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Exception\BuildException;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Schema;
+use RuntimeException;
+use XSLTProcessor;
 
 /**
  * An abstract base Propel manager to perform work related to the XML schema
@@ -29,11 +32,13 @@ abstract class AbstractManager
 {
     /**
      * Data models that we collect. One from each XML schema file.
+     *
+     * @var list<\Propel\Generator\Model\Schema>
      */
     protected $dataModels = [];
 
     /**
-     * @var Database[]
+     * @var array<\Propel\Generator\Model\Database>
      */
     protected $databases;
 
@@ -42,29 +47,38 @@ abstract class AbstractManager
      * Should probably stick to the convention
      * of them being the same but I know right now
      * in a lot of cases they won't be.
+     *
+     * @var array
      */
     protected $dataModelDbMap;
 
     /**
      * DB encoding to use for SchemaReader object
+     *
+     * @var string
      */
     protected $dbEncoding = 'UTF-8';
 
     /**
      * Whether to perform validation (XSD) on the schema.xml file(s).
-     * @var boolean
+     *
+     * @var bool
      */
-    protected $validate;
+    protected $validate = false;
 
     /**
      * The XSD schema file to use for validation.
-     * @var string
+     *
+     * @var mixed
      */
     protected $xsd;
 
     /**
      * XSL file to use to normalize (or otherwise transform) schema before validation.
-     * @var string
+     *
+     * @deprecated Not in use and not working due to missing class.
+     *
+     * @var mixed
      */
     protected $xsl;
 
@@ -81,20 +95,21 @@ abstract class AbstractManager
     protected $workingDirectory;
 
     /**
-     * @var \Closure
+     * @var \Closure|null
      */
-    private $loggerClosure = null;
+    private $loggerClosure;
 
     /**
      * Have datamodels been initialized?
-     * @var boolean
+     *
+     * @var bool
      */
     private $dataModelsLoaded = false;
 
     /**
      * An initialized GeneratorConfig object.
      *
-     * @var GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     private $generatorConfig;
 
@@ -103,7 +118,7 @@ abstract class AbstractManager
      *
      * @return array
      */
-    public function getSchemas()
+    public function getSchemas(): array
     {
         return $this->schemas;
     }
@@ -111,9 +126,11 @@ abstract class AbstractManager
     /**
      * Sets the schemas list.
      *
-     * @param array
+     * @param array $schemas
+     *
+     * @return void
      */
-    public function setSchemas($schemas)
+    public function setSchemas(array $schemas): void
     {
         $this->schemas = $schemas;
     }
@@ -122,8 +139,10 @@ abstract class AbstractManager
      * Sets the working directory path.
      *
      * @param string $workingDirectory
+     *
+     * @return void
      */
-    public function setWorkingDirectory($workingDirectory)
+    public function setWorkingDirectory(string $workingDirectory): void
     {
         $this->workingDirectory = $workingDirectory;
     }
@@ -131,21 +150,20 @@ abstract class AbstractManager
     /**
      * Returns the working directory path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getWorkingDirectory()
+    public function getWorkingDirectory(): ?string
     {
         return $this->workingDirectory;
     }
-
 
     /**
      * Returns the data models that have been
      * processed.
      *
-     * @return Schema[]
+     * @return array<\Propel\Generator\Model\Schema>
      */
-    public function getDataModels()
+    public function getDataModels(): array
     {
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
@@ -159,7 +177,7 @@ abstract class AbstractManager
      *
      * @return array
      */
-    public function getDataModelDbMap()
+    public function getDataModelDbMap(): array
     {
         if (!$this->dataModelsLoaded) {
             $this->loadDataModels();
@@ -169,11 +187,11 @@ abstract class AbstractManager
     }
 
     /**
-     * @return Database[]
+     * @return array<\Propel\Generator\Model\Database>
      */
-    public function getDatabases()
+    public function getDatabases(): array
     {
-        if (null === $this->databases) {
+        if ($this->databases === null) {
             $databases = [];
             foreach ($this->getDataModels() as $dataModel) {
                 foreach ($dataModel->getDatabases() as $database) {
@@ -197,23 +215,27 @@ abstract class AbstractManager
     }
 
     /**
-     * @param  string $name
-     * @return Database|null
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase($name)
+    public function getDatabase(string $name): ?Database
     {
         $dbs = $this->getDatabases();
-        return @$dbs[$name];
+
+        return $dbs[$name] ?? null;
     }
 
     /**
      * Sets whether to perform validation on the datamodel schema.xml file(s).
      *
-     * @param boolean $validate
+     * @param bool $validate
+     *
+     * @return void
      */
-    public function setValidate($validate)
+    public function setValidate(bool $validate): void
     {
-        $this->validate = (boolean) $validate;
+        $this->validate = $validate;
     }
 
     /**
@@ -221,8 +243,10 @@ abstract class AbstractManager
      * file(s).
      *
      * @param string $xsd
+     *
+     * @return void
      */
-    public function setXsd($xsd)
+    public function setXsd(string $xsd): void
     {
         $this->xsd = $xsd;
     }
@@ -231,9 +255,11 @@ abstract class AbstractManager
      * Sets the normalization XSLT to use to transform datamodel schema.xml
      * file(s) before validation and parsing.
      *
-     * @param string $xsl
+     * @param mixed $xsl
+     *
+     * @return void
      */
-    public function setXsl($xsl)
+    public function setXsl($xsl): void
     {
         $this->xsl = $xsl;
     }
@@ -242,8 +268,10 @@ abstract class AbstractManager
      * Sets the current target database encoding.
      *
      * @param string $encoding Target database encoding
+     *
+     * @return void
      */
-    public function setDbEncoding($encoding)
+    public function setDbEncoding(string $encoding): void
     {
         $this->dbEncoding = $encoding;
     }
@@ -252,8 +280,10 @@ abstract class AbstractManager
      * Sets a logger closure.
      *
      * @param \Closure $logger
+     *
+     * @return void
      */
-    public function setLoggerClosure(\Closure $logger)
+    public function setLoggerClosure(Closure $logger): void
     {
         $this->loggerClosure = $logger;
     }
@@ -261,12 +291,18 @@ abstract class AbstractManager
     /**
      * Returns all matching XML schema files and loads them into data models for
      * class.
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     * @throws \RuntimeException
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return void
      */
-    protected function loadDataModels()
+    protected function loadDataModels(): void
     {
         $schemas = [];
-        $totalNbTables   = 0;
-        $dataModelFiles  = $this->getSchemas();
+        $totalNbTables = 0;
+        $dataModelFiles = $this->getSchemas();
         $defaultPlatform = $this->getGeneratorConfig()->getConfiguredPlatform();
 
         // Make a transaction for each file
@@ -274,7 +310,7 @@ abstract class AbstractManager
             $dmFilename = $schema->getPathName();
             $this->log('Processing: ' . $schema->getFileName());
 
-            $dom = new \DOMDocument('1.0', 'UTF-8');
+            $dom = new DOMDocument('1.0', 'UTF-8');
             $dom->load($dmFilename);
 
             $this->includeExternalSchemas($dom, $schema->getPath());
@@ -287,11 +323,15 @@ abstract class AbstractManager
                     $this->log('Could not perform XLST transformation. Make sure PHP has been compiled/configured to support XSLT.');
                 } else {
                     // normalize the document using normalizer stylesheet
-                    $xslDom = new \DOMDocument('1.0', 'UTF-8');
+                    $xslDom = new DOMDocument('1.0', 'UTF-8');
                     $xslDom->load($this->xsl->getAbsolutePath());
-                    $xsl = new \XsltProcessor();
+                    $xsl = new XSLTProcessor();
                     $xsl->importStyleSheet($xslDom);
                     $dom = $xsl->transformToDoc($dom);
+
+                    if ($dom === false) {
+                        throw new RuntimeException('XSLTProcessor transformation to a DOMDocument failed.');
+                    }
                 }
             }
 
@@ -306,7 +346,7 @@ abstract class AbstractManager
 
             $xmlParser = new SchemaReader($defaultPlatform, $this->dbEncoding);
             $xmlParser->setGeneratorConfig($this->getGeneratorConfig());
-            $schema = $xmlParser->parseString($dom->saveXML(), $dmFilename);
+            $schema = $xmlParser->parseString((string)$dom->saveXML(), $dmFilename);
             $nbTables = $schema->getDatabase(null, false)->countTables();
             $totalNbTables += $nbTables;
 
@@ -318,7 +358,7 @@ abstract class AbstractManager
 
         $this->log(sprintf('%d tables found in %d schema files.', $totalNbTables, count($dataModelFiles)));
 
-        if (empty($schemas)) {
+        if (!$schemas) {
             throw new BuildException('No schema files were found (matching your schema fileset definition).');
         }
 
@@ -342,40 +382,47 @@ abstract class AbstractManager
     }
 
     /**
-     * Replaces all external-schema nodes with the content of xml schema that node refers to
+     * Replaces all external-schema nodes with the content of XML schema that node refers to
      *
-     * Recurses to include any external schema referenced from in an included xml (and deeper)
+     * Recurses to include any external schema referenced from in an included XML (and deeper)
      * Note: this function very much assumes at least a reasonable XML schema, maybe it'll proof
      * users don't have those and adding some more informative exceptions would be better
      *
      * @param \DOMDocument $dom
-     * @param string       $srcDir
+     * @param string $srcDir
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return int number of included external schemas
      */
-    protected function includeExternalSchemas(\DOMDocument $dom, $srcDir)
+    protected function includeExternalSchemas(DOMDocument $dom, string $srcDir): int
     {
         $databaseNode = $dom->getElementsByTagName('database')->item(0);
         $externalSchemaNodes = $dom->getElementsByTagName('external-schema');
 
         $nbIncludedSchemas = 0;
         while ($externalSchema = $externalSchemaNodes->item(0)) {
-            $include = $externalSchema->getAttribute('filename');
+            $filePath = $externalSchema->getAttribute('filename');
             $referenceOnly = $externalSchema->getAttribute('referenceOnly');
-            $this->log('Processing external schema: ' . $include);
+            $this->log('Processing external schema: ' . $filePath);
 
             $externalSchema->parentNode->removeChild($externalSchema);
 
-            if (!is_readable($include)) {
-                throw new BuildException("External schema '$include' does not exist");
+            $externalSchemaPath = realpath($srcDir . DIRECTORY_SEPARATOR . $filePath);
+            if ($externalSchemaPath === false) {
+                $externalSchemaPath = realpath($filePath);
+            }
+            if ($externalSchemaPath === false || !is_readable($externalSchemaPath)) {
+                throw new BuildException("Cannot read external schema at '$filePath'");
             }
 
-            $externalSchemaDom = new \DOMDocument('1.0', 'UTF-8');
-            $externalSchemaDom->load(realpath($include));
+            $externalSchemaDom = new DOMDocument('1.0', 'UTF-8');
+            $externalSchemaDom->load($externalSchemaPath);
 
-            // The external schema may have external schemas of its own ; recurs
-            $this->includeExternalSchemas($externalSchemaDom, $srcDir);
+            $this->includeExternalSchemas($externalSchemaDom, dirname($externalSchemaPath));
             foreach ($externalSchemaDom->getElementsByTagName('table') as $tableNode) {
-                if ("true" === $referenceOnly) {
-                    $tableNode->setAttribute("skipSql", "true");
+                if ($referenceOnly === 'true') {
+                    $tableNode->setAttribute('skipSql', 'true');
                 }
                 $databaseNode->appendChild($dom->importNode($tableNode, true));
             }
@@ -391,10 +438,11 @@ abstract class AbstractManager
      * We need to join the datamodels in this case to allow for foreign keys
      * that point to tables in different packages.
      *
-     * @param  array  $schemas
-     * @return Schema
+     * @param array $schemas
+     *
+     * @return \Propel\Generator\Model\Schema
      */
-    protected function joinDataModels(array $schemas)
+    protected function joinDataModels(array $schemas): Schema
     {
         $mainSchema = array_shift($schemas);
         $mainSchema->joinSchemas($schemas);
@@ -406,9 +454,9 @@ abstract class AbstractManager
      * Returns the GeneratorConfig object for this manager or creates it
      * on-demand.
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface
      */
-    protected function getGeneratorConfig()
+    protected function getGeneratorConfig(): GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -416,14 +464,21 @@ abstract class AbstractManager
     /**
      * Sets the GeneratorConfigInterface implementation.
      *
-     * @param GeneratorConfigInterface $generatorConfig
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $generatorConfig
+     *
+     * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig)
+    public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         $this->generatorConfig = $generatorConfig;
     }
 
-    protected function validate()
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return void
+     */
+    protected function validate(): void
     {
         if ($this->validate) {
             if (!$this->xsd) {
@@ -432,9 +487,14 @@ abstract class AbstractManager
         }
     }
 
-    protected function log($message)
+    /**
+     * @param string $message
+     *
+     * @return void
+     */
+    protected function log(string $message): void
     {
-        if (null !== $this->loggerClosure) {
+        if ($this->loggerClosure !== null) {
             $closure = $this->loggerClosure;
             $closure($message);
         }
@@ -443,26 +503,30 @@ abstract class AbstractManager
     /**
      * Returns an array of properties as key/value pairs from an input file.
      *
-     * @param  string $file
-     * @return array
+     * @param string $file
+     *
+     * @throws \Exception
+     *
+     * @return array<string>
      */
-    protected function getProperties($file)
+    protected function getProperties(string $file): array
     {
         $properties = [];
 
-        if (false === $lines = @file($file)) {
-            throw new \Exception(sprintf('Unable to parse contents of "%s".', $file));
+        $lines = @file($file);
+        if ($lines === false) {
+            throw new Exception(sprintf('Unable to parse contents of "%s".', $file));
         }
 
         foreach ($lines as $line) {
             $line = trim($line);
 
-            if (empty($line) || in_array($line[0], ['#', ';'])) {
+            if (!$line || in_array($line[0], ['#', ';'], true)) {
                 continue;
             }
 
-            $pos = strpos($line, '=');
-            $properties[trim(substr($line, 0, $pos))] = trim(substr($line, $pos + 1));
+            $length = strpos($line, '=') ?: null;
+            $properties[trim(substr($line, 0, $length))] = trim(substr($line, $length + 1));
         }
 
         return $properties;

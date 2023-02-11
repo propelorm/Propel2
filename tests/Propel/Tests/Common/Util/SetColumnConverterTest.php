@@ -1,89 +1,106 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Util;
 
+use PHPUnit\Framework\TestCase;
+use Propel\Common\Exception\SetColumnConverterException;
 use Propel\Common\Util\SetColumnConverter;
 
 /**
  * Tests for SetColumnConverter class.
- * 
- * @author Moritz Schroeder <moritz.schroeder@molabs.de> 
+ *
+ * @author Moritz Schroeder <moritz.schroeder@molabs.de>
  */
-class SetColumnConverterTest extends \PHPUnit_Framework_TestCase
+class SetColumnConverterTest extends TestCase
 {
     /**
-     * @param array  $values
-     * @param string $validInteger
-     * 
      * @dataProvider convertValuesProvider
+     *
+     * @param array $values
+     * @param string $validInteger
+     *
+     * @return void
      */
     public function testConvertToIntValidValues(array $values, $validInteger)
     {
-        $valueSet = ['a','b','c','d','e','f'];
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $intValue = SetColumnConverter::convertToInt($values, $valueSet);
-        $this->assertEquals($validInteger, $intValue);
-    }
-
-    public function testConvertToIntStringValue()
-    {
-        $valueSet = ['a','b','c','d','e','f'];
-        $intValue = SetColumnConverter::convertToInt('c', $valueSet);
-        $this->assertEquals('4', $intValue);
-    }
-
-    public function testConvertToIntNullValue()
-    {
-        $valueSet = ['a','b','c','d','e','f'];
-        $intValue = SetColumnConverter::convertToInt(null, $valueSet);
-        $this->assertEquals('0', $intValue);
+        $this->assertSame($validInteger, $intValue);
     }
 
     /**
-     * @expectedException \Propel\Common\Exception\SetColumnConverterException
+     * @return void
+     */
+    public function testConvertToIntStringValue()
+    {
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
+        $intValue = SetColumnConverter::convertToInt('c', $valueSet);
+        $this->assertSame('4', $intValue);
+    }
+
+    /**
+     * @return void
+     */
+    public function testConvertToIntNullValue()
+    {
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
+        $intValue = SetColumnConverter::convertToInt(null, $valueSet);
+        $this->assertSame('0', $intValue);
+    }
+
+    /**
+     * @return void
      */
     public function testConvertToIntValueNotInSet()
     {
-        $valueSet = ['a','b','c','d','e','f'];
+        $this->expectException(SetColumnConverterException::class);
+
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertToInt(['g'], $valueSet);
     }
 
     /**
-     * @param array  $validArray
+     * @dataProvider convertValuesProvider
+     *
+     * @param array $validArray
      * @param string $intValue
      *
-     * @dataProvider convertValuesProvider
+     * @return void
      */
     public function testConvertIntToArrayValidValues(array $validArray, $intValue)
     {
-        $valueSet = ['a','b','c','d','e','f'];
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $arrayValue = SetColumnConverter::convertIntToArray($intValue, $valueSet);
         $this->assertEquals($validArray, $arrayValue);
     }
 
+    /**
+     * @return void
+     */
     public function testConvertIntToArrayNullValue()
     {
-        $valueSet = ['a','b','c','d','e','f'];
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         $arrayValue = SetColumnConverter::convertIntToArray(null, $valueSet);
-        $this->assertEquals([], $arrayValue);
+        $this->assertSame([], $arrayValue);
     }
 
     /**
-     * @expectedException \Propel\Common\Exception\SetColumnConverterException
+     * @return void
      */
     public function testConvertIntToArrayIntOutOfRange()
     {
-        $valueSet = ['a','b','c','d','e','f'];
+        $this->expectException(SetColumnConverterException::class);
+
+        $valueSet = ['a', 'b', 'c', 'd', 'e', 'f'];
         SetColumnConverter::convertIntToArray('65', $valueSet);
     }
-    
+
     public function convertValuesProvider()
     {
         return [

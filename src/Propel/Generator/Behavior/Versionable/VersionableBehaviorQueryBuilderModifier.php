@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Versionable;
+
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 /**
  * Behavior to add versionable columns and abilities
@@ -17,21 +17,44 @@ namespace Propel\Generator\Behavior\Versionable;
  */
 class VersionableBehaviorQueryBuilderModifier
 {
+    /**
+     * @var \Propel\Generator\Behavior\Versionable\VersionableBehavior
+     */
     protected $behavior;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $table;
 
+    /**
+     * @var \Propel\Generator\Builder\Om\AbstractOMBuilder
+     */
     protected $builder;
 
+    /**
+     * @var string
+     */
     protected $objectClassName;
 
-    public function __construct($behavior)
+    /**
+     * @var string
+     */
+    protected $queryClassName;
+
+    /**
+     * @param \Propel\Generator\Behavior\Versionable\VersionableBehavior $behavior
+     */
+    public function __construct(VersionableBehavior $behavior)
     {
         $this->behavior = $behavior;
-        $this->table    = $behavior->getTable();
+        $this->table = $behavior->getTable();
     }
 
-    public function queryAttributes()
+    /**
+     * @return string
+     */
+    public function queryAttributes(): string
     {
         return "
 /**
@@ -41,27 +64,50 @@ static \$isVersioningEnabled = true;
 ";
     }
 
-    protected function getParameter($key)
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    protected function getParameter(string $key)
     {
         return $this->behavior->getParameter($key);
     }
 
-    protected function getColumnAttribute($name = 'version_column')
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getColumnAttribute(string $name = 'version_column'): string
     {
         return strtolower($this->behavior->getColumnForParameter($name)->getName());
     }
 
-    protected function getColumnPhpName($name = 'version_column')
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getColumnPhpName(string $name = 'version_column'): string
     {
         return $this->behavior->getColumnForParameter($name)->getPhpName();
     }
 
-    protected function getVersionQueryClassName()
+    /**
+     * @return string
+     */
+    protected function getVersionQueryClassName(): string
     {
         return $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($this->behavior->getVersionTable()));
     }
 
-    protected function setBuilder($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
+    protected function setBuilder(AbstractOMBuilder $builder): void
     {
         $this->builder = $builder;
         $this->objectClassName = $builder->getObjectClassName();
@@ -71,9 +117,11 @@ static \$isVersioningEnabled = true;
     /**
      * Get the getter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related getter, e.g. 'getVersion'
      */
-    protected function getColumnGetter($name = 'version_column')
+    protected function getColumnGetter(string $name = 'version_column'): string
     {
         return 'get' . $this->getColumnPhpName($name);
     }
@@ -81,18 +129,25 @@ static \$isVersioningEnabled = true;
     /**
      * Get the setter of the column of the behavior
      *
+     * @param string $name
+     *
      * @return string The related setter, e.g. 'setVersion'
      */
-    protected function getColumnSetter($name = 'version_column')
+    protected function getColumnSetter(string $name = 'version_column'): string
     {
         return 'set' . $this->getColumnPhpName($name);
     }
 
-    public function queryMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $this->setBuilder($builder);
         $script = '';
-        if ('version' !== $this->getParameter('version_column')) {
+        if ($this->getParameter('version_column') !== 'version') {
             $this->addFilterByVersion($script);
             $this->addOrderByVersion($script);
         }
@@ -104,74 +159,97 @@ static \$isVersioningEnabled = true;
         return $script;
     }
 
-    protected function addFilterByVersion(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addFilterByVersion(string &$script): void
     {
         $script .= "
 /**
  * Wrap the filter on the version column
  *
- * @param     integer \$version
- * @param     string  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
- * @return    \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @param int|null \$version
+ * @param string|null  \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+ * @return \$this The current query, for fluid interface
  */
-public function filterByVersion(\$version = null, \$comparison = null)
+public function filterByVersion(\$version = null, ?string \$comparison = null)
 {
-    return \$this->filterBy{$this->getColumnPhpName()}(\$version, \$comparison);
+    \$this->filterBy{$this->getColumnPhpName()}(\$version, \$comparison);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addOrderByVersion(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addOrderByVersion(string &$script): void
     {
         $script .= "
 /**
  * Wrap the order on the version column
  *
- * @param   string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
- * @return  \$this|" . $this->builder->getQueryClassName() . " The current query, for fluid interface
+ * @param string \$order The sorting order. Criteria::ASC by default, also accepts Criteria::DESC
+ * @return \$this The current query, for fluid interface
  */
-public function orderByVersion(\$order = Criteria::ASC)
+public function orderByVersion(string \$order = Criteria::ASC)
 {
-    return \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+    \$this->orderBy('{$this->getColumnPhpName()}', \$order);
+
+    return \$this;
 }
 ";
     }
 
-    protected function addIsVersioningEnabled()
+    /**
+     * @return string
+     */
+    protected function addIsVersioningEnabled(): string
     {
         return "
 /**
  * Checks whether versioning is enabled
  *
- * @return boolean
+ * @return bool
  */
-static public function isVersioningEnabled()
+static public function isVersioningEnabled(): bool
 {
     return self::\$isVersioningEnabled;
 }
 ";
     }
 
-    protected function addEnableVersioning()
+    /**
+     * @return string
+     */
+    protected function addEnableVersioning(): string
     {
         return "
 /**
  * Enables versioning
  */
-static public function enableVersioning()
+static public function enableVersioning(): void
 {
     self::\$isVersioningEnabled = true;
 }
 ";
     }
 
-    protected function addDisableVersioning()
+    /**
+     * @return string
+     */
+    protected function addDisableVersioning(): string
     {
         return "
 /**
  * Disables versioning
  */
-static public function disableVersioning()
+static public function disableVersioning(): void
 {
     self::\$isVersioningEnabled = false;
 }

@@ -1,22 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
 
-use Propel\Runtime\ActiveQuery\ModelWith;
-use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
-use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Propel;
-use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Propel;
 
 /**
  * Abstract class for query formatter
@@ -25,37 +22,53 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
  */
 abstract class AbstractFormatter
 {
+    /**
+     * @var string|null
+     */
     protected $dbName;
 
+    /**
+     * @var string|null
+     */
     protected $class;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap|null
+     */
     protected $tableMap;
 
-    /** @var ModelWith[] $with */
-    protected $with;
-
-    protected $asColumns;
-
-    protected $hasLimit;
-
-    /** @var ActiveRecordInterface[] */
-    protected $currentObjects;
-
-    protected $collectionName;
+    /**
+     * @var array<\Propel\Runtime\ActiveQuery\ModelWith>
+     */
+    protected $with = [];
 
     /**
-     * @var DataFetcherInterface
+     * @var array
+     */
+    protected $asColumns = [];
+
+    /**
+     * @var bool
+     */
+    protected $hasLimit = false;
+
+    /**
+     * @var array<\Propel\Runtime\ActiveRecord\ActiveRecordInterface>
+     */
+    protected $currentObjects = [];
+
+    /**
+     * @var \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
     protected $dataFetcher;
 
-    public function __construct(BaseModelCriteria $criteria = null, DataFetcherInterface $dataFetcher = null)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria|null $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     */
+    public function __construct(?BaseModelCriteria $criteria = null, ?DataFetcherInterface $dataFetcher = null)
     {
-        $this->with = [];
-        $this->asColumns = [];
-        $this->currentObjects = [];
-        $this->hasLimit = false;
-
-        if (null !== $criteria) {
+        if ($criteria !== null) {
             $this->init($criteria, $dataFetcher);
         }
     }
@@ -63,9 +76,11 @@ abstract class AbstractFormatter
     /**
      * Sets a DataFetcherInterface object.
      *
-     * @param DataFetcherInterface $dataFetcher
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface $dataFetcher
+     *
+     * @return void
      */
-    public function setDataFetcher(DataFetcherInterface $dataFetcher)
+    public function setDataFetcher(DataFetcherInterface $dataFetcher): void
     {
         $this->dataFetcher = $dataFetcher;
     }
@@ -73,9 +88,9 @@ abstract class AbstractFormatter
     /**
      * Returns the current DataFetcherInterface object.
      *
-     * @return DataFetcherInterface
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function getDataFetcher()
+    public function getDataFetcher(): DataFetcherInterface
     {
         return $this->dataFetcher;
     }
@@ -84,12 +99,12 @@ abstract class AbstractFormatter
      * Define the hydration schema based on a query object.
      * Fills the Formatter's properties using a Criteria as source
      *
-     * @param BaseModelCriteria    $criteria
-     * @param DataFetcherInterface $dataFetcher
+     * @param \Propel\Runtime\ActiveQuery\BaseModelCriteria $criteria
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
      *
-     * @return $this|AbstractFormatter The current formatter object
+     * @return $this The current formatter object
      */
-    public function init(BaseModelCriteria $criteria, DataFetcherInterface $dataFetcher = null)
+    public function init(BaseModelCriteria $criteria, ?DataFetcherInterface $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
         $this->setClass($criteria->getModelName());
@@ -105,53 +120,93 @@ abstract class AbstractFormatter
 
     // DataObject getters & setters
 
-    public function setDbName($dbName)
+    /**
+     * @param string $dbName
+     *
+     * @return void
+     */
+    public function setDbName(string $dbName): void
     {
         $this->dbName = $dbName;
     }
 
-    public function getDbName()
+    /**
+     * @return string|null
+     */
+    public function getDbName(): ?string
     {
         return $this->dbName;
     }
 
-    public function setClass($class)
+    /**
+     * @param string $class
+     *
+     * @return void
+     */
+    public function setClass(string $class): void
     {
-        $this->class     = $class;
-        $this->tableMap  = constant($this->class . '::TABLE_MAP');
+        $this->class = $class;
+        $this->tableMap = $class::TABLE_MAP;
     }
 
-    public function getClass()
+    /**
+     * @return string|null
+     */
+    public function getClass(): ?string
     {
         return $this->class;
     }
 
-    public function setWith($withs = [])
+    /**
+     * @param array $withs
+     *
+     * @return void
+     */
+    public function setWith(array $withs = []): void
     {
         $this->with = $withs;
     }
 
-    public function getWith()
+    /**
+     * @return array<\Propel\Runtime\ActiveQuery\ModelWith>
+     */
+    public function getWith(): array
     {
         return $this->with;
     }
 
-    public function setAsColumns($asColumns = [])
+    /**
+     * @param array $asColumns
+     *
+     * @return void
+     */
+    public function setAsColumns(array $asColumns = []): void
     {
         $this->asColumns = $asColumns;
     }
 
-    public function getAsColumns()
+    /**
+     * @return array
+     */
+    public function getAsColumns(): array
     {
         return $this->asColumns;
     }
 
-    public function setHasLimit($hasLimit = false)
+    /**
+     * @param bool $hasLimit
+     *
+     * @return void
+     */
+    public function setHasLimit(bool $hasLimit = false): void
     {
         $this->hasLimit = $hasLimit;
     }
 
-    public function hasLimit()
+    /**
+     * @return bool
+     */
+    public function hasLimit(): bool
     {
         return $this->hasLimit;
     }
@@ -159,7 +214,7 @@ abstract class AbstractFormatter
     /**
      * Returns a Collection object or a simple array.
      *
-     * @return Collection|array
+     * @return \Propel\Runtime\Collection\Collection|array
      */
     protected function getCollection()
     {
@@ -167,7 +222,7 @@ abstract class AbstractFormatter
 
         $class = $this->getCollectionClassName();
         if ($class) {
-            /** @var Collection $collection */
+            /** @var \Propel\Runtime\Collection\Collection $collection */
             $collection = new $class();
             $collection->setModel($this->class);
             $collection->setFormatter($this);
@@ -177,44 +232,70 @@ abstract class AbstractFormatter
     }
 
     /**
+     * @psalm-return class-string<\Propel\Runtime\Collection\Collection>|null
+     *
      * @return string|null
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): ?string
     {
-
+        return null;
     }
 
     /**
      * Formats an ActiveRecord object
      *
-     * @param ActiveRecordInterface $record the object to format
+     * @param \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null $record the object to format
      *
-     * @return ActiveRecordInterface The original record
+     * @return mixed The original record
      */
-    public function formatRecord(ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null)
     {
         return $record;
     }
 
-    abstract public function format(DataFetcherInterface $dataFetcher = null);
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return mixed
+     */
+    abstract public function format(?DataFetcherInterface $dataFetcher = null);
 
-    abstract public function formatOne(DataFetcherInterface $dataFetcher = null);
+    /**
+     * @param \Propel\Runtime\DataFetcher\DataFetcherInterface|null $dataFetcher
+     *
+     * @return mixed
+     */
+    abstract public function formatOne(?DataFetcherInterface $dataFetcher = null);
 
-    abstract public function isObjectFormatter();
+    /**
+     * @return bool
+     */
+    abstract public function isObjectFormatter(): bool;
 
-    public function checkInit()
+    /**
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return void
+     */
+    public function checkInit(): void
     {
-        if (null === $this->tableMap) {
+        if ($this->tableMap === null) {
             throw new PropelException('You must initialize a formatter object before calling format() or formatOne()');
         }
     }
 
-    public function getTableMap()
+    /**
+     * @return \Propel\Runtime\Map\TableMap
+     */
+    public function getTableMap(): TableMap
     {
         return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
     }
 
-    protected function isWithOneToMany()
+    /**
+     * @return bool
+     */
+    protected function isWithOneToMany(): bool
     {
         foreach ($this->with as $modelWith) {
             if ($modelWith->isWithOneToMany()) {
@@ -228,18 +309,19 @@ abstract class AbstractFormatter
     /**
      * Gets a Propel object hydrated from a selection of columns in statement row
      *
-     * @param array  $row   associative array indexed by column number,
+     * @param array $row associative array indexed by column number,
      *                      as returned by DataFetcher::fetch()
      * @param string $class The classname of the object to create
-     * @param int    $col   The start column for the hydration (modified)
+     * @param int $col The start column for the hydration (modified)
      *
-     * @return ActiveRecordInterface
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getSingleObjectFromRow($row, $class, &$col = 0)
+    public function getSingleObjectFromRow(array $row, string $class, int &$col = 0): ActiveRecordInterface
     {
         $obj = new $class();
         $col = $obj->hydrate($row, $col, false, $this->getDataFetcher()->getIndexType());
 
+        /** @phpstan-var \Propel\Runtime\ActiveRecord\ActiveRecordInterface */
         return $obj;
     }
 }

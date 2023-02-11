@@ -1,20 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Behavior\Validate\ValidateBehavior;
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\PropelTypes;
-use Propel\Generator\Behavior\Validate\ValidateBehavior;
+use Propel\Generator\Model\Table;
 
 /**
  * Allows translation of text columns through transparent one-to-many
@@ -24,76 +25,120 @@ use Propel\Generator\Behavior\Validate\ValidateBehavior;
  */
 class I18nBehavior extends Behavior
 {
-    const DEFAULT_LOCALE = 'en_US';
+    /**
+     * @var string
+     */
+    public const DEFAULT_LOCALE = 'en_US';
 
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array<string, mixed>
+     */
     protected $parameters = [
-        'i18n_table'        => '%TABLE%_i18n',
-        'i18n_phpname'      => '%PHPNAME%I18n',
-        'i18n_columns'      => '',
-        'i18n_pk_column'    => null,
-        'locale_column'     => 'locale',
-        'locale_length'     => 5,
-        'default_locale'    => null,
-        'locale_alias'      => '',
+        'i18n_table' => '%TABLE%_i18n',
+        'i18n_phpname' => '%PHPNAME%I18n',
+        'i18n_columns' => '',
+        'i18n_pk_column' => null,
+        'locale_column' => 'locale',
+        'locale_length' => 5,
+        'default_locale' => null,
+        'locale_alias' => '',
     ];
 
+    /**
+     * @var int
+     */
     protected $tableModificationOrder = 70;
 
+    /**
+     * @var \Propel\Generator\Behavior\I18n\I18nBehaviorObjectBuilderModifier|null
+     */
     protected $objectBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Behavior\I18n\I18nBehaviorQueryBuilderModifier|null
+     */
     protected $queryBuilderModifier;
 
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     protected $i18nTable;
 
-    public function modifyDatabase()
+    /**
+     * @return void
+     */
+    public function modifyDatabase(): void
     {
         foreach ($this->getDatabase()->getTables() as $table) {
             if ($table->hasBehavior('i18n') && !$table->getBehavior('i18n')->getParameter('default_locale')) {
                 $table->getBehavior('i18n')->addParameter([
-                    'name'  => 'default_locale',
+                    'name' => 'default_locale',
                     'value' => $this->getParameter('default_locale'),
                 ]);
             }
         }
     }
 
-    public function getDefaultLocale()
+    /**
+     * @return string
+     */
+    public function getDefaultLocale(): string
     {
-        if (!$defaultLocale = $this->getParameter('default_locale')) {
+        $defaultLocale = $this->getParameter('default_locale');
+        if (!$defaultLocale) {
             $defaultLocale = self::DEFAULT_LOCALE;
         }
 
         return $defaultLocale;
     }
 
-    public function getI18nTable()
+    /**
+     * @return \Propel\Generator\Model\Table
+     */
+    public function getI18nTable(): Table
     {
         return $this->i18nTable;
     }
 
-    public function getI18nForeignKey()
+    /**
+     * @return \Propel\Generator\Model\ForeignKey|null
+     */
+    public function getI18nForeignKey(): ?ForeignKey
     {
         foreach ($this->i18nTable->getForeignKeys() as $fk) {
             if ($fk->getForeignTableName() == $this->table->getName()) {
                 return $fk;
             }
         }
+
+        return null;
     }
 
-    public function getLocaleColumn()
+    /**
+     * @return \Propel\Generator\Model\Column|null
+     */
+    public function getLocaleColumn(): ?Column
     {
         return $this->getI18nTable()->getColumn($this->getLocaleColumnName());
     }
 
-    public function getI18nColumns()
+    /**
+     * @return list<\Propel\Generator\Model\Column>
+     */
+    public function getI18nColumns(): array
     {
         $columns = [];
         $i18nTable = $this->getI18nTable();
-        if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
+        $columnNames = $this->getI18nColumnNamesFromConfig();
+
+        if ($columnNames) {
             // Strategy 1: use the i18n_columns parameter
             foreach ($columnNames as $columnName) {
-                $columns []= $i18nTable->getColumn($columnName);
+                /** @var \Propel\Generator\Model\Column $column */
+                $column = $i18nTable->getColumn($columnName);
+                $columns[] = $column;
             }
         } else {
             // strategy 2: use the columns of the i18n table
@@ -101,7 +146,7 @@ class I18nBehavior extends Behavior
             // (such as timestampable behavior)
             foreach ($i18nTable->getColumns() as $column) {
                 if (!$column->isPrimaryKey()) {
-                    $columns []= $column;
+                    $columns[] = $column;
                 }
             }
         }
@@ -109,42 +154,61 @@ class I18nBehavior extends Behavior
         return $columns;
     }
 
-    public function replaceTokens($string)
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    public function replaceTokens(string $string): string
     {
         $table = $this->getTable();
 
         return strtr($string, [
-            '%TABLE%'   => $table->getOriginCommonName(),
+            '%TABLE%' => $table->getOriginCommonName(),
             '%PHPNAME%' => $table->getPhpName(),
         ]);
     }
 
+    /**
+     * @return $this|\Propel\Generator\Behavior\I18n\I18nBehaviorObjectBuilderModifier
+     */
     public function getObjectBuilderModifier()
     {
-        if (null === $this->objectBuilderModifier) {
+        if ($this->objectBuilderModifier === null) {
             $this->objectBuilderModifier = new I18nBehaviorObjectBuilderModifier($this);
         }
 
         return $this->objectBuilderModifier;
     }
 
+    /**
+     * @return $this|\Propel\Generator\Behavior\I18n\I18nBehaviorQueryBuilderModifier
+     */
     public function getQueryBuilderModifier()
     {
-        if (null === $this->queryBuilderModifier) {
+        if ($this->queryBuilderModifier === null) {
             $this->queryBuilderModifier = new I18nBehaviorQueryBuilderModifier($this);
         }
 
         return $this->queryBuilderModifier;
     }
 
-    public function staticAttributes($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function staticAttributes(AbstractOMBuilder $builder): string
     {
         return $this->renderTemplate('staticAttributes', [
             'defaultLocale' => $this->getDefaultLocale(),
         ]);
     }
 
-    public function modifyTable()
+    /**
+     * @return void
+     */
+    public function modifyTable(): void
     {
         $this->addI18nTable();
         $this->relateI18nTableToMainTable();
@@ -152,23 +216,26 @@ class I18nBehavior extends Behavior
         $this->moveI18nColumns();
     }
 
-    protected function addI18nTable()
+    /**
+     * @return void
+     */
+    protected function addI18nTable(): void
     {
-        $table         = $this->getTable();
-        $database      = $table->getDatabase();
+        $table = $this->getTable();
+        $database = $table->getDatabase();
         $i18nTableName = $this->getI18nTableName();
 
         if ($database->hasTable($i18nTableName)) {
             $this->i18nTable = $database->getTable($i18nTableName);
         } else {
             $this->i18nTable = $database->addTable([
-                'name'      => $i18nTableName,
-                'phpName'   => $this->getI18nTablePhpName(),
-                'package'   => $table->getPackage(),
-                'schema'    => $table->getSchema(),
+                'name' => $i18nTableName,
+                'phpName' => $this->getI18nTablePhpName(),
+                'package' => $table->getPackage(),
+                'schema' => $table->getSchema(),
                 'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-                'skipSql'   => $table->isSkipSql(),
-                'identifierQuoting' => $table->getIdentifierQuoting()
+                'skipSql' => $table->isSkipSql(),
+                'identifierQuoting' => $table->isIdentifierQuotingEnabled(),
             ]);
 
             // every behavior adding a table should re-execute database behaviors
@@ -178,11 +245,16 @@ class I18nBehavior extends Behavior
         }
     }
 
-    protected function relateI18nTableToMainTable()
+    /**
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return void
+     */
+    protected function relateI18nTableToMainTable(): void
     {
-        $table     = $this->getTable();
+        $table = $this->getTable();
         $i18nTable = $this->i18nTable;
-        $pks       = $this->getTable()->getPrimaryKey();
+        $pks = $this->getTable()->getPrimaryKey();
 
         if (count($pks) > 1) {
             throw new EngineException('The i18n behavior does not support tables with composite primary keys');
@@ -194,7 +266,7 @@ class I18nBehavior extends Behavior
         if ($this->getParameter('i18n_pk_column')) {
             // custom i18n table pk name
             $i18nColumn->setName($this->getParameter('i18n_pk_column'));
-        } else if (in_array($table->getName(), $i18nTable->getForeignTableNames())) {
+        } elseif (in_array($table->getName(), $i18nTable->getForeignTableNames(), true)) {
             // custom i18n table pk name not set, but some fk already exists
             return;
         }
@@ -215,16 +287,19 @@ class I18nBehavior extends Behavior
         $i18nTable->addForeignKey($fk);
     }
 
-    protected function addLocaleColumnToI18n()
+    /**
+     * @return void
+     */
+    protected function addLocaleColumnToI18n(): void
     {
         $localeColumnName = $this->getLocaleColumnName();
 
-        if (! $this->i18nTable->hasColumn($localeColumnName)) {
+        if (!$this->i18nTable->hasColumn($localeColumnName)) {
             $this->i18nTable->addColumn([
-                'name'       => $localeColumnName,
-                'type'       => PropelTypes::VARCHAR,
-                'size'       => $this->getParameter('locale_length') ? (int) $this->getParameter('locale_length') : 5,
-                'default'    => $this->getDefaultLocale(),
+                'name' => $localeColumnName,
+                'type' => PropelTypes::VARCHAR,
+                'size' => $this->getParameter('locale_length') ? (int)$this->getParameter('locale_length') : 5,
+                'default' => $this->getDefaultLocale(),
                 'primaryKey' => 'true',
             ]);
         }
@@ -232,17 +307,21 @@ class I18nBehavior extends Behavior
 
     /**
      * Moves i18n columns from the main table to the i18n table
+     *
+     * @throws \Propel\Generator\Exception\EngineException
+     *
+     * @return void
      */
-    protected function moveI18nColumns()
+    protected function moveI18nColumns(): void
     {
-        $table     = $this->getTable();
+        $table = $this->getTable();
         $i18nTable = $this->i18nTable;
 
         $i18nValidateParams = [];
         foreach ($this->getI18nColumnNamesFromConfig() as $columnName) {
             if (!$i18nTable->hasColumn($columnName)) {
                 if (!$table->hasColumn($columnName)) {
-                    throw new EngineException(sprintf('No column named %s found in table %s', $columnName, $table->getName()));
+                    throw new EngineException(sprintf('No column named `%s` found in table `%s`', $columnName, $table->getName()));
                 }
 
                 $column = $table->getColumn($columnName);
@@ -250,6 +329,7 @@ class I18nBehavior extends Behavior
 
                 // validate behavior: move rules associated to the column
                 if ($table->hasBehavior('validate')) {
+                    /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validateBehavior */
                     $validateBehavior = $table->getBehavior('validate');
                     $params = $validateBehavior->getParametersFromColumnName($columnName);
                     $i18nValidateParams = array_merge($i18nValidateParams, $params);
@@ -271,31 +351,47 @@ class I18nBehavior extends Behavior
             $i18nTable->addBehavior($i18nVbehavior);
 
             // current table must have almost 1 validation rule
+            /** @var \Propel\Generator\Behavior\Validate\ValidateBehavior $validate */
             $validate = $table->getBehavior('validate');
             $validate->addRuleOnPk();
         }
     }
 
-    protected function getI18nTableName()
+    /**
+     * @return string
+     */
+    protected function getI18nTableName(): string
     {
         return $this->replaceTokens($this->getParameter('i18n_table'));
     }
 
-    protected function getI18nTablePhpName()
+    /**
+     * @return string
+     */
+    protected function getI18nTablePhpName(): string
     {
         return $this->replaceTokens($this->getParameter('i18n_phpname'));
     }
 
-    protected function getLocaleColumnName()
+    /**
+     * @return string
+     */
+    protected function getLocaleColumnName(): string
     {
         return $this->replaceTokens($this->getParameter('locale_column'));
     }
 
-    protected function getI18nColumnNamesFromConfig()
+    /**
+     * @return list<string>
+     */
+    protected function getI18nColumnNamesFromConfig(): array
     {
         $columnNames = explode(',', $this->getParameter('i18n_columns'));
+
         foreach ($columnNames as $key => $columnName) {
-            if ($columnName = trim($columnName)) {
+            $columnName = trim($columnName);
+
+            if ($columnName) {
                 $columnNames[$key] = $columnName;
             } else {
                 unset($columnNames[$key]);

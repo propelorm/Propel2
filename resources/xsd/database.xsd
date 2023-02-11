@@ -96,6 +96,8 @@
             <xs:enumeration value="SETNULL"/>
             <xs:enumeration value="restrict"/>
             <xs:enumeration value="RESTRICT"/>
+            <xs:enumeration value="no action"/>
+            <xs:enumeration value="NO ACTION"/>
             <xs:enumeration value="none"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value=""/>
@@ -112,6 +114,10 @@
             <xs:enumeration value="SETNULL"/>
             <xs:enumeration value="restrict"/>
             <xs:enumeration value="RESTRICT"/>
+            <xs:enumeration value="no action"/>
+            <xs:enumeration value="NO ACTION"/>
+            <xs:enumeration value="noaction"/>
+            <xs:enumeration value="NOACTION"/>
             <xs:enumeration value="none"/>
             <xs:enumeration value="NONE"/>
             <xs:enumeration value=""/>
@@ -646,7 +652,7 @@
         <xs:attribute name="namespace" type="php_namespace" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The PHP 5.3 namespace to use for the generated model classes.
+                    The PHP namespace to use for the generated model classes.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -844,7 +850,7 @@
         <xs:attribute name="namespace" type="php_namespace" use="optional">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
-                    The PHP 5.3 namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
+                    The PHP namespace to use for the generated model classes of the database. Can be overridden on a per-table basis.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

@@ -1,0 +1,65 @@
+{
+    "name": "propel/propel",
+    "type": "library",
+    "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP 5.5 and up.",
+    "keywords": [
+        "ORM",
+        "persistence",
+        "Active Record"
+    ],
+    "homepage": "http://www.propelorm.org/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "William Durand",
+            "email": "william.durand1@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "symfony/yaml": "^6.0.0",
+        "symfony/config": "^6.0.0",
+        "symfony/console": "^6.0.0",
+        "symfony/filesystem": "^6.0.0",
+        "symfony/finder": "^6.0.0",
+        "symfony/translation": "^6.0.0",
+        "symfony/validator": "^6.0.0",
+        "psr/log": "^1.0"
+    },
+    "require-dev": {
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "monolog/monolog": "^1.3",
+        "phpstan/phpstan": "^0.12.4",
+        "phpunit/phpunit": "^9.5.0",
+        "spryker/code-sniffer": "^0.15.6",
+        "psalm/phar": "^4.1.0",
+        "mikey179/vfsstream": "^1.6"
+    },
+    "suggest": {
+        "monolog/monolog": "The recommended logging library to use with Propel."
+    },
+    "autoload": {
+        "psr-4": {
+            "Propel\\": "src/Propel/"
+        }
+    },
+    "bin": [
+        "bin/propel"
+    ],
+    "scripts": {
+        "stan": [
+            "vendor/bin/phpstan analyze -l 1 -c tests/phpstan.neon src/"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

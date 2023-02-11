@@ -1,18 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
 
+use Exception;
 use Propel\Generator\Exception\BuildException;
-use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\IdMethod;
 use Propel\Generator\Schema\Dumper\DumperInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
@@ -39,44 +38,35 @@ class ReverseManager extends AbstractManager
     protected $xml;
 
     /**
-     * The document root element.
-     *
-     * @var \DOMElement
-     */
-    protected $databaseNode;
-
-    /**
-     * Hashtable of columns that have primary keys.
-     *
-     * @var array
-     */
-    protected $primaryKeys;
-
-    /**
      * Whether to use same name for phpName or not.
      *
-     * @var boolean
+     * @var bool
      */
     protected $samePhpName;
 
     /**
+     * @var string
+     */
+    protected $databaseName;
+
+    /**
      * Whether to add vendor info or not.
      *
-     * @var boolean
+     * @var bool
      */
     protected $addVendorInfo;
 
     /**
      * The schema dumper.
      *
-     * @var DumperInterface
+     * @var \Propel\Generator\Schema\Dumper\DumperInterface
      */
     private $schemaDumper;
 
     /**
      * Constructor.
      *
-     * @param DumperInterface $schemaDumper
+     * @param \Propel\Generator\Schema\Dumper\DumperInterface $schemaDumper
      */
     public function __construct(DumperInterface $schemaDumper)
     {
@@ -86,9 +76,9 @@ class ReverseManager extends AbstractManager
     /**
      * Gets the (optional) schema name to use.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchemaName()
+    public function getSchemaName(): ?string
     {
         return $this->schemaName;
     }
@@ -97,8 +87,10 @@ class ReverseManager extends AbstractManager
      * Sets the name of a database schema to use (optional).
      *
      * @param string $schemaName
+     *
+     * @return void
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName(string $schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -106,9 +98,9 @@ class ReverseManager extends AbstractManager
     /**
      * Gets the (optional) php namespace to use.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         return $this->namespace;
     }
@@ -117,8 +109,10 @@ class ReverseManager extends AbstractManager
      * Sets the php namespace to use (optional).
      *
      * @param string $namespace
+     *
+     * @return void
      */
-    public function setNamespace($namespace)
+    public function setNamespace(string $namespace): void
     {
         $this->namespace = $namespace;
     }
@@ -128,7 +122,7 @@ class ReverseManager extends AbstractManager
      *
      * @return string
      */
-    public function getDatabaseName()
+    public function getDatabaseName(): string
     {
         return $this->databaseName;
     }
@@ -139,8 +133,10 @@ class ReverseManager extends AbstractManager
      * schema.xml
      *
      * @param string $databaseName
+     *
+     * @return void
      */
-    public function setDatabaseName($databaseName)
+    public function setDatabaseName(string $databaseName): void
     {
         $this->databaseName = $databaseName;
     }
@@ -148,35 +144,44 @@ class ReverseManager extends AbstractManager
     /**
      * Sets whether to use the column name as phpName without any translation.
      *
-     * @param boolean $samePhpName
+     * @param bool $samePhpName
+     *
+     * @return void
      */
-    public function setSamePhpName($samePhpName)
+    public function setSamePhpName(bool $samePhpName): void
     {
-        $this->samePhpName = (boolean) $samePhpName;
+        $this->samePhpName = $samePhpName;
     }
 
     /**
      * Sets whether to add vendor info to the schema.
      *
-     * @param boolean $addVendorInfo
+     * @param bool $addVendorInfo
+     *
+     * @return void
      */
-    public function setAddVendorInfo($addVendorInfo)
+    public function setAddVendorInfo(bool $addVendorInfo): void
     {
-        $this->addVendorInfo = (Boolean) $addVendorInfo;
+        $this->addVendorInfo = $addVendorInfo;
     }
 
     /**
      * Returns whether to use the column name as phpName without any
      * translation.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isSamePhpName()
+    public function isSamePhpName(): bool
     {
         return $this->samePhpName;
     }
 
-    public function reverse()
+    /**
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return bool
+     */
+    public function reverse(): bool
     {
         if (!$this->getDatabaseName()) {
             throw new BuildException('The databaseName attribute is required for schema reverse engineering');
@@ -184,14 +189,15 @@ class ReverseManager extends AbstractManager
 
         try {
             $database = $this->buildModel();
-            $schema   = $this->schemaDumper->dump($database);
+            $schema = $this->schemaDumper->dump($database);
 
             $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $this->getSchemaName() . '.xml';
             $this->log('Writing XML file to ' . $file);
 
             file_put_contents($file, $schema);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->log(sprintf('<error>There was an error building XML from metadata: %s</error>', $e->getMessage()));
+
             throw $e;
         }
 
@@ -201,65 +207,78 @@ class ReverseManager extends AbstractManager
     /**
      * Builds the model classes from the database schema.
      *
-     * @return Database The built-out Database (with all tables, etc.)
+     * @return \Propel\Generator\Model\Database The built-out Database (with all tables, etc.)
      */
-    protected function buildModel()
+    protected function buildModel(): Database
     {
-        $config     = $this->getGeneratorConfig();
+        /** @var \Propel\Generator\Config\GeneratorConfig $config */
+        $config = $this->getGeneratorConfig();
         $connection = $this->getConnection();
         $databaseName = $config->getConfigProperty('reverse.connection');
 
-
         $database = new Database($this->getDatabaseName());
-        $database->setPlatform($config->getConfiguredPlatform($connection), $databaseName);
+        $database->setPlatform($config->getConfiguredPlatform($connection));
         $database->setDefaultIdMethod(IdMethod::NATIVE);
 
-        $this->getNamespace() && $database->setNamespace($this->getNamespace());
+        if ($this->getNamespace()) {
+            $database->setNamespace($this->getNamespace());
+        }
 
         $buildConnection = $config->getBuildConnection($databaseName);
         $this->log(sprintf('Reading database structure of database `%s` using dsn `%s`', $this->getDatabaseName(), $buildConnection['dsn']));
 
-        $parser   = $config->getConfiguredSchemaParser($connection, $databaseName);
+        $parser = $config->getConfiguredSchemaParser($connection, $databaseName);
         $this->log(sprintf('SchemaParser `%s` chosen', get_class($parser)));
         $nbTables = $parser->parse($database);
 
         $excludeTables = $config->getConfigProperty('exclude_tables');
-        $tables = [];
+        $tableNames = [];
 
         foreach ($database->getTables() as $table) {
-            /* Was copypasted from DatabaseComparator::isTableExcluded() */
             $skip = false;
-            $tablename = $table->getName();
+            $tableName = $table->getName();
 
-            if (in_array($tablename, $excludeTables)) {
+            if (in_array($tableName, $excludeTables, true)) {
                 $skip = true;
             } else {
-                foreach ($excludeTables as $exclude_tablename) {
-                    if (preg_match('/^' . str_replace('*', '.*', $exclude_tablename) . '$/', $tablename)) {
+                foreach ($excludeTables as $excludeTable) {
+                    if (preg_match('/^' . str_replace('*', '.*', $excludeTable) . '$/', $tableName)) {
                         $skip = true;
+
+                        break;
                     }
                 }
             }
 
-            $skip && $database->removeTable($table);
+            if (!$skip) {
+                continue;
+            }
+
+            $tableNames[] = $tableName;
+
+            $database->removeTable($table);
         }
 
-        $this->log(sprintf('Successfully reverse engineered %d tables', $nbTables));
+        if ($tableNames) {
+            $this->log(sprintf('Successfully reverse engineered %d/%d tables (%s)', count($tableNames), $nbTables, implode(', ', $tableNames)));
+        }
 
         return $database;
     }
 
     /**
-     * @return ConnectionInterface
+     * @throws \Propel\Generator\Exception\BuildException if there isn't a configured connection for reverse
      *
-     * @throws BuildException if there isn't a configured connection for reverse
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnection()
+    protected function getConnection(): ConnectionInterface
     {
+        /** @var \Propel\Generator\Config\GeneratorConfig $generatorConfig */
         $generatorConfig = $this->getGeneratorConfig();
+        /** @var string|null $database */
         $database = $generatorConfig->getConfigProperty('reverse.connection');
 
-        if (null === $database) {
+        if ($database === null) {
             throw new BuildException('No configured connection. Please add a connection to your configuration file
             or pass a `connection` option to your command line.');
         }

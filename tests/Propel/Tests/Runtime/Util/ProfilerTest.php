@@ -16,11 +16,11 @@ class ProfilerTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testGetProfileBetweenAddsSlowTreshold()
+    public function testGetProfileBetweenAddsSlowThreshold()
     {
         $profiler = new Profiler();
         $profiler->setDetails([]);
-        $profiler->setSlowTreshold(1000);
+        $profiler->setSlowThreshold(1000);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
         $this->assertSame('     ', $res);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
@@ -30,11 +30,11 @@ class ProfilerTest extends BaseTestCase
     /**
      * @return void
      */
-    public function testGetProfileBetweenDoesNotAddSlowTresholdWhenValueIsNull()
+    public function testGetProfileBetweenDoesNotAddSlowThresholdWhenValueIsNull()
     {
         $profiler = new Profiler();
         $profiler->setDetails([]);
-        $profiler->setSlowTreshold(0);
+        $profiler->setSlowThreshold(0);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 1200]);
         $this->assertSame('', $res);
         $res = $profiler->getProfileBetween(['microtime' => 1000], ['microtime' => 2200]);
@@ -48,7 +48,7 @@ class ProfilerTest extends BaseTestCase
     {
         $profiler = new Profiler();
         $profiler->setDetails(['time' => ['name' => 'Time', 'precision' => 3, 'pad' => 3]]);
-        $profiler->setSlowTreshold(0);
+        $profiler->setSlowThreshold(0);
         $res = $profiler->getProfileBetween(['microtime' => 1.000], ['microtime' => 1.234]);
         $this->assertEquals('Time: 234ms | ', $res);
         $res = $profiler->getProfileBetween(['microtime' => 1.234], ['microtime' => 2.345]);
@@ -62,7 +62,7 @@ class ProfilerTest extends BaseTestCase
     {
         $profiler = new Profiler();
         $profiler->setDetails(['mem' => ['name' => 'Memory', 'precision' => 3, 'pad' => 3]]);
-        $profiler->setSlowTreshold(0);
+        $profiler->setSlowThreshold(0);
         $res = $profiler->getProfileBetween([], ['memoryUsage' => 343245]);
         $this->assertEquals('Memory: 335kB | ', $res);
         $res = $profiler->getProfileBetween([], ['memoryUsage' => 73456345634]);
@@ -76,7 +76,7 @@ class ProfilerTest extends BaseTestCase
     {
         $profiler = new Profiler();
         $profiler->setDetails(['memDelta' => ['name' => 'Delta', 'precision' => 3, 'pad' => 3]]);
-        $profiler->setSlowTreshold(0);
+        $profiler->setSlowThreshold(0);
         $res = $profiler->getProfileBetween(['memoryUsage' => 343245], ['memoryUsage' => 888064]);
         $this->assertEquals('Delta: +532kB | ', $res);
         $res = $profiler->getProfileBetween(['memoryUsage' => 234523523], ['memoryUsage' => 73456345634]);
@@ -92,7 +92,7 @@ class ProfilerTest extends BaseTestCase
     {
         $profiler = new Profiler();
         $profiler->setDetails(['memPeak' => ['name' => 'Peak', 'precision' => 3, 'pad' => 3]]);
-        $profiler->setSlowTreshold(0);
+        $profiler->setSlowThreshold(0);
         $res = $profiler->getProfileBetween([], ['memoryPeakUsage' => 343245]);
         $this->assertEquals('Peak: 335kB | ', $res);
         $res = $profiler->getProfileBetween([], ['memoryPeakUsage' => 73456345634]);
@@ -301,7 +301,7 @@ class ProfilerTest extends BaseTestCase
      */
     public function testGetProfilerClearsStartValues()
     {
-        $profiler = new class() extends Profiler {
+        $profiler = new class () extends Profiler{
             public function getStartSnapshot(): ?array
             {
                 return $this->snapshot;

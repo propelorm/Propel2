@@ -1,18 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\Database;
-use Propel\Generator\Model\Table;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
@@ -24,46 +22,55 @@ interface SchemaParserInterface
 {
     /**
      * Gets the database connection.
-     * @return ConnectionInterface
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection();
+    public function getConnection(): ConnectionInterface;
 
     /**
      * Sets the database connection.
      *
-     * @param ConnectionInterface $dbh
+     * @param \Propel\Runtime\Connection\ConnectionInterface $dbh
+     *
+     * @return void
      */
-    public function setConnection(ConnectionInterface $dbh);
+    public function setConnection(ConnectionInterface $dbh): void;
 
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
-     * @param GeneratorConfigInterface $config
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $config
+     *
+     * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config);
+    public function setGeneratorConfig(GeneratorConfigInterface $config): void;
 
     /**
      * Gets array of warning messages.
-     * @return string[]
+     *
+     * @return array<string>
      */
-    public function getWarnings();
+    public function getWarnings(): array;
 
     /**
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    public function getPlatform();
+    public function getPlatform(): PlatformInterface;
 
     /**
      * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
      */
-    public function setPlatform($platform);
+    public function setPlatform(PlatformInterface $platform): void;
 
     /**
      * Parse the schema and populate passed-in Database model object.
      *
-     * @param  Database $database
-     * @param  Table[]  $additionalTables additional tables to parse and add to $database
-     * @return int      number of generated tables
+     * @param \Propel\Generator\Model\Database $database
+     * @param array<\Propel\Generator\Model\Table> $additionalTables additional tables to parse and add to $database
+     *
+     * @return int Number of generated tables
      */
-    public function parse(Database $database, array $additionalTables = []);
+    public function parse(Database $database, array $additionalTables = []): int;
 }

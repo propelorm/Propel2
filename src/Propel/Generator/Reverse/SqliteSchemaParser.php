@@ -1,22 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
 
+use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\PropelTypes;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 
 /**
@@ -26,6 +25,10 @@ use Propel\Generator\Model\Unique;
  */
 class SqliteSchemaParser extends AbstractSchemaParser
 {
+    /**
+     * @var bool
+     */
+    protected $addVendorInfo;
 
     /**
      * Map Sqlite native types to Propel types.
@@ -33,51 +36,58 @@ class SqliteSchemaParser extends AbstractSchemaParser
      * There really aren't any SQLite native types, so we're just
      * using the MySQL ones here.
      *
-     * @var array
+     * @var array<string>
      */
     private static $sqliteTypeMap = [
-        'tinyint'    => PropelTypes::TINYINT,
-        'smallint'   => PropelTypes::SMALLINT,
-        'mediumint'  => PropelTypes::SMALLINT,
-        'int'        => PropelTypes::INTEGER,
-        'integer'    => PropelTypes::INTEGER,
-        'bigint'     => PropelTypes::BIGINT,
-        'int24'      => PropelTypes::BIGINT,
-        'real'       => PropelTypes::REAL,
-        'float'      => PropelTypes::FLOAT,
-        'decimal'    => PropelTypes::DECIMAL,
-        'numeric'    => PropelTypes::NUMERIC,
-        'double'     => PropelTypes::DOUBLE,
-        'char'       => PropelTypes::CHAR,
-        'varchar'    => PropelTypes::VARCHAR,
-        'date'       => PropelTypes::DATE,
-        'time'       => PropelTypes::TIME,
-        'year'       => PropelTypes::INTEGER,
-        'datetime'   => PropelTypes::DATE,
-        'timestamp'  => PropelTypes::TIMESTAMP,
-        'tinyblob'   => PropelTypes::BINARY,
-        'blob'       => PropelTypes::BLOB,
+        'tinyint' => PropelTypes::TINYINT,
+        'smallint' => PropelTypes::SMALLINT,
+        'mediumint' => PropelTypes::SMALLINT,
+        'int' => PropelTypes::INTEGER,
+        'integer' => PropelTypes::INTEGER,
+        'bigint' => PropelTypes::BIGINT,
+        'int24' => PropelTypes::BIGINT,
+        'real' => PropelTypes::REAL,
+        'float' => PropelTypes::FLOAT,
+        'decimal' => PropelTypes::DECIMAL,
+        'numeric' => PropelTypes::NUMERIC,
+        'double' => PropelTypes::DOUBLE,
+        'char' => PropelTypes::CHAR,
+        'varchar' => PropelTypes::VARCHAR,
+        'date' => PropelTypes::DATE,
+        'time' => PropelTypes::TIME,
+        'year' => PropelTypes::INTEGER,
+        'datetime' => PropelTypes::DATETIME,
+        'timestamp' => PropelTypes::TIMESTAMP,
+        'tinyblob' => PropelTypes::BINARY,
+        'blob' => PropelTypes::BLOB,
         'mediumblob' => PropelTypes::VARBINARY,
-        'longblob'   => PropelTypes::LONGVARBINARY,
-        'longtext'   => PropelTypes::CLOB,
-        'tinytext'   => PropelTypes::VARCHAR,
+        'longblob' => PropelTypes::LONGVARBINARY,
+        'longtext' => PropelTypes::CLOB,
+        'tinytext' => PropelTypes::VARCHAR,
         'mediumtext' => PropelTypes::LONGVARCHAR,
-        'text'       => PropelTypes::LONGVARCHAR,
-        'enum'       => PropelTypes::CHAR,
-        'set'        => PropelTypes::CHAR,
+        'text' => PropelTypes::LONGVARCHAR,
+        'enum' => PropelTypes::CHAR,
+        'set' => PropelTypes::CHAR,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return array
+     * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$sqliteTypeMap;
     }
 
-    public function parse(Database $database, array $additionalTables = [])
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
+     *
+     * @return int
+     */
+    public function parse(Database $database, array $additionalTables = []): int
     {
         if ($this->getGeneratorConfig()) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];
@@ -103,7 +113,13 @@ class SqliteSchemaParser extends AbstractSchemaParser
         return count($database->getTables());
     }
 
-    protected function parseTables(Database $database, Table $filterTable = null)
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     * @param \Propel\Generator\Model\Table|null $filterTable
+     *
+     * @return void
+     */
+    protected function parseTables(Database $database, ?Table $filterTable = null): void
     {
         $sql = "
         SELECT name
@@ -120,28 +136,34 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $filter = '';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
             }
             $filter .= sprintf(" AND (name = '%s' OR name LIKE '%%§%1\$s')", $filterTable->getCommonName());
-        } else if ($schema = $database->getSchema()) {
-            $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+        } else {
+            $schema = $database->getSchema();
+            if ($schema) {
+                $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+            }
         }
 
         $sql = str_replace('%filter%', $filter, $sql);
 
+        /** @var \Traversable $dataFetcher */
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
             $tableName = $row[0];
             $tableSchema = '';
 
-            if ('sqlite_' == substr($tableName, 0, 7)) {
+            if (substr($tableName, 0, 7) === 'sqlite_') {
                 continue;
             }
 
-            if (false !== ($pos = strpos($tableName, '§'))) {
+            $pos = strpos($tableName, '§');
+            if ($pos !== false) {
                 $tableSchema = substr($tableName, 0, $pos);
                 $tableName = substr($tableName, $pos + 2);
             }
@@ -169,16 +191,18 @@ class SqliteSchemaParser extends AbstractSchemaParser
     /**
      * Adds Columns to the specified table.
      *
-     * @param Table $table The Table model class to add columns to.
+     * @param \Propel\Generator\Model\Table $table The Table model class to add columns to.
+     *
+     * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         $tableName = $table->getName();
 
-//        var_dump("PRAGMA table_info('$tableName') //");
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("PRAGMA table_info('$tableName')");
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['name'];
 
             $fulltype = $row['type'];
@@ -187,11 +211,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
-                $scale = $matches[3];
+                $size = (int)$matches[2];
+                $scale = (int)$matches[3];
             } elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
+                $size = (int)$matches[2];
             } else {
                 $type = $fulltype;
             }
@@ -202,7 +226,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if (!$propelType) {
                 $propelType = Column::DEFAULT_TYPE;
-                $this->warn('Column [' . $table->getName() . '.' . $name. '] has a column type ('.$type.') that Propel does not support.');
+                $this->warn('Column [' . $table->getName() . '.' . $name . '] has a column type (' . $type . ') that Propel does not support.');
             }
 
             $column = new Column($name);
@@ -213,12 +237,12 @@ class SqliteSchemaParser extends AbstractSchemaParser
             $column->getDomain()->replaceSize($size);
             $column->getDomain()->replaceScale($scale);
 
-            if (null !== $default) {
-                if ("'" !== substr($default, 0, 1) && strpos($default, '(')) {
+            if ($default !== null) {
+                if (substr($default, 0, 1) !== "'" && strpos($default, '(')) {
                     $defaultType = ColumnDefaultValue::TYPE_EXPR;
-                    if ('datetime(CURRENT_TIMESTAMP, \'localtime\')' === $default) {
+                    if ($default === 'datetime(CURRENT_TIMESTAMP, \'localtime\')') {
                             $default = 'CURRENT_TIMESTAMP';
-                        }
+                    }
                 } else {
                     $defaultType = ColumnDefaultValue::TYPE_VALUE;
                     $default = str_replace("'", '', $default);
@@ -228,12 +252,13 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             $column->setNotNull($notNull);
 
-            if (0 < $row['pk']+0) {
+            if (0 < $row['pk'] + 0) {
                 $column->setPrimaryKey(true);
             }
 
             if ($column->isPrimaryKey()) {
                 // check if autoIncrement
+                /** @var \PDOStatement $autoIncrementStmt */
                 $autoIncrementStmt = $this->dbh->prepare('
                 SELECT tbl_name
                 FROM sqlite_master
@@ -243,7 +268,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
                   sql LIKE "%AUTOINCREMENT%"
                 ');
                 $autoIncrementStmt->execute([$table->getName()]);
-                $autoincrementRow = $autoIncrementStmt->fetch(\PDO::FETCH_ASSOC);
+                $autoincrementRow = $autoIncrementStmt->fetch(PDO::FETCH_ASSOC);
                 if ($autoincrementRow && $autoincrementRow['tbl_name'] == $table->getName()) {
                     $column->setAutoIncrement(true);
                 }
@@ -253,24 +278,30 @@ class SqliteSchemaParser extends AbstractSchemaParser
         }
     }
 
-    protected function addForeignKeys(Table $table)
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
+     */
+    protected function addForeignKeys(Table $table): void
     {
         $database = $table->getDatabase();
 
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query('PRAGMA foreign_key_list("' . $table->getName() . '")');
 
         $lastId = null;
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if ($lastId !== $row['id']) {
                 $fk = new ForeignKey();
 
                 $onDelete = $row['on_delete'];
-                if ($onDelete && 'NO ACTION' !== $onDelete) {
+                if ($onDelete && $onDelete !== 'NO ACTION') {
                     $fk->setOnDelete($onDelete);
                 }
 
                 $onUpdate = $row['on_update'];
-                if ($onUpdate && 'NO ACTION' !== $onUpdate) {
+                if ($onUpdate && $onUpdate !== 'NO ACTION') {
                     $fk->setOnUpdate($onUpdate);
                 }
 
@@ -298,28 +329,34 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
     /**
      * Load indexes for this table
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
+        /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query('PRAGMA index_list("' . $table->getName() . '")');
 
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['name'];
             $internalName = $name;
 
-            if (0 === strpos($name, 'sqlite_autoindex')) {
+            if (strpos($name, 'sqlite_autoindex') === 0) {
                 $internalName = '';
             }
 
             $index = $row['unique'] ? new Unique($internalName) : new Index($internalName);
 
-            $stmt2 = $this->dbh->query("PRAGMA index_info('".$name."')");
-            while ($row2 = $stmt2->fetch(\PDO::FETCH_ASSOC)) {
+            /** @var \PDOStatement $stmt2 */
+            $stmt2 = $this->dbh->query("PRAGMA index_info('" . $name . "')");
+            while ($row2 = $stmt2->fetch(PDO::FETCH_ASSOC)) {
                 $colname = $row2['name'];
                 $index->addColumn($table->getColumn($colname));
             }
 
-            if (1 === count($table->getPrimaryKey()) && 1 === count($index->getColumns())) {
+            if (count($table->getPrimaryKey()) === 1 && count($index->getColumns()) === 1) {
                 // exclude the primary unique index, since it's autogenerated by sqlite
                 if ($table->getPrimaryKey()[0]->getName() === $index->getColumns()[0]) {
                     continue;

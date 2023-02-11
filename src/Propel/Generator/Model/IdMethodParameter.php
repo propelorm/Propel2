@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -20,13 +18,25 @@ namespace Propel\Generator\Model;
  */
 class IdMethodParameter extends MappingModel
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var mixed
+     */
     private $value;
 
-    /** @var Table */
+    /**
+     * @var \Propel\Generator\Model\Table
+     */
     private $parentTable;
 
-    protected function setupObject()
+    /**
+     * @return void
+     */
+    protected function setupObject(): void
     {
         $this->name = $this->getAttribute('name');
         $this->value = $this->getAttribute('value');
@@ -35,9 +45,9 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parameter name.
      *
-     * @param string
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -46,8 +56,10 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter name.
      *
      * @param string $name
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -55,7 +67,7 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parameter value.
      *
-     * @param mixed
+     * @return mixed
      */
     public function getValue()
     {
@@ -66,8 +78,10 @@ class IdMethodParameter extends MappingModel
      * Sets the parameter value.
      *
      * @param mixed $value
+     *
+     * @return void
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -75,9 +89,11 @@ class IdMethodParameter extends MappingModel
     /**
      * Sets the parent table.
      *
-     * @param Table $parent
+     * @param \Propel\Generator\Model\Table $parent
+     *
+     * @return void
      */
-    public function setTable(Table $parent)
+    public function setTable(Table $parent): void
     {
         $this->parentTable = $parent;
     }
@@ -85,9 +101,9 @@ class IdMethodParameter extends MappingModel
     /**
      * Returns the parent table.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->parentTable;
     }
@@ -97,7 +113,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->parentTable->getName();
     }

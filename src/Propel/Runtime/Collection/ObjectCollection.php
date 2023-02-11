@@ -1,17 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\Propel;
+use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
 use Propel\Runtime\Collection\Exception\UnsupportedRelationException;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -21,6 +19,7 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\PropelQuery;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use JsonSerializable;
+use Propel\Runtime\Propel;
 
 /**
  * Class for iterating over a list of Propel objects
@@ -29,10 +28,20 @@ use JsonSerializable;
  */
 class ObjectCollection extends Collection implements JsonSerializable
 {
-    protected $index;
-    protected $indexSplHash;
+    /**
+     * @var array
+     */
+    protected $index = [];
 
-    public function __construct($data = [])
+    /**
+     * @var array
+     */
+    protected $indexSplHash = [];
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->rebuildIndex();
@@ -40,33 +49,45 @@ class ObjectCollection extends Collection implements JsonSerializable
 
     /**
      * @param array $input
+     *
+     * @return void
      */
-    public function exchangeArray($input)
+    public function exchangeArray(array $input): void
     {
         $this->data = $input;
         $this->rebuildIndex();
     }
 
-    public function setData($data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function setData(array $data): void
     {
         parent::setData($data);
         $this->rebuildIndex();
     }
+
     /**
      * Save all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
+     * @return void
      */
-    public function save($con = null)
+    public function save(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
         }
-        if (null === $con) {
+        if ($con === null) {
             $con = $this->getWriteConnection();
         }
-        $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
+        $con->transaction(function () use ($con): void {
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $element */
             foreach ($this as $element) {
                 $element->save($con);
             }
@@ -76,18 +97,22 @@ class ObjectCollection extends Collection implements JsonSerializable
     /**
      * Delete all the elements in the collection
      *
-     * @param ConnectionInterface $con
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ReadOnlyModelException
+     *
+     * @return void
      */
-    public function delete($con = null)
+    public function delete(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
         }
-        if (null === $con) {
+        if ($con === null) {
             $con = $this->getWriteConnection();
         }
-        $con->transaction(function () use ($con) {
-            /** @var $element ActiveRecordInterface */
+        $con->transaction(function () use ($con): void {
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $element */
             foreach ($this as $element) {
                 $element->delete($con);
             }
@@ -97,17 +122,18 @@ class ObjectCollection extends Collection implements JsonSerializable
     /**
      * Get an array of the primary keys of all the objects in the collection
      *
-     * @param  boolean $usePrefix
-     * @return array   The list of the primary keys of the collection
+     * @param bool $usePrefix
+     *
+     * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true)
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
 
-        /** @var $obj ActiveRecordInterface */
+        /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
         foreach ($this as $key => $obj) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key]= $obj->getPrimaryKey();
+            $ret[$key] = $obj->getPrimaryKey();
         }
 
         return $ret;
@@ -119,12 +145,14 @@ class ObjectCollection extends Collection implements JsonSerializable
      * Does not empty the collection before adding the data from the array
      *
      * @param array $arr
+     *
+     * @return void
      */
-    public function fromArray($arr)
+    public function fromArray(array $arr): void
     {
         $class = $this->getFullyQualifiedModel();
         foreach ($arr as $element) {
-            /** @var $obj ActiveRecordInterface */
+            /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
             $obj = new $class();
             $obj->fromArray($element);
             $this->append($obj);
@@ -135,15 +163,15 @@ class ObjectCollection extends Collection implements JsonSerializable
      * Get an array representation of the collection
      * Each object is turned into an array and the result is returned
      *
-     * @param string  $keyColumn              If null, the returned array uses an incremental index.
+     * @param string|null $keyColumn If null, the returned array uses an incremental index.
      *                                        Otherwise, the array is indexed using the specified column
-     * @param boolean $usePrefix              If true, the returned array prefixes keys
-     *                                        with the model class name ('Article_0', 'Article_1', etc).
-     * @param string  $keyType                (optional) One of the class type constants TableMap::TYPE_PHPNAME,
+     * @param bool $usePrefix If true, the returned array prefixes keys
+     * with the model class name ('Article_0', 'Article_1', etc).
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME,
      *                                        TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME,
      *                                        TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
-     * @param boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param array   $alreadyDumpedObjects   List of objects to skip to avoid recursion
+     * @param bool $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+     * @param array $alreadyDumpedObjects List of objects to skip to avoid recursion
      *
      * <code>
      * $bookCollection->toArray();
@@ -163,16 +191,21 @@ class ObjectCollection extends Collection implements JsonSerializable
      * )
      * </code>
      *
-     * @return array
+     * @return array<int|string, array>
      */
-    public function toArray($keyColumn = null, $usePrefix = false, $keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = [])
-    {
+    public function toArray(
+        ?string $keyColumn = null,
+        bool $usePrefix = false,
+        string $keyType = TableMap::TYPE_PHPNAME,
+        bool $includeLazyLoadColumns = true,
+        array $alreadyDumpedObjects = []
+    ): array {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
-        /** @var $obj ActiveRecordInterface */
+        /** @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface $obj */
         foreach ($this->data as $key => $obj) {
-            $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+            $key = $keyColumn === null ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $obj->toArray($keyType, $includeLazyLoadColumns, $alreadyDumpedObjects, true);
         }
@@ -183,40 +216,39 @@ class ObjectCollection extends Collection implements JsonSerializable
     /**
      * Get an array representation of the collection
      *
-     * @param string  $keyColumn If null, the returned array uses an incremental index.
+     * @param string|null $keyColumn If null, the returned array uses an incremental index.
      *                           Otherwise, the array is indexed using the specified column
-     * @param boolean $usePrefix If true, the returned array prefixes keys
-     *                           with the model class name ('Article_0', 'Article_1', etc).
-     *
+     * @param bool $usePrefix If true, the returned array prefixes keys
+     * with the model class name ('Article_0', 'Article_1', etc).
      * <code>
-     *   $bookCollection->getArrayCopy();
-     *   array(
-     *    0 => $book0,
-     *    1 => $book1,
-     *   )
-     *   $bookCollection->getArrayCopy('Id');
-     *   array(
-     *    123 => $book0,
-     *    456 => $book1,
-     *   )
-     *   $bookCollection->getArrayCopy(null, true);
-     *   array(
-     *    'Book_0' => $book0,
-     *    'Book_1' => $book1,
-     *   )
+     * $bookCollection->getArrayCopy();
+     * array(
+     * 0 => $book0,
+     * 1 => $book1,
+     * )
+     * $bookCollection->getArrayCopy('Id');
+     * array(
+     * 123 => $book0,
+     * 456 => $book1,
+     * )
+     * $bookCollection->getArrayCopy(null, true);
+     * array(
+     * 'Book_0' => $book0,
+     * 'Book_1' => $book1,
+     * )
      * </code>
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false)
+    public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
-        if (null === $keyColumn && false === $usePrefix) {
+        if ($keyColumn === null && $usePrefix === false) {
             return parent::getArrayCopy();
         }
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
         foreach ($this as $key => $obj) {
-            $key = null === $keyColumn ? $key : $obj->$keyGetterMethod();
+            $key = $keyColumn === null ? $key : $obj->$keyGetterMethod();
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
             $ret[$key] = $obj;
         }
@@ -234,15 +266,15 @@ class ObjectCollection extends Collection implements JsonSerializable
      * </code>
      *
      * @param string $keyColumn
-     * @param string $valueColumn
+     * @param string|null $valueColumn
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
-    public function toKeyValue($keyColumn = 'PrimaryKey', $valueColumn = null)
+    public function toKeyValue(string $keyColumn = 'PrimaryKey', ?string $valueColumn = null): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
-        $valueGetterMethod = (null === $valueColumn) ? '__toString' : ('get' . $valueColumn);
+        $valueGetterMethod = ($valueColumn === null) ? '__toString' : ('get' . $valueColumn);
         foreach ($this as $obj) {
             $ret[$obj->$keyGetterMethod()] = $obj->$valueGetterMethod();
         }
@@ -257,18 +289,18 @@ class ObjectCollection extends Collection implements JsonSerializable
      * <code>
      *   $res = $userCollection->toKeyIndex('Name');
      *
-     *   $res = array(
+     *   $res = [
      *       'peter' => class User #1 {$name => 'peter', ...},
      *       'hans' => class User #2 {$name => 'hans', ...},
      *       ...
-     *   )
+     *   ]
      * </code>
      *
      * @param string $keyColumn
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
-    public function toKeyIndex($keyColumn = 'PrimaryKey')
+    public function toKeyIndex(string $keyColumn = 'PrimaryKey'): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . ucfirst($keyColumn);
@@ -285,18 +317,18 @@ class ObjectCollection extends Collection implements JsonSerializable
      * <code>
      *   $res = $userCollection->toKeyIndex('Name');
      *
-     *   $res = array(
+     *   $res = [
      *       'peter',
      *       'hans',
      *       ...
-     *   )
+     *   ]
      * </code>
      *
      * @param string $columnName
      *
-     * @return array
+     * @return list<mixed>
      */
-    public function getColumnValues($columnName = 'PrimaryKey')
+    public function getColumnValues(string $columnName = 'PrimaryKey'): array
     {
         $ret = [];
         $keyGetterMethod = 'get' . ucfirst($columnName);
@@ -311,16 +343,22 @@ class ObjectCollection extends Collection implements JsonSerializable
      * Makes an additional query to populate the objects related to the collection objects
      * by a certain relation
      *
-     * @param string              $relation Relation name (e.g. 'Book')
-     * @param Criteria            $criteria Optional Criteria object to filter the related object collection
-     * @param ConnectionInterface $con      Optional connection object
+     * @param string $relation Relation name (e.g. 'Book')
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria Optional Criteria object to filter the related object collection
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con Optional connection object
      *
-     * @return ObjectCollection The list of related objects
+     * @throws \Propel\Runtime\Exception\RuntimeException
+     * @throws \Propel\Runtime\Collection\Exception\UnsupportedRelationException
+     *
+     * @return static The list of related objects.
      */
-    public function populateRelation($relation, $criteria = null, $con = null)
-    {
+    public function populateRelation(
+        string $relation,
+        ?Criteria $criteria = null,
+        ?ConnectionInterface $con = null
+    ) {
         if (!Propel::isInstancePoolingEnabled()) {
-            throw new RuntimeException(__METHOD__ .' needs instance pooling to be enabled prior to populating the collection');
+            throw new RuntimeException(__METHOD__ . ' needs instance pooling to be enabled prior to populating the collection');
         }
         $relationMap = $this->getFormatter()->getTableMap()->getRelation($relation);
         if ($this->isEmpty()) {
@@ -328,12 +366,14 @@ class ObjectCollection extends Collection implements JsonSerializable
             $relationClassName = $relationMap->getRightTable()->getClassName();
             $collectionClassName = $relationMap->getRightTable()->getCollectionClassName();
 
+            /** @var static $coll */
             $coll = new $collectionClassName();
             $coll->setModel($relationClassName);
             $coll->setFormatter($this->getFormatter());
 
             return $coll;
         }
+
         $symRelationMap = $relationMap->getSymmetricalRelation();
 
         $query = PropelQuery::from($relationMap->getRightTable()->getClassName());
@@ -409,8 +449,10 @@ class ObjectCollection extends Collection implements JsonSerializable
         } elseif (RelationMap::ONE_TO_MANY === $relationMap->getType()) {
             // initialize the embedded collections of the main objects
             $relationName = $relationMap->getName();
+            $resetPartialStatusMethod = 'resetPartial' . $relationMap->getPluralName();
             foreach ($this as $mainObj) {
                 $mainObj->initRelation($relationName);
+                $mainObj->$resetPartialStatusMethod(false);
             }
             // associate the related objects to the main objects
             $getMethod = 'get' . $symRelationMap->getName();
@@ -422,14 +464,14 @@ class ObjectCollection extends Collection implements JsonSerializable
                 }
             }
         } elseif (RelationMap::MANY_TO_ONE === $relationMap->getType() || RelationMap::ONE_TO_ONE === $relationMap->getType()) {
-            
+
             //  Use instance pool to hydrate the related object on the main object.
             $getMethod = 'get' . $relationMap->getName();
             foreach ($this as $mainObj) {
                 $mainObj->$getMethod();
             }
         } else {
-            throw new UnsupportedRelationException(__METHOD__ .' does not support this relation type');
+            throw new UnsupportedRelationException(__METHOD__ . ' does not support this relation type');
         }
 
         return $relatedObjects;
@@ -442,7 +484,7 @@ class ObjectCollection extends Collection implements JsonSerializable
      */
     public function load($relations)
     {
-        
+
         //  Ensure relations is an array.
         if (!is_array($relations)) {
             $relations = [$relations];
@@ -455,7 +497,7 @@ class ObjectCollection extends Collection implements JsonSerializable
 
             $relationsToLoad = explode(".", $relation);
             foreach ($relationsToLoad as $relationToLoad) {
-                
+
                 //  Load relation and set collection for the next nested relation.
                 $collection = $collection->populateRelation($relationToLoad);
 
@@ -481,7 +523,8 @@ class ObjectCollection extends Collection implements JsonSerializable
      */
     public function search($element)
     {
-        if (isset($this->indexSplHash[$splHash = spl_object_hash($element)])) {
+        $splHash = spl_object_hash($element);
+        if (isset($this->indexSplHash[$splHash])) {
             return $this->index[$this->indexSplHash[$splHash]];
         }
 
@@ -493,7 +536,10 @@ class ObjectCollection extends Collection implements JsonSerializable
         return false;
     }
 
-    protected function rebuildIndex()
+    /**
+     * @return void
+     */
+    protected function rebuildIndex(): void
     {
         $this->index = [];
         $this->indexSplHash = [];
@@ -506,8 +552,10 @@ class ObjectCollection extends Collection implements JsonSerializable
 
     /**
      * @param mixed $offset
+     *
+     * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         if (isset($this->data[$offset])) {
             if (is_object($this->data[$offset])) {
@@ -519,22 +567,28 @@ class ObjectCollection extends Collection implements JsonSerializable
     }
 
     /**
-     * @param $element
+     * @param mixed $element
+     *
+     * @return void
      */
-    public function removeObject($element)
+    public function removeObject($element): void
     {
-        if (false !== ($pos = $this->search($element))) {
+        $pos = $this->search($element);
+        if ($pos !== false) {
             $this->remove($pos);
         }
     }
 
     /**
      * @param mixed $value
+     *
+     * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!is_object($value)) {
             parent::append($value);
+
             return;
         }
 
@@ -550,17 +604,20 @@ class ObjectCollection extends Collection implements JsonSerializable
     /**
      * @param mixed $offset
      * @param mixed $value
+     *
+     * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!is_object($value)) {
             parent::offsetSet($offset, $value);
+
             return;
         }
 
         $hashCode = $this->getHashCode($value);
 
-        if (is_null($offset)) {
+        if ($offset === null) {
             $this->data[] = $value;
             end($this->data);
             $pos = key($this->data);
@@ -580,9 +637,9 @@ class ObjectCollection extends Collection implements JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function contains($element)
+    public function contains($element): bool
     {
         if (!is_object($element)) {
             return parent::contains($element);
@@ -595,8 +652,10 @@ class ObjectCollection extends Collection implements JsonSerializable
      * Returns the result of $object->hashCode() if available or uses spl_object_hash($object).
      *
      * @param mixed $object
+     *
+     * @return string
      */
-    protected function getHashCode($object)
+    protected function getHashCode($object): string
     {
         if (is_object($object) && is_callable([$object, 'hashCode'])) {
             return $object->hashCode();

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config\Loader;
@@ -24,27 +22,31 @@ class YamlFileLoader extends FileLoader
     /**
      * Loads a Yaml file.
      *
-     * @param mixed  $file The resource
-     * @param string $type The resource type
+     * @param string $resource The resource
+     * @param string|null $type The resource type
+     *
+     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
+     * @throws \Symfony\Component\Yaml\Exception\ParseException if something goes wrong in parsing file
      *
      * @return array
-     *
-     * @throws \InvalidArgumentException                            if configuration file not found
-     * @throws \Symfony\Component\Yaml\Exception\ParseException     if something goes wrong in parsing file
-     * @throws \Propel\Common\Config\Exception\InputOutputException if configuration file is not readable
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null): array
     {
-        $path = $this->locator->locate($file);
+        $path = $this->locator->locate($resource);
 
         if (!is_readable($path)) {
-            throw new InputOutputException("You don't have permissions to access configuration file $file.");
+            throw new InputOutputException(sprintf("You don't have permissions to access configuration file `%s`.", $resource));
         }
 
-        $content = Yaml::parse(file_get_contents($path));
+        $data = file_get_contents($path);
+        if (!$data) {
+            throw new InputOutputException(sprintf('Unable to read configuration file `%s`.', $resource));
+        }
 
-        //config file is empty
-        if (null === $content) {
+        $content = Yaml::parse($data);
+
+        // config file is empty
+        if ($content === null) {
             $content = [];
         }
 
@@ -52,22 +54,20 @@ class YamlFileLoader extends FileLoader
             throw new ParseException('Unable to parse the configuration file: wrong yaml content.');
         }
 
-        $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
-
-        return $content;
+        return $this->resolveParams($content); //Resolve parameter placeholders (%name%)
     }
 
     /**
      * Returns true if this class supports the given resource.
      * Both 'yml' and 'yaml' extensions are accepted.
      *
-     * @param mixed  $resource A resource
-     * @param string $type     The resource type
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type
      *
-     * @return Boolean true if this class supports the given resource, false otherwise
+     * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports(['yaml', 'yml'], $resource);
+        return static::checkSupports(['yaml', 'yml'], $resource);
     }
 }

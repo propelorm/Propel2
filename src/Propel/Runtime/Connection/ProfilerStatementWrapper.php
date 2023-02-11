@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
+
+use PDO;
 
 /**
  * Statement class with profiling abilities.
@@ -21,49 +21,50 @@ class ProfilerStatementWrapper extends StatementWrapper
      * as a reference and will only be evaluated at the time that PDOStatement::execute() is called.
      * Returns a boolean value indicating success.
      *
-     * @param integer $pos            Parameter identifier (for determining what to replace in the query).
-     * @param mixed   $value          The value to bind to the parameter.
-     * @param integer $type           Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
-     * @param integer $length         Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
-     * @param mixed   $driver_options
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $variable The value to bind to the parameter.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param int|null $length Length of the data type. To indicate that a parameter is an OUT parameter from a stored procedure, you must explicitly set the length.
+     * @param mixed $driverOptions
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindParam($pos, &$value, $type = \PDO::PARAM_STR, $length = 0, $driver_options = null)
+    public function bindParam($parameter, &$variable, int $dataType = PDO::PARAM_STR, ?int $length = null, $driverOptions = null): bool
     {
         $this->connection->getProfiler()->start();
 
-        return parent::bindParam($pos, $value, $type, $length, $driver_options);
+        return parent::bindParam($parameter, $variable, $dataType, $length, $driverOptions);
     }
 
     /**
      * Binds a value to a corresponding named or question mark placeholder in the SQL statement
      * that was use to prepare the statement. Returns a boolean value indicating success.
      *
-     * @param integer $pos   Parameter identifier (for determining what to replace in the query).
-     * @param mixed   $value The value to bind to the parameter.
-     * @param integer $type  Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
+     * @param mixed $parameter Parameter identifier (for determining what to replace in the query).
+     * @param mixed $value The value to bind to the parameter.
+     * @param int $dataType Explicit data type for the parameter using the PDO::PARAM_* constants. Defaults to PDO::PARAM_STR.
      *
-     * @return boolean
+     * @return bool
      */
-    public function bindValue($pos, $value, $type = \PDO::PARAM_STR)
+    public function bindValue($parameter, $value, int $dataType = PDO::PARAM_STR): bool
     {
         $this->connection->getProfiler()->start();
 
-        return parent::bindValue($pos, $value, $type);
+        return parent::bindValue($parameter, $value, $dataType);
     }
 
     /**
-     * Executes a prepared statement.  Returns a boolean value indicating success.
+     * Executes a prepared statement. Returns a boolean value indicating success.
      * Overridden for query counting and logging.
      *
-     * @param  string  $parameters
-     * @return boolean
+     * @param array|null $inputParameters
+     *
+     * @return bool
      */
-    public function execute($parameters = null)
+    public function execute(?array $inputParameters = null): bool
     {
         $this->connection->getProfiler()->start();
 
-        return parent::execute($parameters);
+        return parent::execute($inputParameters);
     }
 }

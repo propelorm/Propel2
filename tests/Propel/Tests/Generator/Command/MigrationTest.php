@@ -1,290 +1,490 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Command;
 
+use Propel\Generator\Command\AbstractCommand;
+use Propel\Generator\Command\MigrationCreateCommand;
 use Propel\Generator\Command\MigrationDiffCommand;
 use Propel\Generator\Command\MigrationDownCommand;
 use Propel\Generator\Command\MigrationMigrateCommand;
+use Propel\Generator\Command\MigrationStatusCommand;
 use Propel\Generator\Command\MigrationUpCommand;
-use Propel\Generator\Command\MigrationCreateCommand;
 use Propel\Runtime\Propel;
 use Propel\Tests\TestCaseFixturesDatabase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * @group database
  */
 class MigrationTest extends TestCaseFixturesDatabase
 {
-    protected static $output = '/../../../../migrationdiff';
+    /**
+     * @var bool
+     */
+    private const MIGRATE_DOWN_AFTERWARDS = true;
 
-    protected $connectionOption;
-    protected $configDir;
-    protected $schemaDir;
-    protected $outputDir;
+    /**
+     * @var string
+     */
+    private const SCHEMA_DIR = __DIR__ . '/../../../../Fixtures/migration-command';
 
-    public function setUp()
+    /**
+     * @var string
+     */
+    private const OUTPUT_DIR = __DIR__ . '/../../../../migrationdiff';
+
+    /**
+     * @var string
+     */
+    private const SCHEMA_DIR_MIGRATE_TO_VERSION = __DIR__ . '/../../../../Fixtures/migrate-to-version';
+
+    /**
+     * @see \Propel\Generator\Command\MigrationMigrateCommand::COMMAND_OPTION_MIGRATE_TO_VERSION
+     *
+     * @var string
+     */
+    private const COMMAND_OPTION_MIGRATE_TO_VERSION = '--migrate-to-version';
+
+    /**
+     * @see \Propel\Generator\Command\MigrationStatusCommand::COMMAND_OPTION_LAST_VERSION
+     *
+     * @var string
+     */
+    private const COMMAND_OPTION_LAST_VERSION = '--last-version';
+
+    /**
+     * @uses \Propel\Generator\Manager\MigrationManager::COL_VERSION
+     *
+     * @var string
+     */
+    private const COL_VERSION = 'version';
+
+    /**
+     * @var string
+     */
+    private const MIGRATION_TABLE = 'propel_migration';
+
+    /**
+     * @return void
+     */
+    public function testDiffCommandCreatesFiles(): void
     {
-        parent::setUp();
-        $this->connectionOption =  ['migration_command=' . $this->getConnectionDsn('bookstore', true)];
-        $this->connectionOption = str_replace('dbname=test', 'dbname=migration', $this->connectionOption);
-        $this->configDir = __DIR__ . '/../../../../Fixtures/migration-command';
-        $this->schemaDir = __DIR__ . '/../../../../Fixtures/migration-command';
-        $this->outputDir = __DIR__ . self::$output;
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, 'PropelMigration_*.php');
     }
 
-    public function testDiffCommand()
+    /**
+     * @return void
+     */
+    public function testDiffCommandCreatesSuffixedFiles(): void
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDiffCommand();
-        $app->add($command);
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(true, "PropelMigration_*_$suffix.php");
+    }
 
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, 'PropelMigration_*.php');
+    }
+
+    /**
+     * @return void
+     */
+    public function testCreateCommandCreatesSuffixedFiles(): void
+    {
+        $this->deleteMigrationFiles();
+        $suffix = 'an_explanatory_filename_suffix';
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->assertGeneratedFileContainsCreateTableStatement(false, "PropelMigration_*_$suffix.php");
+    }
+
+    /**
+     * @return void
+     */
+    public function testUpCommandPerformsUpMigration(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:up', new MigrationUpCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testDownCommandPerformsDownMigration(): void
+    {
+        $this->migrateUp();
+        $outputString = $this->runCommandAndAssertSuccess('migration:down', new MigrationDownCommand());
+        $this->assertStringContainsString('Reverse migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandPerformsUpMigration(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess('migration:migrate', new MigrationMigrateCommand(), [], self::MIGRATE_DOWN_AFTERWARDS);
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldMigrateToTheLastVersionIfTheGivenVersionIsNotExists(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => 0],
+            self::MIGRATE_DOWN_AFTERWARDS,
+        );
+
+        $this->assertStringContainsString('Migration complete.', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldDoNothingIfGivenVersionIsTheLastAppliedVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('Already at version %s.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldRollbackToTheGivenVersionIfItIsLowerThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $expectedVersion = $migrationVersions[array_key_first($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString(
+            sprintf('Successfully rollback to migration version %s.', $expectedVersion),
+            $outputString,
+        );
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrateCommandShouldMigrateToTheGivenVersionIfItIsHigherThanTheCurrentVersion(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+        $this->migrateDown();
+
+        $expectedVersion = $migrationVersions[array_key_last($migrationVersions)];
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:migrate',
+            new MigrationMigrateCommand(),
+            [self::COMMAND_OPTION_MIGRATE_TO_VERSION => $expectedVersion],
+        );
+
+        $this->assertIsCurrentVersion($expectedVersion);
+        $this->assertStringContainsString('Migration complete. No further migration to execute.', $outputString);
+
+        $this->tearDownMigrateToVersion($migrationVersions);
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldReturnEmptyWhenOptionIsProvidedAndMigrationsWereNotExecuted(): void
+    {
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->assertEmpty(trim(str_replace('\n', '', $outputString)));
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldReturnTheLastMigrationVersionWhenOptionIsProvided(): void
+    {
+        $this->setUpMigrateToVersion();
+
+        $migrationVersions = $this->getMigrationVersions();
+
+        $outputString = $this->runCommandAndAssertSuccess(
+            'migration:status',
+            new MigrationStatusCommand(),
+            [self::COMMAND_OPTION_LAST_VERSION => true],
+        );
+
+        $this->tearDownMigrateToVersion($this->getMigrationVersions());
+
+        $this->assertSame((string)array_pop($migrationVersions), trim(str_replace('\n', '', $outputString)));
+    }
+
+    /**
+     * @return void
+     */
+    public function testMigrationStatusCommandShouldNotReturnTheLastMigrationVersionWhenOptionIsNotProvided(): void
+    {
+        $this->setUpMigrateToVersion();
+        $this->migrateDown();
+
+        $outputString = $this->runCommandAndAssertSuccess('migration:status', new MigrationStatusCommand());
+
+        $this->tearDownMigrateToVersion($this->getMigrationVersions());
+
+        $this->assertStringContainsString('Checking Database Versions', $outputString);
+    }
+
+    /**
+     * @return void
+     */
+    private function deleteMigrationFiles(): void
+    {
+        $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . 'PropelMigration_*.php');
         foreach ($files as $file) {
             unlink($file);
         }
+    }
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:diff',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true
-        ]);
+    /**
+     * Runs the supplied command and returns its output.
+     *
+     * @param string $commandName
+     * @param \Propel\Generator\Command\AbstractCommand $commandInstance
+     * @param array $additionalArguments
+     * @param bool $migrateDownAfterwards
+     *
+     * @return string
+     */
+    private function runCommandAndAssertSuccess(
+        string $commandName,
+        AbstractCommand $commandInstance,
+        array $additionalArguments = [],
+        bool $migrateDownAfterwards = false
+    ): string {
+        $outputCapturer = new StreamOutput(fopen('php://temp', 'r+'));
+        $exitCode = $this->runCommand($commandName, $commandInstance, $additionalArguments, $outputCapturer);
 
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
+        if ($migrateDownAfterwards) {
+            $this->migrateDown();
         }
 
-        $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
+        $streamedOutput = $outputCapturer->getStream();
+        rewind($streamedOutput);
+        $outputString = stream_get_contents($streamedOutput);
 
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
+        $msg = "$commandName should exit successfully, but failed with message '$outputString'";
+        $this->assertEquals(0, $exitCode, $msg);
+
+        return $outputString;
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateUp(): void
+    {
+        $this->runCommand('migration:up', new MigrationUpCommand());
+    }
+
+    /**
+     * @return void
+     */
+    private function migrateDown(): void
+    {
+        $this->runCommand('migration:down', new MigrationDownCommand());
+    }
+
+    /**
+     * Create application and run it
+     *
+     * @param string $commandName
+     * @param \Propel\Generator\Command\AbstractCommand $commandInstance
+     * @param array $additionalArguments
+     * @param \Symfony\Component\Console\Output\StreamOutput|null $outputCapturer
+     *
+     * @return int
+     */
+    private function runCommand(
+        string $commandName,
+        AbstractCommand $commandInstance,
+        array $additionalArguments = [],
+        ?StreamOutput $outputCapturer = null
+    ): int {
+        $applicationInputArguments = $this->buildApplicationInputArguments($commandName, $additionalArguments);
+
+        if ($outputCapturer === null) {
+            $outputCapturer = new StreamOutput(fopen('php://temp', 'r+'));
+        }
+
+        $app = new Application('Propel', Propel::VERSION);
+        $app->add($commandInstance);
+        $app->setAutoExit(false);
+
+        return $app->run($applicationInputArguments, $outputCapturer);
+    }
+
+    /**
+     * @param string $commandName
+     * @param array $additionalArguments
+     *
+     * @return \Symfony\Component\Console\Input\ArrayInput
+     */
+    private function buildApplicationInputArguments(string $commandName, array $additionalArguments): ArrayInput
+    {
+        $additionalArguments['command'] = $commandName;
+
+        $dsn = $this->getConnectionDsn('bookstore', true);
+        $connectionOption = ['migration_command=' . $dsn];
+
+        $defaultAppArguments = [
+            '--config-dir' => self::SCHEMA_DIR,
+            '--output-dir' => self::OUTPUT_DIR,
+            '--platform' => ucfirst($this->getDriver()) . 'Platform',
+            '--connection' => $connectionOption,
+            '--verbose' => true,
+        ];
+        $args = array_merge($additionalArguments, $defaultAppArguments);
+
+        return new ArrayInput($args);
+    }
+
+    /**
+     * @param bool $containsCreateTable
+     * @param string $fileGlobPattern
+     *
+     * @return void
+     */
+    private function assertGeneratedFileContainsCreateTableStatement(bool $containsCreateTable, string $fileGlobPattern): void
+    {
+        $files = glob(self::OUTPUT_DIR . DIRECTORY_SEPARATOR . $fileGlobPattern);
+        $this->assertCount(1, $files, 'Exactly one file should have been created');
+
         $file = $files[0];
-
         $content = file_get_contents($file);
-        $this->assertGreaterThanOrEqual(2, substr_count($content, "CREATE TABLE "));
-        $this->assertContains('CREATE TABLE ', $content);
+        if ($containsCreateTable) {
+            // unfortunatelly, the number of CREATE TABLE statements differs when running the tests alone or as part of the suite
+            $this->assertStringContainsString('CREATE TABLE ', $content);
+        } else {
+            $this->assertStringNotContainsString('CREATE TABLE ', $content);
+        }
     }
 
-    public function testDiffCommandUsingSuffix()
+    /**
+     * @param int $version
+     *
+     * @return void
+     */
+    private function assertIsCurrentVersion(int $version): void
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDiffCommand();
-        $app->add($command);
+        $sql = sprintf('SELECT %s FROM %s', self::COL_VERSION, self::MIGRATION_TABLE);
 
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
-        }
+        $stmt = Propel::getServiceContainer()->getConnection()->prepare($sql);
+        $stmt->execute();
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:diff',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--suffix' => 'an_explanatory_filename_suffix',
-            '--verbose' => true
-        ]);
+        $versions = $stmt->fetchAll();
+        $lastVersion = array_pop($versions)[self::COL_VERSION];
 
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:diff tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertGreaterThanOrEqual(2, substr_count($content, "CREATE TABLE "));
-        $this->assertContains('CREATE TABLE ', $content);
+        $this->assertSame($version, (int)$lastVersion);
     }
 
-    public function testUpCommand()
+    /**
+     * @return void
+     */
+    private function setUpMigrateToVersion(): void
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationUpCommand();
-        $app->add($command);
+        $this->deleteMigrationFiles();
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:up',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true
-        ]);
+        /** @var array<string> $versionDirectories */
+        $versionDirectories = glob(
+            sprintf(
+                '%s%s*',
+                self::SCHEMA_DIR_MIGRATE_TO_VERSION,
+                DIRECTORY_SEPARATOR,
+            ),
+            GLOB_ONLYDIR,
+        );
 
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
+        foreach ($versionDirectories as $versionDirectory) {
+            $this->runCommand('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => $versionDirectory]);
+            $this->migrateUp();
+            sleep(1);
         }
-
-        $this->assertEquals(0, $result, 'migration:up tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
     }
 
-    public function testDownCommand()
+    /**
+     * @param list<int> $migrationVersions
+     *
+     * @return void
+     */
+    private function tearDownMigrateToVersion(array $migrationVersions): void
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationDownCommand();
-        $app->add($command);
-
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:down',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true
-        ]);
-
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
+        foreach ($migrationVersions as $migrationVersion) {
+            $this->migrateDown();
         }
 
-        $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Reverse migration complete.', $outputString);
+        $this->deleteMigrationFiles();
     }
 
-    public function testMigrateCommand()
+    /**
+     * @return list<int>
+     */
+    private function getMigrationVersions(): array
     {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationMigrateCommand();
-        $app->add($command);
+        $migrationFiles = scandir(sprintf('%s%s', self::OUTPUT_DIR, DIRECTORY_SEPARATOR));
 
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:migrate',
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true
-        ]);
-
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        rewind($output->getStream());
-        if (0 !== $result) {
-            echo stream_get_contents($output->getStream());
+        $migrationVersions = [];
+        foreach ($migrationFiles as $migrationFile) {
+            if (preg_match('/^PropelMigration_(\d+).*\.php$/', $migrationFile, $matches)) {
+                $migrationVersions[] = (int)$matches[1];
+            }
         }
 
-        $this->assertEquals(0, $result, 'migration:down tests exited successfully');
-        $outputString = stream_get_contents($output->getStream());
-        $this->assertContains('Migration complete.', $outputString);
-
-        //revert this migration change so we have the same database structure as before this test
-        $this->testDownCommand();
+        return $migrationVersions;
     }
-
-    public function testCreateCommand()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationCreateCommand();
-        $app->add($command);
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
-        }
-
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:create',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--verbose' => true
-        ]);
-
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:create tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
-    }
-
-    public function testCreateCommandUsingSuffix()
-    {
-        $app = new Application('Propel', Propel::VERSION);
-        $command = new MigrationCreateCommand();
-        $app->add($command);
-
-        $files = glob($this->outputDir . '/PropelMigration_*.php');
-        foreach ($files as $file) {
-            unlink($file);
-        }
-
-        $input = new \Symfony\Component\Console\Input\ArrayInput([
-            'command' => 'migration:create',
-            '--schema-dir' => $this->schemaDir,
-            '--config-dir' => $this->configDir,
-            '--output-dir' => $this->outputDir,
-            '--platform' => ucfirst($this->getDriver()) . 'Platform',
-            '--connection' => $this->connectionOption,
-            '--suffix' => 'an_explanatory_filename_suffix',
-            '--verbose' => true
-        ]);
-
-        $output = new \Symfony\Component\Console\Output\StreamOutput(fopen("php://temp", 'r+'));
-        $app->setAutoExit(false);
-        $result = $app->run($input, $output);
-
-        if (0 !== $result) {
-            rewind($output->getStream());
-            echo stream_get_contents($output->getStream());
-        }
-
-        $this->assertEquals(0, $result, 'migration:create tests exited successfully');
-
-        $files = glob($this->outputDir . '/PropelMigration_*_an_explanatory_filename_suffix.php');
-        $this->assertGreaterThanOrEqual(1, count($files));
-        $file = $files[0];
-
-        $content = file_get_contents($file);
-        $this->assertNotContains('CREATE TABLE ', $content);
-    }
-
 }

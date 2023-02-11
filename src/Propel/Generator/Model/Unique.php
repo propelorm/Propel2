@@ -1,19 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
 /**
- * Information about unique columns of a table.  This class assumes
+ * Information about unique columns of a table. This class assumes
  * that in the underlying RDBMS, unique constraints and unique indices
- * are roughly equivalent.  For example, adding a unique constraint to
+ * are roughly equivalent. For example, adding a unique constraint to
  * a column also creates an index on that column (this is known to be
  * true for MySQL and Oracle).
  *
@@ -25,13 +23,12 @@ namespace Propel\Generator\Model;
 class Unique extends Index
 {
     /**
-     * Returns whether or not this index is unique.
+     * Returns whether this index is unique.
      *
-     * Returns Boolean
+     * @return bool
      */
-    public function isUnique()
+    public function isUnique(): bool
     {
         return true;
     }
-
 }

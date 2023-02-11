@@ -1,17 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Builder\Om\TableMapLoaderScriptBuilder;
+use SplFileInfo;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * This manager creates the Object Model classes based on the XML schema file.
@@ -23,26 +23,31 @@ class ModelManager extends AbstractManager
     /**
      * A Filesystem object.
      *
-     * @var Filesystem
+     * @var \Symfony\Component\Filesystem\Filesystem
      */
     private $filesystem;
 
     /**
      * Sets the filesystem object.
      *
-     * @param Filesystem $filesystem
+     * @param \Symfony\Component\Filesystem\Filesystem $filesystem
+     *
+     * @return void
      */
-    public function setFilesystem(Filesystem $filesystem)
+    public function setFilesystem(Filesystem $filesystem): void
     {
         $this->filesystem = $filesystem;
     }
 
-    public function build()
+    /**
+     * @return void
+     */
+    public function build(): void
     {
         $this->validate();
 
-        $totalNbFiles    = 0;
-        $dataModels      = $this->getDataModels();
+        $totalNbFiles = 0;
+        $dataModels = $this->getDataModels();
         $generatorConfig = $this->getGeneratorConfig();
 
         $this->log('Generating PHP files...');
@@ -93,12 +98,14 @@ class ModelManager extends AbstractManager
                                         if (!$child->getAncestor() && $child->getClassName() === $table->getPhpName()) {
                                             continue;
                                         }
+                                        /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);
                                     }
                                     $overwrite = false;
                                     foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
+                                        /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
                                         $nbWrittenFiles += $this->doBuild($builder, $overwrite);
@@ -123,20 +130,22 @@ class ModelManager extends AbstractManager
                         // ----------------------------------
                         if ($table->hasAdditionalBuilders()) {
                             foreach ($table->getAdditionalBuilders() as $builderClass) {
+                                /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $builder */
                                 $builder = new $builderClass($table);
                                 $builder->setGeneratorConfig($generatorConfig);
-                                $nbWrittenFiles += $this->doBuild($builder, isset($builder->overwrite) ? $builder->overwrite : true);
+                                $nbWrittenFiles += $this->doBuild($builder, $builder->overwrite ?? true);
                             }
                         }
 
                         $totalNbFiles += $nbWrittenFiles;
-                        if (0 === $nbWrittenFiles) {
+                        if ($nbWrittenFiles === 0) {
                             $this->log("\t\t(no change)");
                         }
                     }
                 }
             }
         }
+        $totalNbFiles += $this->createTableMapLoaderScript();
 
         if ($totalNbFiles) {
             $this->log(sprintf('Object model generation complete - %d files written', $totalNbFiles));
@@ -150,14 +159,15 @@ class ModelManager extends AbstractManager
      * This method assumes that the DataModelBuilder class has been initialized
      * with the build properties.
      *
-     * @param  AbstractOMBuilder $builder
-     * @param  boolean           $overwrite
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     * @param bool $overwrite
+     *
      * @return int
      */
-    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
+    protected function doBuild(AbstractOMBuilder $builder, bool $overwrite = true): int
     {
         $path = $builder->getClassFilePath();
-        $file = new \SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
+        $file = new SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
 
         $this->filesystem->mkdir($file->getPath());
 
@@ -184,6 +194,35 @@ class ModelManager extends AbstractManager
         $action = $file->isFile() ? 'Updating' : 'Creating';
         $this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
         file_put_contents($file->getPathname(), $script);
+
+        return 1;
+    }
+
+    /**
+     * Create script to import all table map files into database map.
+     *
+     * @return int Number of changed files
+     */
+    protected function createTableMapLoaderScript(): int
+    {
+        $schemas = $this->getDataModels();
+        $builder = new TableMapLoaderScriptBuilder($this->getGeneratorConfig());
+        $fileContent = $builder->build($schemas);
+
+        $file = $builder->getFile();
+        $filePath = $file->getPathname();
+
+        $action = $file->isFile() ? 'Updating' : 'Creating';
+        $this->log("\t-> $action $filePath");
+
+        if ($file->isFile() && file_get_contents($filePath) === $fileContent) {
+            $this->log("\t\t(no change)");
+
+            return 0;
+        }
+        $this->log('Generating script for loading table maps at ' . $file->getRealPath());
+        $this->filesystem->mkdir($file->getPath());
+        file_put_contents($filePath, $fileContent);
 
         return 1;
     }

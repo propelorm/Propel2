@@ -1,16 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Data object to describe a joined hydration in a Model Query
@@ -20,31 +19,67 @@ use Propel\Runtime\Map\RelationMap;
  */
 class ModelWith
 {
+    /**
+     * @var string
+     */
     protected $modelName;
 
+    /**
+     * @var \Propel\Runtime\Map\TableMap
+     */
     protected $getTableMap;
 
+    /**
+     * @var bool
+     */
     protected $isSingleTableInheritance = false;
 
+    /**
+     * @var bool
+     */
     protected $isAdd = false;
 
+    /**
+     * @var bool
+     */
     protected $isWithOneToMany = false;
 
+    /**
+     * @var string
+     */
     protected $relationName;
 
+    /**
+     * @var string
+     */
     protected $relationMethod;
 
+    /**
+     * @var string
+     */
     protected $initMethod;
 
+    /**
+     * @var string
+     */
     protected $resetPartialMethod = '';
 
+    /**
+     * @var string
+     */
     protected $leftPhpName;
 
+    /**
+     * @var string
+     */
     protected $rightPhpName;
 
-    public function __construct(ModelJoin $join = null)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelJoin|null $join
+     */
+    public function __construct(?ModelJoin $join = null)
     {
-        if (null !== $join) {
+        if ($join !== null) {
             $this->init($join);
         }
     }
@@ -53,9 +88,11 @@ class ModelWith
      * Define the joined hydration schema based on a join object.
      * Fills the ModelWith properties using a ModelJoin as source
      *
-     * @param ModelJoin $join
+     * @param \Propel\Runtime\ActiveQuery\ModelJoin $join
+     *
+     * @return void
      */
-    public function init(ModelJoin $join)
+    public function init(ModelJoin $join): void
     {
         $tableMap = $join->getTableMap();
         $this->setModelName($tableMap->getClassName());
@@ -81,123 +118,212 @@ class ModelWith
 
     // DataObject getters & setters
 
-    public function setModelName($modelName)
+    /**
+     * @param string $modelName
+     *
+     * @return void
+     */
+    public function setModelName(string $modelName): void
     {
-        if (0 === strpos($modelName, '\\')) {
+        if (strpos($modelName, '\\') === 0) {
             $this->modelName = substr($modelName, 1);
         } else {
             $this->modelName = $modelName;
         }
     }
 
-    public function getTableMap()
+    /**
+     * @return \Propel\Runtime\Map\TableMap
+     */
+    public function getTableMap(): TableMap
     {
         return $this->getTableMap;
     }
 
-    public function getModelName()
+    /**
+     * @return string
+     */
+    public function getModelName(): string
     {
         return $this->modelName;
     }
 
-    public function setIsSingleTableInheritance($isSingleTableInheritance)
+    /**
+     * @param bool $isSingleTableInheritance
+     *
+     * @return void
+     */
+    public function setIsSingleTableInheritance(bool $isSingleTableInheritance): void
     {
         $this->isSingleTableInheritance = $isSingleTableInheritance;
     }
 
-    public function isSingleTableInheritance()
+    /**
+     * @return bool
+     */
+    public function isSingleTableInheritance(): bool
     {
         return $this->isSingleTableInheritance;
     }
 
-    public function setIsAdd($isAdd)
+    /**
+     * @param bool $isAdd
+     *
+     * @return void
+     */
+    public function setIsAdd(bool $isAdd): void
     {
         $this->isAdd = $isAdd;
     }
 
-    public function isAdd()
+    /**
+     * @return bool
+     */
+    public function isAdd(): bool
     {
         return $this->isAdd;
     }
 
-    public function setIsWithOneToMany($isWithOneToMany)
+    /**
+     * @param bool $isWithOneToMany
+     *
+     * @return void
+     */
+    public function setIsWithOneToMany(bool $isWithOneToMany): void
     {
         $this->isWithOneToMany = $isWithOneToMany;
     }
 
-    public function isWithOneToMany()
+    /**
+     * @return bool
+     */
+    public function isWithOneToMany(): bool
     {
         return $this->isWithOneToMany;
     }
 
-    public function setRelationName($relationName)
+    /**
+     * @param string $relationName
+     *
+     * @return void
+     */
+    public function setRelationName(string $relationName): void
     {
         $this->relationName = $relationName;
     }
 
-    public function getRelationName()
+    /**
+     * @return string
+     */
+    public function getRelationName(): string
     {
         return $this->relationName;
     }
 
-    public function setRelationMethod($relationMethod)
+    /**
+     * @param string $relationMethod
+     *
+     * @return void
+     */
+    public function setRelationMethod(string $relationMethod): void
     {
         $this->relationMethod = $relationMethod;
     }
 
-    public function getRelationMethod()
+    /**
+     * @return string
+     */
+    public function getRelationMethod(): string
     {
         return $this->relationMethod;
     }
 
-    public function setInitMethod($initMethod)
+    /**
+     * @param string $initMethod
+     *
+     * @return void
+     */
+    public function setInitMethod(string $initMethod): void
     {
         $this->initMethod = $initMethod;
     }
 
-    public function getInitMethod()
+    /**
+     * @return string
+     */
+    public function getInitMethod(): string
     {
         return $this->initMethod;
     }
 
-    public function setResetPartialMethod($resetPartialMethod)
+    /**
+     * @param string $resetPartialMethod
+     *
+     * @return void
+     */
+    public function setResetPartialMethod(string $resetPartialMethod): void
     {
         $this->resetPartialMethod = $resetPartialMethod;
     }
 
-    public function getResetPartialMethod()
+    /**
+     * @return string
+     */
+    public function getResetPartialMethod(): string
     {
         return $this->resetPartialMethod;
     }
 
-    public function setLeftPhpName($leftPhpName)
+    /**
+     * @param string $leftPhpName
+     *
+     * @return void
+     */
+    public function setLeftPhpName(string $leftPhpName): void
     {
         $this->leftPhpName = $leftPhpName;
     }
 
-    public function getLeftPhpName()
+    /**
+     * @return string|null
+     */
+    public function getLeftPhpName(): ?string
     {
         return $this->leftPhpName;
     }
 
-    public function setRightPhpName($rightPhpName)
+    /**
+     * @param string $rightPhpName
+     *
+     * @return void
+     */
+    public function setRightPhpName(string $rightPhpName): void
     {
         $this->rightPhpName = $rightPhpName;
     }
 
-    public function getRightPhpName()
+    /**
+     * @return string|null
+     */
+    public function getRightPhpName(): ?string
     {
         return $this->rightPhpName;
     }
 
     // Utility methods
 
-    public function isPrimary()
+    /**
+     * @return bool
+     */
+    public function isPrimary(): bool
     {
-        return null === $this->leftPhpName;
+        return $this->leftPhpName === null;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         return sprintf('modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
     }

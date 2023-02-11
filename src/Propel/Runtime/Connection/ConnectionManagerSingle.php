@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
 
+use InvalidArgumentException;
 use Propel\Runtime\Adapter\AdapterInterface;
 
 /**
@@ -28,14 +27,24 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     protected $configuration = [];
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $connection;
 
     /**
      * @param string $name The datasource name associated to this connection
      */
-    public function setName($name)
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $name The datasource name associated to this connection
+     *
+     * @return void
+     */
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -43,36 +52,55 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     /**
      * @return string The datasource name associated to this connection
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getConfiguration()
+    /**
+     * @return array
+     */
+    public function getConfiguration(): array
     {
         return $this->configuration;
     }
 
-    public function setConnection(ConnectionInterface $connection)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     *
+     * @return void
+     */
+    public function setConnection(ConnectionInterface $connection): void
     {
         $this->setConfiguration(null);
         $this->connection = $connection;
     }
 
-    public function setConfiguration($configuration)
+    /**
+     * @param array|null $configuration
+     *
+     * @return void
+     */
+    public function setConfiguration(?array $configuration): void
     {
-        $this->configuration = $configuration;
+        $this->configuration = (array)$configuration;
         $this->closeConnections();
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
+     *
+     * @throws \InvalidArgumentException
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
-        if (null === $this->connection) {
+        if ($this->connection === null) {
+            if ($adapter === null) {
+                throw new InvalidArgumentException('$adapter not given');
+            }
+
             $this->connection = ConnectionFactory::create($this->configuration, $adapter);
             $this->connection->setName($this->getName());
         }
@@ -81,16 +109,19 @@ class ConnectionManagerSingle implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Propel\Runtime\Adapter\AdapterInterface $adapter
+     * @param \Propel\Runtime\Adapter\AdapterInterface|null $adapter
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
         return $this->getWriteConnection($adapter);
     }
 
-    public function closeConnections()
+    /**
+     * @return void
+     */
+    public function closeConnections(): void
     {
         $this->connection = null;
     }

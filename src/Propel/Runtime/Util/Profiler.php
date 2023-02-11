@@ -12,13 +12,15 @@ use Propel\Common\Config\Exception\InvalidConfigurationException;
 
 /**
  * Profiler for Propel
+ *
+ * @psalm-consistent-constructor (instantiated by class name in StandardServiceContainer without arguments)
  */
 class Profiler
 {
     /**
      * @var float
      */
-    protected $slowTreshold;
+    protected $slowThreshold;
 
     /**
      * @var string
@@ -62,13 +64,13 @@ class Profiler
     ];
 
     /**
-     * @param float $slowTreshold
+     * @param float $slowThreshold
      * @param string $innerGlue
      * @param string $outerGlue
      */
-    public function __construct($slowTreshold = 0.1, $innerGlue = ': ', $outerGlue = ' | ')
+    public function __construct(float $slowThreshold = 0.1, string $innerGlue = ': ', string $outerGlue = ' | ')
     {
-        $this->slowTreshold = $slowTreshold;
+        $this->slowThreshold = $slowThreshold;
         $this->innerGlue = $innerGlue;
         $this->outerGlue = $outerGlue;
     }
@@ -76,13 +78,13 @@ class Profiler
     /**
      * Set the duration which triggers the 'slow' label on details.
      *
-     * @param int $slowTreshold duration in seconds
+     * @param int $slowThreshold duration in seconds
      *
      * @return void
      */
-    public function setSlowTreshold($slowTreshold)
+    public function setSlowThreshold(int $slowThreshold): void
     {
-        $this->slowTreshold = $slowTreshold;
+        $this->slowThreshold = $slowThreshold;
     }
 
     /**
@@ -92,7 +94,7 @@ class Profiler
      *
      * @return void
      */
-    public function setDetails($details)
+    public function setDetails(array $details): void
     {
         $this->details = $details;
     }
@@ -104,7 +106,7 @@ class Profiler
      *
      * @return void
      */
-    public function setInnerGlue($innerGlue)
+    public function setInnerGlue(string $innerGlue): void
     {
         $this->innerGlue = $innerGlue;
     }
@@ -116,7 +118,7 @@ class Profiler
      *
      * @return void
      */
-    public function setOuterGlue($outerGlue)
+    public function setOuterGlue(string $outerGlue): void
     {
         $this->outerGlue = $outerGlue;
     }
@@ -127,7 +129,7 @@ class Profiler
      * @example
      * <code>
      * $profiler->setConfiguration(array(
-     *   'slowTreshold' => 0.1,
+     *   'slowThreshold' => 0.1,
      *   'details' => array(
      *       'time' => array(
      *           'name' => 'Time',
@@ -159,10 +161,10 @@ class Profiler
      *
      * @return void
      */
-    public function setConfiguration($profilerConfiguration)
+    public function setConfiguration(array $profilerConfiguration): void
     {
-        if (isset($profilerConfiguration['slowTreshold'])) {
-            $this->setSlowTreshold($profilerConfiguration['slowTreshold']);
+        if (isset($profilerConfiguration['slowThreshold'])) {
+            $this->setSlowThreshold($profilerConfiguration['slowThreshold']);
         }
         if (isset($profilerConfiguration['details'])) {
             $this->setDetails($profilerConfiguration['details']);
@@ -182,10 +184,10 @@ class Profiler
      *
      * @return array
      */
-    public function getConfiguration()
+    public function getConfiguration(): array
     {
         return [
-            'slowTreshold' => $this->slowTreshold,
+            'slowThreshold' => $this->slowThreshold,
             'details' => $this->details,
             'innerGlue' => $this->innerGlue,
             'outerGlue' => $this->outerGlue,
@@ -195,7 +197,7 @@ class Profiler
     /**
      * @return void
      */
-    public function start()
+    public function start(): void
     {
         $this->snapshot = self::getSnapshot();
     }
@@ -203,15 +205,15 @@ class Profiler
     /**
      * @return bool
      */
-    public function isSlow()
+    public function isSlow(): bool
     {
-        return microtime(true) - $this->snapshot['microtime'] > $this->slowTreshold;
+        return microtime(true) - $this->snapshot['microtime'] > $this->slowThreshold;
     }
 
     /**
      * @return string
      */
-    public function getProfile()
+    public function getProfile(): string
     {
         $endSnapshot = self::getSnapshot();
         $startSnapshot = ($this->snapshot === null) ? $endSnapshot : $this->snapshot;
@@ -236,12 +238,12 @@ class Profiler
      *
      * @return string
      */
-    public function getProfileBetween($startSnapshot, $endSnapshot)
+    public function getProfileBetween(array $startSnapshot, array $endSnapshot): string
     {
         $profile = '';
 
-        if ($this->slowTreshold) {
-            if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowTreshold) {
+        if ($this->slowThreshold) {
+            if ($endSnapshot['microtime'] - $startSnapshot['microtime'] >= $this->slowThreshold) {
                 $profile .= 'SLOW ';
             } else {
                 $profile .= '     ';
@@ -282,7 +284,7 @@ class Profiler
      *
      * @return array
      */
-    public static function getSnapshot()
+    public static function getSnapshot(): array
     {
         return [
             'microtime' => microtime(true),
@@ -294,12 +296,12 @@ class Profiler
     /**
      * Format a byte count into a human-readable representation.
      *
-     * @param int|float $bytes Byte count to convert. Can be negative.
+     * @param float|int $bytes Byte count to convert. Can be negative.
      * @param int $precision How many decimals to include.
      *
      * @return string
      */
-    public static function formatMemory($bytes, $precision = 3)
+    public static function formatMemory($bytes, int $precision = 3): string
     {
         $absBytes = abs($bytes);
         $sign = ($bytes == $absBytes) ? 1 : -1;
@@ -321,7 +323,7 @@ class Profiler
      *
      * @return string
      */
-    public static function formatDuration($duration, $precision = 3)
+    public static function formatDuration(float $duration, int $precision = 3): string
     {
         if ($duration < 1) {
             $duration *= 1000;
@@ -341,7 +343,7 @@ class Profiler
      *
      * @return string
      */
-    public static function toPrecision($number, $significantFigures = 3)
+    public static function toPrecision($number, int $significantFigures = 3): string
     {
         if ((float)$number === 0.0) {
             return '0';

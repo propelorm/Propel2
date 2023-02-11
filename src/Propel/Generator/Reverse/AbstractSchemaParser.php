@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
 
 use Propel\Generator\Config\GeneratorConfigInterface;
 use Propel\Generator\Model\VendorInfo;
+use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Base class for reverse engineering a database schema.
@@ -24,21 +24,21 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * The database connection.
      *
-     * @var ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $dbh;
 
     /**
      * Stack of warnings.
      *
-     * @var array string[]
+     * @var list<string>
      */
     protected $warnings = [];
 
     /**
      * GeneratorConfig object holding build properties.
      *
-     * @var GeneratorConfigInterface
+     * @var \Propel\Generator\Config\GeneratorConfigInterface
      */
     private $generatorConfig;
 
@@ -67,18 +67,18 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * The database's platform.
      *
-     * @var \Propel\Generator\Platform\PlatformInterface
+     * @var \Propel\Generator\Platform\PlatformInterface|null
      */
     protected $platform;
 
     /**
      * Constructor.
      *
-     * @param ConnectionInterface $dbh Optional database connection
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $dbh Optional database connection
      */
-    public function __construct(ConnectionInterface $dbh = null)
+    public function __construct(?ConnectionInterface $dbh = null)
     {
-        if (null !== $dbh) {
+        if ($dbh !== null) {
             $this->setConnection($dbh);
         }
     }
@@ -86,18 +86,21 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the database connection.
      *
-     * @param ConnectionInterface $dbh
+     * @param \Propel\Runtime\Connection\ConnectionInterface $dbh
+     *
+     * @return void
      */
-    public function setConnection(ConnectionInterface $dbh)
+    public function setConnection(ConnectionInterface $dbh): void
     {
         $this->dbh = $dbh;
     }
 
     /**
      * Gets the database connection.
-     * @return ConnectionInterface
+     *
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->dbh;
     }
@@ -106,8 +109,10 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Setter for the migrationTable property
      *
      * @param string $migrationTable
+     *
+     * @return void
      */
-    public function setMigrationTable($migrationTable)
+    public function setMigrationTable(string $migrationTable): void
     {
         $this->migrationTable = $migrationTable;
     }
@@ -117,7 +122,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      *
      * @return string
      */
-    public function getMigrationTable()
+    public function getMigrationTable(): string
     {
         return $this->migrationTable;
     }
@@ -126,8 +131,10 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
      * Pushes a message onto the stack of warnings.
      *
      * @param string $msg The warning message.
+     *
+     * @return void
      */
-    protected function warn($msg)
+    protected function warn(string $msg): void
     {
         $this->warnings[] = $msg;
     }
@@ -135,9 +142,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets array of warning messages.
      *
-     * @return string[]
+     * @return array<string>
      */
-    public function getWarnings()
+    public function getWarnings(): array
     {
         return $this->warnings;
     }
@@ -145,9 +152,11 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Sets the GeneratorConfig to use in the parsing.
      *
-     * @param GeneratorConfigInterface $config
+     * @param \Propel\Generator\Config\GeneratorConfigInterface $config
+     *
+     * @return void
      */
-    public function setGeneratorConfig(GeneratorConfigInterface $config)
+    public function setGeneratorConfig(GeneratorConfigInterface $config): void
     {
         $this->generatorConfig = $config;
     }
@@ -155,9 +164,9 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets the GeneratorConfig option.
      *
-     * @return GeneratorConfigInterface
+     * @return \Propel\Generator\Config\GeneratorConfigInterface|null
      */
-    public function getGeneratorConfig()
+    public function getGeneratorConfig(): ?GeneratorConfigInterface
     {
         return $this->generatorConfig;
     }
@@ -165,50 +174,50 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Gets a type mapping from native type to Propel type.
      *
-     * @return array The mapped Propel type.
+     * @return array<string> The mapped Propel type.
      */
-    abstract protected function getTypeMapping();
+    abstract protected function getTypeMapping(): array;
 
     /**
      * Gets a mapped Propel type for specified native type.
      *
-     * @param  string $nativeType
-     * @return string The mapped Propel type.
+     * @param string $nativeType
+     *
+     * @return string|null The mapped Propel type.
      */
-    protected function getMappedPropelType($nativeType)
+    protected function getMappedPropelType(string $nativeType): ?string
     {
-        if (null === $this->nativeToPropelTypeMap) {
+        if ($this->nativeToPropelTypeMap === null) {
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
         }
 
-        if (isset($this->nativeToPropelTypeMap[$nativeType])) {
-            return $this->nativeToPropelTypeMap[$nativeType];
-        }
-
-        return null;
+        return $this->nativeToPropelTypeMap[$nativeType] ?? null;
     }
 
     /**
      * Give a best guess at the native type.
      *
-     * @param  string $propelType
-     * @return string The native SQL type that best matches the specified Propel type.
+     * @param string $propelType
+     *
+     * @return string|null The native SQL type that best matches the specified Propel type.
      */
-    protected function getMappedNativeType($propelType)
+    protected function getMappedNativeType(string $propelType): ?string
     {
-        if (null === $this->reverseTypeMap) {
+        if ($this->reverseTypeMap === null) {
             $this->reverseTypeMap = array_flip($this->getTypeMapping());
         }
 
-        return isset($this->reverseTypeMap[$propelType]) ? $this->reverseTypeMap[$propelType] : null;
+        return $this->reverseTypeMap[$propelType] ?? null;
     }
 
     /**
      * Gets a new VendorInfo object for this platform with specified params.
      *
      * @param array $params
+     *
+     * @return \Propel\Generator\Model\VendorInfo
      */
-    protected function getNewVendorInfoObject(array $params)
+    protected function getNewVendorInfoObject(array $params): VendorInfo
     {
         $type = $this->getPlatform()->getDatabaseType();
 
@@ -218,22 +227,42 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
         return $vi;
     }
 
-    public function setPlatform($platform)
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return void
+     */
+    public function setPlatform(PlatformInterface $platform): void
     {
         $this->platform = $platform;
     }
 
     /**
+     * @return bool
+     */
+    public function hasPlatform(): bool
+    {
+        return $this->platform !== null;
+    }
+
+    /**
      * Returns the database's platform.
+     *
+     * @throws \RuntimeException
      *
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    public function getPlatform()
+    public function getPlatform(): PlatformInterface
     {
-        if (null === $this->platform) {
+        if ($this->platform === null) {
             $this->platform = $this->getGeneratorConfig()->getConfiguredPlatform();
         }
 
-        return $this->platform;
+        $platform = $this->platform;
+        if ($platform === null) {
+            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existence first.');
+        }
+
+        return $platform;
     }
 }

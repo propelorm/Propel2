@@ -2,70 +2,70 @@
 <database name="bookstore-behavior" defaultIdMethod="native" package="behavior.sortable" namespace="Propel\Tests\Bookstore\Behavior">
 
     <table name="sortable_table11">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
 
-        <behavior name="sortable" />
+        <behavior name="sortable"/>
     </table>
 
     <table name="sortable_table12">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="position" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="position" type="INTEGER"/>
 
         <behavior name="sortable">
-            <parameter name="rank_column" value="position" />
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="my_scope_column" />
+            <parameter name="rank_column" value="position"/>
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="my_scope_column"/>
         </behavior>
     </table>
 
     <table name="sortable_table13">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="style" type="ENUM" valueSet="novel, essay" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="style" type="ENUM" valueSet="novel, essay"/>
 
         <behavior name="sortable">
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="style" />
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="style"/>
         </behavior>
     </table>
 
     <table name="sortable_table14">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="style2" type="SET" valueSet="novel, essay" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="style2" type="SET" valueSet="novel, essay"/>
 
         <behavior name="sortable">
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="style2" />
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="style2"/>
         </behavior>
     </table>
 
     <table name="sortable_multi_scopes">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="category_id" required="true" type="INTEGER" />
-        <column name="sub_category_id" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="position" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="category_id" required="true" type="INTEGER"/>
+        <column name="sub_category_id" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="position" type="INTEGER"/>
         <behavior name="sortable">
-            <parameter name="rank_column" value="position" />
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="category_id" />
-            <parameter name="scope_column" value="sub_category_id" />
+            <parameter name="rank_column" value="position"/>
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="category_id"/>
+            <parameter name="scope_column" value="sub_category_id"/>
         </behavior>
     </table>
 
     <table name="sortable_multi_comma_scopes">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="category_id" required="true" type="INTEGER" />
-        <column name="sub_category_id" type="INTEGER" />
-        <column name="title" type="VARCHAR" size="100" primaryString="true" />
-        <column name="position" type="INTEGER" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="category_id" required="true" type="INTEGER"/>
+        <column name="sub_category_id" type="INTEGER"/>
+        <column name="title" type="VARCHAR" size="100" primaryString="true"/>
+        <column name="position" type="INTEGER"/>
         <behavior name="sortable">
-            <parameter name="rank_column" value="position" />
-            <parameter name="use_scope" value="true" />
-            <parameter name="scope_column" value="category_id, sub_category_id" />
+            <parameter name="rank_column" value="position"/>
+            <parameter name="use_scope" value="true"/>
+            <parameter name="scope_column" value="category_id, sub_category_id"/>
         </behavior>
     </table>
 

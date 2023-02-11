@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -14,67 +12,66 @@ namespace Propel\Generator\Model;
  * A class for information about table cross foreign keys which are used in many-to-many relations.
  *
  *
- *    ___CrossTable1___                                   ___User___
- *   |  PK1 userId     |----------FK1------------------->|  id      |
- *   |                 |                    _Group__     |  name    |
- *   |  PK2 groupId    |-----+----FK2----->|  id    |    |__________|
- *   |                 |    /           \->|  id2   |
- *   |  PK3 relationId |   /               |  name  |
- *   |                 |  /                |________|
- *   |  PK4 groupId2   |-/
+ *    ___CrossTable1___ ___User___
+ *   | PK1 userId |----------FK1------------------->| id |
+ *   ||_Group__|name|
+ *   | PK2 groupId |-----+----FK2----->| id | |__________|
+ *   ||/ \->| id2 |
+ *   | PK3 relationId | / | name |
+ *   ||/|________|
+ *   | PK4 groupId2 |-/
  *   |_________________|
  *
  *
  *    User->getCrossFks():
  *      0:
- *         getTable()                   -> User
- *         getCrossForeignKeys()        -> [FK2]
- *         getMiddleTable()             -> CrossTable1
- *         getIncomingForeignKey()      -> FK1
+ *         getTable() -> User
+ *         getCrossForeignKeys() -> [FK2]
+ *         getMiddleTable() -> CrossTable1
+ *         getIncomingForeignKey() -> FK1
  *         getUnclassifiedPrimaryKeys() -> [PK3]
  *
  *    Group->getCrossFks():
  *      0:
- *         getTable()                   -> Group
- *         getCrossForeignKeys()        -> [FK1]
- *         getMiddleTable()             -> CrossTable1
- *         getIncomingForeignKey()      -> FK2
+ *         getTable() -> Group
+ *         getCrossForeignKeys() -> [FK1]
+ *         getMiddleTable() -> CrossTable1
+ *         getIncomingForeignKey() -> FK2
  *         getUnclassifiedPrimaryKeys() -> [PK3]
  */
 class CrossForeignKeys
 {
-
     /**
      * The middle-table.
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $table;
 
     /**
      * The target table (which has crossRef=true).
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $middleTable;
 
     /**
      * All other outgoing relations from the middle-table to other tables.
      *
-     * @var ForeignKey[]
+     * @var array<\Propel\Generator\Model\ForeignKey>
      */
     protected $crossForeignKeys = [];
 
     /**
      * The incoming foreign key from the middle-table to this table.
      *
-     * @var ForeignKey
+     * @var \Propel\Generator\Model\ForeignKey|null
      */
     protected $incomingForeignKey;
 
     /**
-     * @param ForeignKey $foreignKey
-     * @param Table      $crossTable
+     * @param \Propel\Generator\Model\ForeignKey $foreignKey
+     * @param \Propel\Generator\Model\Table $crossTable
      */
     public function __construct(ForeignKey $foreignKey, Table $crossTable)
     {
@@ -83,20 +80,22 @@ class CrossForeignKeys
     }
 
     /**
-     * @param ForeignKey $foreignKey
+     * @param \Propel\Generator\Model\ForeignKey $foreignKey
+     *
+     * @return void
      */
-    public function setIncomingForeignKey($foreignKey)
+    public function setIncomingForeignKey(ForeignKey $foreignKey): void
     {
-        $this->setMiddleTable($foreignKey ? $foreignKey->getTable() : null);
+        $this->setMiddleTable($foreignKey->getTable());
         $this->incomingForeignKey = $foreignKey;
     }
 
     /**
      * The foreign key from the middle-table to the target table.
      *
-     * @return ForeignKey
+     * @return \Propel\Generator\Model\ForeignKey|null
      */
-    public function getIncomingForeignKey()
+    public function getIncomingForeignKey(): ?ForeignKey
     {
         return $this->incomingForeignKey;
     }
@@ -109,12 +108,12 @@ class CrossForeignKeys
      *
      * table (local primary keys -> foreignKey):
      *
-     *   pk1  -> FK1
+     *   pk1 -> FK1
      *   pk2
      *      \
      *        -> FK2
      *      /
-     *   pk3  -> FK3
+     *   pk3 -> FK3
      *      \
      *        -> FK4
      *      /
@@ -127,10 +126,11 @@ class CrossForeignKeys
      *  isAtLeastOneLocalPrimaryKeyNotCovered(FK3) where FK1,FK2 is in our collection: false
      *  isAtLeastOneLocalPrimaryKeyNotCovered(FK4) where FK1,FK2 is in our collection: true
      *
-     * @param  ForeignKey $fk
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
      * @return bool
      */
-    public function isAtLeastOneLocalPrimaryKeyNotCovered(ForeignKey $fk)
+    public function isAtLeastOneLocalPrimaryKeyNotCovered(ForeignKey $fk): bool
     {
         $primaryKeys = $fk->getLocalPrimaryKeys();
         foreach ($primaryKeys as $primaryKey) {
@@ -138,6 +138,7 @@ class CrossForeignKeys
             foreach ($this->getCrossForeignKeys() as $crossFK) {
                 if ($crossFK->hasLocalColumn($primaryKey)) {
                     $covered = true;
+
                     break;
                 }
             }
@@ -153,9 +154,9 @@ class CrossForeignKeys
     /**
      * Returns all primary keys of middle-table which are not already covered by at least on of our cross foreignKey collection.
      *
-     * @return Column[]
+     * @return list<\Propel\Generator\Model\Column>
      */
-    public function getUnclassifiedPrimaryKeys()
+    public function getUnclassifiedPrimaryKeys(): array
     {
         $pks = [];
         foreach ($this->getMiddleTable()->getPrimaryKey() as $pk) {
@@ -168,6 +169,7 @@ class CrossForeignKeys
                 foreach ($this->getCrossForeignKeys() as $crossFK) {
                     if ($crossFK->hasLocalColumn($pk)) {
                         $unclassified = false;
+
                         break;
                     }
                 }
@@ -181,9 +183,11 @@ class CrossForeignKeys
     }
 
     /**
-     * @param ForeignKey $foreignKey
+     * @param \Propel\Generator\Model\ForeignKey $foreignKey
+     *
+     * @return void
      */
-    public function addCrossForeignKey(ForeignKey $foreignKey)
+    public function addCrossForeignKey(ForeignKey $foreignKey): void
     {
         $this->crossForeignKeys[] = $foreignKey;
     }
@@ -191,15 +195,17 @@ class CrossForeignKeys
     /**
      * @return bool
      */
-    public function hasCrossForeignKeys()
+    public function hasCrossForeignKeys(): bool
     {
-        return !!$this->crossForeignKeys;
+        return (bool)$this->crossForeignKeys;
     }
 
     /**
-     * @param ForeignKey[] $foreignKeys
+     * @param array<\Propel\Generator\Model\ForeignKey> $foreignKeys
+     *
+     * @return void
      */
-    public function setCrossForeignKeys(array $foreignKeys)
+    public function setCrossForeignKeys(array $foreignKeys): void
     {
         $this->crossForeignKeys = $foreignKeys;
     }
@@ -207,17 +213,19 @@ class CrossForeignKeys
     /**
      * All other outgoing relations from the middle-table to other tables.
      *
-     * @return ForeignKey[]
+     * @return array<\Propel\Generator\Model\ForeignKey>
      */
-    public function getCrossForeignKeys()
+    public function getCrossForeignKeys(): array
     {
         return $this->crossForeignKeys;
     }
 
     /**
-     * @param Table $foreignTable
+     * @param \Propel\Generator\Model\Table $foreignTable
+     *
+     * @return void
      */
-    public function setMiddleTable(Table $foreignTable)
+    public function setMiddleTable(Table $foreignTable): void
     {
         $this->middleTable = $foreignTable;
     }
@@ -225,17 +233,19 @@ class CrossForeignKeys
     /**
      * The middle table (which has crossRef=true).
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
-    public function getMiddleTable()
+    public function getMiddleTable(): Table
     {
         return $this->middleTable;
     }
 
     /**
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -243,11 +253,10 @@ class CrossForeignKeys
     /**
      * The source table.
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->table;
     }
-
 }

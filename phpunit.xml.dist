@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    bootstrap="tests/bootstrap.php"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+>
+
+    <testsuites>
+        <testsuite name="propel2">
+            <directory>tests/Propel/Tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <exclude>
+            <group>pgsql</group>
+            <group>mysql</group>
+        </exclude>
+    </groups>
+
+    <php>
+        <env name="DB" value="mysql"/> <!-- mysql, sqlite, pgsql -->
+        <env name="DB_USER" value=""/>
+        <env name="DB_PW" value=""/>
+    </php>
+
+    <logging />
+
+    <coverage>
+        <include>
+            <directory>src/Propel/</directory>
+        </include>
+        <report>
+            <php outputFile="tests/clover.cov" />
+        </report>
+    </coverage>
+
+</phpunit>

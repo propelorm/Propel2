@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -22,12 +20,13 @@ class IndexComparator
     /**
      * Computes the difference between two index objects.
      *
-     * @param  Index   $fromIndex
-     * @param  Index   $toIndex
-     * @param  boolean $caseInsensitive
-     * @return boolean
+     * @param \Propel\Generator\Model\Index $fromIndex
+     * @param \Propel\Generator\Model\Index $toIndex
+     * @param bool $caseInsensitive
+     *
+     * @return bool
      */
-    public static function computeDiff(Index $fromIndex, Index $toIndex, $caseInsensitive = false)
+    public static function computeDiff(Index $fromIndex, Index $toIndex, bool $caseInsensitive = false): bool
     {
         // Check for removed index columns in $toIndex
         $fromIndexColumns = $fromIndex->getColumns();

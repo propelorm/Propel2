@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
+
+use Propel\Generator\Exception\LogicException;
 
 /**
  * Data about an element with a name and optional namespace, schema and package
@@ -19,28 +19,39 @@ namespace Propel\Generator\Model;
  */
 abstract class ScopedMappingModel extends MappingModel
 {
-    protected $package;
-    protected $packageOverridden;
-    protected $namespace;
-    protected $schema;
+    /**
+     * @var string|null
+     */
+    protected ?string $package = null;
+
+    /**
+     * @var bool
+     */
+    protected bool $packageOverridden = false;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $namespace = null;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $schema = null;
 
     /**
      * Constructs a new scoped model object.
-     *
      */
     public function __construct()
     {
-        parent::__construct();
-
-        $this->packageOverridden = false;
     }
 
     /**
-     * Returns whether or not the package has been overriden.
+     * Returns whether the package has been overriden.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPackageOverriden()
+    public function isPackageOverriden(): bool
     {
         return $this->packageOverridden;
     }
@@ -49,10 +60,15 @@ abstract class ScopedMappingModel extends MappingModel
      * Returns a build property by its name.
      *
      * @param string $name
+     *
+     * @return string
      */
-    abstract protected function getBuildProperty($name);
+    abstract protected function getBuildProperty(string $name): string;
 
-    protected function setupObject()
+    /**
+     * @return void
+     */
+    protected function setupObject(): void
     {
         $this->setPackage($this->getAttribute('package', $this->package));
         $this->setSchema($this->getAttribute('schema', $this->schema));
@@ -62,21 +78,51 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns the namespace.
      *
+     * @param bool $getAbsoluteNamespace
+     *
+     * @return string|null
+     */
+    public function getNamespace(bool $getAbsoluteNamespace = false): ?string
+    {
+        if ($getAbsoluteNamespace) {
+            return $this->makeNamespaceAbsolute($this->namespace);
+        }
+
+        return $this->namespace;
+    }
+
+    /**
+     * Returns the namespace.
+     *
+     * @param bool $getAbsoluteNamespace
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
      * @return string
      */
-    public function getNamespace()
+    public function getNamespaceOrFail(bool $getAbsoluteNamespace = false): string
     {
-        return $this->namespace;
+        $namespace = $this->getNamespace($getAbsoluteNamespace);
+
+        if ($namespace === null) {
+            throw new LogicException('Namespace is not defined.');
+        }
+
+        return $namespace;
     }
 
     /**
      * Sets the namespace.
      *
-     * @param string $namespace
+     * @param string|null $namespace
+     *
+     * @return void
      */
-    public function setNamespace($namespace)
+    public function setNamespace(?string $namespace): void
     {
-        $namespace = rtrim(trim($namespace), '\\');
+        $namespace = $namespace === null
+            ? ''
+            : rtrim(trim($namespace), '\\');
 
         if ($namespace === $this->namespace) {
             return;
@@ -90,24 +136,41 @@ abstract class ScopedMappingModel extends MappingModel
     }
 
     /**
-     * Returns whether or not the namespace is absolute.
+     * Returns whether the namespace is absolute.
      *
      * A namespace is absolute if it starts with a "\".
      *
-     * @param  string  $namespace
-     * @return boolean
+     * @param string|null $namespace
+     *
+     * @return bool
      */
-    public function isAbsoluteNamespace($namespace)
+    public function isAbsoluteNamespace(?string $namespace): bool
     {
-        return 0 === strpos($namespace, '\\');
+        return ($namespace && substr($namespace, 0, 1) === '\\');
+    }
+
+    /**
+     * Prepends a backslash to a namespace if there is none.
+     *
+     * A namespace with a backslash is considered absolute.
+     *
+     * @param string|null $namespace
+     *
+     * @return string|null
+     */
+    protected function makeNamespaceAbsolute(?string $namespace): ?string
+    {
+        $prependBackslash = ($namespace && !$this->isAbsoluteNamespace($namespace));
+
+        return ($prependBackslash) ? "\\$namespace" : $namespace;
     }
 
     /**
      * Returns the package name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return $this->package;
     }
@@ -115,9 +178,11 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Sets the package name.
      *
-     * @param string $package
+     * @param string|null $package
+     *
+     * @return void
      */
-    public function setPackage($package)
+    public function setPackage(?string $package): void
     {
         if ($package === $this->package) {
             return;
@@ -130,9 +195,9 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Returns the schema name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSchema()
+    public function getSchema(): ?string
     {
         return $this->schema;
     }
@@ -140,9 +205,11 @@ abstract class ScopedMappingModel extends MappingModel
     /**
      * Sets the schema name.
      *
-     * @param string $schema
+     * @param string|null $schema
+     *
+     * @return void
      */
-    public function setSchema($schema)
+    public function setSchema(?string $schema): void
     {
         if ($schema === $this->schema) {
             return;

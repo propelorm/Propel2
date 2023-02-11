@@ -1,18 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
 
+use PDO;
+use Propel\Runtime\DataFetcher\DataFetcherInterface;
+
 /**
- * Interface for Propel Connection object.
+ * Interface for Propel Connection class.
  * Based on the PDO interface.
+ *
  * @see http://php.net/manual/en/book.pdo.php
  *
  * @author Francois Zaninotto
@@ -20,14 +22,16 @@ namespace Propel\Runtime\Connection;
 interface ConnectionInterface
 {
     /**
-     * @param string $name The datasource name associated to this connection
+     * @param string $name The datasource name associated to this connection.
+     *
+     * @return void
      */
-    public function setName($name);
+    public function setName(string $name): void;
 
     /**
-     * @return string The datasource name associated to this connection
+     * @return string|null The datasource name associated to this connection.
      */
-    public function getName();
+    public function getName(): ?string;
 
     /**
      * Turns off autocommit mode.
@@ -38,9 +42,9 @@ interface ConnectionInterface
      * Calling Connection::rollBack() will roll back all changes to the database
      * and return the connection to autocommit mode.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
-    public function beginTransaction();
+    public function beginTransaction(): bool;
 
     /**
      * Commits a transaction.
@@ -48,9 +52,9 @@ interface ConnectionInterface
      * commit() returns the database connection to autocommit mode until the
      * next call to connection::beginTransaction() starts a new transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
-    public function commit();
+    public function commit(): bool;
 
     /**
      * Rolls back a transaction.
@@ -60,37 +64,37 @@ interface ConnectionInterface
      * If the database was set to autocommit mode, this function will restore
      * autocommit mode after it has rolled back the transaction.
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
-    public function rollBack();
+    public function rollBack(): bool;
 
     /**
      * Checks if inside a transaction.
      *
      * @return bool TRUE if a transaction is currently active, and FALSE if not.
      */
-    public function inTransaction();
+    public function inTransaction(): bool;
 
     /**
      * Retrieve a database connection attribute.
      *
-     * @param string $attribute The name of the attribute to retrieve,
-     *                          e.g. PDO::ATTR_AUTOCOMMIT
+     * @param int $attribute The name of the attribute to retrieve,
+     *                          e.g. PDO::ATTR_AUTOCOMMIT.
      *
      * @return mixed A successful call returns the value of the requested attribute.
      *               An unsuccessful call returns null.
      */
-    public function getAttribute($attribute);
+    public function getAttribute(int $attribute);
 
     /**
      * Set an attribute.
      *
-     * @param string $attribute
-     * @param mixed  $value
+     * @param string|int $attribute
+     * @param mixed $value
      *
-     * @return boolean TRUE on success or FALSE on failure.
+     * @return bool TRUE on success or FALSE on failure.
      */
-    public function setAttribute($attribute, $value);
+    public function setAttribute($attribute, $value): bool;
 
     /**
      * Returns the ID of the last inserted row or sequence value.
@@ -99,31 +103,31 @@ interface ConnectionInterface
      * object, depending on the underlying driver. For example, PDO_PGSQL()
      * requires you to specify the name of a sequence object for the name parameter.
      *
-     * @param string $name Name of the sequence object from which the ID should be
+     * @param string|null $name Name of the sequence object from which the ID should be
      *                     returned.
      *
-     * @return string If a sequence name was not specified for the name parameter,
+     * @return string|int If a sequence name was not specified for the name parameter,
      *                returns a string representing the row ID of the last row that was
      *                inserted into the database.
      *                If a sequence name was specified for the name parameter, returns
      *                a string representing the last value retrieved from the specified
      *                sequence object.
      */
-    public function lastInsertId($name = null);
+    public function lastInsertId(?string $name = null);
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function getSingleDataFetcher($data);
+    public function getSingleDataFetcher($data): DataFetcherInterface;
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function getDataFetcher($data);
+    public function getDataFetcher($data): DataFetcherInterface;
 
     /**
      * Executes the given callable within a transaction.
@@ -131,11 +135,11 @@ interface ConnectionInterface
      *
      * In case you want the transaction to rollback just throw an Exception of any type.
      *
-     * @param callable $callable A callable to be wrapped in a transaction
+     * @param callable $callable A callable to be wrapped in a transaction.
+     *
+     * @throws \Throwable Re-throws a possible <code>Throwable</code> triggered by the callable.
      *
      * @return mixed Returns the result of the callable.
-     *
-     * @throws \Exception Re-throws a possible <code>Exception</code> triggered by the callable.
      */
     public function transaction(callable $callable);
 
@@ -145,10 +149,9 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return int The number of rows that were modified or deleted by the SQL
-     *             statement you issued. If no rows were affected, returns 0.
+     * @return int The number of rows that were modified or deleted.
      */
-    public function exec($statement);
+    public function exec(string $statement): int;
 
     /**
      * Prepares a statement for execution and returns a statement object.
@@ -161,16 +164,14 @@ interface ConnectionInterface
      * these parameters to bind any user-input, do not include the user-input
      * directly in the query.
      *
-     * @param string $statement      This must be a valid SQL statement for the target
-     *                               database server.
-     * @param array  $driver_options
+     * @param string $statement This must be a valid SQL statement for the target database server.
+     * @param array $driverOptions
      *
-     * @return \PDOStatement|bool A Statement object if the database server
-     *                            successfully prepares, FALSE otherwise.
-
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
+     *
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|false
      */
-    public function prepare($statement, $driver_options = null);
+    public function prepare(string $statement, array $driverOptions = []);
 
     /**
      * Executes an SQL statement, returning a result set as a Statement object.
@@ -178,10 +179,11 @@ interface ConnectionInterface
      * @param string $statement The SQL statement to prepare and execute.
      *                          Data inside the query should be properly escaped.
      *
-     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      * @throws \Propel\Runtime\Connection\Exception\ConnectionException depending on error handling.
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|\PDOStatement|false
      */
-    public function query($statement);
+    public function query(string $statement);
 
     /**
      * Quotes a string for use in a query.
@@ -190,13 +192,13 @@ interface ConnectionInterface
      * characters within the input string, using a quoting style appropriate to
      * the underlying driver.
      *
-     * @param string $string         The string to be quoted.
-     * @param int    $parameter_type Provides a data type hint for drivers that
+     * @param string $string The string to be quoted.
+     * @param int $parameterType Provides a data type hint for drivers that
      *                               have alternate quoting styles.
      *
      * @return string A quoted string that is theoretically safe to pass into an
      *                SQL statement. Returns FALSE if the driver does not support
      *                quoting in this way.
      */
-    public function quote($string, $parameter_type = \PDO::PARAM_STR);
+    public function quote(string $string, int $parameterType = PDO::PARAM_STR): string;
 }

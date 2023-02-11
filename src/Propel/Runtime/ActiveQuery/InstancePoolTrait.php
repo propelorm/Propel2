@@ -1,53 +1,78 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery;
 
+use Countable;
 use Propel\Runtime\Propel;
 
 trait InstancePoolTrait
 {
+    /**
+     * @var array<object>
+     */
     public static $instances = [];
 
-    public static function addInstanceToPool($object, $key = null)
+    /**
+     * @param object $object
+     * @param string|null $key
+     *
+     * @return void
+     */
+    public static function addInstanceToPool(object $object, ?string $key = null): void
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if (null === $key) {
-                $key = static::getInstanceKey($object);
-            }
-
-            self::$instances[$key] = $object;
+        if (!Propel::isInstancePoolingEnabled()) {
+            return;
         }
+        if ($key === null) {
+            $key = static::getInstanceKey($object);
+        }
+        if (!$key) {
+            return;
+        }
+        self::$instances[$key] = $object;
     }
 
-    public static function getInstanceKey($value)
+    /**
+     * @param mixed $value
+     *
+     * @return string|null
+     */
+    public static function getInstanceKey($value): ?string
     {
         if (!($value instanceof Criteria) && is_object($value)) {
             $pk = $value->getPrimaryKey();
-            if (((is_array($pk) || $pk instanceof \Countable) && count($pk) > 1)
-                || is_object($pk)) {
+            if (
+                ((is_array($pk) || $pk instanceof Countable) && count($pk) > 1)
+                || is_object($pk)
+            ) {
                 $pk = serialize($pk);
             }
 
-            return (string) $pk;
+            return (string)$pk;
         }
 
         if (is_scalar($value)) {
             // assume we've been passed a primary key
-            return (string) $value;
+            return (string)$value;
         }
+
+        return null;
     }
 
-    public static function removeInstanceFromPool($value)
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public static function removeInstanceFromPool($value): void
     {
-        if (Propel::isInstancePoolingEnabled() && null !== $value) {
+        if (Propel::isInstancePoolingEnabled() && $value !== null) {
             $key = static::getInstanceKey($value);
             if ($key) {
                 unset(self::$instances[$key]);
@@ -57,23 +82,36 @@ trait InstancePoolTrait
         }
     }
 
-    public static function getInstanceFromPool($key)
+    /**
+     * @param string|null $key
+     *
+     * @return object|null
+     */
+    public static function getInstanceFromPool(?string $key): ?object
     {
-        if (Propel::isInstancePoolingEnabled()) {
-            if (isset(self::$instances[$key])) {
-                return self::$instances[$key];
-            }
+        if ($key === null || !Propel::isInstancePoolingEnabled()) {
+            return null;
         }
 
-        return null;
+        if (!isset(self::$instances[$key])) {
+            return null;
+        }
+
+        return self::$instances[$key];
     }
 
-    public static function clearInstancePool()
+    /**
+     * @return void
+     */
+    public static function clearInstancePool(): void
     {
         self::$instances = [];
     }
 
-    public static function clearRelatedInstancePool()
+    /**
+     * @return void
+     */
+    public static function clearRelatedInstancePool(): void
     {
     }
 }

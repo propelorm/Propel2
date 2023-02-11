@@ -1,19 +1,20 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Util;
 
+use Countable;
+use IteratorAggregate;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
+use Traversable;
 
 /**
  * Implements a pager based on a ModelCriteria
@@ -21,11 +22,13 @@ use Propel\Runtime\Exception\BadMethodCallException;
  *
  * @author Fabien Potencier <fabien.potencier@symfony-project.com>
  * @author François Zaninotto
+ *
+ * @implements \IteratorAggregate<int|string, mixed>
  */
-class PropelModelPager implements \IteratorAggregate, \Countable
+class PropelModelPager implements IteratorAggregate, Countable
 {
     /**
-     * @var ModelCriteria
+     * @var \Propel\Runtime\ActiveQuery\ModelCriteria
      */
     protected $query;
 
@@ -60,61 +63,76 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     protected $maxRecordLimit;
 
     /**
-     * @var Collection|array|mixed
+     * @var \Propel\Runtime\Collection\Collection|mixed|array
      */
     protected $results;
 
     /**
-     * @var ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface
      */
     protected $con;
 
-    public function __construct(ModelCriteria $query, $maxPerPage = 10)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $query
+     * @param int $maxPerPage
+     */
+    public function __construct(ModelCriteria $query, int $maxPerPage = 10)
     {
         $this->setQuery($query);
         $this->setMaxPerPage($maxPerPage);
         $this->setPage(1);
         $this->setLastPage(1);
-        $this->setMaxRecordLimit(false);
+        $this->setMaxRecordLimit(0);
         $this->setNbResults(0);
 
         $this->currentMaxLink = 1;
     }
 
-    public function setQuery(ModelCriteria $query)
+    /**
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $query
+     *
+     * @return void
+     */
+    public function setQuery(ModelCriteria $query): void
     {
         $this->query = $query;
     }
 
-    public function getQuery()
+    /**
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     */
+    public function getQuery(): ModelCriteria
     {
         return $this->query;
     }
 
-    public function init(ConnectionInterface $con = null)
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return void
+     */
+    public function init(?ConnectionInterface $con = null): void
     {
         $this->con = $con;
-        $hasMaxRecordLimit = false !== $this->getMaxRecordLimit();
         $maxRecordLimit = $this->getMaxRecordLimit();
-        
+        $hasMaxRecordLimit = (bool)$maxRecordLimit;
+
         $qForCount = clone $this->getQuery();
         $count = $qForCount
             ->offset(0)
             ->limit(-1)
-            ->count($this->con)
-        ;
+            ->count($this->con);
 
         $this->setNbResults($hasMaxRecordLimit ? min($count, $maxRecordLimit) : $count);
 
         $q = $this->getQuery()
             ->offset(0)
-            ->limit(-1)
-        ;
+            ->limit(-1);
 
-        if (0 === $this->getPage() || 0 === $this->getMaxPerPage()) {
+        if ($this->getPage() === 0 || $this->getMaxPerPage() === 0) {
             $this->setLastPage(0);
         } else {
-            $this->setLastPage((int) ceil($this->getNbResults() / $this->getMaxPerPage()));
+            $this->setLastPage((int)ceil($this->getNbResults() / $this->getMaxPerPage()));
 
             $offset = ($this->getPage() - 1) * $this->getMaxPerPage();
             $q->offset($offset);
@@ -135,49 +153,66 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Get the collection of results in the page
      *
-     * @return Collection A collection of results
+     * @return \Propel\Runtime\Collection\Collection A collection of results
      */
-    public function getResults()
+    public function getResults(): Collection
     {
-        if (null === $this->results) {
+        if ($this->results === null) {
             $queryKey = method_exists($this->getQuery(), 'getQueryKey') ? $this->getQuery()->getQueryKey() : null;
             if ($queryKey) {
                 $newQueryKey = sprintf('%s offset %s limit %s', $queryKey, $this->getQuery()->getOffset(), $this->getQuery()->getLimit());
                 $this->getQuery()->setQueryKey($newQueryKey);
             }
-            
+
             $this->results = $this->getQuery()
-                ->find($this->con)
-            ;
+                ->find($this->con);
         }
 
-        return $this->results;
+        return is_array($this->results)
+            ? new Collection($this->results)
+            : $this->results;
     }
 
-    public function getCurrentMaxLink()
+    /**
+     * @return int
+     */
+    public function getCurrentMaxLink(): int
     {
         return $this->currentMaxLink;
     }
 
-    public function getMaxRecordLimit()
+    /**
+     * @return int
+     */
+    public function getMaxRecordLimit(): int
     {
         return $this->maxRecordLimit;
     }
 
-    public function setMaxRecordLimit($limit)
+    /**
+     * @param int $limit
+     *
+     * @return void
+     */
+    public function setMaxRecordLimit(int $limit): void
     {
         $this->maxRecordLimit = $limit;
     }
 
-    public function getLinks($nbLinks = 5)
+    /**
+     * @param int $nbLinks
+     *
+     * @return list<int>
+     */
+    public function getLinks(int $nbLinks = 5): array
     {
         $links = [];
-        $tmp   = $this->page - floor($nbLinks / 2);
+        $tmp = $this->page - floor($nbLinks / 2);
         $check = $this->lastPage - $nbLinks + 1;
         $limit = ($check > 0) ? $check : 1;
         $begin = ($tmp > 0) ? (($tmp > $limit) ? $limit : $tmp) : 1;
 
-        $i = (int) $begin;
+        $i = (int)$begin;
         while (($i < $begin + $nbLinks) && ($i <= $this->lastPage)) {
             $links[] = $i++;
         }
@@ -190,11 +225,11 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Test whether the number of results exceeds the max number of results per page
      *
-     * @return boolean true if the pager displays only a subset of the results
+     * @return bool true if the pager displays only a subset of the results
      */
-    public function haveToPaginate()
+    public function haveToPaginate(): bool
     {
-        return (0 !== $this->getMaxPerPage() && $this->getNbResults() > $this->getMaxPerPage());
+        return ($this->getMaxPerPage() !== 0 && $this->getNbResults() > $this->getMaxPerPage());
     }
 
     /**
@@ -203,9 +238,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getFirstIndex()
+    public function getFirstIndex(): int
     {
-        if (0 === $this->page) {
+        if ($this->page === 0) {
             return 1;
         }
 
@@ -218,9 +253,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getLastIndex()
+    public function getLastIndex(): int
     {
-        if (0 === $this->page) {
+        if ($this->page === 0) {
             return $this->nbResults;
         }
 
@@ -237,7 +272,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getNbResults()
+    public function getNbResults(): int
     {
         return $this->nbResults;
     }
@@ -246,8 +281,10 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the total number of results of the query
      *
      * @param int $nb
+     *
+     * @return void
      */
-    protected function setNbResults($nb)
+    protected function setNbResults(int $nb): void
     {
         $this->nbResults = $nb;
     }
@@ -255,9 +292,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the first page
      *
-     * @return boolean true if the current page is the first page
+     * @return bool true if the current page is the first page
      */
-    public function isFirstPage()
+    public function isFirstPage(): bool
     {
         return $this->getPage() === $this->getFirstPage();
     }
@@ -267,7 +304,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int Always 1
      */
-    public function getFirstPage()
+    public function getFirstPage(): int
     {
         return $this->nbResults === 0 ? 0 : 1;
     }
@@ -275,9 +312,9 @@ class PropelModelPager implements \IteratorAggregate, \Countable
     /**
      * Check whether the current page is the last page
      *
-     * @return boolean true if the current page is the last page
+     * @return bool true if the current page is the last page
      */
-    public function isLastPage()
+    public function isLastPage(): bool
     {
         return $this->getPage() === $this->getLastPage();
     }
@@ -287,7 +324,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getLastPage()
+    public function getLastPage(): int
     {
         return $this->lastPage;
     }
@@ -296,8 +333,10 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the first page
      *
      * @param int $page
+     *
+     * @return void
      */
-    protected function setLastPage($page)
+    protected function setLastPage(int $page): void
     {
         $this->lastPage = $page;
         if ($this->getPage() > $page) {
@@ -310,7 +349,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getPage()
+    public function getPage(): int
     {
         return $this->page;
     }
@@ -319,10 +358,12 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the number of the current page
      *
      * @param int $page
+     *
+     * @return void
      */
-    public function setPage($page)
+    public function setPage(int $page): void
     {
-        $this->page = (int) $page;
+        $this->page = $page;
         if ($this->page <= 0 && $this->nbResults > 0) {
             // set first page, which depends on a maximum set
             $this->page = $this->getMaxPerPage() ? 1 : 0;
@@ -334,7 +375,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getNextPage()
+    public function getNextPage(): int
     {
         return min($this->getPage() + 1, $this->getLastPage());
     }
@@ -344,7 +385,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getPreviousPage()
+    public function getPreviousPage(): int
     {
         return max($this->getPage() - 1, $this->getFirstPage());
     }
@@ -354,7 +395,7 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      *
      * @return int
      */
-    public function getMaxPerPage()
+    public function getMaxPerPage(): int
     {
         return $this->maxPerPage;
     }
@@ -363,20 +404,22 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Set the maximum number results per page
      *
      * @param int $max
+     *
+     * @return void
      */
-    public function setMaxPerPage($max)
+    public function setMaxPerPage(int $max): void
     {
         if ($max > 0) {
             $this->maxPerPage = $max;
-            if (0 === $this->page) {
+            if ($this->page === 0) {
                 $this->page = 1;
             }
-        } elseif (0 === $max) {
+        } elseif ($max === 0) {
             $this->maxPerPage = 0;
             $this->page = 0;
         } else {
             $this->maxPerPage = 1;
-            if (0 === $this->page) {
+            if ($this->page === 0) {
                 $this->page = 1;
             }
         }
@@ -384,16 +427,20 @@ class PropelModelPager implements \IteratorAggregate, \Countable
 
     /**
      * Check if the collection is empty
+     *
      * @see Collection
      *
-     * @return boolean
+     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->getResults()->isEmpty();
     }
 
-    public function getIterator()
+    /**
+     * @return \Propel\Runtime\Collection\CollectionIterator|\Traversable
+     */
+    public function getIterator(): Traversable
     {
         return $this->getResults()->getIterator();
     }
@@ -402,20 +449,28 @@ class PropelModelPager implements \IteratorAggregate, \Countable
      * Returns the number of items in the result collection.
      *
      * @see Countable
+     *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->getResults());
     }
 
-    public function __call($name, $params)
+    /**
+     * @param string $name
+     * @param array $params
+     *
+     * @throws \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return mixed
+     */
+    public function __call(string $name, array $params)
     {
         try {
-            return call_user_func_array([$this->getResults(), $name], $params);
+            return $this->getResults()->$name(...$params);
         } catch (BadMethodCallException $exception) {
             throw new BadMethodCallException('Call to undefined method: ' . $name);
         }
     }
-
 }

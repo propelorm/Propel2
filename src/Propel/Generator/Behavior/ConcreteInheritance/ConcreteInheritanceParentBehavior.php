@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -21,29 +20,49 @@ use Propel\Generator\Model\Behavior;
  */
 class ConcreteInheritanceParentBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder
+     */
+    protected $builder;
+
+    /**
+     * Default parameters value
+     *
+     * @var array<string, mixed>
+     */
     protected $parameters = [
-        'descendant_column' => 'descendant_class'
+        'descendant_column' => 'descendant_class',
     ];
 
-    public function modifyTable()
+    /**
+     * @return void
+     */
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         if (!$table->hasColumn($this->getParameter('descendant_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('descendant_column'),
                 'type' => 'VARCHAR',
-                'size' => 100
+                'size' => 100,
             ]);
         }
     }
 
-    protected function getColumnGetter()
+    /**
+     * @return string
+     */
+    protected function getColumnGetter(): string
     {
         return 'get' . $this->getColumnForParameter('descendant_column')->getPhpName();
     }
 
-    public function objectMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $this->builder = $builder;
         $this->builder->declareClasses('Propel\Runtime\ActiveQuery\PropelQuery');
@@ -54,28 +73,38 @@ class ConcreteInheritanceParentBehavior extends Behavior
         return $script;
     }
 
-    protected function addHasChildObject(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addHasChildObject(string &$script): void
     {
         $script .= "
 /**
- * Whether or not this object is the parent of a child object
+ * Whether this object is the parent of a child object
  *
- * @return    bool
+ * @return bool
  */
-public function hasChildObject()
+public function hasChildObject(): bool
 {
     return \$this->" . $this->getColumnGetter() . "() !== null;
 }
 ";
     }
 
-    protected function addGetChildObject(&$script)
+    /**
+     * @param string $script
+     *
+     * @return void
+     */
+    protected function addGetChildObject(string &$script): void
     {
         $script .= "
 /**
  * Get the child object of this object
  *
- * @return    mixed
+ * @return mixed
  */
 public function getChildObject()
 {

@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Reverse;
 
+use PDO;
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\DefaultPlatform;
 use Propel\Generator\Reverse\PgsqlSchemaParser;
 use Propel\Runtime\Propel;
@@ -27,7 +27,10 @@ use Propel\Tests\TestCaseFixturesDatabase;
  */
 class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
 {
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         Propel::init(__DIR__ . '/../../../../Fixtures/reverse/pgsql/build/conf/reverse-bookstore-conf.php');
@@ -35,12 +38,15 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         $this->con = Propel::getConnection('reverse-bookstore');
         $this->con->beginTransaction();
 
-        if ('pgsql' !== $this->con->getAttribute(\PDO::ATTR_DRIVER_NAME)) {
+        if ('pgsql' !== $this->con->getAttribute(PDO::ATTR_DRIVER_NAME)) {
             $this->markTestSkipped('This test is designed for PostgreSQL');
         }
     }
 
-    protected function tearDown()
+    /**
+     * @return void
+     */
+    protected function tearDown(): void
     {
         if ($this->con) {
             $this->con->rollback();
@@ -53,18 +59,21 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
     public function parseDataProvider()
     {
         return [
-            // columnDDL, expectedColumnPhpName, expectedColumnDefaultType, expectedColumnDefaultValue, expectedSize, expectedScale
-            ["my_column varchar(20) default null", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "NULL", 20, null],
-            ["my_column varchar(20) default ''", "MyColumn", ColumnDefaultValue::TYPE_VALUE, "", 20, null],
-            ["my_column numeric(11,0) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 11, 0],
-            ["my_column numeric(55,8) default 0", "MyColumn", ColumnDefaultValue::TYPE_VALUE, 0, 55, 8],
+            // columnDDL, expectedColumnPhpName, type, expectedColumnDefaultType, expectedColumnDefaultValue, expectedSize, expectedScale
+            ['my_column varchar(20) default null', 'MyColumn', PropelTypes::VARCHAR, ColumnDefaultValue::TYPE_VALUE, 'NULL', 20, null],
+            ["my_column varchar(20) default ''", 'MyColumn', PropelTypes::VARCHAR, ColumnDefaultValue::TYPE_VALUE, '', 20, null],
+            ['my_column numeric(11,0) default 0', 'MyColumn', PropelTypes::DECIMAL, ColumnDefaultValue::TYPE_VALUE, 0, 11, 0],
+            ['my_column numeric(55,8) default 0', 'MyColumn', PropelTypes::DECIMAL, ColumnDefaultValue::TYPE_VALUE, 0, 55, 8],
+            ['my_column uuid default null', 'MyColumn', PropelTypes::UUID, null, null, null, null],
         ];
     }
 
     /**
      * @dataProvider parseDataProvider
+     *
+     * @return void
      */
-    public function testParse($columnDDL, $expectedColumnPhpName, $expectedColumnDefaultType, $expectedColumnDefaultValue, $expectedSize, $expectedScale)
+    public function testParse($columnDDL, $expectedPhpName, $expectedType, $expectedDefaultType, $expectedDefaultValue, $expectedSize, $expectedScale)
     {
         $this->con->query("create table foo ( {$columnDDL} );");
         $parser = new PgsqlSchemaParser($this->con);
@@ -79,13 +88,22 @@ class PgsqlSchemaParserTest extends TestCaseFixturesDatabase
         $table = $database->getTable('foo');
         $columns = $table->getColumns();
         $this->assertEquals(1, count($columns));
+        $column = $columns[0];
+        $this->assertNotEmpty($column);
 
         // check out our rev-eng column info
-        $defaultValue = $columns[0]->getDefaultValue();
-        $this->assertEquals($expectedColumnPhpName, $columns[0]->getPhpName());
-        $this->assertEquals($expectedColumnDefaultType, $defaultValue->getType());
-        $this->assertEquals($expectedColumnDefaultValue, $defaultValue->getValue());
-        $this->assertEquals($expectedSize, $columns[0]->getSize());
-        $this->assertEquals($expectedScale, $columns[0]->getScale());
+        $this->assertEquals($expectedPhpName, $column->getPhpName());
+        $this->assertEquals($expectedType, $column->getType());
+
+        $defaultValue = $column->getDefaultValue();
+        if($expectedDefaultType === null){
+            $this->assertNull($expectedDefaultType);
+        } else {
+            $this->assertEquals($expectedDefaultType, $defaultValue->getType());
+            $this->assertEquals($expectedDefaultValue, $defaultValue->getValue());
+        }
+        
+        $this->assertEquals($expectedSize, $column->getSize());
+        $this->assertEquals($expectedScale, $column->getScale());
     }
 }

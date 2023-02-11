@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Map;
@@ -22,12 +20,18 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
 {
     protected $databaseMap;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
         parent::setUp();
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
     }
 
+    /**
+     * @return void
+     */
     public function testOneToMany()
     {
         $bookTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Book');
@@ -38,6 +42,9 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
         $this->assertEquals($bookToAuthor, $authorToBook->getSymmetricalRelation());
     }
 
+    /**
+     * @return void
+     */
     public function testOneToOne()
     {
         $accountTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\BookstoreEmployeeAccount');
@@ -48,6 +55,9 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
         $this->assertEquals($employeeToAccount, $accountToEmployee->getSymmetricalRelation());
     }
 
+    /**
+     * @return void
+     */
     public function testSeveralRelationsOnSameTable()
     {
         $authorTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\Author');
@@ -58,6 +68,9 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
         $this->assertEquals($essayToAuthor, $authorToEssay->getSymmetricalRelation());
     }
 
+    /**
+     * @return void
+     */
     public function testCompositeForeignKey()
     {
         $favoriteTable = $this->databaseMap->getTableByPhpName('Propel\Tests\Bookstore\ReaderFavorite');
@@ -67,5 +80,4 @@ class RelatedMapSymmetricalTest extends TestCaseFixtures
         $this->assertEquals($favoriteToOpinion, $opinionToFavorite->getSymmetricalRelation());
         $this->assertEquals($opinionToFavorite, $favoriteToOpinion->getSymmetricalRelation());
     }
-
 }

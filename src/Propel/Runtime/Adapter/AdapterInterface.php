@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter;
@@ -16,22 +14,32 @@ use Propel\Runtime\Map\ColumnMap;
 
 /**
  * Interface for adapters.
- *
  */
 interface AdapterInterface
 {
-    const ID_METHOD_NONE = 0;
-    const ID_METHOD_AUTOINCREMENT = 1;
-    const ID_METHOD_SEQUENCE = 2;
+    /**
+     * @var int
+     */
+    public const ID_METHOD_NONE = 0;
+
+    /**
+     * @var int
+     */
+    public const ID_METHOD_AUTOINCREMENT = 1;
+
+    /**
+     * @var int
+     */
+    public const ID_METHOD_SEQUENCE = 2;
 
     /**
      * Build database connection
      *
-     * @param array $conparams connection parameters
+     * @param array $params connection parameters
      *
-     * @return ConnectionInterface
+     * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($conparams);
+    public function getConnection(array $params): ConnectionInterface;
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -41,10 +49,12 @@ interface AdapterInterface
      *
      * @see initConnection()
      *
-     * @param ConnectionInterface $con
-     * @param string              $charset The $string charset encoding.
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string $charset The $string charset encoding.
+     *
+     * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset);
+    public function setCharset(ConnectionInterface $con, string $charset): void;
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -52,10 +62,11 @@ interface AdapterInterface
      * (Interbase for example) does not use the same SQL in ORDER BY
      * and other clauses.
      *
-     * @param  string $in The string whose case to ignore.
+     * @param string $in The string whose case to ignore.
+     *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in);
+    public function ignoreCaseInOrderBy(string $in): string;
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -64,7 +75,7 @@ interface AdapterInterface
      *
      * @return string The text delimiter.
      */
-    public function getStringDelimiter();
+    public function getStringDelimiter(): string;
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -74,33 +85,36 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2);
+    public function concatString(string $s1, string $s2): string;
 
     /**
      * Returns SQL which extracts a substring.
      *
-     * @param string  $s   String to extract from.
-     * @param integer $pos Offset to start from.
-     * @param integer $len Number of characters to extract.
+     * @param string $s String to extract from.
+     * @param int $pos Offset to start from.
+     * @param int $len Number of characters to extract.
      *
      * @return string
      */
-    public function subString($s, $pos, $len);
+    public function subString(string $s, int $pos, int $len): string;
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
      *
-     * @param  string $s String to calculate length of.
+     * @param string $s String to calculate length of.
+     *
      * @return string
      */
-    public function strLength($s);
+    public function strLength(string $s): string;
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
-     * @param  string $text The identifier to quote.
+     *
+     * @param string $text The identifier to quote.
+     *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text);
+    public function quoteIdentifier(string $text): string;
 
     /**
      * Quotes a database table which could have space separating it from an alias,
@@ -108,10 +122,11 @@ interface AdapterInterface
      * separate schema names from table names. Adapters for RDBMs which support
      * schemas have to implement that in the platform-specific way.
      *
-     * @param  string $table The table name to quo
+     * @param string $table The table name to quo
+     *
      * @return string The quoted table name
-     **/
-    public function quoteIdentifierTable($table);
+     */
+    public function quoteIdentifierTable(string $table): string;
 
     /**
      * Quotes full qualified column names and table names.
@@ -120,80 +135,70 @@ interface AdapterInterface
      * author_id => `author_id`
      *
      * @param string $text
+     *
      * @return string
      */
-    public function quote($text);
+    public function quote(string $text): string;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isGetIdBeforeInsert();
+    public function isGetIdBeforeInsert(): bool;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isGetIdAfterInsert();
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param Criteria $criteria
-     * @param string   $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
+    public function isGetIdAfterInsert(): bool;
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
      *
-     * @param ConnectionInterface $con
-     * @param string              $name
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     * @param string|null $name
      *
-     * @return mixed
+     * @return string|int|null
      */
-    public function getId(ConnectionInterface $con, $name = null);
+    public function getId(ConnectionInterface $con, ?string $name = null);
 
     /**
      * Formats a temporal value before binding, given a ColumnMap object
      *
-     * @param mixed     $value The temporal value
-     * @param ColumnMap $cMap
+     * @param mixed $value The temporal value
+     * @param \Propel\Runtime\Map\ColumnMap $cMap
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, ColumnMap $cMap): string;
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimestampFormatter();
+    public function getTimestampFormatter(): string;
 
     /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
      */
-    public function getDateFormatter();
+    public function getDateFormatter(): string;
 
     /**
      * Returns time formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimeFormatter();
+    public function getTimeFormatter(): string;
 
     /**
-     * @param Criteria $criteria
+     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria);
-
+    public function getGroupBy(Criteria $criteria): string;
 }

@@ -1,44 +1,49 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
 
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
 use Propel\Common\Pluralizer\PluralizerInterface;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
-use Propel\Runtime\Connection\ConnectionInterface;
-use Propel\Runtime\Exception\RuntimeException;
-use Propel\Runtime\Propel;
 use Propel\Runtime\Collection\Exception\ModelNotFoundException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\UnexpectedValueException;
 use Propel\Runtime\Formatter\AbstractFormatter;
-use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Propel;
+use Serializable;
+use Traversable;
 
 /**
  * Class for iterating over a list of Propel elements
  * The collection keys must be integers - no associative array accepted
  *
- * @method Collection fromXML(string $data) Populate the collection from an XML string
- * @method Collection fromYAML(string $data) Populate the collection from a YAML string
- * @method Collection fromJSON(string $data) Populate the collection from a JSON string
- * @method Collection fromCSV(string $data) Populate the collection from a CSV string
+ * @method \Propel\Runtime\Collection\Collection fromXML(string $data) Populate the collection from an XML string
+ * @method \Propel\Runtime\Collection\Collection fromYAML(string $data) Populate the collection from a YAML string
+ * @method \Propel\Runtime\Collection\Collection fromJSON(string $data) Populate the collection from a JSON string
+ * @method \Propel\Runtime\Collection\Collection fromCSV(string $data) Populate the collection from a CSV string
  *
- * @method string toXML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to an XML string
- * @method string toYAML(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a YAML string
- * @method string toJSON(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a JSON string
- * @method string toCSV(boolean $usePrefix = true, boolean $includeLazyLoadColumns = true) Export the collection to a CSV string
+ * @method string toXML(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to an XML string
+ * @method string toYAML(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a YAML string
+ * @method string toJSON(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a JSON string
+ * @method string toCSV(bool $usePrefix = true, bool $includeLazyLoadColumns = true) Export the collection to a CSV string
  *
  * @author Francois Zaninotto
+ *
+ * @implements \ArrayAccess<int|string, mixed>
+ * @implements \IteratorAggregate<int|string, mixed>
  */
-class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Serializable
+class Collection implements ArrayAccess, IteratorAggregate, Countable, Serializable
 {
     /**
      * @var string
@@ -53,7 +58,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     protected $fullyQualifiedModel = '';
 
     /**
-     * @var AbstractFormatter
+     * @var \Propel\Runtime\Formatter\AbstractFormatter
      */
     protected $formatter;
 
@@ -63,50 +68,82 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     protected $data = [];
 
     /**
-     * @var PluralizerInterface|null
+     * @var \Propel\Common\Pluralizer\PluralizerInterface|null
      */
     private $pluralizer;
 
-    public function __construct($data = [])
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
         $this->data = $data;
     }
 
     /**
-     * @param mixed $value
+     * @return array
      */
-    public function append($value)
+    public function __serialize(): array
+    {
+        return [$this->serialize()];
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->unserialize($data[0]);
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function append($value): void
     {
         $this->data[] = $value;
     }
 
     /**
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
 
     /**
-     * @param  mixed $offset
+     * @psalm-suppress ReservedWord
+     *
+     * @param mixed $offset
+     *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         if (isset($this->data[$offset])) {
             return $this->data[$offset];
         }
+
+        return null;
     }
 
     /**
      * @param mixed $offset
      * @param mixed $value
+     *
+     * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
-        if (is_null($offset)) {
+        if ($offset === null) {
             $this->data[] = $value;
         } else {
             $this->data[$offset] = $value;
@@ -115,16 +152,20 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param mixed $offset
+     *
+     * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
 
     /**
      * @param array $input
+     *
+     * @return void
      */
-    public function exchangeArray($input)
+    public function exchangeArray(array $input): void
     {
         $this->data = $input;
     }
@@ -134,7 +175,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -142,7 +183,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return $this->data;
     }
@@ -151,16 +192,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Set the data in the collection
      *
      * @param array $data
+     *
+     * @return void
      */
-    public function setData($data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
     /**
-     * @return CollectionIterator
+     * @return \Propel\Runtime\Collection\CollectionIterator|\Propel\Runtime\Collection\IteratorInterface
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new CollectionIterator($this);
     }
@@ -170,7 +213,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
@@ -182,7 +225,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function getFirst()
     {
-        if (0 === count($this->data)) {
+        if (count($this->data) === 0) {
             return null;
         }
         reset($this->data);
@@ -197,7 +240,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function getLast()
     {
-        if (0 === $this->count()) {
+        if ($this->count() === 0) {
             return null;
         }
 
@@ -209,18 +252,21 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Check if the collection is empty
      *
-     * @return boolean
+     * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
-        return 0 === $this->count();
+        return $this->count() === 0;
     }
 
     /**
      * Get an element from its key
      * Alias for ArrayObject::offsetGet()
      *
-     * @param  mixed $key
+     * @param mixed $key
+     *
+     * @throws \Propel\Runtime\Exception\UnexpectedValueException
+     *
      * @return mixed The element
      */
     public function get($key)
@@ -239,7 +285,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      */
     public function pop()
     {
-        if (0 === $this->count()) {
+        if ($this->count() === 0) {
             return null;
         }
 
@@ -267,11 +313,13 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     }
 
     /**
-     * Prepend one  elements to the end of the collection
+     * Prepend one elements to the end of the collection
      *
      * @param mixed $value the element to prepend
+     *
+     * @return void
      */
-    public function push($value)
+    public function push($value): void
     {
         $this[] = $value;
     }
@@ -279,10 +327,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Prepend one or more elements to the beginning of the collection
      *
-     * @param  mixed   $value the element to prepend
-     * @return integer The number of new elements in the array
+     * @param mixed $value the element to prepend
+     *
+     * @return int The number of new elements in the array
      */
-    public function prepend($value)
+    public function prepend($value): int
     {
         // the reindexing is complicated to deal with through the iterator
         // so let's use the simple solution
@@ -299,8 +348,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @param mixed $key
      * @param mixed $value
+     *
+     * @return void
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->offsetSet($key, $value);
     }
@@ -309,35 +360,39 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Removes a specified collection element
      * Alias for ArrayObject::offsetUnset()
      *
-     * @param  mixed $key
-     * @return mixed The removed element
+     * @param mixed $key
+     *
+     * @throws \Propel\Runtime\Exception\UnexpectedValueException
+     *
+     * @return void
      */
-    public function remove($key)
+    public function remove($key): void
     {
         if (!$this->offsetExists($key)) {
             throw new UnexpectedValueException(sprintf('Unknown key %s.', $key));
         }
 
-        return $this->offsetUnset($key);
+        $this->offsetUnset($key);
     }
 
     /**
      * Clears the collection
      *
-     * @return array The previous collection
+     * @return void
      */
-    public function clear()
+    public function clear(): void
     {
-        return $this->exchangeArray([]);
+        $this->exchangeArray([]);
     }
 
     /**
-     * Whether or not this collection contains a specified element
+     * Whether this collection contains a specified element
      *
-     * @param  mixed   $element
-     * @return boolean
+     * @param mixed $element
+     *
+     * @return bool
      */
-    public function contains($element)
+    public function contains($element): bool
     {
         return in_array($element, $this->getArrayCopy(), true);
     }
@@ -345,7 +400,8 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Search an element in the collection
      *
-     * @param  mixed $element
+     * @param mixed $element
+     *
      * @return mixed Returns the key for the element if it is found in the collection, FALSE otherwise
      */
     public function search($element)
@@ -357,10 +413,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Returns an array of objects present in the collection that
      * are not presents in the given collection.
      *
-     * @param  Collection $collection A Propel collection.
-     * @return Collection An array of Propel objects from the collection that are not presents in the given collection.
+     * @param \Propel\Runtime\Collection\Collection $collection A Propel collection.
+     *
+     * @return self An array of Propel objects from the collection that are not presents in the given collection.
      */
-    public function diff(Collection $collection)
+    public function diff(Collection $collection): self
     {
         $diff = clone $this;
         $diff->clear();
@@ -377,9 +434,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     // Serializable interface
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function serialize()
+    #[\ReturnTypeWillChange]
+    public function serialize(): ?string
     {
         $repr = [
             'data' => $this->getArrayCopy(),
@@ -392,8 +450,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * @param string $data
+     *
+     * @return void
      */
-    public function unserialize($data)
+    #[\ReturnTypeWillChange]
+    public function unserialize($data): void
     {
         $repr = unserialize($data);
         $this->exchangeArray($repr['data']);
@@ -407,15 +468,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Set the model of the elements in the collection
      *
      * @param string $model Name of the Propel object classes stored in the collection
+     *
+     * @return void
      */
-    public function setModel($model)
+    public function setModel(string $model): void
     {
-        if (false !== $pos = strrpos($model, '\\')) {
+        $pos = strrpos($model, '\\');
+        if ($pos !== false) {
             $this->model = substr($model, $pos + 1);
         } else {
             $this->model = $model;
         }
-        $this->fullyQualifiedModel = ((0 === strpos($model, '\\')) ? '' : '\\') . $model;
+        $this->fullyQualifiedModel = ((strpos($model, '\\') === 0) ? '' : '\\') . $model;
     }
 
     /**
@@ -423,7 +487,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @return string Name of the Propel object class stored in the collection
      */
-    public function getModel()
+    public function getModel(): string
     {
         return $this->model;
     }
@@ -433,34 +497,43 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @return string Fully qualified Name of the Propel object class stored in the collection
      */
-    public function getFullyQualifiedModel()
+    public function getFullyQualifiedModel(): string
     {
         return $this->fullyQualifiedModel;
     }
 
-    public function getTableMapClass()
+    /**
+     * @psalm-return class-string<\Propel\Runtime\Map\TableMap>
+     *
+     * @throws \Propel\Runtime\Collection\Exception\ModelNotFoundException
+     *
+     * @return string
+     */
+    public function getTableMapClass(): string
     {
         $model = $this->getModel();
 
-        if (empty($model)) {
+        if (!$model) {
             throw new ModelNotFoundException('You must set the collection model before interacting with it');
         }
 
-        return constant($this->getFullyQualifiedModel() . '::TABLE_MAP');
+        return $this->getFullyQualifiedModel()::TABLE_MAP;
     }
 
     /**
-     * @param AbstractFormatter $formatter
+     * @param \Propel\Runtime\Formatter\AbstractFormatter $formatter
+     *
+     * @return void
      */
-    public function setFormatter(AbstractFormatter $formatter)
+    public function setFormatter(AbstractFormatter $formatter): void
     {
         $this->formatter = $formatter;
     }
 
     /**
-     * @return AbstractFormatter
+     * @return \Propel\Runtime\Formatter\AbstractFormatter
      */
-    public function getFormatter()
+    public function getFormatter(): AbstractFormatter
     {
         return $this->formatter;
     }
@@ -468,11 +541,11 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
     /**
      * Get a write connection object for the database containing the elements of the collection
      *
-     * @return ConnectionInterface A ConnectionInterface connection object
+     * @return \Propel\Runtime\Connection\ConnectionInterface A ConnectionInterface connection object
      */
-    public function getWriteConnection()
+    public function getWriteConnection(): ConnectionInterface
     {
-        $databaseName = constant($this->getTableMapClass() . '::DATABASE_NAME');
+        $databaseName = $this->getTableMapClass()::DATABASE_NAME;
 
         return Propel::getServiceContainer()->getWriteConnection($databaseName);
     }
@@ -485,18 +558,18 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * $coll->importFrom('JSON', '{{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678}}');
      * </code>
      *
-     * @param mixed  $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param string $data   The source data to import from
+     * @param mixed $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param string $data The source data to import from
      *
-     * @return mixed The current object, for fluid interface
+     * @return void
      */
-    public function importFrom($parser, $data)
+    public function importFrom($parser, string $data): void
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $this->fromArray($parser->listToArray($data, $this->getPluralModelName()), TableMap::TYPE_PHPNAME);
+        $this->fromArray($parser->listToArray($data, $this->getPluralModelName()));
     }
 
     /**
@@ -509,23 +582,25 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * A OnDemandCollection cannot be exported. Any attempt will result in a PropelException being thrown.
      *
-     * @param  mixed   $parser                 A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
-     * @param  boolean $usePrefix              (optional) If true, the returned element keys will be prefixed with the
-     *                                         model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
-     *                                         Not supported by ArrayCollection, as ArrayFormatter has
-     *                                         already created the array used here with integers as keys.
-     * @param  boolean $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
-     *                                         Not supported by ArrayCollection, as ArrayFormatter has
-     *                                         already included lazy-load columns in the array used here.
-     * @return string  The exported data
+     * @param \Propel\Runtime\Parser\AbstractParser|string $parser A AbstractParser instance, or a format name ('XML', 'YAML', 'JSON', 'CSV')
+     * @param bool $usePrefix (optional) If true, the returned element keys will be prefixed with the
+     * model class name ('Article_0', 'Article_1', etc). Defaults to TRUE.
+     * Not supported by ArrayCollection, as ArrayFormatter has
+     * already created the array used here with integers as keys.
+     * @param bool $includeLazyLoadColumns (optional) Whether to include lazy load(ed) columns. Defaults to TRUE.
+     * Not supported by ArrayCollection, as ArrayFormatter has
+     * already included lazy-load columns in the array used here.
+     * @param string $keyType (optional) One of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. Defaults to TableMap::TYPE_PHPNAME.
+     *
+     * @return string The exported data
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+    public function exportTo($parser, bool $usePrefix = true, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME): string
     {
         if (!$parser instanceof AbstractParser) {
             $parser = AbstractParser::getParser($parser);
         }
 
-        $array = $this->toArray(null, $usePrefix, TableMap::TYPE_PHPNAME, $includeLazyLoadColumns);
+        $array = $this->toArray(null, $usePrefix, $keyType, $includeLazyLoadColumns);
 
         return $parser->listFromArray($array, $this->getPluralModelName());
     }
@@ -537,24 +612,30 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      * Allows to define default __call() behavior if you use a custom BaseObject
      *
      * @param string $name
-     * @param mixed  $params
+     * @param mixed $params
      *
-     * @return array|string
+     * @throws \Propel\Runtime\Exception\BadMethodCallException
+     *
+     * @return array|string|null
      */
-    public function __call($name, $params)
+    public function __call(string $name, $params)
     {
-        if (0 === strpos($name, 'from')) {
+        if (strpos($name, 'from') === 0) {
             $format = substr($name, 4);
+            $this->importFrom($format, reset($params));
 
-            return $this->importFrom($format, reset($params));
+            return null;
         }
-        if (0 === strpos($name, 'to')) {
+
+        if (strpos($name, 'to') === 0) {
             $format = substr($name, 2);
-            $usePrefix = isset($params[0]) ? $params[0] : false;
-            $includeLazyLoadColumns = isset($params[1]) ? $params[1] : true;
+            $usePrefix = $params[0] ?? false;
+            $includeLazyLoadColumns = $params[1] ?? true;
+            $keyType = $params[2] ?? TableMap::TYPE_PHPNAME;
 
-            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns);
+            return $this->exportTo($format, $usePrefix, $includeLazyLoadColumns, $keyType);
         }
+
         throw new BadMethodCallException('Call to undefined method: ' . $name);
     }
 
@@ -565,13 +646,15 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return (string) $this->exportTo(constant($this->getTableMapClass() . '::DEFAULT_STRING_FORMAT'), false);
+        return $this->exportTo($this->getTableMapClass()::DEFAULT_STRING_FORMAT, false);
     }
 
     /**
      * Creates clones of the containing data.
+     *
+     * @return void
      */
     public function __clone()
     {
@@ -582,7 +665,10 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
         }
     }
 
-    protected function getPluralizer()
+    /**
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
+     */
+    protected function getPluralizer(): PluralizerInterface
     {
         if ($this->pluralizer === null) {
             $this->pluralizer = $this->createPluralizer();
@@ -593,18 +679,26 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, \Seria
 
     /**
      * Overwrite this method if you want to use a custom pluralizer
+     *
+     * @return \Propel\Common\Pluralizer\PluralizerInterface
      */
-    protected function createPluralizer()
+    protected function createPluralizer(): PluralizerInterface
     {
         return new StandardEnglishPluralizer();
     }
 
-    protected function getPluralModelName()
+    /**
+     * @return string
+     */
+    protected function getPluralModelName(): string
     {
         return $this->getPluralizer()->getPluralForm($this->getModel());
     }
 
-    public function hashCode()
+    /**
+     * @return string
+     */
+    public function hashCode(): string
     {
         return spl_object_hash($this);
     }

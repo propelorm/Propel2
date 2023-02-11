@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Runtime\DataFetcher;
 
 use Propel\Runtime\Map\TableMap;
@@ -17,27 +23,30 @@ class ArrayDataFetcher extends AbstractDataFetcher
     protected $indexType = TableMap::TYPE_PHPNAME;
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
-    public function next()
+    public function next(): void
     {
-        if (null !== $this->dataObject) {
+        if ($this->dataObject !== null) {
             next($this->dataObject);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @psalm-suppress ReservedWord
+     *
+     * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
-        return null === $this->dataObject ? null : current($this->dataObject);
+        return $this->dataObject === null ? null : current($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @return array|null
      */
-    public function fetch()
+    public function fetch(): ?array
     {
         $row = $this->valid() ? $this->current() : null;
         $this->next();
@@ -46,59 +55,68 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
-     * {@inheritDoc}
+     * @psalm-suppress ReservedWord
+     *
+     * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
-        return null === $this->dataObject ? null : key($this->dataObject);
+        return $this->dataObject === null ? null : key($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
-        return (null !== $this->dataObject && null !== key($this->dataObject));
+        return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return null === $this->dataObject ? null : reset($this->dataObject);
+        if ($this->dataObject === null) {
+            return;
+        }
+
+        reset($this->dataObject);
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return $this->indexType;
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
-        return null === $this->dataObject ? null : count($this->dataObject);
+        return $this->dataObject === null ? 0 : count($this->dataObject);
     }
 
     /**
      * Sets the current index type.
      *
      * @param string $indexType one of TableMap::TYPE_*
+     *
+     * @return void
      */
-    public function setIndexType($indexType)
+    public function setIndexType(string $indexType): void
     {
         $this->indexType = $indexType;
     }
 
     /**
-     * {@inheritDoc}
+     * @return void
      */
-    public function close()
+    public function close(): void
     {
         $this->dataObject = null;
     }

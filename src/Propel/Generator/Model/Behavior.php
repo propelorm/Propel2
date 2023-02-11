@@ -1,17 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
 
+use InvalidArgumentException;
+use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Exception\LogicException;
+use ReflectionObject;
 
 /**
  * Information about behaviors of a table.
@@ -21,17 +22,19 @@ use Propel\Generator\Exception\LogicException;
  */
 class Behavior extends MappingModel
 {
+    use PathTrait;
+
     /**
      * The table object on which the behavior is applied.
      *
-     * @var Table
+     * @var \Propel\Generator\Model\Table
      */
     protected $table;
 
     /**
      * The database object.
      *
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     protected $database;
 
@@ -52,15 +55,15 @@ class Behavior extends MappingModel
     /**
      * A collection of parameters.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $parameters = [ ];
+    protected $parameters = [];
 
     /**
-     * Wether or not the table has been
+     * Whether the table has been
      * modified by the behavior.
      *
-     * @var boolean
+     * @var bool
      */
     protected $isTableModified = false;
 
@@ -92,8 +95,10 @@ class Behavior extends MappingModel
      * Sets the name of the Behavior
      *
      * @param string $name the name of the behavior
+     *
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
 
@@ -106,8 +111,10 @@ class Behavior extends MappingModel
      * Sets the id of the Behavior
      *
      * @param string $id The id of the behavior
+     *
+     * @return void
      */
-    public function setId($id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -118,7 +125,7 @@ class Behavior extends MappingModel
      *
      * @return bool
      */
-    public function allowMultiple()
+    public function allowMultiple(): bool
     {
         return false;
     }
@@ -128,7 +135,7 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -136,9 +143,9 @@ class Behavior extends MappingModel
     /**
      * Returns the name of the Behavior
      *
-     * @return string
+     * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -146,9 +153,11 @@ class Behavior extends MappingModel
     /**
      * Sets the table this behavior is applied to
      *
-     * @param Table $table
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -156,19 +165,39 @@ class Behavior extends MappingModel
     /**
      * Returns the table this behavior is applied to
      *
-     * @return Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable()
+    public function getTable(): ?Table
     {
         return $this->table;
     }
 
     /**
+     * Returns the table this behavior is applied to
+     *
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return \Propel\Generator\Model\Table
+     */
+    public function getTableOrFail(): Table
+    {
+        $table = $this->getTable();
+
+        if ($table === null) {
+            throw new LogicException('Table is not defined.');
+        }
+
+        return $table;
+    }
+
+    /**
      * Sets the database this behavior is applied to
      *
-     * @param Database $database
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return void
      */
-    public function setDatabase(Database $database)
+    public function setDatabase(Database $database): void
     {
         $this->database = $database;
     }
@@ -177,9 +206,9 @@ class Behavior extends MappingModel
      * Returns the table this behavior is applied to if behavior is applied to
      * a database element.
      *
-     * @return Database
+     * @return \Propel\Generator\Model\Database
      */
-    public function getDatabase()
+    public function getDatabase(): Database
     {
         return $this->database;
     }
@@ -191,11 +220,13 @@ class Behavior extends MappingModel
      * [ 'name' => 'foo', 'value' => bar ]
      *
      * @param array $parameter
+     *
+     * @return void
      */
-    public function addParameter(array $parameter)
+    public function addParameter(array $parameter): void
     {
         $parameter = array_change_key_case($parameter, CASE_LOWER);
-        $this->parameters[$parameter['name']] = $parameter['value'];
+        $this->parameters[(string)$parameter['name']] = $parameter['value'];
     }
 
     /**
@@ -204,8 +235,10 @@ class Behavior extends MappingModel
      * Expects an associative array looking like [ 'foo' => 'bar' ].
      *
      * @param array $parameters
+     *
+     * @return void
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }
@@ -215,7 +248,7 @@ class Behavior extends MappingModel
      *
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -223,12 +256,26 @@ class Behavior extends MappingModel
     /**
      * Returns a single parameter by its name.
      *
-     * @param  string $name
-     * @return array
+     * @param string $name
+     *
+     * @return mixed
      */
-    public function getParameter($name)
+    public function getParameter(string $name)
     {
         return $this->parameters[$name];
+    }
+
+    /**
+     * Checks if a param has the given value
+     *
+     * @param string $paramName
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    public function parameterHasValue(string $paramName, $value): bool
+    {
+        return $this->parameters[$paramName] === $value;
     }
 
     /**
@@ -238,11 +285,13 @@ class Behavior extends MappingModel
      *
      * Default is 50.
      *
-     * @param integer $tableModificationOrder
+     * @param int $tableModificationOrder
+     *
+     * @return void
      */
-    public function setTableModificationOrder($tableModificationOrder)
+    public function setTableModificationOrder(int $tableModificationOrder): void
     {
-        $this->tableModificationOrder = (int) $tableModificationOrder;
+        $this->tableModificationOrder = $tableModificationOrder;
     }
 
     /**
@@ -252,9 +301,9 @@ class Behavior extends MappingModel
      *
      * Default is 50.
      *
-     * @return integer
+     * @return int
      */
-    public function getTableModificationOrder()
+    public function getTableModificationOrder(): int
     {
         return $this->tableModificationOrder;
     }
@@ -265,8 +314,10 @@ class Behavior extends MappingModel
      *
      * Propagates the behavior to the tables of the database and override this
      * method to have a database behavior do something special.
+     *
+     * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getTables() as $table) {
             if ($table->hasBehavior($this->getId())) {
@@ -281,39 +332,42 @@ class Behavior extends MappingModel
     /**
      * Returns the list of all tables in the same database.
      *
-     * @return Table[] A collection of Table instance
+     * @return array<\Propel\Generator\Model\Table> A collection of Table instance
      */
-    protected function getTables()
+    protected function getTables(): array
     {
         return $this->database->getTables();
     }
 
     /**
      * This method is automatically called on table behaviors when the database
-     * model is finished. It also override it to add columns to the current
+     * model is finished. Override this method to add columns to the current
      * table.
+     *
+     * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
-
     }
 
     /**
-     * Sets whether or not the table has been modified.
+     * Sets whether the table has been modified.
      *
-     * @param boolean $modified
+     * @param bool $modified
+     *
+     * @return void
      */
-    public function setTableModified($modified)
+    public function setTableModified(bool $modified): void
     {
         $this->isTableModified = $modified;
     }
 
     /**
-     * Returns whether or not the table has been modified.
+     * Returns whether the table has been modified.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isTableModified()
+    public function isTableModified(): bool
     {
         return $this->isTableModified;
     }
@@ -323,27 +377,35 @@ class Behavior extends MappingModel
      * passed as arguments. The template file name is relative to the behavior's
      * directory name.
      *
-     * @param  string $filename
-     * @param  array  $vars
-     * @param  string $templateDir
+     * @param string $filename
+     * @param array $vars
+     * @param string|null $templatePath
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return string
      */
-    public function renderTemplate($filename, $vars = [], $templateDir = '/templates/')
+    public function renderTemplate(string $filename, array $vars = [], ?string $templatePath = null): string
     {
-        $filePath = $this->getDirname() . $templateDir . $filename;
+        if ($templatePath === null) {
+            $templatePath = $this->getTemplatePath($this->getDirname());
+        }
+
+        $filePath = $templatePath . $filename;
         if (!file_exists($filePath)) {
             // try with '.php' at the end
             $filePath = $filePath . '.php';
             if (!file_exists($filePath)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found in "%s" directory',
+                throw new InvalidArgumentException(sprintf(
+                    'Template `%s` not found in `%s` directory',
                     $filename,
-                    $this->getDirname() . $templateDir
+                    $templatePath,
                 ));
             }
         }
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
-        $vars = array_merge($vars, [ 'behavior' => $this ]);
+        $vars = array_merge($vars, ['behavior' => $this]);
 
         return $template->render($vars);
     }
@@ -354,11 +416,12 @@ class Behavior extends MappingModel
      *
      * @return string
      */
-    protected function getDirname()
+    protected function getDirname(): string
     {
-        if (null === $this->dirname) {
-            $r = new \ReflectionObject($this);
-            $this->dirname = dirname($r->getFileName());
+        if ($this->dirname === null) {
+            $behaviorReflectionObject = new ReflectionObject($this);
+            $behaviorFileName = (string)$behaviorReflectionObject->getFileName();
+            $this->dirname = dirname($behaviorFileName);
         }
 
         return $this->dirname;
@@ -368,19 +431,26 @@ class Behavior extends MappingModel
      * Returns a column object using a name stored in the behavior parameters.
      * Useful for table behaviors.
      *
-     * @param  string $name
-     * @return Column
+     * @param string $name
+     *
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumnForParameter($name)
+    public function getColumnForParameter(string $name): ?Column
     {
         return $this->table->getColumn($this->getParameter($name));
     }
 
-    protected function setupObject()
+    /**
+     * @throws \Propel\Generator\Exception\LogicException
+     *
+     * @return void
+     */
+    protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
+        $id = $this->getAttribute('id');
 
-        if (!$this->allowMultiple() && $id = $this->getAttribute('id')) {
+        if (!$this->allowMultiple() && $id) {
             throw new LogicException(sprintf('Defining an ID (%s) on a behavior which does not allow multiple instances makes no sense', $id));
         }
 
@@ -392,7 +462,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return $this|Behavior
+     * @return $this
      */
     public function getTableModifier()
     {
@@ -404,7 +474,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return $this|Behavior
+     * @return $this
      */
     public function getObjectBuilderModifier()
     {
@@ -416,7 +486,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return $this|Behavior
+     * @return $this
      */
     public function getQueryBuilderModifier()
     {
@@ -428,7 +498,7 @@ class Behavior extends MappingModel
      *
      * The current object is returned by default.
      *
-     * @return $this|Behavior
+     * @return $this
      */
     public function getTableMapBuilderModifier()
     {
@@ -436,13 +506,13 @@ class Behavior extends MappingModel
     }
 
     /**
-     * Returns whether or not this behavior has additional builders.
+     * Returns whether this behavior has additional builders.
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasAdditionalBuilders()
+    public function hasAdditionalBuilders(): bool
     {
-        return !empty($this->additionalBuilders);
+        return (bool)$this->additionalBuilders;
     }
 
     /**
@@ -450,7 +520,7 @@ class Behavior extends MappingModel
      *
      * @return array
      */
-    public function getAdditionalBuilders()
+    public function getAdditionalBuilders(): array
     {
         return $this->additionalBuilders;
     }

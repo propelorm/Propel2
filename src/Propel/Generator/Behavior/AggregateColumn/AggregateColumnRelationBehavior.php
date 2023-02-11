@@ -1,16 +1,17 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AggregateColumn;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -19,19 +20,31 @@ use Propel\Generator\Model\Behavior;
  */
 class AggregateColumnRelationBehavior extends Behavior
 {
-    // default parameters value
+    /**
+     * Default parameters value
+     *
+     * @var array<string, mixed>
+     */
     protected $parameters = [
-        'foreign_table'     => '',
-        'update_method'     => '',
-        'aggregate_name'    => '',
+        'foreign_table' => '',
+        'update_method' => '',
+        'aggregate_name' => '',
     ];
 
-    public function allowMultiple()
+    /**
+     * @return bool
+     */
+    public function allowMultiple(): bool
     {
         return true;
     }
 
-    public function postSave($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function postSave(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
         $aggregateName = $this->getParameter('aggregate_name');
@@ -42,7 +55,12 @@ class AggregateColumnRelationBehavior extends Behavior
     // no need for a postDelete() hook, since delete() uses Query::delete(),
     // which already has a hook
 
-    public function objectAttributes($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function objectAttributes(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
         $relatedClass = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($this->getForeignTable()));
@@ -55,24 +73,40 @@ protected \$old{$relationName}{$aggregateName};
 ";
     }
 
-    public function objectMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function objectMethods(AbstractOMBuilder $builder): string
     {
         return $this->addObjectUpdateRelated($builder);
     }
 
-    protected function addObjectUpdateRelated($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function addObjectUpdateRelated(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
 
         return $this->renderTemplate('objectUpdateRelated', [
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName),
             'updateMethodName' => $this->getParameter('update_method'),
         ]);
     }
 
-    public function objectFilter(&$script, $builder)
+    /**
+     * @param string $script
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return void
+     */
+    public function objectFilter(string &$script, AbstractOMBuilder $builder): void
     {
         $relationName = $this->getRelationName($builder);
         $aggregateName = $this->getParameter('aggregate_name');
@@ -87,17 +121,32 @@ protected \$old{$relationName}{$aggregateName};
         $script = str_replace($search, $replace, $script);
     }
 
-    public function preUpdateQuery($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function preUpdateQuery(AbstractOMBuilder $builder): string
     {
         return $this->getFindRelated($builder);
     }
 
-    public function preDeleteQuery($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function preDeleteQuery(AbstractOMBuilder $builder): string
     {
         return $this->getFindRelated($builder);
     }
 
-    protected function getFindRelated($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function getFindRelated(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
         $aggregateName = $this->getParameter('aggregate_name');
@@ -105,17 +154,32 @@ protected \$old{$relationName}{$aggregateName};
         return "\$this->findRelated{$relationName}{$aggregateName}s(\$con);";
     }
 
-    public function postUpdateQuery($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function postUpdateQuery(AbstractOMBuilder $builder): string
     {
         return $this->getUpdateRelated($builder);
     }
 
-    public function postDeleteQuery($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function postDeleteQuery(AbstractOMBuilder $builder): string
     {
         return $this->getUpdateRelated($builder);
     }
 
-    protected function getUpdateRelated($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function getUpdateRelated(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
         $aggregateName = $this->getParameter('aggregate_name');
@@ -123,7 +187,12 @@ protected \$old{$relationName}{$aggregateName};
         return "\$this->updateRelated{$relationName}{$aggregateName}s(\$con);";
     }
 
-    public function queryMethods($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $script = '';
 
@@ -133,7 +202,12 @@ protected \$old{$relationName}{$aggregateName};
         return $script;
     }
 
-    protected function addQueryFindRelated($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function addQueryFindRelated(AbstractOMBuilder $builder): string
     {
         $foreignKey = $this->getForeignKey();
         $foreignQueryBuilder = $builder->getNewStubQueryBuilder($foreignKey->getForeignTable());
@@ -141,46 +215,63 @@ protected \$old{$relationName}{$aggregateName};
 
         $builder->declareClassNamespace(
             $foreignKey->getForeignTable()->getPhpName() . 'Query',
-            $foreignKey->getForeignTable()->getNamespace()
+            $foreignKey->getForeignTable()->getNamespace(),
         );
 
         return $this->renderTemplate('queryFindRelated', [
-            'foreignTable'     => $this->getForeignTable(),
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
+            'foreignTable' => $this->getForeignTable(),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName . $this->getParameter('aggregate_name')),
             'foreignQueryName' => $foreignQueryBuilder->getClassName(),
-            'refRelationName'  => $builder->getRefFKPhpNameAffix($foreignKey),
+            'refRelationName' => $builder->getRefFKPhpNameAffix($foreignKey),
         ]);
     }
 
-    protected function addQueryUpdateRelated($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function addQueryUpdateRelated(AbstractOMBuilder $builder): string
     {
         $relationName = $this->getRelationName($builder);
 
         return $this->renderTemplate('queryUpdateRelated', [
-            'relationName'     => $relationName,
-            'aggregateName'    => $this->getParameter('aggregate_name'),
-            'variableName'     => lcfirst($relationName.$this->getParameter('aggregate_name')),
+            'relationName' => $relationName,
+            'aggregateName' => $this->getParameter('aggregate_name'),
+            'variableName' => lcfirst($relationName . $this->getParameter('aggregate_name')),
             'updateMethodName' => $this->getParameter('update_method'),
         ]);
     }
 
-    protected function getForeignTable()
+    /**
+     * @return \Propel\Generator\Model\Table|null
+     */
+    protected function getForeignTable(): ?Table
     {
         return $this->getTable()->getDatabase()->getTable($this->getParameter('foreign_table'));
     }
 
-    protected function getForeignKey()
+    /**
+     * @return \Propel\Generator\Model\ForeignKey
+     */
+    protected function getForeignKey(): ForeignKey
     {
         $foreignTable = $this->getForeignTable();
         // let's infer the relation from the foreign table
         $fks = $this->getTable()->getForeignKeysReferencingTable($foreignTable->getName());
+
         // FIXME doesn't work when more than one fk to the same table
         return array_shift($fks);
     }
 
-    protected function getRelationName($builder)
+    /**
+     * @param \Propel\Generator\Builder\Om\AbstractOMBuilder $builder
+     *
+     * @return string
+     */
+    protected function getRelationName(AbstractOMBuilder $builder): string
     {
         return $builder->getFKPhpNameAffix($this->getForeignKey());
     }

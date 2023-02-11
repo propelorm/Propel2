@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -24,47 +22,47 @@ class ColumnDiff
      *
      * @var array
      */
-    protected $changedProperties;
+    protected $changedProperties = [];
 
     /**
      * The original column definition.
      *
-     * @var Column
+     * @var \Propel\Generator\Model\Column|null
      */
     protected $fromColumn;
 
     /**
      * The modified column definition.
      *
-     * @var Column
+     * @var \Propel\Generator\Model\Column|null
      */
     protected $toColumn;
 
     /**
      * Constructor.
      *
-     * @param Column $fromColumn The original column
-     * @param Column $toColumn   The modified column
+     * @param \Propel\Generator\Model\Column|null $fromColumn The original column
+     * @param \Propel\Generator\Model\Column|null $toColumn The modified column
      */
-    public function __construct(Column $fromColumn = null, Column $toColumn = null)
+    public function __construct(?Column $fromColumn = null, ?Column $toColumn = null)
     {
-        if (null !== $fromColumn) {
+        if ($fromColumn !== null) {
             $this->setFromColumn($fromColumn);
         }
 
-        if (null !== $toColumn) {
+        if ($toColumn !== null) {
             $this->setToColumn($toColumn);
         }
-
-        $this->changedProperties = [];
     }
 
     /**
      * Sets for the changed properties.
      *
      * @param array $properties
+     *
+     * @return void
      */
-    public function setChangedProperties($properties)
+    public function setChangedProperties(array $properties): void
     {
         $this->changedProperties = $properties;
     }
@@ -74,7 +72,7 @@ class ColumnDiff
      *
      * @return array
      */
-    public function getChangedProperties()
+    public function getChangedProperties(): array
     {
         return $this->changedProperties;
     }
@@ -82,9 +80,11 @@ class ColumnDiff
     /**
      * Sets the fromColumn property.
      *
-     * @param Column $fromColumn
+     * @param \Propel\Generator\Model\Column $fromColumn
+     *
+     * @return void
      */
-    public function setFromColumn(Column $fromColumn)
+    public function setFromColumn(Column $fromColumn): void
     {
         $this->fromColumn = $fromColumn;
     }
@@ -92,9 +92,9 @@ class ColumnDiff
     /**
      * Returns the fromColumn property.
      *
-     * @return Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getFromColumn()
+    public function getFromColumn(): ?Column
     {
         return $this->fromColumn;
     }
@@ -102,9 +102,11 @@ class ColumnDiff
     /**
      * Sets the toColumn property.
      *
-     * @param Column $toColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return void
      */
-    public function setToColumn(Column $toColumn)
+    public function setToColumn(Column $toColumn): void
     {
         $this->toColumn = $toColumn;
     }
@@ -112,9 +114,9 @@ class ColumnDiff
     /**
      * Returns the toColumn property.
      *
-     * @return Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getToColumn()
+    public function getToColumn(): ?Column
     {
         return $this->toColumn;
     }
@@ -122,9 +124,9 @@ class ColumnDiff
     /**
      * Returns the reverse diff for this diff.
      *
-     * @return ColumnDiff
+     * @return self
      */
-    public function getReverseDiff()
+    public function getReverseDiff(): self
     {
         $diff = new self();
 
@@ -147,7 +149,7 @@ class ColumnDiff
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $ret = '';
         $ret .= sprintf("      %s:\n", $this->fromColumn->getFullyQualifiedName());

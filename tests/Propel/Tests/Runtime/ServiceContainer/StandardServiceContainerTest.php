@@ -1,28 +1,31 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ServiceContainer;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
-use Propel\Runtime\ServiceContainer\StandardServiceContainer;
-use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
+use Exception;
+use Monolog\Logger;
 use Propel\Runtime\Adapter\AdapterInterface;
-use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
-use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\ConnectionManagerSingle;
 use Propel\Runtime\Connection\PdoConnection;
-use Propel\Runtime\Util\Profiler;
-use Monolog\Logger;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\Propel;
+use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
+use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Propel\Runtime\Util\Profiler;
+use Propel\Tests\Helpers\BaseTestCase;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\ConnectionFactory;
 
 class StandardServiceContainerTest extends BaseTestCase
 {
@@ -31,22 +34,35 @@ class StandardServiceContainerTest extends BaseTestCase
      */
     protected $sc;
 
-    protected function setUp()
+    /**
+     * @return void
+     */
+    protected function setUp(): void
     {
-        $this->sc = new StandardServiceContainer;
+        $this->sc = new StandardServiceContainer();
+        $this->sc->initDatabaseMaps([]);
     }
 
-    protected function tearDown()
+    /**
+     * @return void
+     */
+    protected function tearDown(): void
     {
         $this->sc = null;
     }
 
+    /**
+     * @return void
+     */
     public function testDefaultDatasourceIsDefault()
     {
         $defaultDatasource = $this->sc->getDefaultDatasource();
         $this->assertEquals('default', $defaultDatasource);
     }
 
+    /**
+     * @return void
+     */
     public function testSetDefaultDatasourceUpdatesDefaultDatasource()
     {
         $this->sc->setDefaultDatasource('bookstore');
@@ -54,6 +70,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals('bookstore', $defaultDatasource);
     }
 
+    /**
+     * @return void
+     */
     public function testGetAdapterClassUsesDefaultDatasource()
     {
         $this->sc->setAdapterClasses(['default' => 'bar1', 'foo' => 'bar2']);
@@ -62,12 +81,18 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals('bar2', $this->sc->getAdapterClass());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdapterClassSetsTheAdapterClassForAGivenDatasource()
     {
         $this->sc->setAdapterClass('foo', 'bar');
         $this->assertEquals('bar', $this->sc->getAdapterClass('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdapterClassesSetsAdapterClassForAllDatasources()
     {
         $this->sc->setAdapterClasses(['foo1' => 'bar1', 'foo2' => 'bar2']);
@@ -75,14 +100,20 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals('bar2', $this->sc->getAdapterClass('foo2'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdapterClassesRemovesExistingAdapterClassesForAllDatasources()
     {
-        $sc = new TestableServiceContainer;
+        $sc = new TestableServiceContainer();
         $sc->setAdapterClass('foo', 'bar');
         $sc->setAdapterClasses(['foo1' => 'bar1', 'foo2' => 'bar2']);
         $this->assertEquals(['foo1' => 'bar1', 'foo2' => 'bar2'], $sc->adapterClasses);
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdapterClassAllowsToReplaceExistingAdapter()
     {
         $this->sc->setAdapter('foo', new SqliteAdapter());
@@ -90,6 +121,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapter('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function getAdapterReturnsSetAdapter()
     {
         $adapter = new SqliteAdapter();
@@ -98,82 +132,190 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertSame($adapter, $this->sc->getAdapter('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function getAdapterCreatesAdapterBasedOnAdapterClass()
     {
         $this->sc->setAdapterClass('foo', '\Propel\Runtime\Adapter\Pdo\MysqlAdapter');
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapter('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAdapterUsesDefaultDatasource()
     {
         $this->sc->setAdapterClasses([
             'default' => '\Propel\Runtime\Adapter\Pdo\SqliteAdapter',
-            'foo'     => '\Propel\Runtime\Adapter\Pdo\MysqlAdapter']);
+            'foo' => '\Propel\Runtime\Adapter\Pdo\MysqlAdapter']);
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\SqliteAdapter', $this->sc->getAdapter());
         $this->sc->setDefaultDatasource('foo');
         $this->assertInstanceof('\Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapter());
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdapterUpdatesAdapterClass()
     {
         $this->sc->setAdapter('foo', new SqliteAdapter());
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\SqliteAdapter', $this->sc->getAdapterClass('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetAdaptersSetsAllAdapters()
     {
         $this->sc->setAdapters([
             'foo1' => new SqliteAdapter(),
-            'foo2' => new MysqlAdapter()
+            'foo2' => new MysqlAdapter(),
         ]);
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\SqliteAdapter', $this->sc->getAdapterClass('foo1'));
         $this->assertEquals('Propel\Runtime\Adapter\Pdo\MysqlAdapter', $this->sc->getAdapterClass('foo2'));
     }
 
-    public function testSetAdaptersRemovesExistingAdaptersForAllDatasources($value='')
+    /**
+     * @return void
+     */
+    public function testSetAdaptersRemovesExistingAdaptersForAllDatasources($value = '')
     {
-        $sc = new TestableServiceContainer;
+        $sc = new TestableServiceContainer();
         $sc->setAdapter('foo', new SqliteAdapter());
         $sc->setAdapters([
             'foo1' => new SqliteAdapter(),
-            'foo2' => new MysqlAdapter()
+            'foo2' => new MysqlAdapter(),
         ]);
         $this->assertEquals([
             'foo1' => new SqliteAdapter(),
-            'foo2' => new MysqlAdapter()
+            'foo2' => new MysqlAdapter(),
         ], $sc->adapters);
     }
 
-    public function testCheckInvalidVersion()
+    /**
+     * @return void
+     */
+    public function testCheckInvalidVersion(): void
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
-        $logger->expects($this->once())->method('warning');
-
-        $this->sc->setLogger('defaultLogger', $logger);
-        $this->sc->checkVersion('1.0.0-invalid');
+        $this->expectException(PropelException::class);
+        $this->sc->checkVersion(-1);
     }
 
-    public function testCheckValidVersion()
+    /**
+     * @doesNotPerformAssertions
+     *
+     * @return void
+     */
+    public function testCheckValidVersion(): void
     {
-        $logger = $this->getMock('Monolog\Logger', ['warning'], ['mylogger']);
-        $logger->expects($this->never())->method('warning');
-
-        $this->sc->setLogger('defaultLogger', $logger);
-        $this->sc->checkVersion(Propel::VERSION);
+        try {
+            $this->sc->checkVersion(StandardServiceContainer::CONFIGURATION_VERSION);
+        } catch (PropelException $e) {
+            $this->fail('The current configuration version should pass a check, but failed with message: ' . $e->getMessage());
+        }
     }
 
+    /**
+     * @return void
+     */
+    public function testUninitializedDatabaseMapThrowsException(): void
+    {
+        $sc = new StandardServiceContainer();
+        $this->expectException(PropelException::class);
+        $this->expectExceptionMessage('Database map was not initialized. Please check the database loader script included by your conf.');
+
+        $sc->getDatabaseMap('a database name');
+    }
+
+    /**
+     * @return void
+     */
+    public function testInitializedDatabaseMapContainsTableMaps(): void
+    {
+        $sc = new StandardServiceContainer();
+        $dbName = 'myBookstore';
+        $dbMap = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\BookTableMap',
+            ],
+        ];
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap);
+        $dbMap = $sc->getDatabaseMap($dbName);
+
+        $this->assertTrue($dbMap->hasTable('author'));
+        $this->assertTrue($dbMap->hasTable('book'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testInitializingdDatabaseMapsAccumulates(): void
+    {
+        $sc = new StandardServiceContainer();
+        $dbName = 'myBookstore';
+        $dbMap1 = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\BookTableMap',
+            ],
+        ];
+
+        $dbMap2 = [
+            $dbName => [
+                '\\Propel\\Tests\\Bookstore\\Map\\AuthorTableMap',
+                '\\Propel\\Tests\\Bookstore\\Map\\EssayTableMap',
+            ],
+        ];
+
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap1);
+        $this->runInitDatabaseMapsOnContainer($sc, $dbMap2);
+        $dbMap = $sc->getDatabaseMap($dbName);
+
+        $this->assertTrue($dbMap->hasTable('author'));
+        $this->assertTrue($dbMap->hasTable('book'));
+        $this->assertTrue($dbMap->hasTable('essay'));
+    }
+
+    /**
+     * @param \Propel\Runtime\ServiceContainer\StandardServiceContainer $sc
+     * @param String[][] $dbMap
+     *
+     * @return void
+     */
+    private function runInitDatabaseMapsOnContainer(StandardServiceContainer $sc, array $dbMap): void
+    {
+        $initialServiceContainer = Propel::getServiceContainer();
+        try {
+            Propel::setServiceContainer($sc);
+            $sc->initDatabaseMaps($dbMap);
+        } finally {
+            Propel::setServiceContainer($initialServiceContainer);
+        }
+    }
+
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapReturnsADatabaseMap()
     {
         $map = $this->sc->getDatabaseMap('foo');
         $this->assertInstanceOf('\Propel\Runtime\Map\DatabaseMap', $map);
     }
 
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapReturnsADatabaseMapForTheGivenDatasource()
     {
         $map = $this->sc->getDatabaseMap('foo');
         $this->assertEquals('foo', $map->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapReturnsADatabaseMapForTheDefaultDatasourceByDefault()
     {
         $map = $this->sc->getDatabaseMap();
@@ -183,18 +325,27 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals('foo', $map->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapReturnsAlwaysTheSameDatabaseMapForAGivenDatasource()
     {
         $map = $this->sc->getDatabaseMap('foo');
         $this->assertSame($map, $this->sc->getDatabaseMap('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapReturnsDifferentDatabaseMapForTwoDatasources()
     {
         $map = $this->sc->getDatabaseMap('foo1');
         $this->assertNotSame($map, $this->sc->getDatabaseMap('foo2'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDatabaseMapUsesDatabaseMapClass()
     {
         $this->sc->setDatabaseMapClass('Propel\Tests\Runtime\ServiceContainer\MyDatabaseMap');
@@ -202,6 +353,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertInstanceOf('Propel\Tests\Runtime\ServiceContainer\MyDatabaseMap', $map);
     }
 
+    /**
+     * @return void
+     */
     public function testSetDatabaseMapSetsTheDatabaseMapForAGivenDatasource()
     {
         $map = new DatabaseMap('foo');
@@ -209,115 +363,170 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertSame($map, $this->sc->getDatabaseMap('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionManagerSetsTheConnectionManagerForAGivenDatasource()
     {
-        $manager1 = new ConnectionManagerSingle();
-        $manager2 = new ConnectionManagerSingle();
-        $this->sc->setConnectionManager('foo1', $manager1);
-        $this->sc->setConnectionManager('foo2', $manager2);
+        $manager1 = new ConnectionManagerSingle('foo1');
+        $manager2 = new ConnectionManagerSingle('foo2');
+        $this->sc->setConnectionManager($manager1);
+        $this->sc->setConnectionManager($manager2);
         $this->assertSame($manager1, $this->sc->getConnectionManager('foo1'));
         $this->assertSame($manager2, $this->sc->getConnectionManager('foo2'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionManagerClosesExistingConnectionManagerForTheSameDatasource()
     {
-        $manager = new TestableConnectionManagerSingle();
+        $manager = new TestableConnectionManagerSingle('foo');
         $manager->setConnection(new PdoConnection('sqlite::memory:'));
-        $this->assertNotNull($manager->connection);
-        $this->sc->setConnectionManager('foo', $manager);
-        $this->sc->setConnectionManager('foo', new ConnectionManagerSingle());
-        $this->assertNull($manager->connection);
+        $this->assertNotNull($manager->getReadConnection());
+        $this->sc->setConnectionManager($manager);
+        $this->sc->setConnectionManager(new ConnectionManagerSingle('foo'));
+        try {
+            $manager->getReadConnection();
+        } catch (\Error $e) {
+            $this->assertTrue(true, 'Throws error');
+        }
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionManagersReturnsConnectionManagersForAllDatasources()
     {
-        $manager1 = new ConnectionManagerSingle();
-        $manager2 = new ConnectionManagerSingle();
-        $this->sc->setConnectionManager('foo1', $manager1);
-        $this->sc->setConnectionManager('foo2', $manager2);
+        $manager1 = new ConnectionManagerSingle('foo1');
+        $manager2 = new ConnectionManagerSingle('foo2');
+        $this->sc->setConnectionManager($manager1);
+        $this->sc->setConnectionManager($manager2);
         $expected = [
             'foo1' => $manager1,
-            'foo2' => $manager2
+            'foo2' => $manager2,
         ];
         $this->assertEquals($expected, $this->sc->getConnectionManagers());
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\RuntimeException
+     * @return void
      */
     public function testGetConnectionManagerWithUnknownDatasource()
     {
+        $this->expectException(RuntimeException::class);
+
         $this->sc->getConnectionManager('unknown');
     }
 
+    /**
+     * @return void
+     */
     public function testHasConnectionManager()
     {
-        $this->sc->setConnectionManager('single', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('single'));
         $this->assertTrue($this->sc->hasConnectionManager('single'));
         $this->assertFalse($this->sc->hasConnectionManager('single_not_existing'));
     }
 
+    /**
+     * @return void
+     */
     public function testCloseConnectionsClosesConnectionsOnAllConnectionManagers()
     {
-        $manager1 = new TestableConnectionManagerSingle();
+        $manager1 = new TestableConnectionManagerSingle('foo1');
         $manager1->setConnection(new PdoConnection('sqlite::memory:'));
-        $manager2 = new TestableConnectionManagerSingle();
+        $manager2 = new TestableConnectionManagerSingle('foo2');
         $manager2->setConnection(new PdoConnection('sqlite::memory:'));
-        $this->sc->setConnectionManager('foo1', $manager1);
-        $this->sc->setConnectionManager('foo2', $manager2);
+        $this->sc->setConnectionManager($manager1);
+        $this->sc->setConnectionManager($manager2);
         $this->sc->closeConnections();
-        $this->assertNull($manager1->connection);
-        $this->assertNull($manager2->connection);
+
+        try {
+            $manager1->getReadConnection();
+        } catch (\Error $e) {
+            $this->assertTrue(true, 'Throws error');
+        }
+
+        try {
+            $manager2->getReadConnection();
+        } catch (\Error $e) {
+            $this->assertTrue(true, 'Throws error');
+        }
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionReturnsWriteConnectionByDefault()
     {
-        $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('foo'));
         $this->sc->setAdapter('foo', new SqliteAdapter());
-        $this->assertEquals('write', $this->sc->getConnection('foo'));
+        $this->assertEquals('write', $this->sc->getConnection('foo')->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionReturnsWriteConnectionWhenAskedExplicitly()
     {
-        $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('foo'));
         $this->sc->setAdapter('foo', new SqliteAdapter());
-        $this->assertEquals('write', $this->sc->getConnection('foo', ServiceContainerInterface::CONNECTION_WRITE));
+        $this->assertEquals('write', $this->sc->getConnection('foo', ServiceContainerInterface::CONNECTION_WRITE)->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionReturnsReadConnectionWhenAskedExplicitly()
     {
-        $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('foo'));
         $this->sc->setAdapter('foo', new SqliteAdapter());
-        $this->assertEquals('read', $this->sc->getConnection('foo', ServiceContainerInterface::CONNECTION_READ));
+        $this->assertEquals('read', $this->sc->getConnection('foo', ServiceContainerInterface::CONNECTION_READ)->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetConnectionReturnsConnectionForDefaultDatasourceByDefault()
     {
-        $this->sc->setConnectionManager('default', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('default'));
         $this->sc->setAdapter('default', new SqliteAdapter());
-        $this->assertEquals('write', $this->sc->getConnection());
+        $this->assertEquals('write', $this->sc->getConnection()->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetWriteConnectionReturnsWriteConnectionForAGivenDatasource()
     {
-        $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('foo'));
         $this->sc->setAdapter('foo', new SqliteAdapter());
-        $this->assertEquals('write', $this->sc->getWriteConnection('foo'));
+        $this->assertEquals('write', $this->sc->getWriteConnection('foo')->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testGetReadConnectionReturnsReadConnectionForAGivenDatasource()
     {
-        $this->sc->setConnectionManager('foo', new TestableConnectionManagerSingle());
+        $this->sc->setConnectionManager(new TestableConnectionManagerSingle('foo'));
         $this->sc->setAdapter('foo', new SqliteAdapter());
-        $this->assertEquals('read', $this->sc->getReadConnection('foo'));
+        $this->assertEquals('read', $this->sc->getReadConnection('foo')->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionAddsAConnectionManagerSingle()
     {
         $this->sc->setConnection('foo', new PdoConnection('sqlite::memory:'));
-        $this->assertInstanceOf('Propel\Runtime\Connection\ConnectionManagerSingle', $this->sc->getConnectionManager('foo'));
+        $this->assertInstanceOf(ConnectionManagerSingle::class, $this->sc->getConnectionManager('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionAddsAConnectionWhichCanBeRetrievedByGetConnection()
     {
         $con = new PdoConnection('sqlite::memory:');
@@ -326,71 +535,92 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertSame($con, $this->sc->getConnection('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfilerReturnsAProfiler()
     {
         $profiler = $this->sc->getProfiler();
         $this->assertInstanceOf('\Propel\Runtime\Util\Profiler', $profiler);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfilerUsesProfilerClass()
     {
-        $this->sc->setProfilerClass('\Propel\Tests\Runtime\ServiceContainer\myProfiler');
+        $this->sc->setProfilerClass('\Propel\Tests\Runtime\ServiceContainer\MyProfiler');
         $profiler = $this->sc->getProfiler();
-        $this->assertInstanceOf('\Propel\Tests\Runtime\ServiceContainer\myProfiler', $profiler);
+        $this->assertInstanceOf('\Propel\Tests\Runtime\ServiceContainer\MyProfiler', $profiler);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfilerUsesDefaultConfiguration()
     {
         $config = $this->sc->getProfiler()->getConfiguration();
         $expected = [
             'details' => [
                 'time' => [
-                    'name'      => 'Time',
+                    'name' => 'Time',
                     'precision' => 3,
-                    'pad'       => 8
+                    'pad' => 8,
                 ],
                 'mem' => [
-                    'name'      => 'Memory',
+                    'name' => 'Memory',
                     'precision' => 3,
-                    'pad'       => 8
+                    'pad' => 8,
                 ],
                 'memDelta' => [
-                    'name'      => 'Memory Delta',
+                    'name' => 'Memory Delta',
                     'precision' => 3,
-                    'pad'       => 8
+                    'pad' => 8,
                 ],
                 'memPeak' => [
-                    'name'      => 'Memory Peak',
+                    'name' => 'Memory Peak',
                     'precision' => 3,
-                    'pad'       => 8
+                    'pad' => 8,
                 ],
             ],
-            'innerGlue'    => ': ',
-            'outerGlue'    => ' | ',
-            'slowTreshold' => 0.1
+            'innerGlue' => ': ',
+            'outerGlue' => ' | ',
+            'slowThreshold' => 0.1,
         ];
         $this->assertEquals($expected, $config);
     }
 
+    /**
+     * @return void
+     */
     public function testGetProfilerUsesProfilerConfigurationWhenGiven()
     {
         $this->sc->setProfilerConfiguration([
-            'slowTreshold' => 22
+            'slowThreshold' => 22,
         ]);
         $config = $this->sc->getProfiler()->getConfiguration();
-        $this->assertEquals(22, $config['slowTreshold']);
+        $this->assertEquals(22, $config['slowThreshold']);
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerReturnsNullLoggerByDefault()
     {
         $this->assertInstanceOf('Psr\Log\NullLogger', $this->sc->getLogger());
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerReturnsNullLoggerForConnectionNamesByDefault()
     {
         $this->assertInstanceOf('Psr\Log\NullLogger', $this->sc->getLogger('book'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerReturnsLoggerPreviouslySet()
     {
         $logger = new Logger('book');
@@ -398,6 +628,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals($logger, $this->sc->getLogger('book'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerWithNoArgumentReturnsDefaultLogger()
     {
         $logger = new Logger('defaultLogger');
@@ -405,6 +638,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals($logger, $this->sc->getLogger());
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerWithAnArgumentReturnsLoggerSetOnThatArgument()
     {
         $logger1 = new Logger('defaultLogger');
@@ -414,6 +650,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals($logger2, $this->sc->getLogger('book'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerWithAnArgumentReturnsDefaultLoggerOnFallback()
     {
         $logger = new Logger('defaultLogger');
@@ -421,6 +660,9 @@ class StandardServiceContainerTest extends BaseTestCase
         $this->assertEquals($logger, $this->sc->getLogger('book'));
     }
 
+    /**
+     * @return void
+     */
     public function testGetLoggerLazyLoadsLoggerFromConfiguration()
     {
         $this->sc->setLoggerConfiguration('defaultLogger', [
@@ -432,12 +674,37 @@ class StandardServiceContainerTest extends BaseTestCase
         $handler = $logger->popHandler();
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $handler);
     }
-
+    
+    
+    /**
+     * @dataProvider debugModeDataProvider
+     */
+    public function testUseDebugMode(bool $useDebug, ?bool $useProfiler, bool $expectedConnectionMode, bool $expectedProfilerMode)
+    {
+        $this->sc->useDebugMode($useDebug, $useProfiler);
+        $this->assertSame($expectedConnectionMode, ConnectionWrapper::$useDebugMode);
+        $this->assertSame($expectedProfilerMode, ConnectionFactory::$useProfilerConnection);
+    }
+        
+    public function debugModeDataProvider(): array
+    {
+        // use debug , use profile, connection debug, connection profile
+        return [
+            [false, null, false, false],
+            [false, false, false, false],
+            [false, true, false, true],
+            [true, null, true, true],
+            [true, false, true, false],
+            [true, false, true, false],
+            
+        ];
+    }
 }
 
 class TestableServiceContainer extends StandardServiceContainer
 {
     public $adapterClasses = [];
+
     public $adapters = [];
 }
 
@@ -445,21 +712,25 @@ class MyDatabaseMap extends DatabaseMap
 {
 }
 
-class myProfiler extends Profiler
+class MyProfiler extends Profiler
 {
 }
 
 class TestableConnectionManagerSingle extends ConnectionManagerSingle
 {
-    public $connection;
-
-    public function getWriteConnection(AdapterInterface $adapter = null)
+    public function getWriteConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
-        return 'write';
+        $connection = $this->connection ?: $adapter->getConnection(['dsn' => 'sqlite::memory:']);
+        $connection->setName('write');
+
+        return $connection;
     }
 
-    public function getReadConnection(AdapterInterface $adapter = null)
+    public function getReadConnection(?AdapterInterface $adapter = null): ConnectionInterface
     {
-        return 'read';
+        $connection = $this->connection ?: $adapter->getConnection(['dsn' => 'sqlite::memory:']);
+        $connection->setName('read');
+
+        return $connection;
     }
 }
