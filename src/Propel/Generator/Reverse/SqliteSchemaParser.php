@@ -68,6 +68,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'text' => PropelTypes::LONGVARCHAR,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**
@@ -135,19 +136,24 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $filter = '';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
             }
             $filter .= sprintf(" AND (name = '%s' OR name LIKE '%%§%1\$s')", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+        } else {
+            $schema = $database->getSchema();
+            if ($schema) {
+                $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+            }
         }
 
         $sql = str_replace('%filter%', $filter, $sql);
 
+        /** @var \Traversable $dataFetcher */
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
             $tableName = $row[0];
             $tableSchema = '';
@@ -156,7 +162,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 continue;
             }
 
-            if (($pos = strpos($tableName, '§')) !== false) {
+            $pos = strpos($tableName, '§');
+            if ($pos !== false) {
                 $tableSchema = substr($tableName, 0, $pos);
                 $tableName = substr($tableName, $pos + 2);
             }
@@ -204,11 +211,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
-                $scale = $matches[3];
+                $size = (int)$matches[2];
+                $scale = (int)$matches[3];
             } elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
+                $size = (int)$matches[2];
             } else {
                 $type = $fulltype;
             }

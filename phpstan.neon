@@ -1,20 +1,12 @@
 includes:
     - phpstan-baseline.neon
 parameters:
-    level: 6
+    level: 7
     checkMissingIterableValueType: false
     reportUnmatchedIgnoredErrors: false
-    treatPhpDocTypesAsCertain: false
     paths:
         - '%rootDir%/../../../src/'
     ignoreErrors:
         - '#Call to an undefined method .+Collection::.+Array\(\)#'
-        -
-        	message: "#^Method .+\\\\ConsoleHelper::.+\\(\\) has no return type specified#"
-        	path: src/Propel/Generator/Command/Helper/ConsoleHelper.php
-        -
-            message: "#^Method .+\\\\ConsoleHelper::.+\\(\\) has parameter \\$messages with no type specified#"
-            path: src/Propel/Generator/Command/Helper/ConsoleHelper.php
-        -
-        	message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder\\:\\:root\\(\\)\\.$#"
-        	path: src/Propel/Common/Config/PropelConfiguration.php
+        - '#Call to an undefined method object::.+\(\)#'
+

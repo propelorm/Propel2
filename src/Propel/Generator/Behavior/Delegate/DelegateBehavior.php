@@ -193,7 +193,7 @@ if (method_exists({$ARFQCN}::class, \$name)) {
     public function objectFilter(string &$script): void
     {
         $p = new PhpParser($script, true);
-        $text = $p->findMethod('toArray');
+        $text = (string)$p->findMethod('toArray');
         $matches = [];
         preg_match('/(\$result = \[([^;]+)\];)/U', $text, $matches);
         if (!$matches) {
@@ -256,7 +256,6 @@ if (method_exists({$ARFQCN}::class, \$name)) {
         }
 
         foreach ($delegateTable->getForeignKeysReferencingTable($table->getName()) as $fk) {
-            /** @var \Propel\Generator\Model\ForeignKey $fk */
             $fks[] = $fk->getForeignColumnName();
         }
 
@@ -340,11 +339,11 @@ protected \$delegatedFields = [
  *
  * @param string \$column A string representing the column phpName, e.g. 'AuthorId'
  * @param mixed \$value A value for the condition
- * @param string \$comparison What to use for the column comparison, defaults to Criteria::EQUAL
+ * @param string \$comparison What to use for the column comparison, defaults to Criteria::EQUAL and Criteria::IN for queries
  *
  * @return \$this The current object, for fluid interface
  */
-public function filterBy(string \$column, \$value, string \$comparison = Criteria::EQUAL)
+public function filterBy(string \$column, \$value, string \$comparison = null)
 {
     if (isset(\$this->delegatedFields[\$column])) {
         \$methodUse = \"use{\$this->delegatedFields[\$column]}Query\";

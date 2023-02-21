@@ -128,9 +128,6 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      */
     public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
-        $offset = (int)$offset;
-        $limit = (int)$limit;
-
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
         } elseif ($offset > 0) {
@@ -218,9 +215,9 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $type = $lock->getType();
 
-        if (Lock::SHARED === $type) {
+        if ($type === Lock::SHARED) {
             $sql .= ' LOCK IN SHARE MODE';
-        } elseif (Lock::EXCLUSIVE === $type) {
+        } elseif ($type === Lock::EXCLUSIVE) {
             $sql .= ' FOR UPDATE';
         }
     }

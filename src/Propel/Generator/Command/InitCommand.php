@@ -40,7 +40,7 @@ class InitCommand extends AbstractCommand
     public function __construct(?string $name = null)
     {
         parent::__construct($name);
-        $this->defaultSchemaDir = getcwd();
+        $this->defaultSchemaDir = (string)getcwd();
         $this->defaultPhpDir = $this->detectDefaultPhpDir();
     }
 
@@ -195,7 +195,7 @@ class InitCommand extends AbstractCommand
             }
         }
 
-        return getcwd();
+        return (string)getcwd();
     }
 
     /**
@@ -359,8 +359,9 @@ class InitCommand extends AbstractCommand
         } catch (ConnectionException $e) {
             // get the "real" wrapped exception message
             do {
+                $e = $e->getPrevious() ?? $e;
                 $message = $e->getMessage();
-            } while (($e = $e->getPrevious()) !== null);
+            } while ($e->getPrevious() !== null);
 
             $consoleHelper->writeBlock('Unable to connect to the specific sql server: ' . $message, 'error');
             $consoleHelper->writeSection('Make sure the specified credentials are correct and try it again.');
@@ -400,11 +401,11 @@ class InitCommand extends AbstractCommand
         $input = new ArrayInput($arrInput);
         $result = $this->getApplication()->run($input, $output);
 
-        if ($result === 0) {
-            $schema = file_get_contents($outputDir . '/schema.xml');
-        } else {
+        if ($result !== 0) {
             exit(1);
         }
+
+        $schema = (string)file_get_contents($outputDir . '/schema.xml');
 
         $this->getApplication()->setAutoExit(true);
 

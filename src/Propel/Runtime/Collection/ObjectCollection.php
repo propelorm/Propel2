@@ -188,7 +188,7 @@ class ObjectCollection extends Collection
      * )
      * </code>
      *
-     * @return array
+     * @return array<int|string, array>
      */
     public function toArray(
         ?string $keyColumn = null,
@@ -235,7 +235,7 @@ class ObjectCollection extends Collection
      * )
      * </code>
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
@@ -265,7 +265,7 @@ class ObjectCollection extends Collection
      * @param string $keyColumn
      * @param string|null $valueColumn
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function toKeyValue(string $keyColumn = 'PrimaryKey', ?string $valueColumn = null): array
     {
@@ -295,7 +295,7 @@ class ObjectCollection extends Collection
      *
      * @param string $keyColumn
      *
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function toKeyIndex(string $keyColumn = 'PrimaryKey'): array
     {
@@ -323,7 +323,7 @@ class ObjectCollection extends Collection
      *
      * @param string $columnName
      *
-     * @return array
+     * @return list<mixed>
      */
     public function getColumnValues(string $columnName = 'PrimaryKey'): array
     {
@@ -414,7 +414,8 @@ class ObjectCollection extends Collection
      */
     public function search($element)
     {
-        if (isset($this->indexSplHash[$splHash = spl_object_hash($element)])) {
+        $splHash = spl_object_hash($element);
+        if (isset($this->indexSplHash[$splHash])) {
             return $this->index[$this->indexSplHash[$splHash]];
         }
 
@@ -463,7 +464,8 @@ class ObjectCollection extends Collection
      */
     public function removeObject($element): void
     {
-        if (($pos = $this->search($element)) !== false) {
+        $pos = $this->search($element);
+        if ($pos !== false) {
             $this->remove($pos);
         }
     }

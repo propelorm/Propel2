@@ -16,10 +16,10 @@ use Propel\Common\Config\Exception\InvalidArgumentException;
  * The configuration values are expected to be in form of array. I.e.
  * <code>
  *     <?php
- *         return array(
- *                    'property1' => 'value1',
- *                    .......................
- *                );
+ *         return [
+ *             'property1' => 'value1',
+ *             .......................
+ *         ];
  * </code>
  *
  * @author Cristiano Cinotti

@@ -240,7 +240,7 @@ class TestCaseFixtures extends TestCase
         $configuration = $manager->getConfiguration();
         $dsn = $configuration['dsn'];
 
-        if ('sqlite' !== substr($dsn, 0, 6) && $withCredentials) {
+        if (substr($dsn, 0, 6) !== 'sqlite' && $withCredentials) {
             $dsn .= ';user=' . $configuration['user'];
             if (isset($configuration['password']) && $configuration['password']) {
                 $dsn .= ';password=' . $configuration['password'];

@@ -299,7 +299,6 @@ public function getVersion()
      */
     protected function addEnforceVersioning(string &$script): void
     {
-        $objectClass = $this->builder->getStubObjectBuilder()->getClassname();
         $script .= "
 /**
  * Enforce a new Version of this object upon next save.
@@ -372,7 +371,7 @@ public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
     }
 ";
             } else {
-                $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural = true);
+                $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, true);
                 $script .= "
     if (\$this->coll{$fkGetter}) {
 
@@ -439,7 +438,6 @@ public function addVersion(?ConnectionInterface \$con = null)
         \$version->set{$fkVersionColumnPhpName}(\$related->getVersion());
     }";
         }
-        $plural = true;
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
             $plural = !$fk->isLocalPrimaryKey();
             $fkGetter = $this->builder->getRefFKPhpNameAffix($fk, $plural);

@@ -10,12 +10,7 @@ namespace Propel\Runtime\ActiveQuery;
 
 use Exception;
 use Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BasicCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\BinaryCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\CustomCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\InCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\LikeCriterion;
-use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
+use Propel\Runtime\ActiveQuery\Criterion\CriterionFactory;
 use Propel\Runtime\ActiveQuery\QueryExecutor\CountQueryExecutor;
 use Propel\Runtime\ActiveQuery\QueryExecutor\DeleteAllQueryExecutor;
 use Propel\Runtime\ActiveQuery\QueryExecutor\DeleteQueryExecutor;
@@ -657,7 +652,7 @@ class Criteria
      */
     public function setUseTransaction(bool $v)
     {
-        $this->useTransaction = (bool)$v;
+        $this->useTransaction = $v;
 
         return $this;
     }
@@ -712,44 +707,13 @@ class Criteria
      *
      * @param string $column Full name of column (for example TABLE.COLUMN).
      * @param mixed|null $value
-     * @param string|int $comparison Criteria comparison constant or PDO binding type
+     * @param string|int|null $comparison Criteria comparison constant or PDO binding type
      *
      * @return \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion
      */
-    public function getNewCriterion(string $column, $value = null, $comparison = self::EQUAL): AbstractCriterion
+    public function getNewCriterion(string $column, $value = null, $comparison = null): AbstractCriterion
     {
-        if (is_int($comparison)) {
-            // $comparison is a PDO::PARAM_* constant value
-            // something like $c->add('foo like ?', '%bar%', PDO::PARAM_STR);
-            return new RawCriterion($this, $column, $value, $comparison);
-        }
-        switch ($comparison) {
-            case self::CUSTOM:
-                // custom expression with no parameter binding
-                // something like $c->add(BookTableMap::TITLE, "CONCAT(book.TITLE, 'bar') = 'foobar'", Criteria::CUSTOM);
-                return new CustomCriterion($this, $value);
-            case self::IN:
-            case self::NOT_IN:
-                // table.column IN (?, ?) or table.column NOT IN (?, ?)
-                // something like $c->add(BookTableMap::TITLE, array('foo', 'bar'), Criteria::IN);
-                return new InCriterion($this, $column, $value, $comparison);
-            case self::LIKE:
-            case self::NOT_LIKE:
-            case self::ILIKE:
-            case self::NOT_ILIKE:
-                // table.column LIKE ? or table.column NOT LIKE ?  (or ILIKE for Postgres)
-                // something like $c->add(BookTableMap::TITLE, 'foo%', Criteria::LIKE);
-                return new LikeCriterion($this, $column, $value, $comparison);
-            case self::BINARY_NONE:
-            case self::BINARY_ALL:
-                // table.column & ? = 0 (Similar to  "NOT IN")
-                // something like $c->add(BookTableMap::SOME_ARRAY_VAR, 26, Criteria::BINARY_NONE);
-                return new BinaryCriterion($this, $column, $value, $comparison);
-            default:
-                // simple comparison
-                // something like $c->add(BookTableMap::PRICE, 12, Criteria::GREATER_THAN);
-                return new BasicCriterion($this, $column, $value, $comparison);
-        }
+        return CriterionFactory::build($this, $column, $comparison, $value);
     }
 
     /**
@@ -784,7 +748,7 @@ class Criteria
     {
         $tables = [];
         foreach ($this->keys() as $key) {
-            $tableName = substr($key, 0, strrpos($key, '.'));
+            $tableName = substr($key, 0, strrpos($key, '.') ?: null);
             $tables[$tableName][] = $key;
         }
 
@@ -1083,7 +1047,7 @@ class Criteria
      */
     public function addJoin($left, $right, ?string $joinType = null)
     {
-        if (is_array($left)) {
+        if (is_array($left) && is_array($right)) {
             $conditions = [];
             foreach ($left as $key => $value) {
                 $condition = [$value, $right[$key]];
@@ -1099,13 +1063,15 @@ class Criteria
         $join->setIdentifierQuoting($this->isIdentifierQuotingEnabled());
 
         // is the left table an alias ?
-        $dotpos = strrpos($left, '.');
+        /** @phpstan-var string $left */
+        $dotpos = strrpos($left, '.') ?: null;
         $leftTableAlias = substr($left, 0, $dotpos);
         $leftColumnName = substr($left, $dotpos + 1);
         [$leftTableName, $leftTableAlias] = $this->getTableNameAndAlias($leftTableAlias);
 
         // is the right table an alias ?
-        $dotpos = strrpos($right, '.');
+        /** @phpstan-var string $right */
+        $dotpos = strrpos($right, '.') ?: null;
         $rightTableAlias = substr($right, 0, $dotpos);
         $rightColumnName = substr($right, $dotpos + 1);
         [$rightTableName, $rightTableAlias] = $this->getTableNameAndAlias($rightTableAlias);
@@ -1189,7 +1155,8 @@ class Criteria
             $conditionClause .= $condition[2] ?? Join::EQUAL;
             $conditionClause .= $rightTableAlias ? $rightTableAlias . '.' : ($rightTableName ? $rightTableName . '.' : '');
             $conditionClause .= $rightColumnName;
-            $criterion = $this->getNewCriterion($leftTableName . '.' . $leftColumnName, $conditionClause, self::CUSTOM);
+            $fullColumnName = $leftTableName . '.' . $leftColumnName;
+            $criterion = CriterionFactory::build($this, $fullColumnName, self::CUSTOM, $conditionClause);
 
             if ($joinCondition === null) {
                 $joinCondition = $criterion;
@@ -1396,7 +1363,7 @@ class Criteria
      */
     public function hasSelectModifier(string $modifier): bool
     {
-        return in_array($modifier, $this->selectModifiers);
+        return in_array($modifier, $this->selectModifiers, true);
     }
 
     /**
@@ -1477,7 +1444,7 @@ class Criteria
      */
     public function setIgnoreCase(bool $b)
     {
-        $this->ignoreCase = (bool)$b;
+        $this->ignoreCase = $b;
 
         return $this;
     }
@@ -1507,7 +1474,7 @@ class Criteria
      */
     public function setSingleRecord(bool $b)
     {
-        $this->singleRecord = (bool)$b;
+        $this->singleRecord = $b;
 
         return $this;
     }
@@ -1593,7 +1560,7 @@ class Criteria
      */
     public function removeSelectColumn(string $name)
     {
-        while (false !== ($key = array_search($name, $this->selectColumns, true))) {
+        while (($key = array_search($name, $this->selectColumns, true)) !== false) {
             unset($this->selectColumns[$key]);
         }
 
@@ -2051,7 +2018,7 @@ class Criteria
 
         // $comparison is one of Criteria's constants, or a PDO binding type
         // something like $c->add(BookTableMap::TITLE, 'War%', Criteria::LIKE);
-        return $this->getNewCriterion((string)$p1, $value, $comparison);
+        return CriterionFactory::build($this, (string)$p1, $comparison, $value);
     }
 
     /**
@@ -2066,16 +2033,16 @@ class Criteria
      *  - addAnd(column, value)
      *  - addAnd(Criterion)
      *
-     * @param mixed $p1
-     * @param mixed|null $p2
-     * @param mixed|null $p3
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1
+     * @param mixed|null $value
+     * @param mixed|null $condition
      * @param bool $preferColumnCondition
      *
      * @return $this A modified Criteria object.
      */
-    public function addAnd($p1, $p2 = null, $p3 = null, bool $preferColumnCondition = true)
+    public function addAnd($p1, $value = null, $condition = null, bool $preferColumnCondition = true)
     {
-        $criterion = $this->getCriterionForCondition($p1, $p2, $p3);
+        $criterion = $this->getCriterionForCondition($p1, $value, $condition);
 
         $key = $criterion->getTable() . '.' . $criterion->getColumn();
         if ($preferColumnCondition && $this->containsKey($key)) {
@@ -2101,16 +2068,16 @@ class Criteria
      *  - addOr(column, value)
      *  - addOr(Criterion)
      *
-     * @param mixed $p1
-     * @param mixed $p2
-     * @param mixed $p3
+     * @param \Propel\Runtime\ActiveQuery\Criterion\AbstractCriterion|string $p1
+     * @param mixed $value
+     * @param mixed $condition
      * @param bool $preferColumnCondition
      *
      * @return $this A modified Criteria object.
      */
-    public function addOr($p1, $p2 = null, $p3 = null, bool $preferColumnCondition = true)
+    public function addOr($p1, $value = null, $condition = null, bool $preferColumnCondition = true)
     {
-        $rightCriterion = $this->getCriterionForCondition($p1, $p2, $p3);
+        $rightCriterion = $this->getCriterionForCondition($p1, $value, $condition);
 
         $leftCriterion = $this->getLastCriterion();
 
@@ -2203,7 +2170,8 @@ class Criteria
         }
 
         //find table name and ask tableMap if quoting is enabled
-        if (!$tableName && ($pos = strrpos($string, '.')) !== false) {
+        $pos = strrpos($string, '.');
+        if (!$tableName && $pos !== false) {
             $tableName = substr($string, 0, $pos);
         }
 
@@ -2357,7 +2325,7 @@ class Criteria
      * WHERE some_column = some value AND could_have_another_column =
      * another value AND so on.
      *
-     * @param \Propel\Runtime\ActiveQuery\Criteria|array $updateValues A Criteria object containing values used in set clause.
+     * @param \Propel\Runtime\ActiveQuery\Criteria $updateValues A Criteria object containing values used in set clause.
      * @param \Propel\Runtime\Connection\ConnectionInterface $con The ConnectionInterface connection object to use.
      *
      * @return int The number of rows affected by last update statement.
@@ -2366,7 +2334,7 @@ class Criteria
      *             Note that the return value does require that this information is returned
      *             (supported) by the Propel db driver.
      */
-    public function doUpdate($updateValues, ConnectionInterface $con): int
+    public function doUpdate(Criteria $updateValues, ConnectionInterface $con): int
     {
         return UpdateQueryExecutor::execute($this, $updateValues, $con);
     }
@@ -2475,7 +2443,7 @@ class Criteria
      *
      * @param mixed $cond Casts to bool for variable evaluation
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _if($cond)
     {
@@ -2494,7 +2462,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|$this
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _elseif($cond)
     {
@@ -2513,7 +2481,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return \Propel\Runtime\Util\PropelConditionalProxy|static
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _else()
     {
@@ -2530,7 +2498,7 @@ class Criteria
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _endif()
     {

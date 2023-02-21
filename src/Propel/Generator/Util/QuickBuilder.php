@@ -1,10 +1,12 @@
-<?php declare(strict_types = 1);
+<?php
 
 /**
  * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Propel\Generator\Util;
 
@@ -28,6 +30,7 @@ use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Propel;
+use RuntimeException;
 
 class QuickBuilder
 {
@@ -321,6 +324,7 @@ class QuickBuilder
      * @param \Propel\Runtime\Connection\ConnectionInterface $con
      *
      * @throws \Propel\Generator\Exception\BuildException
+     * @throws \RuntimeException
      *
      * @return \Propel\Generator\Model\Database|null
      */
@@ -340,6 +344,11 @@ class QuickBuilder
         foreach ($statements as $statement) {
             try {
                 $stmt = $con->prepare($statement);
+
+                if ($stmt === false) {
+                    throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+                }
+
                 $stmt->execute();
             } catch (Exception $e) {
                 //echo $sql; //uncomment for better debugging
@@ -466,24 +475,25 @@ class QuickBuilder
             $script .= $this->fixNamespaceDeclarations($class);
         }
 
-        if ($col = $table->getChildrenColumn()) {
-            if ($col->isEnumeratedClasses()) {
-                foreach ($col->getChildren() as $child) {
-                    if ($child->getAncestor()) {
-                        /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
-                        $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
-                        $builder->setChild($child);
-                        $class = $builder->build();
-                        $script .= $this->fixNamespaceDeclarations($class);
+        $column = $table->getChildrenColumn();
+        if ($column && $column->isEnumeratedClasses()) {
+            foreach ($column->getChildren() as $child) {
+                if (!$child->getAncestor()) {
+                    continue;
+                }
 
-                        foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
-                            /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
-                            $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
-                            $builder->setChild($child);
-                            $class = $builder->build();
-                            $script .= $this->fixNamespaceDeclarations($class);
-                        }
-                    }
+                /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
+                $builder = $this->getConfig()->getConfiguredBuilder($table, 'queryinheritance');
+                $builder->setChild($child);
+                $class = $builder->build();
+                $script .= $this->fixNamespaceDeclarations($class);
+
+                foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
+                    /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
+                    $builder = $this->getConfig()->getConfiguredBuilder($table, $target);
+                    $builder->setChild($child);
+                    $class = $builder->build();
+                    $script .= $this->fixNamespaceDeclarations($class);
                 }
             }
         }
@@ -548,7 +558,7 @@ class QuickBuilder
                 while (($t = $tokens[++$i]) && is_array($t) && in_array($t[0], $cooperativeLexems)) {
                     $output .= $t[1];
                 }
-                if (is_string($t) && $t === '{') {
+                if ($t === '{') {
                     $inNamespace = false;
                     --$i;
                 } else {
@@ -619,7 +629,7 @@ class QuickBuilder
     {
         $includes = [];
         $dirName = sys_get_temp_dir()
-            . '/propelQuickBuild-' . Propel::VERSION . '-' . substr(sha1(getcwd()), 0, 10) . '/';
+            . '/propelQuickBuild-' . Propel::VERSION . '-' . substr(sha1((string)getcwd()), 0, 10) . '/';
         if (!is_dir($dirName)) {
             mkdir($dirName);
         }
@@ -677,6 +687,7 @@ class QuickBuilder
         $builder->setGeneratorConfig($this->config);
         foreach ($db->getTables() as $table) {
             $builder->setTable($table);
+            /** @phpstan-var class-string<\Propel\Runtime\Map\TableMap> $mapClass */
             $mapClass = $builder->getFullyQualifiedClassName();
             $dbMap->addTableFromMapClass($mapClass);
         }

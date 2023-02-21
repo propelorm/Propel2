@@ -166,8 +166,10 @@ static public function sortableApplyScopeCriteria(Criteria \$criteria, \$scope, 
 ";
             }
         } else {
+            /** @var string $scope */
+            $scope = current($this->behavior->getScopes());
             $script .= "
-    \$criteria->\$method({$this->tableMapClassName}::" . Column::CONSTANT_PREFIX . strtoupper(current($this->behavior->getScopes())) . ", \$scope, Criteria::EQUAL);
+    \$criteria->\$method({$this->tableMapClassName}::" . Column::CONSTANT_PREFIX . strtoupper($scope) . ", \$scope, Criteria::EQUAL);
 ";
         }
 

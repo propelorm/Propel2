@@ -29,11 +29,13 @@ Read the [Propel documentation](http://propelorm.org/documentation/01-installati
 
 ## Contribute
 
-Everybody can contribute to Propel. Just fork it, and send Pull Requests.
-You have to follow [Propel Coding Standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards) and provides unit
-tests as much as possible. Also [check out the roadmap](https://github.com/propelorm/Propel2/wiki) to get an overview of what we are working on!
+Everybody is welcome to contribute to Propel! Just [fork the repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
-Please see our [contribution guideline](http://propelorm.org/contribute.html). Thank you!
+Please include unit tests to verify your changes. Have a look at the [test suite guide](http://propelorm.org/documentation/cookbook/working-with-test-suite.html) for more details about test development in Propel, like how to run tests locally. It also has information on how to apply [Propel coding standards](https://github.com/propelorm/Propel2/wiki/Coding-Standards).
+
+More detailed information can be found in our [contribution guideline](http://propelorm.org/contribute.html).
+
+Thank you!
 
 ## License
 

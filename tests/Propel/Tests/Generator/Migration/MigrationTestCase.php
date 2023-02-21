@@ -121,12 +121,14 @@ class MigrationTestCase extends TestCaseFixturesDatabase
                 $stmt = $this->con->prepare($statement);
                 $stmt->execute();
             } catch (Exception $e) {
-                throw new BuildException(sprintf(
-                    "Can not execute SQL: \n%s\nFrom database: \n%s\n\nTo database: \n%s\n",
+                $message = sprintf(
+                    "Cannot execute SQL: \n%s\nError: %s\nFrom database: \n%s\n\nTo database: \n%s\n",
                     $statement,
+                    $e->getMessage(),
                     $this->database,
                     $database
-                ), null, $e);
+                );
+                throw new BuildException($message, 0, $e);
             }
         }
         $this->con->commit();
@@ -156,18 +158,19 @@ class MigrationTestCase extends TestCaseFixturesDatabase
      *
      * @return void
      */
-    public function migrateAndTest($originXml, $targetXml)
+    public function migrateAndTest($originXml, $targetXml, ?string $description = null)
     {
+        $messagePrefix = $description ? $description . ': ' : '';
         try {
             $this->applyXmlAndTest($originXml);
         } catch (BuildException $e) {
-            $this->fail("Failed to apply the first/original schema:\n\n" . $e->getMessage());
+            $this->fail("{$messagePrefix}Failed to apply the first/original schema:\n\n" . $e->getMessage());
         }
 
         try {
             $this->applyXmlAndTest($targetXml, true);
         } catch (BuildException $e) {
-            $this->fail("Failed to apply the second/target schema:\n\n" . $e->getMessage());
+            $this->fail("{$messagePrefix}Failed to apply the second/target schema:\n\n" . $e->getMessage());
         }
     }
 
@@ -198,7 +201,7 @@ class MigrationTestCase extends TestCaseFixturesDatabase
     {
         $this->readDatabase();
         $diff = DatabaseComparator::computeDiff($this->database, $database);
-        if (false !== $diff) {
+        if ($diff !== false) {
             $sql = $this->database->getPlatform()->getModifyDatabaseDDL($diff);
 
             throw new BuildException(sprintf(

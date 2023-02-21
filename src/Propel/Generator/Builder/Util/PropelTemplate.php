@@ -105,6 +105,6 @@ class PropelTemplate
             throw $e;
         }
 
-        return ob_get_clean();
+        return (string)ob_get_clean();
     }
 }

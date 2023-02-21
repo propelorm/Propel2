@@ -18,6 +18,7 @@ use Propel\Generator\Model\Column;
 use Propel\Generator\Model\CrossForeignKeys;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\VendorInfo;
 
 /**
  * Baseclass for OM-building classes.
@@ -76,11 +77,13 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         $ignoredNamespace = ltrim((string)$this->getNamespace(), '\\');
 
-        if ($useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace')) {
+        $useStatements = $this->getUseStatements($ignoredNamespace ?: 'namespace');
+        if ($useStatements) {
             $script = $useStatements . $script;
         }
 
-        if ($namespaceStatement = $this->getNamespaceStatement()) {
+        $namespaceStatement = $this->getNamespaceStatement();
+        if ($namespaceStatement) {
             $script = $namespaceStatement . $script;
         }
 
@@ -145,7 +148,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     public function getQualifiedClassName(): string
     {
-        if ($namespace = $this->getNamespace()) {
+        $namespace = $this->getNamespace();
+        if ($namespace) {
             return $namespace . '\\' . $this->getUnqualifiedClassName();
         }
 
@@ -445,7 +449,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
     public function declareClass(string $fullyQualifiedClassName, $aliasPrefix = false): string
     {
         $fullyQualifiedClassName = trim($fullyQualifiedClassName, '\\');
-        if (($pos = strrpos($fullyQualifiedClassName, '\\')) !== false) {
+        $pos = strrpos($fullyQualifiedClassName, '\\');
+        if ($pos !== false) {
             return $this->declareClassNamespacePrefix(substr($fullyQualifiedClassName, $pos + 1), substr($fullyQualifiedClassName, 0, $pos), $aliasPrefix);
         }
 
@@ -633,7 +638,8 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected function getJoinType(ForeignKey $fk): string
     {
-        if ($defaultJoin = $fk->getDefaultJoin()) {
+        $defaultJoin = $fk->getDefaultJoin();
+        if ($defaultJoin) {
             return "'" . $defaultJoin . "'";
         }
 
@@ -904,10 +910,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
 
         foreach ($fk->getMapping() as $mapping) {
             [$localColumn, $foreignValueOrColumn] = $mapping;
-            $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
             if (!$localColumn) {
-                throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
+                throw new RuntimeException(sprintf('Could not resolve column of foreign key `%s` on table `%s`', $fk->getName(), $localTable->getName()));
             }
 
             $tableName = $fk->getTableName();
@@ -967,10 +972,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         $relCol = '';
         foreach ($fk->getMapping() as $mapping) {
             [$localColumn, $foreignValueOrColumn] = $mapping;
-            $localColumnName = $localColumn->getPhpName();
             $localTable = $fk->getTable();
             if (!$localColumn) {
-                throw new RuntimeException(sprintf('Could not fetch column: %s in table %s.', $localColumnName, $localTable->getName()));
+                throw new RuntimeException(sprintf('Could not resolve column of foreign key `%s` on table `%s`', $fk->getName(), $localTable->getName()));
             }
 
             $tableName = $fk->getTableName();
@@ -1189,4 +1193,28 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      * @return void
      */
     abstract protected function addClassClose(string &$script): void;
+
+    /**
+     * Returns the vendor info from the table for the configured platform.
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    protected function getVendorInfo(): VendorInfo
+    {
+        $dbVendorId = $this->getPlatform()->getDatabaseType();
+
+        return $this->getTable()->getVendorInfoForType($dbVendorId);
+    }
+
+    /**
+     * @psalm-return 'true'|'false'
+     *
+     * @see \Propel\Generator\Model\VendorInfo::getUuidSwapFlagLiteral()
+     *
+     * @return string
+     */
+    protected function getUuidSwapFlagLiteral(): string
+    {
+        return $this->getVendorInfo()->getUuidSwapFlagLiteral();
+    }
 }

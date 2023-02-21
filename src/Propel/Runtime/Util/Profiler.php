@@ -12,6 +12,8 @@ use Propel\Common\Config\Exception\InvalidConfigurationException;
 
 /**
  * Profiler for Propel
+ *
+ * @psalm-consistent-constructor (instantiated by class name in StandardServiceContainer without arguments)
  */
 class Profiler
 {

@@ -93,8 +93,8 @@ class Index extends MappingModel
     {
         $this->doNaming();
 
-        if ($this->table && ($database = $this->table->getDatabase())) {
-            return substr($this->name, 0, $database->getMaxColumnNameLength());
+        if ($this->table && $this->table->getDatabase()) {
+            return substr($this->name, 0, $this->table->getDatabase()->getMaxColumnNameLength());
         }
 
         return $this->name;
@@ -105,26 +105,27 @@ class Index extends MappingModel
      */
     protected function doNaming(): void
     {
-        if (!$this->name || $this->autoNaming) {
-            $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
-
-            if ($this->columns) {
-                $hash = [];
-                $hash[] = implode(',', (array)$this->columns);
-                $hash[] = implode(',', (array)$this->columnsSize);
-
-                $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
-            } else {
-                $newName .= 'no_columns';
-            }
-
-            if ($this->table) {
-                $newName = $this->table->getCommonName() . '_' . $newName;
-            }
-
-            $this->name = $newName;
-            $this->autoNaming = true;
+        if ($this->name && !$this->autoNaming) {
+            return;
         }
+        $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
+
+        if ($this->columns) {
+            $hash = [];
+            $hash[] = implode(',', (array)$this->columns);
+            $hash[] = implode(',', (array)$this->columnsSize);
+
+            $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
+        } else {
+            $newName .= 'no_columns';
+        }
+
+        if ($this->table) {
+            $newName = $this->table->getCommonName() . '_' . $newName;
+        }
+
+        $this->name = $newName;
+        $this->autoNaming = true;
     }
 
     /**
@@ -189,7 +190,7 @@ class Index extends MappingModel
     {
         if ($data instanceof Column) {
             $column = $data;
-            $this->columns[] = (string)$column->getName();
+            $this->columns[] = $column->getName();
             if ($column->getSize()) {
                 $this->columnsSize[$column->getName()] = (int)$column->getSize();
             }
@@ -212,7 +213,7 @@ class Index extends MappingModel
      */
     public function hasColumn(string $name): bool
     {
-        return in_array($name, $this->columns);
+        return in_array($name, $this->columns, true);
     }
 
     /**

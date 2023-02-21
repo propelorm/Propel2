@@ -21,6 +21,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Generator\Platform\Util\MysqlUuidMigrationBuilder;
 
 /**
  * MySql PlatformInterface implementation.
@@ -46,17 +47,22 @@ class MysqlPlatform extends DefaultPlatform
     protected $serverVersion;
 
     /**
+     * @var bool
+     */
+    protected $useUuidNativeType = false;
+
+    /**
      * Initializes db specific domain mapping.
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'TINYINT', 1));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'TEXT'));
-        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BLOB'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'BINARY'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'MEDIUMBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARBINARY, 'LONGBLOB'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'LONGTEXT'));
@@ -65,6 +71,9 @@ class MysqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::REAL, 'DOUBLE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BINARY', 16));
+
+        $this->setUuidTypeMapping();
     }
 
     /**
@@ -75,17 +84,54 @@ class MysqlPlatform extends DefaultPlatform
     public function setGeneratorConfig(GeneratorConfigInterface $generatorConfig): void
     {
         parent::setGeneratorConfig($generatorConfig);
-        if ($defaultTableEngine = $generatorConfig->get()['database']['adapters']['mysql']['tableType']) {
+
+        $mysqlConfig = $generatorConfig->get()['database']['adapters']['mysql'];
+
+        $defaultTableEngine = $mysqlConfig['tableType'];
+        if ($defaultTableEngine) {
             $this->defaultTableEngine = $defaultTableEngine;
         }
-        if ($tableEngineKeyword = $generatorConfig->get()['database']['adapters']['mysql']['tableEngineKeyword']) {
+
+        $tableEngineKeyword = $mysqlConfig['tableEngineKeyword'];
+        if ($tableEngineKeyword) {
             $this->tableEngineKeyword = $tableEngineKeyword;
+        }
+
+        $uuidColumnType = $mysqlConfig['uuidColumnType'];
+        if ($uuidColumnType) {
+            $enable = strtolower($uuidColumnType) === 'native';
+            $this->setUuidNativeType($enable);
         }
     }
 
     /**
-     * Setter for the tableEngineKeyword property
+     * @param bool $enable
      *
+     * @return void
+     */
+    public function setUuidNativeType(bool $enable): void
+    {
+        $this->useUuidNativeType = $enable;
+        $this->setUuidTypeMapping();
+    }
+
+    /**
+     * Set column type for UUIDs according to MysqlPlatform::useUuidNativeType.
+     *
+     * Currently, only MariaDB has a native UUID type.
+     *
+     * @return void
+     */
+    protected function setUuidTypeMapping(): void
+    {
+        $domain = ($this->useUuidNativeType)
+            ? new Domain(PropelTypes::UUID, 'UUID')
+            : $this->schemaDomainMap[PropelTypes::UUID_BINARY];
+
+        $this->schemaDomainMap[PropelTypes::UUID] = $domain;
+    }
+
+    /**
      * @param string $tableEngineKeyword
      *
      * @return void
@@ -96,8 +142,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Getter for the tableEngineKeyword property
-     *
      * @return string
      */
     public function getTableEngineKeyword(): string
@@ -106,8 +150,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Setter for the defaultTableEngine property
-     *
      * @param string $defaultTableEngine
      *
      * @return void
@@ -118,8 +160,6 @@ class MysqlPlatform extends DefaultPlatform
     }
 
     /**
-     * Getter for the defaultTableEngine property
-     *
      * @return string
      */
     public function getDefaultTableEngine(): string
@@ -330,9 +370,7 @@ CREATE TABLE %s
      */
     protected function getTableOptions(Table $table): array
     {
-        $dbVI = $table->getDatabase()->getVendorInfoForType('mysql');
-        $tableVI = $table->getVendorInfoForType('mysql');
-        $vi = $dbVI->getMergedVendorInfo($tableVI);
+        $vi = $table->getVendorInfoForType('mysql');
         $tableOptions = [];
         // List of supported table options
         // see http://dev.mysql.com/doc/refman/5.5/en/create-table.html
@@ -433,11 +471,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         }
 
         $ddl = [$this->quoteIdentifier($col->getName())];
-        if ($this->hasSize($sqlType) && $col->isDefaultSqlType($this)) {
-            $ddl[] = $sqlType . $col->getSizeDefinition();
-        } else {
-            $ddl[] = $sqlType;
-        }
+        $ddl[] = $this->getSqlTypeExpression($col);
+
         $colinfo = $col->getVendorInfoForType($this->getDatabaseType());
         if ($colinfo->hasParameter('Unsigned')) {
             $unsigned = $colinfo->getParameter('Unsigned');
@@ -452,6 +487,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                     throw new EngineException('Unexpected value "' . $unsigned . '" for MySQL vendor column parameter "Unsigned", expecting "true" or "false".');
             }
         }
+
         if ($colinfo->hasParameter('Charset')) {
             $ddl[] = 'CHARACTER SET ' . $this->quote($colinfo->getParameter('Charset'));
         }
@@ -460,6 +496,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } elseif ($colinfo->hasParameter('Collate')) {
             $ddl[] = 'COLLATE ' . $this->quote($colinfo->getParameter('Collate'));
         }
+
         if ($sqlType === 'TIMESTAMP') {
             if ($notNullString === '') {
                 $notNullString = 'NULL';
@@ -479,14 +516,56 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $ddl[] = $notNullString;
             }
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
+
         if ($col->getDescription()) {
             $ddl[] = 'COMMENT ' . $this->quote($col->getDescription());
         }
 
         return implode(' ', $ddl);
+    }
+
+    /**
+     * Returns the SQL type as a string.
+     *
+     * @see Domain::getSqlType()
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
+    public function getSqlTypeExpression(Column $column): string
+    {
+        $sqlType = $column->getSqlType();
+        $hasSize = $this->hasSize($sqlType) && $column->isDefaultSqlType($this);
+
+        return (!$hasSize) ? $sqlType : $sqlType . $column->getSizeDefinition();
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return string
+     */
+    protected function getChangeColumnToUuidBinaryType(Column $fromColumn, Column $toColumn): string
+    {
+        return MysqlUuidMigrationBuilder::create($this)->buildMigration($fromColumn, $toColumn, true);
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Column $fromColumn
+     * @param \Propel\Generator\Model\Column $toColumn
+     *
+     * @return string
+     */
+    protected function getChangeColumnFromUuidBinaryType(Column $fromColumn, Column $toColumn): string
+    {
+        return MysqlUuidMigrationBuilder::create($this)->buildMigration($fromColumn, $toColumn, false);
     }
 
     /**
@@ -502,7 +581,8 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
     {
         $list = [];
         foreach ($index->getColumns() as $col) {
-            $list[] = $this->quoteIdentifier($col) . ($index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '');
+            $size = $index->hasColumnSize($col) ? '(' . $index->getColumnSize($col) . ')' : '';
+            $list[] = $this->quoteIdentifier($col) . $size;
         }
 
         return implode(', ', $list);
@@ -521,14 +601,9 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             return '';
         }
 
-        $pattern = "
-ALTER TABLE %s DROP PRIMARY KEY;
-";
+        $tableName = $this->quoteIdentifier($table->getName());
 
-        return sprintf(
-            $pattern,
-            $this->quoteIdentifier($table->getName()),
-        );
+        return "\nALTER TABLE $tableName DROP PRIMARY KEY;\n";
     }
 
     /**
@@ -790,7 +865,20 @@ ALTER TABLE %s DROP %s;
      */
     public function getModifyColumnDDL(ColumnDiff $columnDiff): string
     {
-        return $this->getChangeColumnDDL($columnDiff->getFromColumn(), $columnDiff->getToColumn());
+        $fromColumn = $columnDiff->getFromColumn();
+        $toColumn = $columnDiff->getToColumn();
+
+        if ($fromColumn->isTextType() && $toColumn->isUuidBinaryType()) {
+            return $this->getChangeColumnToUuidBinaryType($fromColumn, $toColumn);
+        }
+
+        // binary column from database does not know it is a UUID column
+        $fromBinaryColumn = in_array($fromColumn->getType(), [PropelTypes::BINARY, PropelTypes::UUID_BINARY], true);
+        if ($fromBinaryColumn && $toColumn->isTextType() && $toColumn->isContent('UUID')) {
+            return $this->getChangeColumnFromUuidBinaryType($fromColumn, $toColumn);
+        }
+
+        return $this->getChangeColumnDDL($fromColumn, $toColumn);
     }
 
     /**
@@ -803,16 +891,12 @@ ALTER TABLE %s DROP %s;
      */
     public function getChangeColumnDDL(Column $fromColumn, Column $toColumn): string
     {
-        $pattern = "
-ALTER TABLE %s CHANGE %s %s;
-";
+        $tableName = $this->quoteIdentifier($fromColumn->getTable()->getName());
+        $columnName = $this->quoteIdentifier($fromColumn->getName());
+        $columnDefinition = $this->getColumnDDL($toColumn);
+        $pattern = "\nALTER TABLE %s CHANGE %s %s;\n";
 
-        return sprintf(
-            $pattern,
-            $this->quoteIdentifier($fromColumn->getTable()->getName()),
-            $this->quoteIdentifier($fromColumn->getName()),
-            $this->getColumnDDL($toColumn),
-        );
+        return sprintf($pattern, $tableName, $columnName, $columnDefinition);
     }
 
     /**
@@ -824,12 +908,9 @@ ALTER TABLE %s CHANGE %s %s;
      */
     public function getModifyColumnsDDL(array $columnDiffs): string
     {
-        $ret = '';
-        foreach ($columnDiffs as $columnDiff) {
-            $ret .= $this->getModifyColumnDDL($columnDiff);
-        }
+        $modifyColumnStatements = array_map([$this, 'getModifyColumnDDL'], $columnDiffs);
 
-        return $ret;
+        return implode('', $modifyColumnStatements);
     }
 
     /**
@@ -908,7 +989,7 @@ ALTER TABLE %s ADD %s %s;
             'BLOB',
             'MEDIUMBLOB',
             'LONGBLOB',
-        ]);
+        ], true);
     }
 
     /**

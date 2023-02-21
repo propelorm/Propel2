@@ -60,7 +60,7 @@ class Behavior extends MappingModel
     protected $parameters = [];
 
     /**
-     * Wether or not the table has been
+     * Whether the table has been
      * modified by the behavior.
      *
      * @var bool
@@ -226,7 +226,7 @@ class Behavior extends MappingModel
     public function addParameter(array $parameter): void
     {
         $parameter = array_change_key_case($parameter, CASE_LOWER);
-        $this->parameters[$parameter['name']] = $parameter['value'];
+        $this->parameters[(string)$parameter['name']] = $parameter['value'];
     }
 
     /**
@@ -262,6 +262,19 @@ class Behavior extends MappingModel
     public function getParameter(string $name)
     {
         return $this->parameters[$name];
+    }
+
+    /**
+     * Checks if a param has the given value
+     *
+     * @param string $paramName
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    public function parameterHasValue(string $paramName, $value): bool
+    {
+        return $this->parameters[$paramName] === $value;
     }
 
     /**
@@ -405,8 +418,9 @@ class Behavior extends MappingModel
     protected function getDirname(): string
     {
         if ($this->dirname === null) {
-            $r = new ReflectionObject($this);
-            $this->dirname = dirname($r->getFileName());
+            $behaviorReflectionObject = new ReflectionObject($this);
+            $behaviorFileName = (string)$behaviorReflectionObject->getFileName();
+            $this->dirname = dirname($behaviorFileName);
         }
 
         return $this->dirname;
@@ -433,8 +447,9 @@ class Behavior extends MappingModel
     protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
+        $id = $this->getAttribute('id');
 
-        if (!$this->allowMultiple() && $id = $this->getAttribute('id')) {
+        if (!$this->allowMultiple() && $id) {
             throw new LogicException(sprintf('Defining an ID (%s) on a behavior which does not allow multiple instances makes no sense', $id));
         }
 

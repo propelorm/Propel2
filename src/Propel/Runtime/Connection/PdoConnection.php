@@ -142,7 +142,7 @@ class PdoConnection implements ConnectionInterface
      */
     public function exec($statement): int
     {
-        return $this->pdo->exec($statement);
+        return (int)$this->pdo->exec($statement);
     }
 
     /**
@@ -164,7 +164,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @param string|null $name
      *
-     * @return string|int
+     * @return string|false
      */
     public function lastInsertId(?string $name = null)
     {

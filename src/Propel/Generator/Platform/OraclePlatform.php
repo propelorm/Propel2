@@ -33,9 +33,9 @@ class OraclePlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN_EMU, 'NUMBER', 1, 0);
         $this->schemaDomainMap[PropelTypes::CLOB] = new Domain(PropelTypes::CLOB_EMU, 'CLOB');
         $this->schemaDomainMap[PropelTypes::CLOB_EMU] = $this->schemaDomainMap[PropelTypes::CLOB];
@@ -60,6 +60,8 @@ class OraclePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'NVARCHAR2', 2000));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'NUMBER', 3, 0));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'UUID'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'RAW(16)'));
     }
 
     /**
@@ -474,7 +476,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return array<string>|string|null
+     * @return string
      */
     public function getIdentifierPhp(
         string $columnValueMutator,
@@ -482,7 +484,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
         string $sequenceName = '',
         string $tab = '            ',
         ?string $phpType = null
-    ) {
+    ): string {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }

@@ -197,8 +197,6 @@ public function keepUpdateDateUnchanged(\$keep = true)
      */
     public function queryMethods(AbstractOMBuilder $builder): string
     {
-        $queryClassName = $builder->getQueryClassName();
-
         $script = '';
 
         if ($this->withUpdatedAt()) {

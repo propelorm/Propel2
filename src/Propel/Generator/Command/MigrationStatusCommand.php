@@ -19,6 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MigrationStatusCommand extends AbstractCommand
 {
     /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_LAST_VERSION = 'last-version';
+
+    /**
+     * @var string
+     */
+    protected const COMMAND_OPTION_LAST_VERSION_DESCRIPTION = 'Use this option to receive the version of the last executed migration.';
+
+    /**
      * @inheritDoc
      */
     protected function configure()
@@ -33,6 +43,7 @@ class MigrationStatusCommand extends AbstractCommand
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Connection to use',
                 [])
+            ->addOption(static::COMMAND_OPTION_LAST_VERSION, null, InputOption::VALUE_NONE, static::COMMAND_OPTION_LAST_VERSION_DESCRIPTION)
             ->setName('migration:status')
             ->setAliases(['status'])
             ->setDescription('Get migration status');
@@ -76,6 +87,13 @@ class MigrationStatusCommand extends AbstractCommand
         $manager->setMigrationTable($generatorConfig->getSection('migrations')['tableName']);
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
+        $oldestMigrationTimestamp = $manager->getOldestDatabaseVersion();
+        if ($input->getOption(static::COMMAND_OPTION_LAST_VERSION)) {
+            $output->writeln((string)$oldestMigrationTimestamp);
+
+            return static::CODE_SUCCESS;
+        }
+
         $output->writeln('Checking Database Versions...');
         foreach ($manager->getConnections() as $datasource => $params) {
             if ($input->getOption('verbose')) {
@@ -94,10 +112,11 @@ class MigrationStatusCommand extends AbstractCommand
                     ));
                 }
                 $manager->createMigrationTable($datasource);
+            } else {
+                $manager->modifyMigrationTableIfOutdated($datasource);
             }
         }
 
-        $oldestMigrationTimestamp = $manager->getOldestDatabaseVersion();
         if ($input->getOption('verbose')) {
             if ($oldestMigrationTimestamp) {
                 $output->writeln(sprintf(

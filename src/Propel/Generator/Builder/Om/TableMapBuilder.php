@@ -34,18 +34,17 @@ class TableMapBuilder extends AbstractOMBuilder
      */
     public function getNamespace(): ?string
     {
-        if (!$namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if (!$namespace) {
             return 'Map';
         }
 
-        if (
-            $this->getGeneratorConfig()
-            && $omns = $this->getBuildProperty('generator.objectModel.namespaceMap')
-        ) {
-            return $namespace . '\\' . $omns;
+        $namespaceMap = $this->getBuildProperty('generator.objectModel.namespaceMap');
+        if (!$namespaceMap) {
+            return $namespace . 'Map';
         }
 
-        return $namespace . 'Map';
+        return $namespace . '\\' . $namespaceMap;
     }
 
     /**
@@ -203,7 +202,8 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             'className' => $this->getClasspath(),
             'dbName' => $this->getDatabase()->getName(),
             'tableName' => $this->getTable()->getName(),
-            'tablePhpName' => $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()),
+            'tablePhpName' => $this->getTable()->getPhpName(),
+            'omClassName' => $this->getTable()->isAbstract() ? '' : addslashes($this->getStubObjectBuilder()->getFullyQualifiedClassName()),
             'classPath' => $this->getStubObjectBuilder()->getClasspath(),
             'nbColumns' => $this->getTable()->getNumColumns(),
             'nbLazyLoadColumns' => $this->getTable()->getNumLazyLoadColumns(),
@@ -265,9 +265,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     protected function addValueSetColumnAttributes(string &$script): void
     {
         $script .= "
-    /** 
-     * The enumerated values for this table 
-     * 
+    /**
+     * The enumerated values for this table
+     *
      * @var array<string, array<string>>
      */
     protected static \$enumValueSets = [";
@@ -342,11 +342,9 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
      */
     public function addInheritanceColumnConstants(string &$script): void
     {
-        if (!$col = $this->getTable()->getChildrenColumn()) {
-            return;
-        }
+        $col = $this->getTable()->getChildrenColumn();
 
-        if (!$col->isEnumeratedClasses()) {
+        if (!$col || !$col->isEnumeratedClasses()) {
             return;
         }
 
@@ -1194,7 +1192,7 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             {$this->getTableMapClassName()}::addInstanceToPool(\$obj, \$key);
         }
 
-        return array(\$obj, \$col);
+        return [\$obj, \$col];
     }
 ";
     }

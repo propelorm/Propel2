@@ -17,6 +17,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -73,6 +74,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         'timestamp with time zone' => PropelTypes::TIMESTAMP,
         'double precision' => PropelTypes::DOUBLE,
         'json' => PropelTypes::JSON,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**
@@ -140,8 +142,6 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      */
     protected function parseTables(array &$tableWraps, Database $database, ?Table $filterTable = null): void
     {
-        $stmt = null;
-
         $params = [];
 
         $sql = "
@@ -153,7 +153,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND n.nspname NOT LIKE 'pg_toast%'";
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $sql .= ' AND n.nspname = ?';
                 $params[] = $schema;
             }
@@ -190,7 +191,7 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $stmt->execute($params);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $name = $row['relname'];
             $namespaceName = $row['nspname'];
@@ -222,6 +223,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Table $table The Table model class to add columns to.
      * @param int $oid The table OID
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addColumns(Table $table, int $oid): void
@@ -231,12 +234,15 @@ class PgsqlSchemaParser extends AbstractSchemaParser
 
         $searchPath = '?';
         $params = [$table->getDatabase()->getSchema()];
+        $schema = $table->getSchema();
 
-        if ($schema = $table->getSchema()) {
-            $searchPath = '?';
+        if ($schema) {
             $params = [$schema];
         } elseif (!$table->getDatabase()->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
+            if ($stmt === false) {
+                throw new RuntimeException('Could not retrieve search_path from database.');
+            }
             $searchPathString = $stmt->fetchColumn();
 
             $params = [];
@@ -262,6 +268,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         WHERE
             table_schema IN ($searchPath) AND table_name = ?
         ");
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
 
         $params[] = $table->getCommonName();
         $stmt->execute($params);
@@ -370,6 +379,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Table $table
      * @param int $oid
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addForeignKeys(Table $table, int $oid): void
@@ -397,6 +408,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     AND a1.attnum = ANY (ct.confkey)
                     GROUP BY conname, confupdtype, confdeltype, fktab, reftab
                     ORDER BY conname");
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
@@ -494,6 +508,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Table $table
      * @param int $oid
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addIndexes(Table $table, int $oid): void
@@ -507,6 +523,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             JOIN pg_class cls ON cls.oid=indexrelid
             WHERE indrelid = ? AND NOT indisprimary
             ORDER BY cls.relname");
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
 
         $stmt->bindValue(1, $oid);
         $stmt->execute();
@@ -515,6 +534,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
             WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
             ORDER BY a.attnum");
+        if ($stmt2 === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
 
         $indexes = [];
 
@@ -560,6 +582,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Table $table
      * @param int $oid
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addPrimaryKey(Table $table, int $oid): void
@@ -573,6 +597,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             JOIN pg_class cls ON cls.oid=indexrelid
             WHERE indrelid = ? AND indisprimary
             ORDER BY cls.relname");
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
         $stmt->bindValue(1, $oid);
         $stmt->execute();
 
@@ -585,6 +612,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
                     FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
                     WHERE c.oid = ? AND a.attnum = ? AND NOT a.attisdropped
                     ORDER BY a.attnum");
+                if ($stmt2 === false) {
+                    throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+                }
                 $stmt2->bindValue(1, $oid);
                 $stmt2->bindValue(2, $intColNum);
                 $stmt2->execute();
@@ -603,6 +633,8 @@ class PgsqlSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Database $database
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function addSequences(Database $database): void
@@ -611,6 +643,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
         $params = [$database->getSchema()];
         if (!$database->getSchema()) {
             $stmt = $this->dbh->query('SHOW search_path');
+            if ($stmt === false) {
+                throw new RuntimeException('Query returned no statement.');
+            }
             $searchPathString = $stmt->fetchColumn();
 
             $params = [];
@@ -631,6 +666,9 @@ class PgsqlSchemaParser extends AbstractSchemaParser
             AND c.relkind = 'S'
             AND n.nspname IN ($searchPath);
         ");
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
         $stmt->execute($params);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

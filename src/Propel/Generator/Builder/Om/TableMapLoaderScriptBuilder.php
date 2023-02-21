@@ -11,7 +11,10 @@ namespace Propel\Generator\Builder\Om;
 use Propel\Common\Util\PathTrait;
 use Propel\Generator\Builder\Util\PropelTemplate;
 use Propel\Generator\Config\GeneratorConfigInterface;
+use Propel\Generator\Exception\BuildException;
+use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Table;
+use Propel\Runtime\Map\DatabaseMap;
 use SplFileInfo;
 
 /**
@@ -46,65 +49,87 @@ class TableMapLoaderScriptBuilder
      */
     public function build(array $schemas): string
     {
-        $vars = $this->buildVars($schemas);
-
-        return $this->renderTemplate($vars);
-    }
-
-    /**
-     * @param array<\Propel\Generator\Model\Schema> $schemas
-     *
-     * @return array
-     */
-    protected function buildVars(array $schemas): array
-    {
-        $databaseNameToTableMapNames = [];
-
-        foreach ($schemas as $schema) {
-            foreach ($schema->getDatabases(false) as $database) {
-                $databaseName = $database->getName();
-                $tableMapNames = array_map([$this, 'getFullyQualifiedTableMapClassName'], $database->getTables());
-                if (array_key_exists($databaseName, $databaseNameToTableMapNames)) {
-                    $existing = $databaseNameToTableMapNames[$databaseName];
-                    $tableMapNames = array_merge($existing, $tableMapNames);
-                }
-                sort($tableMapNames);
-                $databaseNameToTableMapNames[$databaseName] = $tableMapNames;
-            }
-        }
-
-        return [
-            'databaseNameToTableMapNames' => $databaseNameToTableMapNames,
-        ];
-    }
-
-    /**
-     * @param \Propel\Generator\Model\Table $table
-     *
-     * @return string
-     */
-    protected function getFullyQualifiedTableMapClassName(Table $table): string
-    {
-        $builder = new TableMapBuilder($table);
-        $builder->setGeneratorConfig($this->generatorConfig);
-
-        return $builder->getFullyQualifiedClassName();
-    }
-
-    /**
-     * @param array $vars
-     *
-     * @return string
-     */
-    protected function renderTemplate(array $vars): string
-    {
         $templatePath = $this->getTemplatePath(__DIR__);
 
         $filePath = $templatePath . 'tableMapLoaderScript.php';
         $template = new PropelTemplate();
         $template->setTemplateFile($filePath);
 
+        $vars = [
+            'databaseNameToTableMapDumps' => $this->buildDatabaseNameToTableMapDumps($schemas),
+        ];
+
         return $template->render($vars);
+    }
+
+    /**
+     * @param array<\Propel\Generator\Model\Schema> $schemas
+     *
+     * @throws \Propel\Generator\Exception\BuildException
+     *
+     * @return array
+     */
+    protected function buildDatabaseNameToTableMapDumps(array $schemas): array
+    {
+        $entries = [];
+        foreach ($schemas as $schema) {
+            foreach ($schema->getDatabases(false) as $database) {
+                $databaseName = $database->getName();
+                if (!$databaseName) {
+                    throw new BuildException('Cannot build table map of unnamed database');
+                }
+                $tableMapDumps = $this->buildDatabaseMap($database)->dumpMaps();
+                $entries[] = [$databaseName => $tableMapDumps];
+            }
+        }
+        $databaseNameToTableMapDumps = array_merge_recursive(...$entries);
+        $this->sortRecursive($databaseNameToTableMapDumps);
+
+        return $databaseNameToTableMapDumps;
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Database $database
+     *
+     * @return \Propel\Runtime\Map\DatabaseMap
+     */
+    protected function buildDatabaseMap(Database $database): DatabaseMap
+    {
+        $databaseName = $database->getName();
+        $databaseMap = new DatabaseMap($databaseName);
+        foreach ($database->getTables() as $table) {
+            $tableName = $table->getName();
+            $phpName = $table->getPhpName();
+            $tableMapClass = $this->getFullyQualifiedTableMapClassName($table);
+            $databaseMap->registerTableMapClassByName($tableName, $phpName, $tableMapClass);
+        }
+
+        return $databaseMap;
+    }
+
+    /**
+     * @param array $array
+     *
+     * @return void
+     */
+    protected function sortRecursive(array &$array): void
+    {
+        ksort($array, SORT_STRING);
+        array_walk($array, fn (&$value) => is_array($value) && $this->sortRecursive($value));
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return class-string<\Propel\Runtime\Map\TableMap>
+     */
+    protected function getFullyQualifiedTableMapClassName(Table $table): string
+    {
+        $builder = new TableMapBuilder($table);
+        $builder->setGeneratorConfig($this->generatorConfig);
+
+        /** @var class-string<\Propel\Runtime\Map\TableMap> */
+        return $builder->getFullyQualifiedClassName();
     }
 
     /**

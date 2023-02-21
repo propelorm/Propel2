@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
+declare(strict_types=1);
 
 namespace Propel\Generator\Model;
 
@@ -18,6 +18,7 @@ use Propel\Generator\Exception\LogicException;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Platform\PlatformInterface;
 use Propel\Runtime\Exception\RuntimeException;
+use Propel\Runtime\Util\UuidConverter;
 
 /**
  * Data about a table used in an application.
@@ -204,7 +205,7 @@ class Table extends ScopedMappingModel implements IdMethod
         // retrieves the method for converting from specified name to a PHP name.
         $this->phpNamingMethod = $this->getAttribute('phpNamingMethod', $this->database->getDefaultPhpNamingMethod());
 
-        $this->phpName = $this->getAttribute('phpName', $this->buildPhpName((string)$this->getStdSeparatedName()));
+        $this->phpName = $this->getAttribute('phpName', $this->buildPhpName($this->getStdSeparatedName()));
 
         if ($this->database->getTablePrefix()) {
             $this->commonName = $this->database->getTablePrefix() . $this->commonName;
@@ -564,35 +565,35 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function addColumn($col): Column
     {
-        if ($col instanceof Column) {
-            if (isset($this->columnsByName[$col->getName()])) {
-                throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
-            }
+        if (is_array($col)) {
+            $column = new Column($col['name']);
+            $column->setTable($this);
+            $column->loadMapping($col);
 
-            $col->setTable($this);
-
-            if ($col->isInheritance()) {
-                $this->inheritanceColumn = $col;
-            }
-
-            $this->columns[] = $col;
-            $this->columnsByName[(string)$col->getName()] = $col;
-            $this->columnsByLowercaseName[strtolower((string)$col->getName())] = $col;
-            $this->columnsByPhpName[(string)$col->getPhpName()] = $col;
-            $col->setPosition(count($this->columns));
-
-            if ($col->requiresTransactionInPostgres()) {
-                $this->needsTransactionInPostgres = true;
-            }
-
-            return $col;
+            $col = $column;
         }
 
-        $column = new Column($col['name']);
-        $column->setTable($this);
-        $column->loadMapping($col);
+        if (isset($this->columnsByName[$col->getName()])) {
+            throw new EngineException(sprintf('Column "%s" declared twice in table "%s"', $col->getName(), $this->getName()));
+        }
 
-        return $this->addColumn($column); // call self w/ different param
+        $col->setTable($this);
+
+        if ($col->isInheritance()) {
+            $this->inheritanceColumn = $col;
+        }
+
+        $this->columns[] = $col;
+        $this->columnsByName[(string)$col->getName()] = $col;
+        $this->columnsByLowercaseName[strtolower((string)$col->getName())] = $col;
+        $this->columnsByPhpName[(string)$col->getPhpName()] = $col;
+        $col->setPosition(count($this->columns));
+
+        if ($col->requiresTransactionInPostgres()) {
+            $this->needsTransactionInPostgres = true;
+        }
+
+        return $col;
     }
 
     /**
@@ -807,7 +808,7 @@ class Table extends ScopedMappingModel implements IdMethod
 
             if ($foreignTable !== null) {
                 $referrers = $foreignTable->getReferrers();
-                if ($referrers === null || !in_array($foreignKey, $referrers, true)) {
+                if (!$referrers || !in_array($foreignKey, $referrers, true)) {
                     $foreignTable->addReferrer($foreignKey);
                 }
             } elseif ($throwErrors) {
@@ -943,7 +944,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setContainsForeignPK(bool $containsForeignPK): void
     {
-        $this->containsForeignPK = (bool)$containsForeignPK;
+        $this->containsForeignPK = $containsForeignPK;
     }
 
     /**
@@ -964,6 +965,18 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getForeignTableNames(): array
     {
         return $this->foreignTableNames;
+    }
+
+    /**
+     * @param \Propel\Generator\Model\ForeignKey $fk
+     *
+     * @return bool
+     */
+    public function containsForeignKeyWithSameName(ForeignKey $fk): bool
+    {
+        $name = $fk->getPhpName() ?: $fk->getName();
+
+        return isset($this->foreignKeysByName[$name]);
     }
 
     /**
@@ -1034,6 +1047,20 @@ class Table extends ScopedMappingModel implements IdMethod
         }
 
         return false;
+    }
+
+    /**
+     * Get indexes on a column
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return array<\Propel\Generator\Model\Index>
+     */
+    public function getIndexesOnColumn(Column $column): array
+    {
+        $columnName = $column->getName();
+
+        return array_filter($this->indices, fn ($idx) => $idx->hasColumn($columnName));
     }
 
     /**
@@ -1161,7 +1188,11 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function guessSchemaName(): ?string
     {
-        return $this->schema ?: $this->database->getSchema();
+        if ($this->schema) {
+            return $this->schema;
+        }
+
+        return $this->database ? $this->database->getSchema() : null;
     }
 
     /**
@@ -1217,7 +1248,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getPhpName(): string
     {
         if ($this->phpName === null) {
-            $this->phpName = $this->buildPhpName((string)$this->getStdSeparatedName());
+            $this->phpName = $this->buildPhpName($this->getStdSeparatedName());
         }
 
         return $this->phpName;
@@ -1307,7 +1338,7 @@ class Table extends ScopedMappingModel implements IdMethod
         $formats = Database::getSupportedStringFormats();
 
         $format = strtoupper($format);
-        if (!in_array($format, $formats)) {
+        if (!in_array($format, $formats, true)) {
             throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
         }
 
@@ -1385,7 +1416,7 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function setSkipSql(bool $skip): void
     {
-        $this->skipSql = (bool)$skip;
+        $this->skipSql = $skip;
     }
 
     /**
@@ -1662,7 +1693,7 @@ class Table extends ScopedMappingModel implements IdMethod
             $stringArray = is_string($keys[0]);
             foreach ($this->getPrimaryKey() as $pk) {
                 if ($stringArray) {
-                    if (!in_array($pk->getName(), $keys)) {
+                    if (!in_array($pk->getName(), $keys, true)) {
                         $allPk = false;
 
                         break;
@@ -1681,7 +1712,7 @@ class Table extends ScopedMappingModel implements IdMethod
             }
         }
 
-        // check if there is a unique constrains that contains exactly the $keys
+        // check if there is a unique constraints that contains exactly the $keys
         if ($this->unices) {
             foreach ($this->unices as $unique) {
                 if (count($unique->getColumns()) === count($keys)) {
@@ -1696,8 +1727,6 @@ class Table extends ScopedMappingModel implements IdMethod
                     if ($allAvailable) {
                         return true;
                     }
-                } else {
-                    continue;
                 }
             }
         }
@@ -1803,14 +1832,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getForeignKeysReferencingTable(string $tableName): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if ($fk->getForeignTableName() === $tableName) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => $fk->getForeignTableName() === $tableName;
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1826,14 +1850,9 @@ class Table extends ScopedMappingModel implements IdMethod
      */
     public function getColumnForeignKeys(string $column): array
     {
-        $matches = [];
-        foreach ($this->foreignKeys as $fk) {
-            if (in_array($column, $fk->getLocalColumns())) {
-                $matches[] = $fk;
-            }
-        }
+        $filter = fn (ForeignKey $fk) => in_array($column, $fk->getLocalColumns(), true);
 
-        return $matches;
+        return array_values(array_filter($this->foreignKeys, $filter));
     }
 
     /**
@@ -1856,6 +1875,31 @@ class Table extends ScopedMappingModel implements IdMethod
     public function getDatabase(): ?Database
     {
         return $this->database;
+    }
+
+    /**
+     * Returns a VendorInfo object by its vendor type id (i.e. "mysql").
+     *
+     * Vendor information is set in schema.xml for the table or the whole
+     * database. The method returns database-wide vendor information extended
+     * and possibly overridden by table vendor information.
+     *
+     * @see \Propel\Generator\Model\MappingModel::getVendorInfoForType()
+     *
+     * @param string $type Vendor id, i.e. "mysql"
+     *
+     * @return \Propel\Generator\Model\VendorInfo
+     */
+    public function getVendorInfoForType(string $type): VendorInfo
+    {
+        $tableVendorInfo = parent::getVendorInfoForType($type);
+        $db = $this->getDatabase();
+        if (!$db) {
+            return $tableVendorInfo;
+        }
+        $databaseVendorInfo = $db->getVendorInfoForType($type);
+
+        return $databaseVendorInfo->getMergedVendorInfo($tableVendorInfo);
     }
 
     /**
@@ -1900,7 +1944,7 @@ class Table extends ScopedMappingModel implements IdMethod
     public function quoteIdentifier(string $text): string
     {
         if (!$this->getPlatform()) {
-            throw new RuntimeException('No platform specified. Can not quote without knowing which platform this table\'s database is using.');
+            throw new RuntimeException('No platform specified. Cannot quote without knowing which platform this table\'s database is using.');
         }
 
         if ($this->isIdentifierQuotingEnabled()) {
@@ -2204,5 +2248,44 @@ class Table extends ScopedMappingModel implements IdMethod
     public function setIdentifierQuoting(?bool $identifierQuoting): void
     {
         $this->identifierQuoting = $identifierQuoting;
+    }
+
+    /**
+     * Check if this table contains columns of the given type.
+     *
+     * @param string $type The type to check for, i.e. PropelTypes::BOOLEAN
+     *
+     * @return bool
+     */
+    public function containsColumnsOfType(string $type): bool
+    {
+        foreach ($this->columns as $column) {
+            if ($column->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get additional class imports for model and query classes needed by the columns.
+     *
+     * @psalm-return array<class-string>
+     *
+     * @see \Propel\Generator\Builder\Om\ObjectBuilder::addClassBody()
+     * @see \Propel\Generator\Builder\Om\QueryBuilder::addClassBody()
+     *
+     * @return array<string>|null
+     */
+    public function getAdditionalModelClassImports(): ?array
+    {
+        if ($this->containsColumnsOfType(PropelTypes::UUID_BINARY)) {
+            return [
+                UuidConverter::class,
+            ];
+        }
+
+        return null;
     }
 }

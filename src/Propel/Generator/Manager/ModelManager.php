@@ -130,6 +130,7 @@ class ModelManager extends AbstractManager
                         // ----------------------------------
                         if ($table->hasAdditionalBuilders()) {
                             foreach ($table->getAdditionalBuilders() as $builderClass) {
+                                /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $builder */
                                 $builder = new $builderClass($table);
                                 $builder->setGeneratorConfig($generatorConfig);
                                 $nbWrittenFiles += $this->doBuild($builder, $builder->overwrite ?? true);

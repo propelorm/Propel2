@@ -12,7 +12,7 @@ if "%mysql%" == "" (
 )       
 
 if "%mysql%" == "" (
-    echo Can not find mysql binary. Is it installed?
+    echo Cannot find mysql binary. Is it installed?
     exit /B 1
 )
 

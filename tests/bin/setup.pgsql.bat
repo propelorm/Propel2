@@ -9,7 +9,7 @@ set psql=
 @for %%e in (%PATHEXT%) do @for %%i in (psql%%e) do @if NOT "%%~$PATH:i"=="" set psql=%%~$PATH:i
 
 if "%psql%" == "" (
-    echo Can not find psql binary. Is it installed?
+    echo Cannot find psql binary. Is it installed?
     exit /B 1
 )
 

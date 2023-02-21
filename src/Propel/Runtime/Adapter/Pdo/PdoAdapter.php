@@ -430,8 +430,6 @@ abstract class PdoAdapter
             foreach ($criteria->getSelectColumns() as $columnName) {
                 // expect every column to be of "table.column" formation
                 // it could be a function:  e.g. MAX(books.price)
-                $tableName = null;
-
                 $selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
 
                 $parenPos = strrpos($columnName, '(');
@@ -481,7 +479,7 @@ abstract class PdoAdapter
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getPlainSelectedColumns(Criteria $criteria): array
     {
@@ -492,8 +490,8 @@ abstract class PdoAdapter
             }
         }
 
-        foreach ($criteria->getAsColumns() as $alias => $col) {
-            if (strpos($col, '(') === false && !in_array($col, $selected)) {
+        foreach ($criteria->getAsColumns() as $col) {
+            if (strpos($col, '(') === false && !in_array($col, $selected, true)) {
                 $selected[] = $col;
             }
         }
@@ -553,7 +551,7 @@ abstract class PdoAdapter
      * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
      * $params = [];
-     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($critera->getDbName()));
+     * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));
      * $stmt->execute();
      * </code>
      *

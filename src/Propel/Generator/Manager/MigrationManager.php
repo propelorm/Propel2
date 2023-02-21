@@ -22,6 +22,7 @@ use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Service class for preparing and executing migrations
@@ -31,6 +32,21 @@ use Propel\Runtime\Connection\ConnectionInterface;
 class MigrationManager extends AbstractManager
 {
     use PathTrait;
+
+    /**
+     * @var string
+     */
+    protected const COL_VERSION = 'version';
+
+    /**
+     * @var string
+     */
+    protected const COL_EXECUTION_DATETIME = 'execution_datetime';
+
+    /**
+     * @var string
+     */
+    protected const EXECUTION_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * @var array
@@ -108,12 +124,14 @@ class MigrationManager extends AbstractManager
      */
     public function getPlatform(string $datasource): PlatformInterface
     {
-        $params = $this->getConnection($datasource);
-        $adapter = $params['adapter'];
+        $connection = $this->getConnection($datasource);
+        $adapter = ucfirst($connection['adapter']);
+        $class = '\\Propel\\Generator\\Platform\\' . $adapter . 'Platform';
 
-        $class = '\\Propel\\Generator\\Platform\\' . ucfirst($adapter) . 'Platform';
+        /** @var \Propel\Generator\Platform\PlatformInterface $platform */
+        $platform = new $class();
 
-        return new $class();
+        return $platform;
     }
 
     /**
@@ -141,7 +159,7 @@ class MigrationManager extends AbstractManager
     /**
      * @throws \Exception
      *
-     * @return array<int>
+     * @return list<int>
      */
     public function getAllDatabaseVersions(): array
     {
@@ -150,38 +168,33 @@ class MigrationManager extends AbstractManager
             throw new Exception('You must define database connection settings in a buildtime-conf.xml file to use migrations');
         }
 
-        /** @var array<int> $migrationTimestamps */
-        $migrationTimestamps = [];
+        $migrationData = [];
         foreach ($connections as $name => $params) {
-            $conn = $this->getAdapterConnection($name);
-            $platform = $this->getGeneratorConfig()->getConfiguredPlatform($conn);
-            if (!$platform->supportsMigrations()) {
-                continue;
-            }
-
-            $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
-
             try {
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
-
-                while ($migrationTimestamp = $stmt->fetchColumn()) {
-                    /** @phpstan-var int $migrationTimestamp */
-                    $migrationTimestamps[] = $migrationTimestamp;
-                }
+                $migrationData += $this->getMigrationData($name);
             } catch (PDOException $e) {
                 $this->createMigrationTable($name);
-                $migrationTimestamps = [];
+                $migrationData = [];
             }
         }
 
-        sort($migrationTimestamps);
+        usort($migrationData, function (array $a, array $b) {
+            if ($a[static::COL_EXECUTION_DATETIME] === $b[static::COL_EXECUTION_DATETIME]) {
+                return $a[static::COL_VERSION] <=> $b[static::COL_VERSION];
+            }
 
-        return $migrationTimestamps;
+            return $a[static::COL_EXECUTION_DATETIME] <=> $b[static::COL_EXECUTION_DATETIME];
+        });
+
+        return array_map(function (array $migration) {
+            return (int)$migration[static::COL_VERSION];
+        }, $migrationData);
     }
 
     /**
      * @param string $datasource
+     *
+     * @throws \RuntimeException
      *
      * @return bool
      */
@@ -191,6 +204,11 @@ class MigrationManager extends AbstractManager
         $sql = sprintf('SELECT version FROM %s', $this->getMigrationTable());
         try {
             $stmt = $conn->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
             $stmt->execute();
 
             return true;
@@ -217,11 +235,9 @@ class MigrationManager extends AbstractManager
         $table = new Table($this->getMigrationTable());
         $database->addTable($table);
 
-        $column = new Column('version');
-        $column->getDomain()->copy($platform->getDomainForType('INTEGER'));
-        $column->setDefaultValue('0');
+        $table->addColumn($this->createVersionColumn($platform));
+        $table->addColumn($this->createExecutionDatetimeColumn($platform));
 
-        $table->addColumn($column);
         // insert the table into the database
         $statements = $platform->getAddTableDDL($table);
         $conn = $this->getAdapterConnection($datasource);
@@ -249,6 +265,11 @@ class MigrationManager extends AbstractManager
                 $platform->doQuoting('version'),
             );
             $stmt = $conn->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
             $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
             $stmt->execute();
         });
@@ -258,19 +279,34 @@ class MigrationManager extends AbstractManager
      * @param string $datasource
      * @param int $timestamp
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     public function updateLatestMigrationTimestamp(string $datasource, int $timestamp): void
     {
         $platform = $this->getPlatform($datasource);
         $conn = $this->getAdapterConnection($datasource);
+
+        $this->modifyMigrationTableIfOutdated($datasource);
+
         $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (?)',
+            'INSERT INTO %s (%s, %s) VALUES (?, ?)',
             $this->getMigrationTable(),
-            $platform->doQuoting('version'),
+            $platform->doQuoting(static::COL_VERSION),
+            $platform->doQuoting(static::COL_EXECUTION_DATETIME),
         );
+
+        $executionDatetime = date(static::EXECUTION_DATETIME_FORMAT);
+
         $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
         $stmt->bindParam(1, $timestamp, PDO::PARAM_INT);
+        $stmt->bindParam(2, $executionDatetime);
         $stmt->execute();
     }
 
@@ -284,9 +320,12 @@ class MigrationManager extends AbstractManager
 
         if (is_dir($path)) {
             $files = scandir($path);
-            foreach ($files as $file) {
-                if (preg_match('/^PropelMigration_(\d+).*\.php$/', $file, $matches)) {
-                    $migrationTimestamps[] = (int)$matches[1];
+
+            if ($files) {
+                foreach ($files as $file) {
+                    if (preg_match('/^PropelMigration_(\d+).*\.php$/', $file, $matches)) {
+                        $migrationTimestamps[] = (int)$matches[1];
+                    }
                 }
             }
         }
@@ -306,6 +345,30 @@ class MigrationManager extends AbstractManager
     }
 
     /**
+     * - Gets non executed migrations.
+     * - If `version` is provided, filters out values after the given version in the result.
+     *
+     * @param int|null $version
+     *
+     * @return list<int>
+     */
+    public function getNonExecutedMigrationTimestampsByVersion(?int $version = null): array
+    {
+        $migrationTimestamps = $this->getValidMigrationTimestamps();
+
+        if ($version === null) {
+            return $migrationTimestamps;
+        }
+
+        $versionIndex = array_search($version, $migrationTimestamps, true);
+        if ($versionIndex === false) {
+            return $migrationTimestamps;
+        }
+
+        return array_slice($migrationTimestamps, 0, (int)$versionIndex + 1);
+    }
+
+    /**
      * @return bool
      */
     public function hasPendingMigrations(): bool
@@ -314,14 +377,43 @@ class MigrationManager extends AbstractManager
     }
 
     /**
-     * @return array<int>
+     * @return list<int>
      */
     public function getAlreadyExecutedMigrationTimestamps(): array
     {
-        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $this->getAllDatabaseVersions());
-        sort($migrationTimestamps);
+        $allDatabaseVersions = $this->getAllDatabaseVersions();
+        $migrationTimestamps = array_intersect($this->getMigrationTimestamps(), $allDatabaseVersions);
+
+        $sortOrder = array_flip($allDatabaseVersions);
+        usort($migrationTimestamps, function (int $a, int $b) use ($sortOrder) {
+            return $sortOrder[$a] <=> $sortOrder[$b];
+        });
 
         return $migrationTimestamps;
+    }
+
+    /**
+     * - Gets already executed migration timestamps.
+     * - If `version` is provided, filters out values before the given version in the result.
+     *
+     * @param int|null $version
+     *
+     * @return list<int>
+     */
+    public function getAlreadyExecutedMigrationTimestampsByVersion(?int $version = null): array
+    {
+        $migrationTimestamps = $this->getAlreadyExecutedMigrationTimestamps();
+
+        if ($version === null) {
+            return $migrationTimestamps;
+        }
+
+        $versionIndex = array_search($version, $migrationTimestamps, true);
+        if ($versionIndex === false) {
+            return $migrationTimestamps;
+        }
+
+        return array_slice($migrationTimestamps, $versionIndex + 1);
     }
 
     /**
@@ -371,7 +463,7 @@ class MigrationManager extends AbstractManager
         $suffix = '';
         $path = $this->getWorkingDirectory();
         if ($path && is_dir($path)) {
-            $files = scandir($path);
+            $files = scandir($path) ?: [];
             foreach ($files as $file) {
                 if (preg_match('/^PropelMigration_' . $timestamp . '(_)?(.*)\.php$/', $file, $matches)) {
                     $suffix = (string)$matches[2];
@@ -503,5 +595,135 @@ class MigrationManager extends AbstractManager
         }
 
         return array_pop($versions);
+    }
+
+    /**
+     * @param string $datasource
+     *
+     * @throws \RuntimeException
+     *
+     * @return void
+     */
+    public function modifyMigrationTableIfOutdated(string $datasource): void
+    {
+        $connection = $this->getAdapterConnection($datasource);
+
+        if ($this->columnExists($connection, static::COL_EXECUTION_DATETIME)) {
+            return;
+        }
+
+        $table = new Table($this->getMigrationTable());
+
+        $platform = $this->getPlatform($datasource);
+        $column = $this->createExecutionDatetimeColumn($platform);
+        $column->setTable($table);
+
+        /** @phpstan-var \Propel\Generator\Platform\DefaultPlatform $platform */
+        $sql = $platform->getAddColumnDDL($column);
+        $stmt = $connection->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
+        $stmt->execute();
+    }
+
+    /**
+     * @param int $version
+     *
+     * @return bool
+     */
+    public function isDatabaseVersionApplied(int $version): bool
+    {
+        return in_array($version, $this->getAlreadyExecutedMigrationTimestamps());
+    }
+
+    /**
+     * @param string $connectionName
+     *
+     * @throws \RuntimeException
+     *
+     * @return array
+     */
+    protected function getMigrationData(string $connectionName): array
+    {
+        $connection = $this->getAdapterConnection($connectionName);
+        $platform = $this->getGeneratorConfig()->getConfiguredPlatform($connection);
+        if (!$platform->supportsMigrations()) {
+            return [];
+        }
+
+        $this->modifyMigrationTableIfOutdated($connectionName);
+
+        $sql = sprintf(
+            'SELECT %s, %s FROM %s',
+            static::COL_VERSION,
+            static::COL_EXECUTION_DATETIME,
+            $this->getMigrationTable(),
+        );
+
+        $stmt = $connection->prepare($sql);
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    protected function createVersionColumn(PlatformInterface $platform): Column
+    {
+        $column = new Column(static::COL_VERSION);
+        $column->getDomain()->copy($platform->getDomainForType('INTEGER'));
+        $column->setDefaultValue('0');
+
+        return $column;
+    }
+
+    /**
+     * @param \Propel\Generator\Platform\PlatformInterface $platform
+     *
+     * @return \Propel\Generator\Model\Column
+     */
+    protected function createExecutionDatetimeColumn(PlatformInterface $platform): Column
+    {
+        $column = new Column(static::COL_EXECUTION_DATETIME);
+        $column->getDomain()->copy($platform->getDomainForType('DATETIME'));
+
+        return $column;
+    }
+
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $connection
+     * @param string $columnName
+     *
+     * @throws \RuntimeException
+     *
+     * @return bool
+     */
+    protected function columnExists(ConnectionInterface $connection, string $columnName): bool
+    {
+        try {
+            $sql = sprintf('SELECT %s FROM %s', $columnName, $this->getMigrationTable());
+            $stmt = $connection->prepare($sql);
+
+            if ($stmt === false) {
+                throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+            }
+
+            $stmt->execute();
+
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

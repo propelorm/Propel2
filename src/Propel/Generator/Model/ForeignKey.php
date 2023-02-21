@@ -466,7 +466,8 @@ class ForeignKey extends MappingModel
         }
 
         $database = $this->getDatabase();
-        if ($database && ($schema = $this->parentTable->guessSchemaName()) && $platform && $platform->supportsSchemas()) {
+        $schema = $this->parentTable->guessSchemaName();
+        if ($database && $schema && $platform && $platform->supportsSchemas()) {
             return $schema
                 . $platform->getSchemaDelimiter()
                 . $this->foreignTableCommonName;
@@ -648,7 +649,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of local column names.
      *
-     * @return array
+     * @return array<string>
      */
     public function getLocalColumns(): array
     {
@@ -702,8 +703,10 @@ class ForeignKey extends MappingModel
     public function getMapping(): array
     {
         $mapping = [];
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
-            if ($right = $this->foreignColumns[$i]) {
+        $size = count($this->localColumns);
+        for ($i = 0; $i < $size; $i++) {
+            $right = $this->foreignColumns[$i];
+            if ($right) {
                 $right = $this->getForeignTable()->getColumn($right);
             } else {
                 $right = $this->localValues[$i];
@@ -739,7 +742,8 @@ class ForeignKey extends MappingModel
     {
         $mapping = [];
         $foreignTable = $this->getForeignTable();
-        for ($i = 0, $size = count($this->localColumns); $i < $size; $i++) {
+        $size = count($this->localColumns);
+        for ($i = 0; $i < $size; $i++) {
             $mapping[] = [
                 'local' => $this->parentTable->getColumn($this->localColumns[$i]),
                 'foreign' => $foreignTable->getColumn($this->foreignColumns[$i]),
@@ -781,7 +785,7 @@ class ForeignKey extends MappingModel
     /**
      * Returns an array of foreign column names.
      *
-     * @return array
+     * @return array<string|null>
      */
     public function getForeignColumns(): array
     {
@@ -1021,7 +1025,7 @@ class ForeignKey extends MappingModel
      */
     public function setSkipSql(bool $skip): void
     {
-        $this->skipSql = (bool)$skip;
+        $this->skipSql = $skip;
     }
 
     /**

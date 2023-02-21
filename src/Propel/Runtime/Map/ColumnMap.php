@@ -230,7 +230,7 @@ class ColumnMap
             PropelTypes::BLOB,
             PropelTypes::VARBINARY,
             PropelTypes::LONGVARBINARY,
-        ]);
+        ], true);
     }
 
     /**
@@ -247,7 +247,7 @@ class ColumnMap
             PropelTypes::TIME,
             PropelTypes::BU_DATE,
             PropelTypes::BU_TIMESTAMP,
-        ]);
+        ], true);
     }
 
     /**
@@ -267,7 +267,7 @@ class ColumnMap
             PropelTypes::REAL,
             PropelTypes::FLOAT,
             PropelTypes::DOUBLE,
-        ]);
+        ], true);
     }
 
     /**
@@ -291,7 +291,17 @@ class ColumnMap
             PropelTypes::VARCHAR,
             PropelTypes::LONGVARCHAR,
             PropelTypes::CHAR,
-        ]);
+        ], true);
+    }
+
+    /**
+     * Whether this column contains UUIDs.
+     *
+     * @return bool
+     */
+    public function isUuid(): bool
+    {
+        return PropelTypes::isUuidType($this->type);
     }
 
     /**
@@ -325,7 +335,7 @@ class ColumnMap
      */
     public function setPrimaryKey(bool $pk): void
     {
-        $this->pk = (bool)$pk;
+        $this->pk = $pk;
     }
 
     /**
@@ -347,7 +357,7 @@ class ColumnMap
      */
     public function setNotNull(bool $nn): void
     {
-        $this->notNull = (bool)$nn;
+        $this->notNull = $nn;
     }
 
     /**
@@ -564,7 +574,8 @@ class ColumnMap
      */
     public static function normalizeName(string $name): string
     {
-        if (($pos = strrpos($name, '.')) !== false) {
+        $pos = strrpos($name, '.');
+        if ($pos !== false) {
             $name = substr($name, $pos + 1);
             $name = trim($name, " \t\n\r\0\x0B`'()\"[]~!-{}%^&.");
         }
@@ -581,7 +592,7 @@ class ColumnMap
      */
     public function setPrimaryString(bool $pkString): void
     {
-        $this->isPkString = (bool)$pkString;
+        $this->isPkString = $pkString;
     }
 
     /**

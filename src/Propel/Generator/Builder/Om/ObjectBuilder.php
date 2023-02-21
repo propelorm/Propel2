@@ -48,13 +48,14 @@ class ObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns the namespace for the base class.
      *
-     * @see Propel\Generator\Builder\Om.AbstractOMBuilder::getNamespace()
+     * @see \Propel\Generator\Builder\Om\AbstractOMBuilder::getNamespace()
      *
      * @return string|null
      */
     public function getNamespace(): ?string
     {
-        if ($namespace = parent::getNamespace()) {
+        $namespace = parent::getNamespace();
+        if ($namespace) {
             return $namespace . '\\Base';
         }
 
@@ -199,7 +200,7 @@ class ObjectBuilder extends AbstractObjectBuilder
             }
             $defaultValue = (string)array_search($val, $valueSet);
         } elseif ($column->isSetType()) {
-            $defaultValue = (string)SetColumnConverter::convertToInt($val, $column->getValueSet());
+            $defaultValue = SetColumnConverter::convertToInt($val, $column->getValueSet());
         } elseif ($column->isPhpPrimitiveType()) {
             settype($val, $column->getPhpType());
             $defaultValue = var_export($val, true);
@@ -270,7 +271,8 @@ class ObjectBuilder extends AbstractObjectBuilder
         $script .= "
 abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implements ActiveRecordInterface ';
 
-        if ($interface = $this->getInterface()) {
+        $interface = $this->getInterface();
+        if ($interface) {
             $script .= ', Child' . ClassTools::classname($interface);
             if ($interface !== ClassTools::classname($interface)) {
                 $this->declareClass($interface);
@@ -323,6 +325,12 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $table = $this->getTable();
+
+        $additionalModelClasses = $table->getAdditionalModelClassImports();
+        if ($additionalModelClasses) {
+            $this->declareClasses(...$additionalModelClasses);
+        }
+
         if (!$table->isAlias()) {
             $this->addConstants($script);
             $this->addAttributes($script);
@@ -974,7 +982,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-    " . $visibility . " function get$cfc(\$format = " . $format . '';
+    " . $visibility . " function get$cfc(\$format = " . $format;
         if ($column->isLazyLoad()) {
             $script .= ', $con = null';
         }
@@ -1709,6 +1717,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         } elseif ($column->isPhpObjectType()) {
             $script .= "
             \$this->$clo = (\$firstColumn !== null) ? new " . $column->getPhpType() . '($firstColumn) : null;';
+        } elseif ($column->getType() === PropelTypes::UUID_BINARY) {
+            $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+            $script .= "
+            if (is_resource(\$firstColumn)) {
+                \$firstColumn = stream_get_contents(\$firstColumn);
+            }
+            \$this->$clo = (\$firstColumn) ? UuidConverter::binToUuid(\$firstColumn, $uuidSwapFlag) : null;";
         } else {
             $script .= "
             \$this->$clo = \$firstColumn;";
@@ -1959,7 +1974,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addMutatorCloseClose(string &$script, Column $col): void
     {
-        $cfc = $col->getPhpName();
         $script .= "
         return \$this;
     }
@@ -2024,7 +2038,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$dt = PropelDateTime::newInstance(\$v, null, '$dateTimeClass');
         if (\$this->$clo !== null || \$dt !== null) {";
 
-        if (($def = $col->getDefaultValue()) !== null && !$def->isExpression()) {
+        $def = $col->getDefaultValue();
+        if ($def !== null && !$def->isExpression()) {
             $defaultValue = $this->getDefaultValueString($col);
             $script .= "
             if ( (\$dt != \$this->{$clo}) // normalized values don't match
@@ -2716,6 +2731,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     }
                     $script .= "
             \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
+                } elseif ($col->isUuidBinaryType()) {
+                    $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+                    $script .= "
+            if (is_resource(\$col)) {
+                \$col = stream_get_contents(\$col);
+            }
+            \$this->$clo = (\$col) ? UuidConverter::binToUuid(\$col, $uuidSwapFlag) : null;";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
@@ -2745,8 +2767,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         if ($this->getBuildProperty('generator.objectModel.addSaveMethod')) {
             $script .= "
-            \$this->resetModified();
-";
+
+            \$this->resetModified();";
         }
 
         $script .= "
@@ -2950,10 +2972,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$criteria = new Criteria(" . $this->getTableMapClass() . "::DATABASE_NAME);
 ";
         foreach ($this->getTable()->getColumns() as $col) {
-            $clo = $col->getLowercasedName();
+            $accessValueStatement = $this->getAccessValueStatement($col);
+            $columnConstant = $this->getColumnConstant($col);
             $script .= "
-        if (\$this->isColumnModified(" . $this->getColumnConstant($col) . ")) {
-            \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);
+        if (\$this->isColumnModified($columnConstant)) {
+            \$criteria->add($columnConstant, $accessValueStatement);
         }";
         }
     }
@@ -2989,7 +3012,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $referrers = $this->getTable()->getReferrers();
         $hasFks = count($fks) > 0 || count($referrers) > 0;
         $objectClassName = $this->getUnqualifiedClassName();
-        $pkGetter = $this->getTable()->hasCompositePrimaryKey() ? 'serialize($this->getPrimaryKey())' : '$this->getPrimaryKey()';
         $defaultKeyType = $this->getDefaultKeyType();
         $script .= "
     /**
@@ -3917,9 +3939,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $this->addSetPrimaryKeySinglePK($script);
         } elseif (count($pkeys) > 1) {
             $this->addSetPrimaryKeyMultiPK($script);
-        } else {
-            // no primary key -- this is deprecated, since we don't *need* this method anymore
-            $this->addSetPrimaryKeyNoPK($script);
         }
     }
 
@@ -3976,37 +3995,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $i++;
         }
         $script .= "
-    }
-";
-    }
-
-    /**
-     * Adds the setPrimaryKey() method for objects that have no primary key.
-     * This "feature" is deprecated, since the setPrimaryKey() method is not required
-     * by the Persistent interface (or used by the templates). Hence, this method is also
-     * deprecated.
-     *
-     * @deprecated Not needed anymore.
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addSetPrimaryKeyNoPK(string &$script): void
-    {
-        $script .= "
-    /**
-     * Dummy primary key setter.
-     *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
-     */
-    public function setPrimaryKey(\$pk): void
-    {
-        // do nothing, because this object doesn't have any primary keys
     }
 ";
     }
@@ -4135,10 +4123,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addFKMutator(string &$script, ForeignKey $fk): void
     {
-        $table = $this->getTable();
         $fkTable = $fk->getForeignTable();
+        $interface = $fk->getInterface();
 
-        if ($interface = $fk->getInterface()) {
+        if ($interface) {
             $className = $this->declareClass($interface);
         } else {
             $className = $this->getClassNameFromTable($fkTable);
@@ -4223,14 +4211,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addFKAccessor(string &$script, ForeignKey $fk): void
     {
-        $table = $this->getTable();
-
         $varName = $this->getFKVarName($fk);
-
         $fkQueryBuilder = $this->getNewStubQueryBuilder($fk->getForeignTable());
         $fkObjectBuilder = $this->getNewObjectBuilder($fk->getForeignTable())->getStubObjectBuilder();
         $returnDesc = '';
-        if ($interface = $fk->getInterface()) {
+        $interface = $fk->getInterface();
+
+        if ($interface) {
             $className = $this->declareClass($interface);
         } else {
             $className = $this->getClassNameFromBuilder($fkObjectBuilder); // get the ClassName that has maybe a prefix
@@ -4336,7 +4323,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $joinBehavior = $this->getBuildProperty('generator.objectModel.useLeftJoinsInDoJoinMethods') ? 'Criteria::LEFT_JOIN' : 'Criteria::INNER_JOIN';
 
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
 
         $className = $this->getClassNameFromTable($tblFK);
 
@@ -4434,9 +4421,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFKMethods(string &$script): void
     {
-        if (!$referrers = $this->getTable()->getReferrers()) {
+        $referrers = $this->getTable()->getReferrers();
+        if (!$referrers) {
             return;
         }
+
         $this->addInitRelations($script, $referrers);
         foreach ($referrers as $refFK) {
             $this->declareClassFromBuilder($this->getNewStubObjectBuilder($refFK->getTable()), 'Child');
@@ -4587,7 +4576,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $collName = $this->getRefFKCollVarName($refFK);
 
-        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, $plural = true)) . 'ScheduledForDeletion';
+        $scheduledForDeletion = lcfirst($this->getRefFKPhpNameAffix($refFK, true)) . 'ScheduledForDeletion';
 
         $script .= "
     /**
@@ -4600,7 +4589,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function add" . $this->getRefFKPhpNameAffix($refFK, false) . "($className \$l)
     {
         if (\$this->$collName === null) {
-            \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+            \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "();
             \$this->{$collName}Partial = true;
         }
 
@@ -4628,7 +4617,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addRefFKCount(string &$script, ForeignKey $refFK): void
     {
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $joinedTableObjectBuilder = $this->getNewObjectBuilder($refFK->getTable());
@@ -4682,7 +4671,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addRefFKGet(string &$script, ForeignKey $refFK): void
     {
         $fkQueryClassName = $this->getClassNameFromBuilder($this->getNewStubQueryBuilder($refFK->getTable()));
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $className = $this->getClassNameFromTable($refFK->getTable());
@@ -4710,7 +4699,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if (\$this->isNew()) {
                 // return empty collection
                 if (null === \$this->$collName) {
-                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "();
+                    \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "();
                 } else {
                     \$collectionClassName = " . $this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable())) . "::getTableMap()->getCollectionClassName();
 
@@ -4726,7 +4715,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
                 if (null !== \$criteria) {
                     if (false !== \$this->{$collName}Partial && count(\$$collName)) {
-                        \$this->init" . $this->getRefFKPhpNameAffix($refFK, $plural = true) . "(false);
+                        \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "(false);
 
                         foreach (\$$collName as \$obj) {
                             if (false == \$this->{$collName}->contains(\$obj)) {
@@ -4874,7 +4863,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $className = $this->getClassNameFromTable($refFK->getTable());
         }
 
-        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $relatedObjectClassName = $this->getRefFKPhpNameAffix($refFK, false);
         $inputCollection = lcfirst($relatedName . 'ScheduledForDeletion');
         $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
@@ -5289,7 +5278,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFkScheduledForDeletion(string &$script, ForeignKey $refFK): void
     {
-        $relatedName = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relatedName = $this->getRefFKPhpNameAffix($refFK, true);
         $lowerRelatedName = lcfirst($relatedName);
         $lowerSingleRelatedName = lcfirst($this->getRefFKPhpNameAffix($refFK, false));
         $queryClassName = $this->getNewStubQueryBuilder($refFK->getTable())->getClassname();
@@ -5385,7 +5374,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addRefFKPartial(string &$script, ForeignKey $refFK): void
     {
-        $relCol = $this->getRefFKPhpNameAffix($refFK, $plural = true);
+        $relCol = $this->getRefFKPhpNameAffix($refFK, true);
         $collName = $this->getRefFKCollVarName($refFK);
 
         $script .= "
@@ -6060,7 +6049,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         [, $getSignature] = $this->getCrossFKAddMethodInformation($crossFKs);
         $getSignature = explode(', ', $getSignature);
 
-        if (($pos = array_search($excludeSignatureItem, $getSignature)) !== false) {
+        $pos = array_search($excludeSignatureItem, $getSignature);
+        if ($pos !== false) {
             unset($getSignature[$pos]);
         }
 
@@ -6075,7 +6065,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addCrossFKDoAdd(string &$script, CrossForeignKeys $crossFKs): void
     {
-        $selfRelationName = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), false);
         $selfRelationNamePlural = $this->getFKPhpNameAffix($crossFKs->getIncomingForeignKey(), true);
         $relatedObjectClassName = $this->getCrossFKsPhpNameAffix($crossFKs, false);
         $className = $this->getClassNameFromTable($crossFKs->getIncomingForeignKey()->getTable());
@@ -6636,12 +6625,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$stmt = \$con->prepare(\$sql);
             foreach (\$modifiedColumns as \$identifier => \$columnName) {
                 switch (\$columnName) {";
+
+        $tab = '                        ';
         foreach ($table->getColumns() as $column) {
             $columnNameCase = var_export($this->quoteIdentifier($column->getName()), true);
+            $accessValueStatement = $this->getAccessValueStatement($column);
+            $bindValueStatement = $platform->getColumnBindingPHP($column, '$identifier', $accessValueStatement, $tab);
             $script .= "
-                    case $columnNameCase:";
-            $script .= $platform->getColumnBindingPHP($column, '$identifier', '$this->' . $column->getLowercasedName(), '                        ');
-            $script .= "
+                    case $columnNameCase:$bindValueStatement
+
                         break;";
         }
         $script .= "
@@ -6680,6 +6672,30 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         return $script;
+    }
+
+    /**
+     * Get the statement how a column value is accessed in the script.
+     *
+     * Note that this is not necessarily just the getter. If the value is
+     * stored on the model in an encoded format, the statement returned by
+     * this method includes the statement to decode the value.
+     *
+     * @param \Propel\Generator\Model\Column $column
+     *
+     * @return string
+     */
+    protected function getAccessValueStatement(Column $column): string
+    {
+        $columnName = $column->getLowercasedName();
+
+        if ($column->isUuidBinaryType()) {
+            $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+
+            return "(\$this->$columnName) ? UuidConverter::uuidToBin(\$this->$columnName, $uuidSwapFlag) : null";
+        }
+
+        return "\$this->$columnName";
     }
 
     /**

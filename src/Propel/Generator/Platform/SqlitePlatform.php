@@ -21,6 +21,7 @@ use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Runtime\Connection\PdoConnection;
+use RuntimeException;
 use SQLite3;
 
 /**
@@ -47,8 +48,6 @@ class SqlitePlatform extends DefaultPlatform
     protected $tableAlteringWorkaround = true;
 
     /**
-     * Initializes db specific domain mapping.
-     *
      * @return void
      */
     protected function initialize(): void
@@ -58,6 +57,16 @@ class SqlitePlatform extends DefaultPlatform
         $version = $this->getVersion();
 
         $this->foreignKeySupport = version_compare($version, '3.6.19') >= 0;
+    }
+
+    /**
+     * Initializes db specific domain mapping.
+     *
+     * @return void
+     */
+    protected function initializeTypeMap(): void
+    {
+        parent::initializeTypeMap();
 
         $this->setSchemaDomainMapping(new Domain(PropelTypes::NUMERIC, 'DECIMAL'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'MEDIUMTEXT'));
@@ -72,6 +81,10 @@ class SqlitePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'MEDIUMTEXT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BLOB'));
+
+        // no native UUID type, use UUID_BINARY
+        $this->schemaDomainMap[PropelTypes::UUID] = $this->schemaDomainMap[PropelTypes::UUID_BINARY];
     }
 
     /**
@@ -106,10 +119,12 @@ class SqlitePlatform extends DefaultPlatform
     {
         parent::setGeneratorConfig($generatorConfig);
 
-        if (($foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey')) !== null) {
+        $foreignKeySupport = $generatorConfig->getConfigProperty('database.adapter.sqlite.foreignKey');
+        if ($foreignKeySupport !== null) {
             $this->foreignKeySupport = filter_var($foreignKeySupport, FILTER_VALIDATE_BOOLEAN);
         }
-        if (($tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround')) !== null) {
+        $tableAlteringWorkaround = $generatorConfig->getConfigProperty('database.adapter.sqlite.tableAlteringWorkaround');
+        if ($tableAlteringWorkaround !== null) {
             $this->tableAlteringWorkaround = filter_var($tableAlteringWorkaround, FILTER_VALIDATE_BOOLEAN);
         }
     }
@@ -174,7 +189,7 @@ ALTER TABLE %s ADD %s;
                         ['CURRENT_TIME', 'CURRENT_DATE', 'CURRENT_TIMESTAMP'],
                         true,
                     ))
-                    || substr(trim($column->getDefaultValue() ? $column->getDefaultValue()->getValue() : ''), 0, 1) === '('
+                    || substr(trim($column->getDefaultValue() ? (string)$column->getDefaultValue()->getValue() : ''), 0, 1) === '('
 
                     //If a NOT NULL constraint is specified, then the column must have a default value other than NULL.
                     || ($column->isNotNull() && $column->getDefaultValue()->getValue() === 'NULL');
@@ -505,7 +520,8 @@ PRAGMA foreign_keys = ON;
             $lines[] = $this->getColumnDDL($column);
         }
 
-        if ($table->hasPrimaryKey() && ($pk = $this->getPrimaryKeyDDL($table))) {
+        $pk = $this->getPrimaryKeyDDL($table);
+        if ($pk) {
             $lines[] = $pk;
         }
 
@@ -615,6 +631,8 @@ PRAGMA foreign_keys = ON;
     }
 
     /**
+     * @throws \RuntimeException
+     *
      * @return string
      */
     protected function getVersion(): string
@@ -625,7 +643,12 @@ PRAGMA foreign_keys = ON;
 
         //if php_sqlite3 extension is not installed, we need to query the database
         $connection = new PdoConnection('sqlite::memory:');
+        $pdoStatement = $connection->query('SELECT sqlite_version()');
 
-        return (string)$connection->query('SELECT sqlite_version()')->fetch(PDO::FETCH_NUM)[0];
+        if ($pdoStatement === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
+        return (string)$pdoStatement->fetch(PDO::FETCH_NUM)[0];
     }
 }

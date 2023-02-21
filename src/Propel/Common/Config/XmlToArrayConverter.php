@@ -62,7 +62,7 @@ class XmlToArrayConverter
         libxml_clear_errors();
         libxml_use_internal_errors($currentInternalErrors);
 
-        if (count($errors) > 0) {
+        if ($xml === false || count($errors) > 0) {
             throw new XmlParseException($errors);
         }
 
@@ -101,9 +101,10 @@ class XmlToArrayConverter
                     }
                 } else {
                     // otherwise, just add the attribute like a child element
-                    if (is_string($child)) {
+                    if (!is_array($child)) {
                         $child = [];
                     }
+
                     $child[$ak] = self::getConvertedXmlValue($av);
                 }
             }

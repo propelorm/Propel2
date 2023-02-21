@@ -61,7 +61,7 @@ class PropelConditionalProxy
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      * @param mixed $cond
-     * @param \Propel\Runtime\Util\PropelConditionalProxy|self|null $proxy
+     * @param self|null $proxy
      */
     public function __construct(Criteria $criteria, $cond, ?self $proxy = null)
     {
@@ -83,7 +83,7 @@ class PropelConditionalProxy
      *
      * @param mixed $cond Casts to bool for variable evaluation
      *
-     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _if($cond)
     {
@@ -120,7 +120,7 @@ class PropelConditionalProxy
      * Returns the parent object
      * Allows for conditional statements in a fluid interface.
      *
-     * @return $this|\Propel\Runtime\ActiveQuery\Criteria
+     * @return \Propel\Runtime\ActiveQuery\Criteria|\Propel\Runtime\Util\PropelConditionalProxy
      */
     public function _endif()
     {

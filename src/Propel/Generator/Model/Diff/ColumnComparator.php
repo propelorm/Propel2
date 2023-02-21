@@ -27,7 +27,8 @@ class ColumnComparator
      */
     public static function computeDiff(Column $fromColumn, Column $toColumn)
     {
-        if ($changedProperties = self::compareColumns($fromColumn, $toColumn)) {
+        $changedProperties = self::compareColumns($fromColumn, $toColumn);
+        if ($changedProperties) {
             if ($fromColumn->hasPlatform() || $toColumn->hasPlatform()) {
                 $platform = $fromColumn->hasPlatform() ? $fromColumn->getPlatform() : $toColumn->getPlatform();
                 if ($platform->getColumnDDL($fromColumn) == $platform->getColumnDDl($toColumn)) {
@@ -88,7 +89,7 @@ class ColumnComparator
         } elseif (!$fromDefaultValue && $toDefaultValue) {
             $changedProperties['defaultValueType'] = [null, $toDefaultValue->getType()];
             $changedProperties['defaultValueValue'] = [null, $toDefaultValue->getValue()];
-        } elseif ($fromDefaultValue && $toDefaultValue) {
+        } elseif ($fromDefaultValue) {
             if (!$fromDefaultValue->equals($toDefaultValue)) {
                 if ($fromDefaultValue->getType() !== $toDefaultValue->getType()) {
                     $changedProperties['defaultValueType'] = [$fromDefaultValue->getType(), $toDefaultValue->getType()];

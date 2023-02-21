@@ -148,7 +148,7 @@ interface PlatformInterface
      *
      * @return string
      */
-    public function getColumnListDDL($columns, $delimiter = ','): string;
+    public function getColumnListDDL(array $columns, string $delimiter = ','): string;
 
     /**
      * Returns the SQL for the primary key of a Table object
@@ -300,14 +300,14 @@ interface PlatformInterface
     public function normalizeTable(Table $table): void;
 
     /**
-     * Get the default On Delete behavior for foreign keys when not explicity set.
+     * Get the default On Delete behavior for foreign keys when not explicitly set.
      *
      * @return string
      */
     public function getDefaultForeignKeyOnDeleteBehavior(): string;
 
     /**
-     * Get the default On Update behavior for foreign keys when not explicity set.
+     * Get the default On Update behavior for foreign keys when not explicitly set.
      *
      * @return string
      */
@@ -338,4 +338,21 @@ interface PlatformInterface
      * @return void
      */
     public function setIdentifierQuoting(bool $enabled): void;
+
+    /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return string
+     */
+    public function getAddTableDDL(Table $table): string;
+
+    /**
+     * Quotes identifiers used in database SQL if isIdentifierQuotingEnabled is true.
+     * Calls doQuoting() when identifierQuoting is enabled.
+     *
+     * @param string $text
+     *
+     * @return string Quoted identifier.
+     */
+    public function quoteIdentifier(string $text): string;
 }

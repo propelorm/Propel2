@@ -289,6 +289,7 @@ protected \$oldScope;
                     $script = str_replace($search, $replace, $script);
                 }
             } else {
+                /** @var string $scope */
                 $scope = current($this->behavior->getScopes());
                 $name = strtolower($this->behavior->getTable()->getColumn($scope)->getName());
 

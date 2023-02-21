@@ -31,7 +31,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
     /**
      * Stack of warnings.
      *
-     * @var array string[]
+     * @var list<string>
      */
     protected $warnings = [];
 
@@ -191,11 +191,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
             $this->nativeToPropelTypeMap = $this->getTypeMapping();
         }
 
-        if (isset($this->nativeToPropelTypeMap[$nativeType])) {
-            return $this->nativeToPropelTypeMap[$nativeType];
-        }
-
-        return null;
+        return $this->nativeToPropelTypeMap[$nativeType] ?? null;
     }
 
     /**
@@ -264,7 +260,7 @@ abstract class AbstractSchemaParser implements SchemaParserInterface
 
         $platform = $this->platform;
         if ($platform === null) {
-            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existance first.');
+            throw new RuntimeException('No platform set, please use `hasPlatform()` to check for existence first.');
         }
 
         return $platform;

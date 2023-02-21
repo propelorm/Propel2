@@ -9,6 +9,7 @@
 namespace Propel\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use Propel\Generator\Platform\PlatformInterface;
 
 class TestCase extends PHPUnitTestCase
 {
@@ -104,7 +105,7 @@ class TestCase extends PHPUnitTestCase
     /**
      * @return \Propel\Generator\Platform\PlatformInterface
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         $className = sprintf('\\Propel\\Generator\\Platform\\%sPlatform', ucfirst($this->getDriver()));
 

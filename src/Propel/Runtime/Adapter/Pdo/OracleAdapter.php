@@ -17,6 +17,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Map\ColumnMap;
+use RuntimeException;
 
 /**
  * Oracle adapter.
@@ -147,6 +148,7 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string|null $name
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return int
      */
@@ -157,6 +159,9 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         $dataFetcher = $con->query(sprintf('SELECT %s.nextval FROM dual', $name));
+        if ($dataFetcher === false) {
+            throw new RuntimeException('Query returned no statement.');
+        }
 
         return $dataFetcher->fetchColumn();
     }
@@ -267,9 +272,9 @@ class OracleAdapter extends PdoAdapter implements SqlAdapterInterface
     {
         $type = $lock->getType();
 
-        if (Lock::SHARED === $type) {
+        if ($type === Lock::SHARED) {
             $sql .= ' LOCK IN SHARE MODE';
-        } elseif (Lock::EXCLUSIVE === $type) {
+        } elseif ($type === Lock::EXCLUSIVE) {
             $sql .= ' FOR UPDATE';
         }
     }

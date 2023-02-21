@@ -19,6 +19,7 @@ use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
 use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Mysql database schema parser.
@@ -67,6 +68,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'text' => PropelTypes::LONGVARCHAR,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
+        'binary' => PropelTypes::BINARY,
+        'uuid' => PropelTypes::UUID, // for MariaDB
     ];
 
     /**
@@ -141,6 +144,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Database $database
      * @param \Propel\Generator\Model\Table|null $filterTable
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function parseTables(Database $database, ?Table $filterTable = null): void
@@ -148,17 +153,26 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $sql = 'SHOW FULL TABLES';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
             }
+
             $sql .= sprintf(" LIKE '%s'", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+        } else {
+            $schema = $database->getSchema();
+            if ($schema) {
+                $sql .= ' FROM ' . $database->getPlatform()->doQuoting($schema);
+            }
         }
 
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
+        // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
             $name = $row[0];
             $type = $row[1];
@@ -224,7 +238,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
             if ($matches[2]) {
-                if (($cpos = strpos($matches[2], ',')) !== false) {
+                $cpos = strpos($matches[2], ',');
+                if ($cpos !== false) {
                     $size = (int)substr($matches[2], 0, $cpos);
                     $scale = (int)substr($matches[2], $cpos + 1);
                 } else {
@@ -278,7 +293,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $default = 'false';
                 }
             }
-            if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'])) {
+            if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
                 $default = 'CURRENT_TIMESTAMP';
                 $type = ColumnDefaultValue::TYPE_EXPR;
             } else {
@@ -334,6 +349,8 @@ class MysqlSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Table $table
      *
+     * @throws \RuntimeException
+     *
      * @return string|null
      */
     protected function loadTableDescription(Table $table): ?string
@@ -346,14 +363,21 @@ WHERE table_schema=DATABASE()
   AND table_name=($tableName)
 EOT;
 
+        $dataFetcher = $this->dbh->query($query);
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
         /** @phpstan-var string|null */
-        return $this->dbh->query($query)->fetchColumn();
+        return $dataFetcher->fetchColumn();
     }
 
     /**
      * Load a comment for this column.
      *
      * @param \Propel\Generator\Model\Column $column
+     *
+     * @throws \RuntimeException
      *
      * @return string|null
      */
@@ -369,14 +393,21 @@ WHERE table_schema=DATABASE()
   AND column_name=($columnName)
 EOT;
 
+        $dataFetcher = $this->dbh->query($query);
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
         /** @phpstan-var string|null */
-        return $this->dbh->query($query)->fetchColumn();
+        return $dataFetcher->fetchColumn();
     }
 
     /**
      * Load foreign keys for this table.
      *
      * @param \Propel\Generator\Model\Table $table
+     *
+     * @throws \RuntimeException
      *
      * @return void
      */
@@ -385,8 +416,12 @@ EOT;
         $database = $table->getDatabase();
 
         $dataFetcher = $this->dbh->query(sprintf('SHOW CREATE TABLE %s', $this->getPlatform()->doQuoting($table->getName())));
-        $row = $dataFetcher->fetch();
 
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
+        $row = $dataFetcher->fetch();
         $foreignKeys = []; // local store to avoid duplicates
 
         // Get the information on all the foreign keys
@@ -434,7 +469,7 @@ EOT;
 
                 $localColumns = [];
                 $foreignColumns = [];
-                if ($table->guessSchemaName() != $database->getSchema() && strpos($ftbl, $database->getPlatform()->getSchemaDelimiter()) == false) {
+                if ($table->guessSchemaName() != $database->getSchema() && strpos($ftbl, $database->getPlatform()->getSchemaDelimiter()) === false) {
                     $ftbl = $table->guessSchemaName() . $database->getPlatform()->getSchemaDelimiter() . $ftbl;
                 }
 

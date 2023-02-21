@@ -23,6 +23,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use Propel\Generator\Platform\Util\AlterTableStatementMerger;
 use Propel\Runtime\Connection\ConnectionInterface;
 use ReflectionClass;
 
@@ -128,11 +129,19 @@ class DefaultPlatform implements PlatformInterface
     }
 
     /**
+     * @return void
+     */
+    protected function initialize(): void
+    {
+        $this->initializeTypeMap();
+    }
+
+    /**
      * Initialize the type -> Domain mapping.
      *
      * @return void
      */
-    protected function initialize(): void
+    protected function initializeTypeMap(): void
     {
         $this->schemaDomainMap = [];
         foreach (PropelTypes::getPropelTypes() as $type) {
@@ -166,11 +175,11 @@ class DefaultPlatform implements PlatformInterface
      */
     public function getDatabaseType(): string
     {
-        $reflClass = new ReflectionClass($this);
-        $clazz = $reflClass->getShortName();
-        $pos = strpos($clazz, 'Platform');
+        $reflectionClass = new ReflectionClass($this);
+        $platformShortName = $reflectionClass->getShortName();
+        $length = strpos($platformShortName, 'Platform') ?: null;
 
-        return strtolower(substr($clazz, 0, $pos));
+        return strtolower(substr($platformShortName, 0, $length));
     }
 
     /**
@@ -407,13 +416,22 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+
+        $default = $this->getColumnDefaultValueDDL($col);
+
+        if ($default) {
             $ddl[] = $default;
         }
-        if ($notNull = $this->getNullString($col->isNotNull())) {
+
+        $notNull = $this->getNullString($col->isNotNull());
+
+        if ($notNull) {
             $ddl[] = $notNull;
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
 
@@ -437,20 +455,20 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
                 $default .= $defaultValue->getValue();
             } else {
                 if ($col->isTextType()) {
-                    $default .= $this->quote($defaultValue->getValue());
-                } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU])) {
+                    $default .= $this->quote((string)$defaultValue->getValue());
+                } elseif (in_array($col->getType(), [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU], true)) {
                     $default .= $this->getBooleanString($defaultValue->getValue());
                 } elseif ($col->getType() == PropelTypes::ENUM) {
                     $default .= array_search($defaultValue->getValue(), $col->getValueSet());
                 } elseif ($col->isSetType()) {
-                    $val = trim($defaultValue->getValue());
+                    $val = trim((string)$defaultValue->getValue());
                     $values = [];
                     foreach (explode(',', $val) as $v) {
                         $values[] = trim($v);
                     }
                     $default .= SetColumnConverter::convertToInt($values, $col->getValueSet());
                 } elseif ($col->isPhpArrayType()) {
-                    $value = $this->getPhpArrayString($defaultValue->getValue());
+                    $value = $this->getPhpArrayString((string)$defaultValue->getValue());
                     if ($value === null) {
                         $default = '';
                     } else {
@@ -479,7 +497,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      *
      * @return string
      */
-    public function getColumnListDDL($columns, $delimiter = ','): string
+    public function getColumnListDDL(array $columns, string $delimiter = ','): string
     {
         $list = [];
         foreach ($columns as $column) {
@@ -881,12 +899,19 @@ ALTER TABLE %s RENAME TO %s;
         foreach ($tableDiff->getRenamedColumns() as $columnRenaming) {
             $columnChangeString .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
-        if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+
+        $modifiedColumns = $tableDiff->getModifiedColumns();
+
+        if ($modifiedColumns) {
             $columnChangeString .= $this->getModifyColumnsDDL($modifiedColumns);
         }
-        if ($addedColumns = $tableDiff->getAddedColumns()) {
+
+        $addedColumns = $tableDiff->getAddedColumns();
+
+        if ($addedColumns) {
             $columnChangeString .= $this->getAddColumnsDDL($addedColumns);
         }
+
         foreach ($tableDiff->getRemovedColumns() as $column) {
             $columnChangeString .= $this->getRemoveColumnDDL($column);
         }
@@ -896,41 +921,7 @@ ALTER TABLE %s RENAME TO %s;
             $columnChangeString .= $this->getAddPrimaryKeyDDL($tableDiff->getToTable());
         }
 
-        if ($columnChangeString) {
-            //merge column changes into one command. This is more compatible especially with PK constraints.
-
-            $changes = explode(';', $columnChangeString);
-            $columnChanges = [];
-
-            foreach ($changes as $change) {
-                if (!trim($change)) {
-                    continue;
-                }
-                $isCompatibleCall = preg_match(
-                    sprintf('/ALTER TABLE %s (?!RENAME)/', $this->quoteIdentifier($toTable->getName())),
-                    $change,
-                );
-                if ($isCompatibleCall) {
-                    $columnChanges[] = preg_replace(
-                        sprintf('/ALTER TABLE %s /', $this->quoteIdentifier($toTable->getName())),
-                        "\n\n  ",
-                        trim($change),
-                    );
-                } else {
-                    $ret .= $change . ";\n";
-                }
-            }
-
-            if (0 < count($columnChanges)) {
-                $ret .= sprintf(
-                    "
-ALTER TABLE %s%s;
-",
-                    $this->quoteIdentifier($toTable->getName()),
-                    implode(',', $columnChanges),
-                );
-            }
-        }
+        $ret .= AlterTableStatementMerger::merge($toTable, $columnChangeString);
 
         // create indices, foreign keys
         foreach ($tableDiff->getModifiedIndices() as $indexModification) {
@@ -971,11 +962,15 @@ ALTER TABLE %s%s;
             $ret .= $this->getRenameColumnDDL($columnRenaming[0], $columnRenaming[1]);
         }
 
-        if ($modifiedColumns = $tableDiff->getModifiedColumns()) {
+        $modifiedColumns = $tableDiff->getModifiedColumns();
+
+        if ($modifiedColumns) {
             $ret .= $this->getModifyColumnsDDL($modifiedColumns);
         }
 
-        if ($addedColumns = $tableDiff->getAddedColumns()) {
+        $addedColumns = $tableDiff->getAddedColumns();
+
+        if ($addedColumns) {
             $ret .= $this->getAddColumnsDDL($addedColumns);
         }
 
@@ -1278,7 +1273,7 @@ ALTER TABLE %s ADD
      *
      * @return string Quoted identifier.
      */
-    protected function quoteIdentifier(string $text): string
+    public function quoteIdentifier(string $text): string
     {
         return $this->isIdentifierQuotingEnabled() ? $this->doQuoting($text) : $text;
     }
@@ -1372,17 +1367,13 @@ ALTER TABLE %s ADD
      */
     public function getBooleanString($value): string
     {
-        if (is_bool($value) && $value === true) {
-            return '1';
-        }
-
-        if (is_int($value) && $value === 1) {
+        if ($value === true || $value === 1) {
             return '1';
         }
 
         if (
             is_string($value)
-            && in_array(strtolower($value), ['1', 'true', 'y', 'yes'])
+            && in_array(strtolower($value), ['1', 'true', 'y', 'yes'], true)
         ) {
             return '1';
         }
@@ -1495,13 +1486,8 @@ if (is_resource($columnValueAccessor)) {
 }";
         }
 
-        $script .= sprintf(
-            "
-\$stmt->bindValue(%s, %s, %s);",
-            $identifier,
-            $columnValueAccessor,
-            PropelTypes::getPdoTypeString($column->getType()),
-        );
+        $pdoType = PropelTypes::getPdoTypeString($column->getType());
+        $script .= "\n\$stmt->bindValue($identifier, $columnValueAccessor, $pdoType);";
 
         return preg_replace('/^(.+)/m', $tab . '$1', $script);
     }
@@ -1522,7 +1508,7 @@ if (is_resource($columnValueAccessor)) {
      * @param string $tab
      * @param string|null $phpType
      *
-     * @return array<string>|string|null
+     * @return string
      */
     public function getIdentifierPhp(
         string $columnValueMutator,
@@ -1530,7 +1516,7 @@ if (is_resource($columnValueAccessor)) {
         string $sequenceName = '',
         string $tab = '            ',
         ?string $phpType = null
-    ) {
+    ): string {
         return sprintf(
             "
 %s%s = %s%s->lastInsertId(%s);",
@@ -1543,7 +1529,7 @@ if (is_resource($columnValueAccessor)) {
     }
 
     /**
-     * Returns a integer indexed array of default type sizes.
+     * Returns an integer indexed array of default type sizes.
      *
      * @return array<int> type indexed array of integers
      */
@@ -1596,7 +1582,9 @@ if (is_resource($columnValueAccessor)) {
         }
 
         foreach ($table->getColumns() as $column) {
-            if ($column->getSize() && $defaultSize = $this->getDefaultTypeSize($column->getType())) {
+            $defaultSize = $this->getDefaultTypeSize($column->getType());
+
+            if ($column->getSize() && $defaultSize) {
                 if ($column->getScale() === null && (int)$column->getSize() === $defaultSize) {
                     $column->setSize(null);
                 }

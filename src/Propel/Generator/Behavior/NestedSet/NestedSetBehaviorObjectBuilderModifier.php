@@ -397,8 +397,6 @@ public function getScopeValue(): int
      */
     protected function addSetRight(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the right value of the nested set model.
@@ -423,8 +421,6 @@ public function setRightValue(int \$v)
      */
     protected function addSetLevel(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the level value of the nested set model.
@@ -449,8 +445,6 @@ public function setLevel(int \$v)
      */
     protected function addSetScope(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Proxy setter method for the scope value of the nested set model.
@@ -475,8 +469,6 @@ public function setScopeValue(int \$v)
      */
     protected function addMakeRoot(string &$script): void
     {
-        $objectClassName = $this->builder->getObjectClassName();
-
         $script .= "
 /**
  * Creates the supplied node as the root node.
@@ -1082,7 +1074,7 @@ public function getLastChild(?Criteria \$criteria = null, ?ConnectionInterface \
 public function getSiblings(\$includeNode = false, ?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isRoot()) {
-        return array();
+        return [];
     } else {
         \$query = $queryClassName::create(null, \$criteria)
             ->childrenOf(\$this->getParent(\$con))
@@ -1118,7 +1110,7 @@ public function getSiblings(\$includeNode = false, ?Criteria \$criteria = null, 
 public function getDescendants(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (\$this->isLeaf()) {
-        return array();
+        return [];
     } else {
         return $queryClassName::create(null, \$criteria)
             ->descendantsOf(\$this)
@@ -1211,7 +1203,7 @@ public function getAncestors(?Criteria \$criteria = null, ?ConnectionInterface \
 {
     if (\$this->isRoot()) {
         // save one query
-        return array();
+        return [];
     } else {
         return $queryClassName::create(null, \$criteria)
             ->ancestorsOf(\$this)

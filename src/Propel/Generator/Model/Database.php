@@ -357,7 +357,7 @@ class Database extends ScopedMappingModel
         $formats = static::getSupportedStringFormats();
 
         $format = strtoupper($format);
-        if (!in_array($format, $formats)) {
+        if (!in_array($format, $formats, true)) {
             throw new InvalidArgumentException(sprintf('Given "%s" default string format is not supported. Only "%s" are valid string formats.', $format, implode(', ', $formats)));
         }
 
@@ -643,7 +643,8 @@ class Database extends ScopedMappingModel
     public function removeSequence(string $sequence): void
     {
         if ($this->sequences) {
-            if (($idx = array_search($sequence, $this->sequences)) !== false) {
+            $idx = array_search($sequence, $this->sequences);
+            if ($idx !== false) {
                 unset($this->sequences[$idx]);
             }
         }
@@ -656,7 +657,7 @@ class Database extends ScopedMappingModel
      */
     public function hasSequence(string $sequence): bool
     {
-        return $this->sequences && in_array($sequence, $this->sequences);
+        return $this->sequences && in_array($sequence, $this->sequences, true);
     }
 
     /**

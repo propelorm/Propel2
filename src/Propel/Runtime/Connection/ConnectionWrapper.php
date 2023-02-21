@@ -326,7 +326,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function inTransaction(): bool
     {
-        return (bool)$this->connection->inTransaction();
+        return $this->connection->inTransaction();
     }
 
     /**
@@ -403,8 +403,6 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     public function prepare(string $statement, array $driverOptions = [])
     {
-        $statementWrapper = null;
-
         if ($this->isCachePreparedStatements && isset($this->cachedPreparedStatements[$statement])) {
             $statementWrapper = $this->cachedPreparedStatements[$statement];
         } else {
@@ -668,7 +666,7 @@ class ConnectionWrapper implements ConnectionInterface, LoggerAwareInterface
      */
     protected function isLogEnabledForMethod(string $methodName): bool
     {
-        return in_array($methodName, $this->getLogMethods());
+        return in_array($methodName, $this->getLogMethods(), true);
     }
 
     /**

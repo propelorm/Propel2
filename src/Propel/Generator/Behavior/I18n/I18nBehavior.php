@@ -125,13 +125,15 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return array<\Propel\Generator\Model\Column>
+     * @return list<\Propel\Generator\Model\Column>
      */
     public function getI18nColumns(): array
     {
         $columns = [];
         $i18nTable = $this->getI18nTable();
-        if ($columnNames = $this->getI18nColumnNamesFromConfig()) {
+        $columnNames = $this->getI18nColumnNamesFromConfig();
+
+        if ($columnNames) {
             // Strategy 1: use the i18n_columns parameter
             foreach ($columnNames as $columnName) {
                 /** @var \Propel\Generator\Model\Column $column */
@@ -380,13 +382,16 @@ class I18nBehavior extends Behavior
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     protected function getI18nColumnNamesFromConfig(): array
     {
         $columnNames = explode(',', $this->getParameter('i18n_columns'));
+
         foreach ($columnNames as $key => $columnName) {
-            if ($columnName = trim($columnName)) {
+            $columnName = trim($columnName);
+
+            if ($columnName) {
                 $columnNames[$key] = $columnName;
             } else {
                 unset($columnNames[$key]);

@@ -17,23 +17,13 @@
     <rule ref="vendor/spryker/code-sniffer/SprykerStrict/ruleset.xml">
         <exclude name="SprykerStrict.TypeHints.ParameterTypeHint"/>
         <exclude name="SprykerStrict.TypeHints.PropertyTypeHint"/>
+        <exclude name="SprykerStrict.TypeHints.ReturnTypeHint"/>
     </rule>
 
-    <!-- exclude for now -->
-    <rule ref="Spryker.ControlStructures.NoInlineAssignment">
-        <severity>0</severity>
+    <rule ref="Spryker.Internal.SprykerDisallowFunctions">
+        <properties>
+            <!-- We want to prevent 8.0+ functions to break 7.4 compatibility -->
+            <property name="phpVersion" value="7.4"/>
+        </properties>
     </rule>
-    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.AssignmentInCondition">
-        <severity>0</severity>
-    </rule>
-    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Generic.PHP.NoSilencedErrors">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.PHP.Eval">
-        <severity>0</severity>
-    </rule>
-
 </ruleset>

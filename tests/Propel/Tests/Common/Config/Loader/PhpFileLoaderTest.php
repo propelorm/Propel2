@@ -52,7 +52,7 @@ class PhpFileLoaderTest extends TestCase
         $content = <<<EOF
 <?php
 
-    return array('foo' => 'bar', 'bar' => 'baz');
+    return ['foo' => 'bar', 'bar' => 'baz'];
 
 EOF;
         $this->newFile('parameters.php', $content);
@@ -115,7 +115,7 @@ EOF;
         $content = <<<EOF
 <?php
 
-    return array('foo' => 'bar', 'bar' => 'baz');
+    return ['foo' => 'bar', 'bar' => 'baz'];
 
 EOF;
 
