@@ -2288,4 +2288,18 @@ class Table extends ScopedMappingModel implements IdMethod
 
         return null;
     }
+
+    /**
+     * Check if there is a FK rellation between the current table and the given
+     * table in either direction.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return bool
+     */
+    public function isConnectedWithTable(Table $table): bool
+    {
+        return $this->getForeignKeysReferencingTable($table->getName()) ||
+            $table->getForeignKeysReferencingTable($this->getName());
+    }
 }
