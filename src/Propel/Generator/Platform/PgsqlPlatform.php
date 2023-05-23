@@ -10,6 +10,7 @@ namespace Propel\Generator\Platform;
 
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\TableDiff;
@@ -515,6 +516,16 @@ DROP TABLE IF EXISTS %s CASCADE;
             }
         } else {
             $ddl[] = $sqlType;
+        }
+
+        if (
+            $col->getDefaultValue()
+            && $col->getDefaultValue()->isExpression()
+            && $col->getDefaultValue()->getValue() === 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+        ) {
+            $col->setDefaultValue(
+                new ColumnDefaultValue('CURRENT_TIMESTAMP', ColumnDefaultValue::TYPE_EXPR),
+            );
         }
 
         $default = $this->getColumnDefaultValueDDL($col);
