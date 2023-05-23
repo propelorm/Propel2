@@ -297,7 +297,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             }
             if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
                 $default = 'CURRENT_TIMESTAMP';
-                if (strpos(strtolower($extra), 'on update current_timestamp()') !== false) {
+                if (strpos(strtolower($extra), 'on update current_timestamp') !== false) {
                     $default = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
                 }
                 $type = ColumnDefaultValue::TYPE_EXPR;
