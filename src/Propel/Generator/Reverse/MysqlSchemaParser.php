@@ -264,8 +264,6 @@ class MysqlSchemaParser extends AbstractSchemaParser
         // BLOBs can't have any default values in MySQL
         $default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
 
-        $extra = $row['Extra'];
-
         $propelType = $this->getMappedPropelType($nativeType);
         if (!$propelType) {
             $propelType = Column::DEFAULT_TYPE;
@@ -297,7 +295,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
             }
             if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
                 $default = 'CURRENT_TIMESTAMP';
-                if (strpos(strtolower($extra), 'on update current_timestamp') !== false) {
+                if (strpos(strtolower($row['Extra']), 'on update current_timestamp') !== false) {
                     $default = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
                 }
                 $type = ColumnDefaultValue::TYPE_EXPR;
