@@ -55,6 +55,27 @@ class DatabaseMap
     protected $tablesByPhpName = [];
 
     /**
+     * True if all tables were loaded.
+     *
+     * @var bool
+     */
+    protected $areTablesLoaded = false;
+
+    /**
+     * Holds all registered tables.
+     *
+     * @var array<int, class-string<\Propel\Runtime\Map\TableMap>>
+     */
+    protected $registeredTables = [];
+
+    /**
+     * Shows if the table was successfully resolved by its name.
+     *
+     * @var array<string, bool>
+     */
+    protected $resolvedTableNames = [];
+
+    /**
      * @param string $name Name of the database.
      */
     public function __construct(string $name)
@@ -225,7 +246,49 @@ class DatabaseMap
      */
     public function registerTableMapClasses(array $tableMapClasses): void
     {
-        array_map([$this, 'registerTableMapClass'], $tableMapClasses);
+        $this->registeredTables = array_unique(array_merge($this->registeredTables, $tableMapClasses));
+    }
+
+    /**
+     * Tries to resolve a table by the name via PHP name class.
+     *
+     * @param string $name The String representation of the table.
+     *
+     * @return bool if the table was resolved by the name
+     */
+    protected function loadTableMap(string $name): bool
+    {
+        if ($this->areTablesLoaded) {
+            return true;
+        }
+        if (isset($this->resolvedTableNames[$name])) {
+            return $this->resolvedTableNames[$name];
+        }
+        $className = ucfirst(str_replace('_', '', ucwords($name, '_')));
+        $className .= 'TableMap';
+        $results = array_filter($this->registeredTables, function ($registeredTableName) use ($className) {
+            return substr($registeredTableName, -strlen($className)) === $className;
+        });
+
+        array_map([$this, 'registerTableMapClass'], $results);
+        $this->resolvedTableNames[$name] = count($results) > 0;
+
+        return $this->resolvedTableNames[$name];
+    }
+
+    /**
+     * Loads all registered tables classes and fills in name and PHP name lookup indices.
+     *
+     * @return void
+     */
+    protected function loadTableMaps(): void
+    {
+        if ($this->areTablesLoaded) {
+            return;
+        }
+
+        array_map([$this, 'registerTableMapClass'], $this->registeredTables);
+        $this->areTablesLoaded = true;
     }
 
     /**
@@ -241,7 +304,11 @@ class DatabaseMap
             $name = substr($name, 0, strpos($name, '.'));
         }
 
-        return isset($this->tables[$name]);
+        if (isset($this->tables[$name])) {
+            return true;
+        }
+
+        return $this->loadTableMap($name) && isset($this->tables[$name]);
     }
 
     /**
@@ -256,7 +323,14 @@ class DatabaseMap
     public function getTable(string $name): TableMap
     {
         if (!isset($this->tables[$name])) {
-            throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
+            $this->loadTableMap($name);
+            if (!isset($this->tables[$name])) {
+                $this->loadTableMaps();
+            }
+
+            if (!isset($this->tables[$name])) {
+                throw new TableNotFoundException(sprintf('Cannot fetch TableMap for undefined table `%s` in database `%s`.', $name, $this->getName()));
+            }
         }
 
         $tableOrClass = $this->tables[$name];
