@@ -105,7 +105,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     }
 
     /**
-     * @param array|null $params
+     * @param array<mixed>|null $params
      * @param array<string> $sourceTableNames
      * @param array<string> $joinClause
      *
