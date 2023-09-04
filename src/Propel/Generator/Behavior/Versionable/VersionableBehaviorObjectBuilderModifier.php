@@ -343,9 +343,8 @@ public function isVersioningNecessary(?ConnectionInterface \$con = null): bool
     if ({$queryClassName}::isVersioningEnabled() && (\$this->isNew() || \$this->isModified()) || \$this->isDeleted()) {
         return true;
     }";
-        $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
-            $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural);
+            $fkGetter = $this->builder->getFKPhpNameAffix($fk);
             $script .= "
     if (null !== (\$object = \$this->get{$fkGetter}(\$con)) && \$object->isVersioningNecessary(\$con)) {
         return true;
@@ -428,9 +427,8 @@ public function addVersion(?ConnectionInterface \$con = null)
         }
         $script .= "
     \$version->set{$this->table->getPhpName()}(\$this);";
-        $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
-            $fkGetter = $this->builder->getFKPhpNameAffix($fk, $plural);
+            $fkGetter = $this->builder->getFKPhpNameAffix($fk);
             $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
             $fkVersionColumnPhpName = $versionTable->getColumn($fkVersionColumnName)->getPhpName();
             $script .= "
@@ -534,7 +532,6 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $script .= "
     \$this->set" . $col->getPhpName() . '($version->get' . $col->getPhpName() . '());';
         }
-        $plural = false;
         foreach ($this->behavior->getVersionableFks() as $fk) {
             $foreignTable = $fk->getForeignTable();
 
@@ -546,7 +543,7 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
             $fkColumnName = $fk->getLocalColumnName();
             $fkColumnPhpName = $fk->getLocalColumn()->getPhpName();
             $fkVersionColumnPhpName = $versionTable->getColumn($fkColumnName . '_version')->getPhpName();
-            $fkPhpname = $this->builder->getFKPhpNameAffix($fk, $plural);
+            $fkPhpname = $this->builder->getFKPhpNameAffix($fk);
             // FIXME: breaks lazy-loading
             $script .= "
     if (\$fkValue = \$version->get{$fkColumnPhpName}()) {
@@ -564,11 +561,9 @@ public function populateFromVersion(\$version, \$con = null, &\$loadedObjects = 
         \$this->set{$fkPhpname}(\$related);
     }";
         }
-        $plural = true;
         foreach ($this->behavior->getVersionableReferrers() as $fk) {
-            $fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, $plural);
-            $plural = false;
-            $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk, $plural);
+            $fkPhpNames = $this->builder->getRefFKPhpNameAffix($fk, true);
+            $fkPhpName = $this->builder->getRefFKPhpNameAffix($fk);
             $foreignTable = $fk->getTable();
             /** @var \Propel\Generator\Behavior\Versionable\VersionableBehavior $foreignBehavior */
             $foreignBehavior = $foreignTable->getBehavior($this->behavior->getId());
@@ -872,12 +867,11 @@ public function compareVersions(int \$fromVersionNumber, int \$toVersionNumber, 
      */
     protected function addGetLastVersions(string &$script): void
     {
-        $plural = true;
         $versionTable = $this->behavior->getVersionTable();
         $versionARClassName = $this->builder->getNewStubObjectBuilder($versionTable)->getClassName();
         $versionTableMapClassName = $this->builder->getClassNameFromBuilder($this->builder->getNewTableMapBuilder($versionTable));
         $fks = $versionTable->getForeignKeysReferencingTable($this->table->getName());
-        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], $plural);
+        $relCol = $this->builder->getRefFKPhpNameAffix($fks[0], true);
         $versionGetter = 'get' . $relCol;
         $colPrefix = Column::CONSTANT_PREFIX;
 

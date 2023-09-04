@@ -50,7 +50,7 @@ abstract class AbstractParser
      */
     public function listFromArray(array $array, ?string $rootKey = 'data'): string
     {
-        return $this->fromArray($array, $rootKey);
+        return $this->fromArray($array, (string)$rootKey);
     }
 
     /**

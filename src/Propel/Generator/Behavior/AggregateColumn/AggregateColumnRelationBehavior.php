@@ -194,9 +194,7 @@ protected \$old{$relationName}{$aggregateName};
      */
     public function queryMethods(AbstractOMBuilder $builder): string
     {
-        $script = '';
-
-        $script .= $this->addQueryFindRelated($builder);
+        $script = $this->addQueryFindRelated($builder);
         $script .= $this->addQueryUpdateRelated($builder);
 
         return $script;

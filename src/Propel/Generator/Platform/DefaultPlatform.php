@@ -177,9 +177,9 @@ class DefaultPlatform implements PlatformInterface
     {
         $reflectionClass = new ReflectionClass($this);
         $platformShortName = $reflectionClass->getShortName();
-        $length = strpos($platformShortName, 'Platform') ?: null;
+        $pos = strpos($platformShortName, 'Platform') ?: null;
 
-        return strtolower(substr($platformShortName, 0, $length));
+        return strtolower(substr($platformShortName, 0, $pos));
     }
 
     /**
