@@ -1184,9 +1184,9 @@ class Criteria
      * Add a join object to the Criteria
      *
      * @param \Propel\Runtime\ActiveQuery\Join $join A join object
-     * @param string $join A name for the join
+     * @param string|null $name
      *
-     * @return $this A modified Criteria object
+     * @return $this The current object, for fluid interface
      */
     public function addJoinObject(Join $join, ?string $name = null)
     {

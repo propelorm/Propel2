@@ -726,29 +726,6 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Add a join object to the Criteria
-     *
-     * @see Criteria::addJoinObject()
-     *
-     * @param \Propel\Runtime\ActiveQuery\Join $join A join object
-     * @param string|null $name
-     *
-     * @return $this The current object, for fluid interface
-     */
-    public function addJoinObject(Join $join, ?string $name = null)
-    {
-        if (!in_array($join, $this->joins)) { // compare equality, NOT identity
-            if ($name === null) {
-                $this->joins[] = $join;
-            } else {
-                $this->joins[$name] = $join;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Adds a JOIN clause to the query and hydrates the related objects
      * Shortcut for $c->join()->with()
      * <code>
