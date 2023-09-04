@@ -1088,11 +1088,10 @@ class Criteria
 
         $join->setJoinType($joinType);
 
-        if ($leftTableAlias !== null) {
-            $this->addJoinObject($join, $leftTableAlias);
-        }
-        else {
-            $this->addJoinObject($join, $leftTableName);
+        if ($rightTableAlias !== null) {
+            $this->addJoinObject($join, $rightTableAlias);
+        } else {
+            $this->addJoinObject($join, $rightTableName);
         }
 
         return $this;
@@ -1172,11 +1171,10 @@ class Criteria
         $join->setJoinType($joinType);
         $join->setJoinCondition($joinCondition);
 
-        if ($join->getLeftTableAlias()) {
-            $this->addJoinObject($join, $join->getLeftTableAlias());
-        }
-        else {
-            $this->addJoinObject($join, $join->getLeftTableName());
+        if ($join->getRightTableAlias()) {
+            $this->addJoinObject($join, $join->getRightTableAlias());
+        } else {
+            $this->addJoinObject($join, $join->getRightTableName());
         }
 
         return $this;
