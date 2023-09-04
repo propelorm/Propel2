@@ -1088,7 +1088,12 @@ class Criteria
 
         $join->setJoinType($joinType);
 
-        $this->addJoinObject($join);
+        if ($leftTableAlias !== null) {
+            $this->addJoinObject($join, $leftTableAlias);
+        }
+        else {
+            $this->addJoinObject($join, $leftTableName);
+        }
 
         return $this;
     }
@@ -1167,7 +1172,12 @@ class Criteria
         $join->setJoinType($joinType);
         $join->setJoinCondition($joinCondition);
 
-        $this->addJoinObject($join);
+        if ($join->getLeftTableAlias()) {
+            $this->addJoinObject($join, $join->getLeftTableAlias());
+        }
+        else {
+            $this->addJoinObject($join, $join->getLeftTableName());
+        }
 
         return $this;
     }
@@ -1176,13 +1186,18 @@ class Criteria
      * Add a join object to the Criteria
      *
      * @param \Propel\Runtime\ActiveQuery\Join $join A join object
+     * @param string $join A name for the join
      *
      * @return $this A modified Criteria object
      */
-    public function addJoinObject(Join $join)
+    public function addJoinObject(Join $join, ?string $name = null)
     {
         if (!in_array($join, $this->joins)) { // compare equality, NOT identity
-            $this->joins[] = $join;
+            if ($name === null) {
+                $this->joins[] = $join;
+            } else {
+                $this->joins[$name] = $join;
+            }
         }
 
         return $this;
