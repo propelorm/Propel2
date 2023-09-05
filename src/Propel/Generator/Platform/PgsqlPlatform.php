@@ -371,8 +371,7 @@ COMMIT;
      */
     public function getAddTableDDL(Table $table): string
     {
-        $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
+        $ret = $this->getUseSchemaDDL($table);
         $ret .= $this->getAddSequenceDDL($table);
 
         $lines = [];
@@ -464,8 +463,7 @@ COMMENT ON COLUMN %s.%s IS %s;
      */
     public function getDropTableDDL(Table $table): string
     {
-        $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
+        $ret = $this->getUseSchemaDDL($table);
         $pattern = "
 DROP TABLE IF EXISTS %s CASCADE;
 ";

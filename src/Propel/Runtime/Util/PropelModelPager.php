@@ -68,7 +68,7 @@ class PropelModelPager implements IteratorAggregate, Countable
     protected $results;
 
     /**
-     * @var \Propel\Runtime\Connection\ConnectionInterface
+     * @var \Propel\Runtime\Connection\ConnectionInterface|null
      */
     protected $con;
 

@@ -136,7 +136,7 @@ class DatabaseMap
         $table = new $tableMapClass();
         $this->addTableObject($table);
 
-        return $this->getTable($table->getName());
+        return $this->getTable((string)$table->getName());
     }
 
     /**

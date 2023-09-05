@@ -1740,6 +1740,6 @@ class Column extends MappingModel
     {
         $contentAttribute = $this->getAttribute('content');
 
-        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($contentAttribute);
+        return $contentAttribute && strtoupper($contentAttribute) === strtoupper($content);
     }
 }

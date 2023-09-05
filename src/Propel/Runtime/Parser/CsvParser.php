@@ -252,7 +252,7 @@ class CsvParser extends AbstractParser
                 }
             }
         } else {
-            $values = $this->cleanupRow($this->getColumns(array_shift($rows)));
+            $values = $this->cleanupRow($this->getColumns((string)array_shift($rows)));
             if ($keys === [''] && $values === []) {
                 $array = [];
             } else {

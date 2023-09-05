@@ -8,8 +8,6 @@
 
 namespace Propel\Generator\Model;
 
-use Propel\Generator\Exception\EngineException;
-
 /**
  * A <code>NameGeneratorInterface</code> implementation for table-specific
  * constraints. Conforms to the maximum column name length for the
@@ -39,8 +37,6 @@ class ConstraintNameGenerator implements NameGeneratorInterface
      *
      * @param array $inputs An array of input parameters
      *
-     * @throws \Propel\Generator\Exception\EngineException
-     *
      * @return string
      */
     public function generateName(array $inputs): string
@@ -52,12 +48,8 @@ class ConstraintNameGenerator implements NameGeneratorInterface
         $constraintNbr = (string)$inputs[3];
 
         // Calculate maximum RDBMS-specific column character limit.
-        try {
-            $maxColumnNameLength = $db->getMaxColumnNameLength();
-            $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
-        } catch (EngineException $e) {
-            throw $e;
-        }
+        $maxColumnNameLength = $db->getMaxColumnNameLength();
+        $maxBodyLength = ($maxColumnNameLength - strlen($namePostfix) - strlen($constraintNbr) - 2);
 
         // Do any necessary trimming.
         if ($maxBodyLength !== -1 && strlen($name) > $maxBodyLength) {

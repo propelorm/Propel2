@@ -220,8 +220,7 @@ class AggregateMultipleColumnsBehavior extends Behavior
      */
     public function objectMethods(ObjectBuilder $builder): string
     {
-        $script = '';
-        $script .= $this->addObjectCompute($builder);
+        $script = $this->addObjectCompute($builder);
         $script .= $this->addObjectUpdate();
 
         return $script;

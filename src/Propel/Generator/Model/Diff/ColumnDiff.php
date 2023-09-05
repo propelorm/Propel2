@@ -151,8 +151,7 @@ class ColumnDiff
      */
     public function __toString(): string
     {
-        $ret = '';
-        $ret .= sprintf("      %s:\n", $this->fromColumn->getFullyQualifiedName());
+        $ret = sprintf("      %s:\n", $this->fromColumn->getFullyQualifiedName());
         $ret .= "        modifiedProperties:\n";
         foreach ($this->changedProperties as $key => $value) {
             $ret .= sprintf("          %s: %s\n", $key, json_encode($value));

@@ -113,8 +113,7 @@ if (\$this->archiveOnUpdate) {
      */
     public function queryMethods(AbstractOMBuilder $builder): string
     {
-        $script = '';
-        $script .= $this->addArchive($builder);
+        $script = $this->addArchive($builder);
         if ($this->behavior->isArchiveOnUpdate()) {
             $script .= $this->addSetArchiveOnUpdate($builder);
             $script .= $this->addUpdateWithoutArchive($builder);

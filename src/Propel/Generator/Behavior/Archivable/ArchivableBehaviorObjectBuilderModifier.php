@@ -142,8 +142,7 @@ class ArchivableBehaviorObjectBuilderModifier
     public function objectMethods(AbstractOMBuilder $builder): string
     {
         $this->builder = $builder;
-        $script = '';
-        $script .= $this->addGetArchive($builder);
+        $script = $this->addGetArchive($builder);
         $script .= $this->addArchive($builder);
         $script .= $this->addRestoreFromArchive($builder);
         $script .= $this->addPopulateFromArchive($builder);
