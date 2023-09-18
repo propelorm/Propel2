@@ -314,6 +314,7 @@ class TableMapBuilderTest extends BookstoreTestBase
                 'update_column' => 'updated_on',
                 'disable_created_at' => 'false',
                 'disable_updated_at' => 'false',
+                'is_timestamp' => 'true'
             ],
         ];
         $this->assertEquals(
