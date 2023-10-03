@@ -65,7 +65,7 @@ abstract class AbstractModelCriterion extends AbstractCriterion
             return true;
         }
 
-        if ($obj === null || !($obj instanceof AbstractModelCriterion)) {
+        if (!$obj instanceof AbstractModelCriterion) {
             return false;
         }
 

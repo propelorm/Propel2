@@ -87,11 +87,6 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
 
         $fictionMetadatas = $fictionMetadata->getPropertyMetadata('isbn');
 
-        // 1st is for ValidateTriggerFiction (base)
-        // 2nd is for ValidateTriggerBook (base)
-        // I'm not sure if this is needed. We should not care about validator internals
-        $this->assertCount(2, $fictionMetadatas);
-
         $expectedValidatorGroups = [
             'ValidateTriggerFiction',
             'ValidateTriggerBook',

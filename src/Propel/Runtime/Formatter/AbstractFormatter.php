@@ -107,7 +107,7 @@ abstract class AbstractFormatter
     public function init(BaseModelCriteria $criteria, ?DataFetcherInterface $dataFetcher = null)
     {
         $this->dbName = $criteria->getDbName();
-        $this->setClass($criteria->getModelName());
+        $this->setClass((string)$criteria->getModelName());
         $this->setWith($criteria->getWith());
         $this->asColumns = $criteria->getAsColumns();
         $this->hasLimit = $criteria->getLimit() != -1;
@@ -224,7 +224,7 @@ abstract class AbstractFormatter
         if ($class) {
             /** @var \Propel\Runtime\Collection\Collection $collection */
             $collection = new $class();
-            $collection->setModel($this->class);
+            $collection->setModel((string)$this->class);
             $collection->setFormatter($this);
         }
 
@@ -289,7 +289,7 @@ abstract class AbstractFormatter
      */
     public function getTableMap(): TableMap
     {
-        return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName($this->class);
+        return Propel::getServiceContainer()->getDatabaseMap($this->dbName)->getTableByPhpName((string)$this->class);
     }
 
     /**

@@ -151,7 +151,6 @@ class DelegateBehavior extends Behavior
      */
     public function objectCall(ObjectBuilder $builder): string
     {
-        $plural = false;
         $script = '';
         foreach ($this->delegates as $delegate => $type) {
             $delegateTable = $this->getDelegateTable($delegate);
@@ -160,7 +159,7 @@ class DelegateBehavior extends Behavior
                 $fk = $fks[0];
                 $ARClassName = $builder->getClassNameFromBuilder($builder->getNewStubObjectBuilder($fk->getTable()));
                 $ARFQCN = $builder->getNewStubObjectBuilder($fk->getTable())->getFullyQualifiedClassName();
-                $relationName = $builder->getRefFKPhpNameAffix($fk, $plural);
+                $relationName = $builder->getRefFKPhpNameAffix($fk);
             } else {
                 $fks = $this->getTable()->getForeignKeysReferencingTable($delegate);
                 $fk = $fks[0];
