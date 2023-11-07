@@ -6349,7 +6349,19 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-            if (\$this->isNew() || \$this->isModified()) {
+            if (\$this->isNew() || \$this->isModified()) {";
+
+        foreach ($table->getColumns() as $col) {
+            // Update primary key values cache
+            if ($col->isPrimaryKey()) {
+                $clo = $col->getLowercasedName();
+                $script .= "
+                \$this->primaryKeyValues['$clo'] = \$this->$clo;
+                ";
+            }
+        }
+
+        $script .= "
                 // persist changes
                 if (\$this->isNew()) {
                     \$this->doInsert(\$con);
@@ -6382,13 +6394,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     rewind(\$this->$clo);
                 }
 ";
-            }
-
-            // Update primary key values cache
-            if ($col->isPrimaryKey()) {
-                $script .= "
-                \$this->primaryKeyValues['$clo'] = \$this->$clo;
-                ";
             }
         }
 
