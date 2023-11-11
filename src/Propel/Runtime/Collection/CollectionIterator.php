@@ -248,9 +248,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param int $flags Not used
      *
-     * @return bool
+     * @return true
      */
-    public function asort(int $flags = SORT_REGULAR): bool
+    public function asort(int $flags = SORT_REGULAR): true
     {
         parent::asort();
         $this->refreshPositions();
@@ -261,9 +261,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param int $flags Not used
      *
-     * @return bool
+     * @return true
      */
-    public function ksort(int $flags = SORT_REGULAR): bool
+    public function ksort(int $flags = SORT_REGULAR): true
     {
         parent::ksort();
         $this->refreshPositions();
@@ -274,9 +274,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param callable $callback
      *
-     * @return bool
+     * @return true
      */
-    public function uasort($callback): bool
+    public function uasort($callback): true
     {
         parent::uasort($callback);
         $this->refreshPositions();
@@ -287,9 +287,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param callable $callback
      *
-     * @return bool
+     * @return true
      */
-    public function uksort($callback): bool
+    public function uksort($callback): true
     {
         parent::uksort($callback);
         $this->refreshPositions();
@@ -298,9 +298,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @return bool
+     * @return true
      */
-    public function natsort(): bool
+    public function natsort(): true
     {
         parent::natsort();
         $this->refreshPositions();
@@ -309,9 +309,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @return bool
+     * @return true
      */
-    public function natcasesort(): bool
+    public function natcasesort(): true
     {
         parent::natcasesort();
         $this->refreshPositions();
