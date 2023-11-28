@@ -206,7 +206,7 @@ class Column extends MappingModel
     private $isEnumeratedClasses = false;
 
     /**
-     * @var array|null
+     * @var array<\Propel\Generator\Model\Inheritance>|null
      */
     private $inheritanceList;
 
@@ -845,7 +845,7 @@ class Column extends MappingModel
     /**
      * Returns the inheritance list.
      *
-     * @return array|null
+     * @return array<\Propel\Generator\Model\Inheritance>|null
      */
     public function getInheritanceList(): ?array
     {
@@ -855,11 +855,11 @@ class Column extends MappingModel
     /**
      * Returns the inheritance definitions.
      *
-     * @return array|null
+     * @return array<\Propel\Generator\Model\Inheritance>|null
      */
     public function getChildren(): ?array
     {
-        return $this->inheritanceList;
+        return $this->getInheritanceList();
     }
 
     /**
