@@ -16,13 +16,16 @@ class UuidConverter
     /**
      * Transforms a UUID string to a binary string.
      *
-     * @param string $uuid
+     * @param string|null $uuid
      * @param bool $swapFlag Swap first four bytes for better indexing of version-1 UUIDs (@link https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_uuid-to-bin)
      *
-     * @return string
+     * @return string|null
      */
-    public static function uuidToBin(string $uuid, bool $swapFlag = true): string
+    public static function uuidToBin(?string $uuid, bool $swapFlag = true): ?string
     {
+        if (!$uuid) {
+            return null;
+        }
         $rawHex = (!$swapFlag)
             ? str_replace('-', '', $uuid)
             : preg_replace(
@@ -37,13 +40,16 @@ class UuidConverter
     /**
      * Transforms a binary string to a UUID string.
      *
-     * @param string $bin
+     * @param string|null $bin
      * @param bool $swapFlag Assume bytes were swapped (@link https://dev.mysql.com/doc/refman/8.0/en/miscellaneous-functions.html#function_bin-to-uuid)
      *
-     * @return string
+     * @return string|null
      */
-    public static function binToUuid(string $bin, bool $swapFlag = true): string
+    public static function binToUuid(?string $bin, bool $swapFlag = true): ?string
     {
+        if (!$bin) {
+            return null;
+        }
         $rawHex = bin2hex($bin);
         $recombineFormat = $swapFlag ? '$3$4-$2-$1-$5-$6' : '$1$2-$3-$4-$5-$6';
 
