@@ -12,6 +12,7 @@ use PDO;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
+use Propel\Generator\Model\Domain;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
@@ -62,10 +63,10 @@ class MysqlSchemaParser extends AbstractSchemaParser
         'blob' => PropelTypes::BLOB,
         'mediumblob' => PropelTypes::VARBINARY,
         'longblob' => PropelTypes::LONGVARBINARY,
-        'longtext' => PropelTypes::CLOB,
         'tinytext' => PropelTypes::VARCHAR,
-        'mediumtext' => PropelTypes::LONGVARCHAR,
         'text' => PropelTypes::LONGVARCHAR,
+        'mediumtext' => PropelTypes::LONGVARCHAR,
+        'longtext' => PropelTypes::CLOB,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
         'binary' => PropelTypes::BINARY,
@@ -220,9 +221,83 @@ class MysqlSchemaParser extends AbstractSchemaParser
      */
     public function getColumnFromRow(array $row, Table $table): Column
     {
-        $name = $row['Field'];
-        $isNullable = ($row['Null'] === 'YES');
-        $autoincrement = (strpos($row['Extra'], 'auto_increment') !== false);
+        [
+            'Field' => $columnName,
+            'Type' => $type,
+            'Null' => $null,
+            // 'Key' => $key,
+            'Default' => $default,
+            'Extra' => $extra,
+        ] = $row;
+
+        $column = new Column($columnName);
+        $column->setTable($table);
+
+        $domain = $this->extractTypeDomain($type, $default, $column->getFullyQualifiedName());
+        $column->setDomain($domain);
+
+        $autoincrement = (strpos($extra, 'auto_increment') !== false);
+        $column->setAutoIncrement($autoincrement);
+
+        $column->setNotNull($null === 'NO');
+
+        if ($this->addVendorInfo) {
+            $vi = $this->getNewVendorInfoObject($row);
+            $column->addVendorInfo($vi);
+        }
+
+        return $column;
+    }
+
+    /**
+     * @param string $typeDeclaration MySQL type declaration string (like "VARCHAR(16) CHARACTER SET utf8mb4", "INT UNSIGNED", etc)
+     * @param string|null $defaultValueLiteral Default value declaration
+     * @param string $columnName Used when printing warninga
+     *
+     * @return \Propel\Generator\Model\Domain
+     */
+    protected function extractTypeDomain(string $typeDeclaration, ?string $defaultValueLiteral, string $columnName): Domain
+    {
+        [$nativeType, $sqlType, $size, $scale] = $this->parseType($typeDeclaration);
+
+        $propelType = $this->getMappedPropelType($nativeType);
+        if (!$propelType) {
+            $propelType = Column::DEFAULT_TYPE;
+            $sqlType = $typeDeclaration;
+            $this->warn("Column [{$columnName}] has a column type ({$nativeType}) that Propel does not support.");
+        }
+
+        // Special case for TINYINT(1) which is a BOOLEAN
+        if ($propelType === PropelTypes::TINYINT && $size === 1) {
+            $propelType = PropelTypes::BOOLEAN;
+        }
+
+        $domain = clone $this->getPlatform()->getDomainForType($propelType);
+        if ($sqlType) {
+            $domain->replaceSqlType($sqlType);
+        } elseif (in_array(strtoupper($nativeType), ['TINYTEXT', 'MEDIUMTEXT', 'TINYBLOB'], true)) {
+            $domain->replaceSqlType(strtoupper($nativeType));
+        }
+        $domain->replaceSize($size);
+        $domain->replaceScale($scale);
+
+        $defaultValue = $this->extractDefaultValue($defaultValueLiteral, $propelType, $nativeType);
+        if ($defaultValue) {
+            $domain->setDefaultValue($defaultValue);
+        }
+
+        return $domain;
+    }
+
+    /**
+     * Parse values from a MySQL type declaration string.
+     *
+     * @param string $typeDeclaration MySQL type declaration string (like "VARCHAR(16) CHARACTER SET utf8mb4", "INT UNSIGNED", etc)
+     *
+     * @return list{string, string|false, ?int, ?int} Array with the extracted values (type name, type declaration with parameters or false, size, precision)
+     */
+    protected function parseType(string $typeDeclaration): array
+    {
         $size = null;
         $scale = null;
         $sqlType = false;
@@ -233,9 +308,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 ?([\d,]*)  # size or size, precision [2]
             [\)]         # )
             ?\s*         # whitespace
-            (\w*)        # extra description (UNSIGNED, CHARACTER SET, ...) [3]
+            ([\w ]*)     # extra description (UNSIGNED, CHARACTER SET, ...) [3]
         $/x';
-        if (preg_match($regexp, $row['Type'], $matches)) {
+        if (preg_match($regexp, $typeDeclaration, $matches)) {
             $nativeType = $matches[1];
             if ($matches[2]) {
                 $cpos = strpos($matches[2], ',');
@@ -247,69 +322,57 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 }
             }
             if ($matches[3]) {
-                $sqlType = $row['Type'];
+                $sqlType = $typeDeclaration;
             }
             if (isset(static::$defaultTypeSizes[$nativeType]) && $scale == null && $size === static::$defaultTypeSizes[$nativeType]) {
                 $size = null;
             }
-        } elseif (preg_match('/^(\w+)\(/', $row['Type'], $matches)) {
+        } elseif (preg_match('/^(\w+)\(/', $typeDeclaration, $matches)) {
             $nativeType = $matches[1];
             if ($nativeType === 'enum' || $nativeType === 'set') {
-                $sqlType = $row['Type'];
+                $sqlType = $typeDeclaration;
             }
         } else {
-            $nativeType = $row['Type'];
+            $nativeType = $typeDeclaration;
         }
 
+        return [$nativeType, $sqlType, $size, $scale];
+    }
+
+    /**
+     * @param string|null $parsedValue Default value declaration
+     * @param string $propelType Column type indicator from \Propel\Generator\Model\PropelTypes
+     * @param string $nativeType MySQL type name
+     *
+     * @return \Propel\Generator\Model\ColumnDefaultValue|null
+     */
+    protected function extractDefaultValue(?string $parsedValue, string $propelType, string $nativeType): ?ColumnDefaultValue
+    {
         // BLOBs can't have any default values in MySQL
-        $default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
+        $isBlob = preg_match('~blob|text~', $nativeType);
 
-        $propelType = $this->getMappedPropelType($nativeType);
-        if (!$propelType) {
-            $propelType = Column::DEFAULT_TYPE;
-            $sqlType = $row['Type'];
-            $this->warn('Column [' . $table->getName() . '.' . $name . '] has a column type (' . $nativeType . ') that Propel does not support.');
+        if ($parsedValue === null || $isBlob) {
+            return null;
         }
+        $default = $parsedValue;
 
-        // Special case for TINYINT(1) which is a BOOLEAN
-        if ($propelType === PropelTypes::TINYINT && $size === 1) {
-            $propelType = PropelTypes::BOOLEAN;
-        }
-
-        $column = new Column($name);
-        $column->setTable($table);
-        $column->setDomainForType($propelType);
-        if ($sqlType) {
-            $column->getDomain()->replaceSqlType($sqlType);
-        }
-        $column->getDomain()->replaceSize($size);
-        $column->getDomain()->replaceScale($scale);
-        if ($default !== null) {
-            if ($propelType == PropelTypes::BOOLEAN) {
-                if ($default == '1') {
-                    $default = 'true';
-                }
-                if ($default == '0') {
-                    $default = 'false';
-                }
+        if ($propelType == PropelTypes::BOOLEAN) {
+            if ($parsedValue == '1') {
+                $default = 'true';
             }
-            if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
-                $default = 'CURRENT_TIMESTAMP';
-                $type = ColumnDefaultValue::TYPE_EXPR;
-            } else {
-                $type = ColumnDefaultValue::TYPE_VALUE;
+            if ($parsedValue == '0') {
+                $default = 'false';
             }
-            $column->getDomain()->setDefaultValue(new ColumnDefaultValue($default, $type));
-        }
-        $column->setAutoIncrement($autoincrement);
-        $column->setNotNull(!$isNullable);
-
-        if ($this->addVendorInfo) {
-            $vi = $this->getNewVendorInfoObject($row);
-            $column->addVendorInfo($vi);
         }
 
-        return $column;
+        if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
+            $default = 'CURRENT_TIMESTAMP';
+            $type = ColumnDefaultValue::TYPE_EXPR;
+        } else {
+            $type = ColumnDefaultValue::TYPE_VALUE;
+        }
+
+        return new ColumnDefaultValue($default, $type);
     }
 
     /**
@@ -356,7 +419,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
     protected function loadTableDescription(Table $table): ?string
     {
         $tableName = $this->getPlatform()->quote($table->getName());
-        $query = <<< EOT
+        $query = <<<EOT
 SELECT table_comment
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema=DATABASE()
@@ -385,7 +448,7 @@ EOT;
     {
         $tableName = $this->getPlatform()->quote($column->getTableName());
         $columnName = $this->getPlatform()->quote($column->getName());
-        $query = <<< EOT
+        $query = <<<EOT
 SELECT column_comment
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE table_schema=DATABASE()

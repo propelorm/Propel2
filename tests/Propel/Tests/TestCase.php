@@ -125,4 +125,43 @@ class TestCase extends PHPUnitTestCase
 
         return $obj;
     }
+
+    /**
+     * Run private or preotected method.
+     *
+     * @see https://stackoverflow.com/questions/249664/best-practices-to-test-protected-methods-with-phpunit
+     * 
+     * @param object $obj Instance with protected or private methods
+     * @param string $name Name of the protected or private method
+     * @param array $args Argumens for method
+     * @return mixed Result of method call
+     */
+    public function callMethod(object $obj, string $name, array $args = [])
+    {
+        $class = new \ReflectionClass($obj);
+        $method = $class->getMethod($name);
+        if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+            $method->setAccessible(true); // Use this if you are running PHP older than 8.1.0
+        }
+        return $method->invokeArgs($obj, $args);
+    }
+
+
+    /**
+     * Set private or preotected property
+     * 
+     * @param object $obj Instance with protected or private property
+     * @param string $name Name of the protected or private property
+     * @param mixed $value New value for property
+     * @return void
+     */
+    public function setProperty(object $obj, string $name, $value): void
+    {
+        $reflection = new \ReflectionClass($obj);
+        $property = $reflection->getProperty($name);
+        if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+            $property->setAccessible(true);
+        }
+        $property->setValue($obj, $value);
+    }
 }

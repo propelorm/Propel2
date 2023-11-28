@@ -9,6 +9,9 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use PDO;
+use Propel\Generator\Config\QuickGeneratorConfig;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
@@ -43,7 +46,7 @@ class MysqlSchemaParserTest extends AbstractSchemaParserTest
      */
     public function testParseImportsAllTables(): void
     {
-        $query = <<< EOT
+        $query = <<<EOT
 SELECT table_name
 FROM INFORMATION_SCHEMA.TABLES
 WHERE table_schema=DATABASE()
@@ -80,5 +83,60 @@ EOT;
         $bookTable = $this->parsedDatabase->getTable('book');
         $this->assertEquals('Book Table', $bookTable->getDescription());
         $this->assertEquals('Book Title', $bookTable->getColumn('title')->getDescription());
+    }
+
+    public function typeLiterals()
+    {
+        return [
+            // input type literal, out native type, out sql, out size, out precision
+            ['int', 'int', false, null, null],
+            ["set('foo', 'bar')", 'set', "set('foo', 'bar')", null, null],
+            ["enum('foo', 'bar')", 'enum', "enum('foo', 'bar')", null, null],
+            ["unknown('foo', 'bar')", 'unknown', false, null, null],
+            ['varchar(16)', 'varchar', false, 16, null],
+            ['varchar(16) CHARACTER SET utf8mb4', 'varchar', 'varchar(16) CHARACTER SET utf8mb4', 16, null],
+            ['decimal(6,4)', 'decimal', false, 6, 4],
+            ['char(1)', 'char', false, null, null], // default type size
+            ['(nonsense)', '(nonsense)', false, null, null],
+        ];
+    }
+
+    /**
+     * @dataProvider typeLiterals
+     */
+    public function testParseType(
+        string $inputType,
+        ...$expectedOutput)
+    {
+        $output = $this->callMethod($this->parser, 'parseType', [$inputType]);
+        $this->assertEquals($expectedOutput, $output);
+    }
+
+    public function testInvalidTypeBehavior(){
+        $args = ['(nonsense)', null, 'leTable.leColumn'];
+        /** @var \Propel\Generator\Model\Domain */
+        $domain = $this->callMethod($this->parser, 'extractTypeDomain', $args);
+        $this->assertSame(Column::DEFAULT_TYPE, $domain->getType());
+        $this->assertSame($args[0], $domain->getSqlType());
+    }
+
+    public function testAddVendorInfo(){
+        $row = [
+            'Field' => 'le_col',
+            'Type' => 'int',
+            'Null' => 'NO',
+            'Key' => null,
+            'Default' => null,
+            'Extra' => null,
+        ];
+        $table = new Table('le_table');
+        $args = [$row, $table];
+        
+        $parserClass = $this->getSchemaParserClass();
+        $parser = new $parserClass($this->con);
+        $this->setProperty($parser, 'addVendorInfo', true);
+        /** @var \Propel\Generator\Model\Column */
+        $column = $this->callMethod($parser, 'getColumnFromRow', $args);
+        $this->assertNotEmpty($column->getVendorInformation());
     }
 }
