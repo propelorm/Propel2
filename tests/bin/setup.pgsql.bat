@@ -41,6 +41,7 @@ CREATE SCHEMA bookstore_schemas;^
 CREATE SCHEMA contest;^
 CREATE SCHEMA second_hand_books;^
 CREATE SCHEMA migration;^
+CREATE SCHEMA migration_command_db;^
 " "%DB_NAME%"
 
 call %DIR%\base.bat :check

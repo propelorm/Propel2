@@ -30,6 +30,7 @@ DB_PORT=${DB_PORT-3306};
     DROP SCHEMA IF EXISTS contest;
     DROP SCHEMA IF EXISTS bookstore_schemas;
     DROP SCHEMA IF EXISTS migration;
+    DROP SCHEMA IF EXISTS migration_command_db;
     SET FOREIGN_KEY_CHECKS = 1;
     " || exit 1;
 
@@ -41,6 +42,7 @@ DB_PORT=${DB_PORT-3306};
     CREATE SCHEMA contest;
     CREATE SCHEMA second_hand_books;
     CREATE SCHEMA migration;
+    CREATE SCHEMA migration_command_db;
     " || exit 1;
 ) || exit 1;
 
