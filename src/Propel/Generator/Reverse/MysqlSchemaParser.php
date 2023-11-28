@@ -308,7 +308,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                 ?([\d,]*)  # size or size, precision [2]
             [\)]         # )
             ?\s*         # whitespace
-            (\w*)        # extra description (UNSIGNED, CHARACTER SET, ...) [3]
+            ([\w ]*)     # extra description (UNSIGNED, CHARACTER SET, ...) [3]
         $/x';
         if (preg_match($regexp, $typeDeclaration, $matches)) {
             $nativeType = $matches[1];
