@@ -44,7 +44,7 @@ class ExistsTest extends BookstoreTestBase
         [$author1, $author2, $author3] = $this->createTestData();
         // all authors with at least one good book
         $existsQueryCriteria = BookQuery::create()->filterByTitle('good')->where('Book.AuthorId = Author.Id');
-        $authors = AuthorQuery::create()->whereExists($existsQueryCriteria)->find($this->con)->getData();
+        $authors = AuthorQuery::create()->whereExists($existsQueryCriteria)->orderById()->find($this->con)->getData();
 
         $this->assertEquals([$author1, $author3], $authors);
     }
@@ -57,7 +57,7 @@ class ExistsTest extends BookstoreTestBase
         [$author1, $author2, $author3, $author4] = $this->createTestData();
         // all authors with no bad book
         $existsQueryCriteria = BookQuery::create()->filterByTitle('bad')->where('Book.AuthorId = Author.Id');
-        $authors = AuthorQuery::create()->whereNotExists($existsQueryCriteria)->find($this->con)->getData();
+        $authors = AuthorQuery::create()->whereNotExists($existsQueryCriteria)->orderById()->find($this->con)->getData();
 
         $this->assertEquals([$author3, $author4], $authors);
     }
@@ -109,6 +109,7 @@ class ExistsTest extends BookstoreTestBase
         ->useExistsQuery('Book')
         ->filterByTitle('good')
         ->endUse()
+        ->orderById()
         ->find($this->con)
         ->getData();
 
@@ -126,6 +127,7 @@ class ExistsTest extends BookstoreTestBase
         ->useNotExistsQuery('Book')
         ->filterByTitle('bad')
         ->endUse()
+        ->orderById()
         ->find($this->con)
         ->getData();
 
@@ -187,6 +189,7 @@ class ExistsTest extends BookstoreTestBase
         ->useExistsQuery('Book', null, GoodBookQuery::class)
         ->filterByIsGood()
         ->endUse()
+        ->orderById()
         ->find($this->con)
         ->getData();
 

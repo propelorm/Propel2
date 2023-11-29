@@ -25,6 +25,19 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 abstract class AbstractSchemaParserTest extends BookstoreTestBase
 {
+    /*
+     * HACK: tests were written using instance properties for parser and 
+     * parsedDatabase, leading to re-initialization on every test.
+     * Using static properties instead fixes the issue, but I don't want
+     * to update every test, so the static objects will be copied.
+     */ 
+
+
+    /**
+     * @var \Propel\Generator\Model\Database
+     */
+    protected static $parserDatabaseInstance;
+
     /**
      * @var \Propel\Generator\Reverse\SchemaParserInterface
      */
@@ -54,17 +67,12 @@ abstract class AbstractSchemaParserTest extends BookstoreTestBase
      */
     protected function init(): void
     {
-        $parserClass = $this->getSchemaParserClass();
-        $parser = new $parserClass($this->con);
-        $parser->setGeneratorConfig(new QuickGeneratorConfig());
-
         $database = new Database();
         $database->setPlatform(new DefaultPlatform());
 
-        $parser->parse($database);
+        $this->parser->parse($database);
 
-        $this->parser = $parser;
-        $this->parsedDatabase = $database;
+        static::$parserDatabaseInstance = $database;
     }
 
     /**
@@ -80,8 +88,14 @@ abstract class AbstractSchemaParserTest extends BookstoreTestBase
             $this->markTestSkipped("This test is designed for $expectedDriverName and cannot be run with $currentDriverName");
         }
 
-        if ($this->parser === null) {
+        $parserClass = $this->getSchemaParserClass();
+        $this->parser = new $parserClass($this->con);
+        $this->parser->setGeneratorConfig(new QuickGeneratorConfig());
+
+        if (!static::$parserDatabaseInstance) {
             $this->init();
         }
+
+        $this->parsedDatabase = static::$parserDatabaseInstance;
     }
 }
