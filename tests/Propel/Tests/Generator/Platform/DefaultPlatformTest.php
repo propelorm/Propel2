@@ -194,4 +194,12 @@ class DefaultPlatformTest extends TestCase
     {
         $this->assertStringContainsString($default, $this->getPlatform()->getColumnBindingPHP($column, 'ID', 'ACCESSOR'));
     }
+
+    /**
+     * @return void
+     */
+    public function testDoesNotSupportNativeOnDeleteTriggers()
+    {
+        $this->assertFalse($this->getPlatform()->supportsNativeDeleteTrigger());
+    }
 }
