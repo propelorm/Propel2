@@ -143,7 +143,7 @@ interface PlatformInterface
      * // '"foo","bar"'
      * </code>
      *
-     * @param \Propel\Generator\Model\Column[]|string[] $columns
+     * @param Array<\Propel\Generator\Model\Column>|Array<string> $columns
      * @param string $delimiter The delimiter to use in separating the column names.
      *
      * @return string
