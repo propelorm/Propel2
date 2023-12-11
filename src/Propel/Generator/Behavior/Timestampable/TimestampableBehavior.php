@@ -27,7 +27,16 @@ class TimestampableBehavior extends Behavior
         'update_column' => 'updated_at',
         'disable_created_at' => 'false',
         'disable_updated_at' => 'false',
+        'is_timestamp' => 'true',
     ];
+
+    /**
+     * @return bool
+     */
+    protected function isTimestamp(): bool
+    {
+        return $this->booleanValue($this->getParameter('is_timestamp'));
+    }
 
     /**
      * @return bool
@@ -57,13 +66,13 @@ class TimestampableBehavior extends Behavior
         if ($this->withCreatedAt() && !$table->hasColumn($this->getParameter('create_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('create_column'),
-                'type' => 'TIMESTAMP',
+                'type' => $this->isTimestamp() ? 'TIMESTAMP' : 'DATETIME',
             ]);
         }
         if ($this->withUpdatedAt() && !$table->hasColumn($this->getParameter('update_column'))) {
             $table->addColumn([
                 'name' => $this->getParameter('update_column'),
-                'type' => 'TIMESTAMP',
+                'type' => $this->isTimestamp() ? 'TIMESTAMP' : 'DATETIME',
             ]);
         }
     }
@@ -106,7 +115,7 @@ class TimestampableBehavior extends Behavior
                 : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()';
 
             return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('update_column') . "($valueSource);
 }";
         }
 
@@ -131,7 +140,7 @@ $highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();
                 : '$highPrecision';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('create_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('create_column') . "($valueSource);
 }";
         }
 
@@ -141,7 +150,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
                 : '$highPrecision';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('update_column') . "($valueSource);
 }";
         }
 

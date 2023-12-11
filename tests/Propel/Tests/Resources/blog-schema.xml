@@ -36,6 +36,7 @@
         <parameter name="update_column" value="updated_at"/>
         <parameter name="disable_created_at" value="false"/>
         <parameter name="disable_updated_at" value="false"/>
+        <parameter name="is_timestamp" value="true"/>
       </behavior>
       <behavior name="sluggable">
         <parameter name="slug_column" value="slug"/>

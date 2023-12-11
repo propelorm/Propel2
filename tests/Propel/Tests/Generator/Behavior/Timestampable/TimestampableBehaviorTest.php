@@ -356,4 +356,54 @@ EOF;
         $this->assertEquals(1, $obj->save());
         $this->assertNotNull($obj->getUpdatedAt());
     }
+
+    /**
+     * @return void
+     */
+    public function testWithDatetimeSqlType()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_with_datetime_sql_type">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar"/>
+
+        <behavior name="timestampable">
+            <parameter name="is_timestamp" value="false"/>
+        </behavior>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->build();
+        $sql = $builder->getSQL();
+        $this->assertStringContainsString('created_at DATETIME,', $sql, 'created_at column should be DATETIME');
+        $this->assertStringContainsString('updated_at DATETIME,', $sql, 'updated_at column should be DATETIME');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithTimestampSqlType()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_with_timestamp_sql_type">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar"/>
+
+        <behavior name="timestampable">
+            <parameter name="is_timestamp" value="true"/>
+        </behavior>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setSchema($schema);
+        $builder->build();
+        $sql = $builder->getSQL();
+        $this->assertStringContainsString('created_at TIMESTAMP,', $sql, 'created_at column should be TIMESTAMP');
+        $this->assertStringContainsString('updated_at TIMESTAMP,', $sql, 'updated_at column should be TIMESTAMP');
+    }
 }

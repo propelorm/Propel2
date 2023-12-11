@@ -155,7 +155,8 @@ EOF;
             'leParameterList' => [
                 ['leListItem1Value' => 'leValue1'],
                 ['leListItem2Value1' => 'leValue2.1', 'leListItem2Value2' => 'leValue2.2'],
-            ]
+            ],
+            'is_timestamp' => 'true'
         ];
         $this->assertEquals($expectedParameters, $behavior->getParameters(), 'SchemaReader sets the behavior parameters correctly');
     }
