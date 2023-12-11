@@ -492,7 +492,7 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
      * // '"foo","bar"'
      * </code>
      *
-     * @param Array<\Propel\Generator\Model\Column> $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      * @param string $delimiter The delimiter to use in separating the column names.
      *
      * @return string
