@@ -174,6 +174,7 @@
         <column name="enabled" type="BOOLEAN" default="true"/>
         <column name="not_enabled" type="BOOLEAN" default="false"/>
         <column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
+        <column name="updated" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
         <column name="role_id" type="INTEGER" required="false" default="null"/>
         <column name="authenticator" type="VARCHAR" size="32" defaultExpr="'Password'"/>
         <foreign-key foreignTable="bookstore_employee" onDelete="cascade">

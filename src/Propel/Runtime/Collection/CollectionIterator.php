@@ -248,8 +248,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param int $flags Not used
      *
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function asort(int $flags = SORT_REGULAR): bool
     {
         parent::asort();
@@ -261,8 +262,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param int $flags Not used
      *
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function ksort(int $flags = SORT_REGULAR): bool
     {
         parent::ksort();
@@ -274,8 +276,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param callable $callback
      *
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function uasort($callback): bool
     {
         parent::uasort($callback);
@@ -287,8 +290,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     /**
      * @param callable $callback
      *
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function uksort($callback): bool
     {
         parent::uksort($callback);
@@ -298,8 +302,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function natsort(): bool
     {
         parent::natsort();
@@ -309,8 +314,9 @@ class CollectionIterator extends ArrayIterator implements IteratorInterface
     }
 
     /**
-     * @return bool
+     * @return true
      */
+    #[\ReturnTypeWillChange]
     public function natcasesort(): bool
     {
         parent::natcasesort();
