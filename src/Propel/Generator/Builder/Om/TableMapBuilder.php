@@ -10,6 +10,7 @@ namespace Propel\Generator\Builder\Om;
 
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\IdMethod;
+use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Platform\PlatformInterface;
 
 /**
@@ -348,26 +349,31 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
             return;
         }
 
+        $isNumericKey = $col->isNumericType() && $col->getType() !== PropelTypes::DECIMAL;
+
         foreach ($col->getChildren() as $child) {
             $childBuilder = $this->getMultiExtendObjectBuilder();
             $childBuilder->setChild($child);
             $fqcn = addslashes($childBuilder->getFullyQualifiedClassName());
 
+            $suffix = $child->getConstantSuffix();
+            $key = $isNumericKey ? $child->getKey() : "'" . $child->getKey() . "'";
             $script .= "
     /** A key representing a particular subclass */
-    public const CLASSKEY_" . $child->getConstantSuffix() . " = '" . $child->getKey() . "';
+    public const CLASSKEY_{$suffix} = $key;
 ";
 
             if (strtoupper($child->getClassName()) != $child->getConstantSuffix()) {
+                $childClassLiteral = strtoupper($child->getClassname());
                 $script .= "
     /** A key representing a particular subclass */
-    public const CLASSKEY_" . strtoupper($child->getClassname()) . " = '" . $fqcn . "';
+    public const CLASSKEY_{$childClassLiteral} = '$fqcn';
 ";
             }
 
             $script .= "
     /** A class that can be returned by this tableMap. */
-    public const CLASSNAME_" . $child->getConstantSuffix() . " = '" . $fqcn . "';
+    public const CLASSNAME_{$suffix} = '$fqcn';
 ";
         }
     }
