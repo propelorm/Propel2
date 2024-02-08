@@ -15,7 +15,7 @@ class Date extends SymfonyDateConstraint
     /**
      * @var string
      */
-    public $message = 'This value is not a valid date.';
+    public string $message = 'This value is not a valid date.';
 
     /**
      * @var string
