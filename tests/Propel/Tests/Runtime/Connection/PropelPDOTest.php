@@ -564,7 +564,7 @@ class LastMessageHandler extends AbstractHandler
      *
      * @return bool
      */
-    public function handle(array $record): bool
+    public function handle($record): bool
     {
         $this->latestMessage = (string)$record['message'];
 
