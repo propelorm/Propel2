@@ -264,7 +264,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         // BLOBs can't have any default values in MySQL
 
         $default = $row['Default'];
-        if (!empty($default)) {
+        if ($default !== null) {
             if (preg_match('~blob|text~', $nativeType)) {
                 // mariadb has extra single quotes on TEXT type default values, but not on other types
                 $default = preg_replace('@^\'(.*)\'$@', '$1', $row['Default']);
