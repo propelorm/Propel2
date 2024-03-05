@@ -464,10 +464,6 @@ DROP TABLE IF EXISTS " . $this->quoteIdentifier($table->getName()) . ";
             if ($def && $def->isExpression()) {
                 throw new EngineException('DATE columns cannot have default *expressions* in MySQL.');
             }
-        } elseif ($sqlType === 'TEXT' || $sqlType === 'BLOB') {
-            if ($domain->getDefaultValue()) {
-                throw new EngineException('BLOB and TEXT columns cannot have DEFAULT values. in MySQL.');
-            }
         }
 
         $ddl = [$this->quoteIdentifier($col->getName())];
