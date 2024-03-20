@@ -5,8 +5,8 @@
     extension-element-prefixes="exsl str date">
 <xsl:include href="str.replace.function.xsl"/>
 <xsl:output method="html" indent="yes" encoding="US-ASCII"
-  doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" />
-<xsl:decimal-format decimal-separator="." grouping-separator="," />
+  doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+<xsl:decimal-format decimal-separator="." grouping-separator=","/>
 <!--
    Copyright 2001-2004 The Apache Software Foundation
 

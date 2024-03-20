@@ -1,23 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Pluralizer;
 
+use PHPUnit\Framework\TestCase;
 use Propel\Common\Pluralizer\SimpleEnglishPluralizer;
 use Propel\Common\Pluralizer\StandardEnglishPluralizer;
 
 /**
  * Tests for the StandardEnglishPluralizer class
- *
  */
-class EnglishPluralizerTest extends \PHPUnit\Framework\TestCase
+class EnglishPluralizerTest extends TestCase
 {
     public function getPluralFormDataProvider()
     {
@@ -89,23 +87,30 @@ class EnglishPluralizerTest extends \PHPUnit\Framework\TestCase
             ['Tooth', 'Teeth'],
             ['tooth', 'teeth'],
             ['Foot', 'Feet'],
+            ['Box', 'Boxes'],
+            ['ox', 'oxen'],
         ];
     }
 
     /**
      * @dataProvider getPluralFormDataProvider
+     *
+     * @return void
      */
     public function testStandardPluralForm($input, $output)
     {
         $pluralizer = new StandardEnglishPluralizer();
         $this->assertEquals($output, $pluralizer->getPluralForm($input));
     }
+
     /**
      * @dataProvider getPluralFormDataProvider
+     *
+     * @return void
      */
     public function testSimplePluralForm($input)
     {
         $pluralizer = new SimpleEnglishPluralizer();
-        $this->assertEquals($input.'s', $pluralizer->getPluralForm($input));
+        $this->assertEquals($input . 's', $pluralizer->getPluralForm($input));
     }
 }

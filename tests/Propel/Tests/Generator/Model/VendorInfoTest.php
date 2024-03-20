@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -20,6 +18,9 @@ use Propel\Tests\TestCase;
  */
 class VendorInfoTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testSetupObject()
     {
         $info = new VendorInfo();
@@ -28,6 +29,9 @@ class VendorInfoTest extends TestCase
         $this->assertSame('foo', $info->getType());
     }
 
+    /**
+     * @return void
+     */
     public function testGetSetType()
     {
         $info = new VendorInfo('foo');
@@ -36,6 +40,9 @@ class VendorInfoTest extends TestCase
         $this->assertTrue($info->isEmpty());
     }
 
+    /**
+     * @return void
+     */
     public function testSetParameter()
     {
         $info = new VendorInfo();
@@ -46,6 +53,9 @@ class VendorInfoTest extends TestCase
         $this->assertSame('bar', $info->getParameter('foo'));
     }
 
+    /**
+     * @return void
+     */
     public function testSetParameters()
     {
         $info = new VendorInfo();
@@ -56,6 +66,9 @@ class VendorInfoTest extends TestCase
         $this->assertArrayHasKey('baz', $info->getParameters());
     }
 
+    /**
+     * @return void
+     */
     public function testMergeVendorInfo()
     {
         $current = new VendorInfo('mysql');

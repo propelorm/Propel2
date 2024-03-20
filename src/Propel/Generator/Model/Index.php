@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -20,7 +18,7 @@ namespace Propel\Generator\Model;
 class Index extends MappingModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -32,17 +30,17 @@ class Index extends MappingModel
     protected $table;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $columns = [];
 
     /**
-     * @var \Propel\Generator\Model\Column[]
+     * @var array<\Propel\Generator\Model\Column>
      */
     protected $columnObjects = [];
 
     /**
-     * @var int[]
+     * @var array<int>
      */
     protected $columnsSize = [];
 
@@ -56,7 +54,7 @@ class Index extends MappingModel
      *
      * @param string|null $name Name of the index
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         if ($name !== null) {
             $this->setName($name);
@@ -68,7 +66,7 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function isUnique()
+    public function isUnique(): bool
     {
         return false;
     }
@@ -76,11 +74,11 @@ class Index extends MappingModel
     /**
      * Sets the index name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(?string $name): void
     {
         $this->autoNaming = !$name; //if no name we activate autoNaming
         $this->name = $name;
@@ -91,12 +89,12 @@ class Index extends MappingModel
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $this->doNaming();
 
-        if ($this->table && ($database = $this->table->getDatabase())) {
-            return substr($this->name, 0, $database->getMaxColumnNameLength());
+        if ($this->table && $this->table->getDatabase()) {
+            return substr($this->name, 0, $this->table->getDatabase()->getMaxColumnNameLength());
         }
 
         return $this->name;
@@ -105,34 +103,35 @@ class Index extends MappingModel
     /**
      * @return void
      */
-    protected function doNaming()
+    protected function doNaming(): void
     {
-        if (!$this->name || $this->autoNaming) {
-            $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
-
-            if ($this->columns) {
-                $hash = [];
-                $hash[] = implode(',', (array)$this->columns);
-                $hash[] = implode(',', (array)$this->columnsSize);
-
-                $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
-            } else {
-                $newName .= 'no_columns';
-            }
-
-            if ($this->table) {
-                $newName = $this->table->getCommonName() . '_' . $newName;
-            }
-
-            $this->name = $newName;
-            $this->autoNaming = true;
+        if ($this->name && !$this->autoNaming) {
+            return;
         }
+        $newName = sprintf('%s_', $this instanceof Unique ? 'u' : 'i');
+
+        if ($this->columns) {
+            $hash = [];
+            $hash[] = implode(',', (array)$this->columns);
+            $hash[] = implode(',', (array)$this->columnsSize);
+
+            $newName .= substr(md5(strtolower(implode(':', $hash))), 0, 6);
+        } else {
+            $newName .= 'no_columns';
+        }
+
+        if ($this->table) {
+            $newName = $this->table->getCommonName() . '_' . $newName;
+        }
+
+        $this->name = $newName;
+        $this->autoNaming = true;
     }
 
     /**
      * @return string
      */
-    public function getFQName()
+    public function getFQName(): string
     {
         $table = $this->getTable();
         if (
@@ -155,7 +154,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setTable(Table $table)
+    public function setTable(Table $table): void
     {
         $this->table = $table;
     }
@@ -165,7 +164,7 @@ class Index extends MappingModel
      *
      * @return \Propel\Generator\Model\Table|null
      */
-    public function getTable()
+    public function getTable(): ?Table
     {
         return $this->table;
     }
@@ -175,7 +174,7 @@ class Index extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->table->getName();
     }
@@ -187,13 +186,13 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function addColumn($data)
+    public function addColumn($data): void
     {
         if ($data instanceof Column) {
             $column = $data;
             $this->columns[] = $column->getName();
             if ($column->getSize()) {
-                $this->columnsSize[$column->getName()] = $column->getSize();
+                $this->columnsSize[$column->getName()] = (int)$column->getSize();
             }
             $this->columnObjects[] = $column;
         } else {
@@ -212,9 +211,9 @@ class Index extends MappingModel
      *
      * @return bool
      */
-    public function hasColumn($name)
+    public function hasColumn(string $name): bool
     {
-        return in_array($name, $this->columns);
+        return in_array($name, $this->columns, true);
     }
 
     /**
@@ -224,7 +223,7 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): void
     {
         $this->columns = [];
         $this->columnsSize = [];
@@ -234,13 +233,13 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not there is a size for the specified column.
+     * Returns whether there is a size for the specified column.
      *
      * @param string $name
      *
      * @return bool
      */
-    public function hasColumnSize($name)
+    public function hasColumnSize(string $name): bool
     {
         return isset($this->columnsSize[$name]);
     }
@@ -253,7 +252,7 @@ class Index extends MappingModel
      *
      * @return int|null
      */
-    public function getColumnSize($name, $caseInsensitive = false)
+    public function getColumnSize(string $name, bool $caseInsensitive = false): ?int
     {
         if ($caseInsensitive) {
             foreach ($this->columnsSize as $forName => $size) {
@@ -265,7 +264,7 @@ class Index extends MappingModel
             return null;
         }
 
-        return isset($this->columnsSize[$name]) ? $this->columnsSize[$name] : null;
+        return $this->columnsSize[$name] ?? null;
     }
 
     /**
@@ -275,22 +274,22 @@ class Index extends MappingModel
      *
      * @return void
      */
-    public function resetColumnsSize()
+    public function resetColumnsSize(): void
     {
         $this->columnsSize = [];
     }
 
     /**
-     * Returns whether or not this index has a given column at a given position.
+     * Returns whether this index has a given column at a given position.
      *
      * @param int $pos Position in the column list
      * @param string $name Column name
      * @param int|null $size Optional size check
-     * @param bool $caseInsensitive Whether or not the comparison is case insensitive (false by default)
+     * @param bool $caseInsensitive Whether the comparison is case insensitive (false by default)
      *
      * @return bool
      */
-    public function hasColumnAtPosition($pos, $name, $size = null, $caseInsensitive = false)
+    public function hasColumnAtPosition(int $pos, string $name, ?int $size = null, bool $caseInsensitive = false): bool
     {
         if (!isset($this->columns[$pos])) {
             return false;
@@ -314,11 +313,11 @@ class Index extends MappingModel
     }
 
     /**
-     * Returns whether or not the index has columns.
+     * Returns whether the index has columns.
      *
      * @return bool
      */
-    public function hasColumns()
+    public function hasColumns(): bool
     {
         return count($this->columns) > 0;
     }
@@ -328,9 +327,9 @@ class Index extends MappingModel
      *
      * You should not edit this list.
      *
-     * @return string[]
+     * @return array<string>
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -338,25 +337,25 @@ class Index extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->setName($this->getAttribute('name'));
     }
 
     /**
-     * @return \Propel\Generator\Model\Column[]
+     * @return array<\Propel\Generator\Model\Column>
      */
-    public function getColumnObjects()
+    public function getColumnObjects(): array
     {
         return $this->columnObjects;
     }
 
     /**
-     * @param \Propel\Generator\Model\Column[] $columnObjects
+     * @param array<\Propel\Generator\Model\Column> $columnObjects
      *
      * @return void
      */
-    public function setColumnObjects($columnObjects)
+    public function setColumnObjects(array $columnObjects): void
     {
         $this->columnObjects = $columnObjects;
     }

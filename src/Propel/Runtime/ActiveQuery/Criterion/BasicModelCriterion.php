@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -28,7 +26,7 @@ class BasicModelCriterion extends AbstractModelCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         if ($this->value !== null) {
             if (strpos($this->clause, '?') === false) {

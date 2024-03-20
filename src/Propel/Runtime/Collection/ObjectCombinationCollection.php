@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -26,7 +24,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true)
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
 
@@ -45,7 +43,7 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function push($value)
+    public function push($value): void
     {
         parent::push(func_get_args());
     }
@@ -57,7 +55,7 @@ class ObjectCombinationCollection extends ObjectCollection
      *
      * @return array
      */
-    public function getObjectsFromPosition($position = 1)
+    public function getObjectsFromPosition(int $position = 1): array
     {
         $result = [];
         foreach ($this as $array) {
@@ -109,9 +107,10 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function removeObject($element)
+    public function removeObject($element): void
     {
-        if (($pos = call_user_func_array([$this, 'search'], func_get_args())) !== false) {
+        $pos = $this->search(...func_get_args());
+        if ($pos !== false) {
             $this->remove($pos);
         }
     }
@@ -119,8 +118,8 @@ class ObjectCombinationCollection extends ObjectCollection
     /**
      * @inheritDoc
      */
-    public function contains($element)
+    public function contains($element): bool
     {
-        return call_user_func_array([$this, 'search'], func_get_args()) !== false;
+        return $this->search(...func_get_args()) !== false;
     }
 }

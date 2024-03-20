@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\I18n;
+
+use Propel\Generator\Builder\Om\QueryBuilder;
 
 /**
  * Allows translation of text columns through transparent one-to-many relationship.
@@ -36,7 +36,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\I18n\I18nBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(I18nBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -47,11 +47,10 @@ class I18nBehaviorQueryBuilderModifier
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods(QueryBuilder $builder): string
     {
         $this->builder = $builder;
-        $script = '';
-        $script .= $this->addJoinI18n();
+        $script = $this->addJoinI18n();
         $script .= $this->addJoinWithI18n();
         $script .= $this->addUseI18nQuery();
 
@@ -61,7 +60,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addJoinI18n()
+    protected function addJoinI18n(): string
     {
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -76,7 +75,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addJoinWithI18n()
+    protected function addJoinWithI18n(): string
     {
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -90,7 +89,7 @@ class I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
-    protected function addUseI18nQuery()
+    protected function addUseI18nQuery(): string
     {
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();

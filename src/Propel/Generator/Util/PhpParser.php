@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -45,7 +43,7 @@ class PhpParser
     /**
      * methodName => methodCode
      *
-     * @var (string|false)[]
+     * @var array<string, string|false>
      */
     private $knownMethodCache = [];
 
@@ -56,7 +54,7 @@ class PhpParser
      * @param bool $isAddPhp Whether the supplied code needs a supplementary '<?php '
      * to be seen as code by the tokenizer.
      */
-    public function __construct($code, $isAddPhp = false)
+    public function __construct(string $code, bool $isAddPhp = false)
     {
         $this->code = $isAddPhp ? $this->addPhp($code) : $code;
         $this->isAddPhp = $isAddPhp;
@@ -67,7 +65,7 @@ class PhpParser
      *
      * @return string PHP code
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->isAddPhp ? $this->removePhp($this->code) : $this->code;
     }
@@ -77,7 +75,7 @@ class PhpParser
      *
      * @return string
      */
-    protected function addPhp($code)
+    protected function addPhp(string $code): string
     {
         return '<?php ' . $code;
     }
@@ -87,7 +85,7 @@ class PhpParser
      *
      * @return string
      */
-    protected function removePhp($code)
+    protected function removePhp(string $code): string
     {
         return substr($code, 6);
     }
@@ -99,7 +97,7 @@ class PhpParser
      *
      * @return string|false false if not found, or the method code string if found
      */
-    public function findMethod($methodName)
+    public function findMethod(string $methodName)
     {
         if (isset($this->knownMethodCache[$methodName])) {
             return $this->knownMethodCache[$methodName];
@@ -187,9 +185,10 @@ class PhpParser
      *
      * @return mixed false if not found, or the method code string if found
      */
-    public function removeMethod($methodName)
+    public function removeMethod(string $methodName)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, '', $this->code);
             $this->knownMethodCache[$methodName] = false;
 
@@ -207,9 +206,10 @@ class PhpParser
      *
      * @return mixed false if not found, or the method code string if found
      */
-    public function replaceMethod($methodName, $newCode)
+    public function replaceMethod(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $newCode, $this->code);
             $this->knownMethodCache[$methodName] = $newCode;
 
@@ -227,9 +227,10 @@ class PhpParser
      *
      * @return string|false false if not found, or the method code string if found
      */
-    public function addMethodAfter($methodName, $newCode)
+    public function addMethodAfter(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $methodCode . $newCode, $this->code);
 
             return $methodCode;
@@ -246,9 +247,10 @@ class PhpParser
      *
      * @return string|false false if not found, or the method code string if found
      */
-    public function addMethodBefore($methodName, $newCode)
+    public function addMethodBefore(string $methodName, string $newCode)
     {
-        if ($methodCode = $this->findMethod($methodName)) {
+        $methodCode = $this->findMethod($methodName);
+        if ($methodCode) {
             $this->code = str_replace($methodCode, $newCode . $methodCode, $this->code);
 
             return $methodCode;

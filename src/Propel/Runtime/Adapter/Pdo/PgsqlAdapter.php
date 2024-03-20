@@ -1,21 +1,21 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\AdapterInterface;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Propel;
+use RuntimeException;
 
 /**
  * This is used to connect to PostgreSQL databases.
@@ -26,6 +26,13 @@ use Propel\Runtime\Propel;
 class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
 {
     /**
+     * @see PdoAdapter::SUPPORTS_ALIASES_IN_DELETE
+     *
+     * @var bool
+     */
+    protected const SUPPORTS_ALIASES_IN_DELETE = false;
+
+    /**
      * Returns SQL which concatenates the second string to the first.
      *
      * @param string $s1 String to concatenate.
@@ -33,7 +40,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString(string $s1, string $s2): string
     {
         return "($s1 || $s2)";
     }
@@ -41,7 +48,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
     /**
      * @inheritDoc
      */
-    public function compareRegex($left, $right)
+    public function compareRegex($left, $right): string
     {
         return sprintf('%s ~* %s', $left, $right);
     }
@@ -55,7 +62,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString(string $s, int $pos, int $len): string
     {
         return "substring($s from $pos" . ($len > -1 ? "for $len" : '') . ')';
     }
@@ -67,7 +74,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s)
+    public function strLength(string $s): string
     {
         return "char_length($s)";
     }
@@ -77,7 +84,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return int
      */
-    protected function getIdMethod()
+    protected function getIdMethod(): int
     {
         return AdapterInterface::ID_METHOD_SEQUENCE;
     }
@@ -89,15 +96,21 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string|null $name
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return int
      */
-    public function getId(ConnectionInterface $con, $name = null)
+    public function getId(ConnectionInterface $con, ?string $name = null): int
     {
         if ($name === null) {
             throw new InvalidArgumentException('Unable to fetch next sequence ID without sequence name.');
         }
+
         $dataFetcher = $con->query(sprintf('SELECT nextval(%s)', $con->quote($name)));
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
 
         return $dataFetcher->fetchColumn();
     }
@@ -107,7 +120,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s.u O';
     }
@@ -117,7 +130,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getTimeFormatter()
+    public function getTimeFormatter(): string
     {
         return 'H:i:s.u O';
     }
@@ -128,10 +141,11 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
         if ($limit >= 0) {
             $sql .= sprintf(' LIMIT %u', $limit);
@@ -146,7 +160,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria)
+    public function getGroupBy(Criteria $criteria): string
     {
         $groupBy = $criteria->getGroupByColumns();
 
@@ -156,10 +170,11 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $asSelects = $criteria->getAsColumns();
 
             foreach ($selected as $colName) {
-                if (!in_array($colName, $groupBy)) {
+                if (!in_array($colName, $groupBy, true)) {
                     // is a alias there that is grouped?
-                    if ($alias = array_search($colName, $asSelects)) {
-                        if (in_array($alias, $groupBy)) {
+                    $alias = array_search($colName, $asSelects);
+                    if ($alias) {
+                        if (in_array($alias, $groupBy, true)) {
                             continue; //yes, alias is selected.
                         }
                     }
@@ -169,7 +184,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         if ($groupBy) {
-            return ' GROUP BY ' . implode(',', $groupBy);
+            return 'GROUP BY ' . implode(',', $groupBy);
         }
 
         return '';
@@ -182,34 +197,9 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function random($seed = null)
+    public function random(?string $seed = null): string
     {
         return 'random()';
-    }
-
-    /**
-     * @see PdoAdapter::getDeleteFromClause()
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName)
-    {
-        $sql = 'DELETE ';
-        if ($queryComment = $criteria->getComment()) {
-            $sql .= '/* ' . $queryComment . ' */ ';
-        }
-        if ($realTableName = $criteria->getTableForAlias($tableName)) {
-            $realTableName = $criteria->quoteIdentifierTable($realTableName);
-            $sql .= 'FROM ' . $realTableName . ' AS ' . $tableName;
-        } else {
-            $tableName = $criteria->quoteIdentifierTable($tableName);
-            $sql .= 'FROM ' . $tableName;
-        }
-
-        return $sql;
     }
 
     /**
@@ -219,7 +209,7 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierTable(string $table): string
     {
         // e.g. 'database.table alias' should be escaped as '"database"."table" "alias"'
         return '"' . strtr($table, ['.' => '"."', ' ' => '" "']) . '"';
@@ -231,7 +221,9 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con propel connection
      * @param \Propel\Runtime\ActiveQuery\Criteria|string $query query the criteria or the query string
      *
-     * @return \PDOStatement A PDO statement executed using the connection, ready to be fetched
+     * @throws \RuntimeException
+     *
+     * @return \Propel\Runtime\Connection\StatementInterface|\PDOStatement|false A PDO statement executed using the connection, ready to be fetched
      */
     public function doExplainPlan(ConnectionInterface $con, $query)
     {
@@ -243,7 +235,12 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
             $sql = $query;
         }
 
+        /** @var \Propel\Runtime\Connection\StatementInterface|false $stmt */
         $stmt = $con->prepare($this->getExplainPlanQuery($sql));
+
+        if ($stmt === false) {
+            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+        }
 
         if ($query instanceof Criteria) {
             $this->bindValues($stmt, $params, $dbMap);
@@ -261,8 +258,37 @@ class PgsqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function getExplainPlanQuery($query)
+    public function getExplainPlanQuery(string $query): string
     {
         return 'EXPLAIN ' . $query;
+    }
+
+    /**
+     * @see AdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(string &$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if ($type === Lock::SHARED) {
+            $sql .= ' FOR SHARE';
+        } elseif ($type === Lock::EXCLUSIVE) {
+            $sql .= ' FOR UPDATE';
+        }
+
+        $tableNames = $lock->getTableNames();
+        if ($tableNames) {
+            $tableNames = array_map([$this, 'quoteIdentifier'], array_unique($tableNames));
+            $sql .= ' OF ' . implode(', ', $tableNames);
+        }
+
+        if ($lock->isNoWait()) {
+            $sql .= ' NOWAIT';
+        }
     }
 }

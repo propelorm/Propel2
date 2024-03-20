@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -20,13 +18,15 @@ use Propel\Tests\TestCase;
  */
 class InheritanceTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testCreateNewInheritance()
     {
         $column = $this
             ->getMockBuilder('Propel\Generator\Model\Column')
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
         $inheritance = new Inheritance();
         $inheritance->setPackage('Foo');
@@ -42,6 +42,9 @@ class InheritanceTest extends TestCase
         $this->assertSame('Foo\Bar', $inheritance->getClassName());
     }
 
+    /**
+     * @return void
+     */
     public function testSetupObject()
     {
         $inheritance = new Inheritance();

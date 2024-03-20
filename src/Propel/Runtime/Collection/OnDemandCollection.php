@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
@@ -15,6 +13,7 @@ use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
 use Propel\Runtime\Map\TableMap;
+use Traversable;
 
 /**
  * Class for iterating over a statement and returning one Propel object at a time
@@ -24,7 +23,7 @@ use Propel\Runtime\Map\TableMap;
 class OnDemandCollection extends Collection
 {
     /**
-     * @var \Iterator
+     * @var \Propel\Runtime\Collection\OnDemandIterator
      */
     private $lastIterator;
 
@@ -34,7 +33,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher)
+    public function initIterator(AbstractFormatter $formatter, DataFetcherInterface $dataFetcher): void
     {
         $this->lastIterator = new OnDemandIterator($formatter, $dataFetcher);
     }
@@ -74,12 +73,12 @@ class OnDemandCollection extends Collection
      * @return array
      */
     public function toArray(
-        $keyColumn = null,
-        $usePrefix = false,
-        $keyType = TableMap::TYPE_PHPNAME,
-        $includeLazyLoadColumns = true,
-        $alreadyDumpedObjects = []
-    ) {
+        ?string $keyColumn = null,
+        bool $usePrefix = false,
+        string $keyType = TableMap::TYPE_PHPNAME,
+        bool $includeLazyLoadColumns = true,
+        array $alreadyDumpedObjects = []
+    ): array {
         $ret = [];
         $keyGetterMethod = 'get' . $keyColumn;
 
@@ -104,17 +103,15 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr)
+    public function fromArray(array $arr): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
 
-    // IteratorAggregate Interface
-
     /**
-     * @return \Propel\Runtime\Collection\OnDemandIterator
+     * @return \Propel\Runtime\Collection\OnDemandIterator|\Propel\Runtime\Collection\IteratorInterface
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->lastIterator;
     }
@@ -128,18 +125,21 @@ class OnDemandCollection extends Collection
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @param int $offset
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
@@ -153,7 +153,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -165,7 +165,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -175,9 +175,10 @@ class OnDemandCollection extends Collection
     /**
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return string
+     * @return string|null
      */
-    public function serialize()
+    #[\ReturnTypeWillChange]
+    public function serialize(): ?string
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -189,7 +190,8 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function unserialize($data)
+    #[\ReturnTypeWillChange]
+    public function unserialize($data): void
     {
         throw new PropelException('The On Demand Collection cannot be serialized');
     }
@@ -201,7 +203,7 @@ class OnDemandCollection extends Collection
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->getIterator()->count();
     }
@@ -215,7 +217,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -227,7 +229,7 @@ class OnDemandCollection extends Collection
      *
      * @return int
      */
-    public function prepend($value)
+    public function prepend($value): int
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -239,7 +241,7 @@ class OnDemandCollection extends Collection
      *
      * @return void
      */
-    public function exchangeArray($input)
+    public function exchangeArray(array $input): void
     {
         throw new ReadOnlyModelException('The On Demand Collection is read only');
     }
@@ -249,7 +251,7 @@ class OnDemandCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         throw new PropelException('The On Demand Collection does not allow access by offset');
     }
@@ -259,7 +261,7 @@ class OnDemandCollection extends Collection
      *
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function exportTo($parser, $usePrefix = true, $includeLazyLoadColumns = true)
+    public function exportTo($parser, bool $usePrefix = true, bool $includeLazyLoadColumns = true, string $keyType = TableMap::TYPE_PHPNAME): string
     {
         throw new PropelException('A OnDemandCollection cannot be exported.');
     }

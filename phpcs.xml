@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ruleset name="Propel">
+    <description>
+        Propel Coding Standard.
+
+        Extends Spryker+Slevomatik Coding Standard.
+    </description>
+
+    <config name="installed_paths" value="../../spryker/code-sniffer"/>
+
+    <arg value="nps"/>
+
+    <file>src/</file>
+
+    <rule ref="Spryker"/>
+
+    <rule ref="vendor/spryker/code-sniffer/SprykerStrict/ruleset.xml">
+        <exclude name="SprykerStrict.TypeHints.ParameterTypeHint"/>
+        <exclude name="SprykerStrict.TypeHints.PropertyTypeHint"/>
+        <exclude name="SprykerStrict.TypeHints.ReturnTypeHint"/>
+    </rule>
+
+    <rule ref="Spryker.Internal.SprykerDisallowFunctions">
+        <properties>
+            <!-- We want to prevent 8.0+ functions to break 7.4 compatibility -->
+            <property name="phpVersion" value="7.4"/>
+        </properties>
+    </rule>
+</ruleset>

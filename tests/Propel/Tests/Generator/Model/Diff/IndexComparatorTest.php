@@ -1,26 +1,27 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model\Diff;
+
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\Diff\IndexComparator;
 use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Unique;
-use Propel\Generator\Model\Diff\IndexComparator;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the ColumnComparator service class.
- *
  */
 class IndexComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function testCompareNoDifference()
     {
         $c1 = new Column('Foo');
@@ -44,6 +45,9 @@ class IndexComparatorTest extends TestCase
         $this->assertFalse(IndexComparator::computeDiff($i1, $i2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareCaseInsensitive()
     {
         $c1 = new Column('Foo');
@@ -55,6 +59,9 @@ class IndexComparatorTest extends TestCase
         $this->assertFalse(IndexComparator::computeDiff($i1, $i2, true));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareType()
     {
         $c1 = new Column('Foo');
@@ -66,6 +73,9 @@ class IndexComparatorTest extends TestCase
         $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDifferentColumns()
     {
         $c1 = new Column('Foo');
@@ -76,6 +86,9 @@ class IndexComparatorTest extends TestCase
         $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareDifferentOrder()
     {
         $c1 = new Column('Foo');
@@ -90,5 +103,4 @@ class IndexComparatorTest extends TestCase
         $i2->addColumn($c3);
         $this->assertTrue(IndexComparator::computeDiff($i1, $i2));
     }
-
 }

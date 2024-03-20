@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Util;
@@ -42,7 +40,7 @@ class PropelTemplate
      *
      * @return void
      */
-    public function setTemplate($template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
@@ -58,7 +56,7 @@ class PropelTemplate
      *
      * @return void
      */
-    public function setTemplateFile($filePath)
+    public function setTemplateFile(string $filePath): void
     {
         $this->templateFile = $filePath;
     }
@@ -79,7 +77,7 @@ class PropelTemplate
      *
      * @return string The rendered template
      */
-    public function render($vars = [])
+    public function render(array $vars = []): string
     {
         if ($this->templateFile === null && $this->template === null) {
             throw new InvalidArgumentException('You must set a template or a template file before rendering');
@@ -87,7 +85,12 @@ class PropelTemplate
 
         extract($vars);
         ob_start();
-        ob_implicit_flush(0);
+
+        /**
+         * @psalm-suppress InvalidArgument
+         * @phpstan-ignore-next-line
+         */
+        ob_implicit_flush(false);
 
         try {
             if ($this->templateFile !== null) {
@@ -102,6 +105,6 @@ class PropelTemplate
             throw $e;
         }
 
-        return ob_get_clean();
+        return (string)ob_get_clean();
     }
 }

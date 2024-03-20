@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Tests\Generator\Model;
@@ -20,8 +18,10 @@ class MappingModelTest extends TestCase
 {
     /**
      * @dataProvider providerForGetDefaultValueForArray
+     *
+     * @return void
      */
-    public function testGetDefaultValueForArray($value, $expected)
+    public function testGetDefaultValueForArray(string $value, $expected)
     {
         $mappingModel = new TestableMappingModel();
         $this->assertEquals($expected, $mappingModel->getDefaultValueForArray($value));
@@ -31,7 +31,6 @@ class MappingModelTest extends TestCase
     {
         return [
             ['', null],
-            [null, null],
             ['FOO', '||FOO||'],
             ['FOO, BAR', '||FOO | BAR||'],
             ['FOO , BAR', '||FOO | BAR||'],
@@ -44,16 +43,22 @@ class MappingModelTest extends TestCase
 
 class TestableMappingModel extends MappingModel
 {
-    public function getDefaultValueForArray($value)
+    public function getDefaultValueForArray(string $value): ?string
     {
         return parent::getDefaultValueForArray($value);
     }
 
+    /**
+     * @return void
+     */
     public function appendXml(DOMNode $node)
     {
     }
 
-    protected function setupObject()
+    /**
+     * @return void
+     */
+    protected function setupObject(): void
     {
     }
 }

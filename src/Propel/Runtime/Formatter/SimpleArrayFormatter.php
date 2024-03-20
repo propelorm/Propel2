@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -28,7 +26,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection
+     * @return \Propel\Runtime\Collection\Collection|array
      */
     public function format(?DataFetcherInterface $dataFetcher = null)
     {
@@ -47,7 +45,8 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
                 $collection[] = $rowArray;
             }
         }
@@ -59,7 +58,7 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @return string|null
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): ?string
     {
         return '\Propel\Runtime\Collection\ArrayCollection';
     }
@@ -69,7 +68,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|null
+     * @return array|string|null
      */
     public function formatOne(?DataFetcherInterface $dataFetcher = null)
     {
@@ -87,7 +86,8 @@ class SimpleArrayFormatter extends AbstractFormatter
         }
 
         foreach ($dataFetcher as $row) {
-            if (false !== $rowArray = $this->getStructuredArrayFromRow($row)) {
+            $rowArray = $this->getStructuredArrayFromRow($row);
+            if ($rowArray !== false) {
                 $result = $rowArray;
             }
         }
@@ -103,7 +103,7 @@ class SimpleArrayFormatter extends AbstractFormatter
      *
      * @return array The original record turned into an array
      */
-    public function formatRecord(?ActiveRecordInterface $record = null)
+    public function formatRecord(?ActiveRecordInterface $record = null): array
     {
         return $record ? $record->toArray() : [];
     }
@@ -111,7 +111,7 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @return bool
      */
-    public function isObjectFormatter()
+    public function isObjectFormatter(): bool
     {
         return false;
     }
@@ -119,9 +119,9 @@ class SimpleArrayFormatter extends AbstractFormatter
     /**
      * @param array $row
      *
-     * @return array
+     * @return array|string|false
      */
-    public function getStructuredArrayFromRow($row)
+    public function getStructuredArrayFromRow(array $row)
     {
         $columnNames = array_keys($this->getAsColumns());
         if (count($columnNames) > 1 && count($row) > 1) {

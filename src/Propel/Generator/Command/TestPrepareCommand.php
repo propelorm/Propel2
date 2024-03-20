@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
 
+use Propel\Generator\Behavior\AggregateMultipleColumns\AggregateMultipleColumnsBehavior;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -51,7 +50,6 @@ class TestPrepareCommand extends AbstractCommand
     protected $fixtures = [
         //directory - array of connections
         'bookstore' => ['bookstore', 'bookstore-cms', 'bookstore-behavior'],
-        'bookstore-packaged' => ['bookstore-packaged', 'bookstore-log'],
         'namespaced' => ['bookstore_namespaced'],
         'reverse/mysql' => ['reverse-bookstore'],
         'reverse/pgsql' => ['reverse-bookstore'],
@@ -96,24 +94,27 @@ class TestPrepareCommand extends AbstractCommand
     {
         $result = static::CODE_SUCCESS;
         foreach ($this->fixtures as $fixturesDir => $connections) {
+            $this->resetCounters();
+
             $run = $this->buildFixtures(sprintf('%s/%s', self::FIXTURES_DIR, $fixturesDir), $connections, $input, $output);
             if ($run !== static::CODE_SUCCESS) {
                 $result = $run;
             }
         }
+        chdir($this->root);
 
         return $result;
     }
 
     /**
      * @param string $fixturesDir
-     * @param string[] $connections
+     * @param array<string> $connections
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @return int Exit code
      */
-    protected function buildFixtures($fixturesDir, $connections, InputInterface $input, OutputInterface $output): int
+    protected function buildFixtures(string $fixturesDir, array $connections, InputInterface $input, OutputInterface $output): int
     {
         if (!file_exists($this->root . '/' . $fixturesDir)) {
             $output->writeln(sprintf('<error>Directory "%s" not found.</error>', $fixturesDir));
@@ -126,7 +127,7 @@ class TestPrepareCommand extends AbstractCommand
         chdir($this->root . '/' . $fixturesDir);
 
         if (is_file('propel.yaml.dist')) {
-            $content = file_get_contents('propel.yaml.dist');
+            $content = (string)file_get_contents('propel.yaml.dist');
 
             $content = str_replace('##DATABASE_VENDOR##', $input->getOption('vendor'), $content);
             $content = str_replace('##DATABASE_URL##', $input->getOption('dsn'), $content);
@@ -135,7 +136,7 @@ class TestPrepareCommand extends AbstractCommand
 
             file_put_contents('propel.yaml', $content);
         } else {
-            $output->writeln(sprintf('<comment>No "propel.yaml.dist" file found, skipped.</comment>'));
+            $output->writeln('<comment>No "propel.yaml.dist" file found, skipped.</comment>');
         }
 
         if (is_file('propel.yaml')) {
@@ -143,17 +144,19 @@ class TestPrepareCommand extends AbstractCommand
                 'command' => 'config:convert',
                 '--output-dir' => './build/conf',
                 '--output-file' => sprintf('%s-conf.php', $connections[0]), // the first connection is the main one
+                '--loader-script-dir' => './build/conf',
             ]);
 
             $command = $this->getApplication()->find('config:convert');
             $command->run($in, $output);
         }
 
-        if (0 < count((array)$this->getSchemas('.'))) {
+        if (0 < count($this->getSchemas('.'))) {
             $in = new ArrayInput([
                 'command' => 'model:build',
                 '--schema-dir' => '.',
                 '--output-dir' => 'build/classes/',
+                '--loader-script-dir' => './build/conf',
                 '--platform' => ucfirst($input->getOption('vendor')) . 'Platform',
                 '--verbose' => $input->getOption('verbose'),
             ]);
@@ -184,7 +187,7 @@ class TestPrepareCommand extends AbstractCommand
                     $conParams[] = sprintf(
                         '%s=%s',
                         $con,
-                        $input->getOption('dsn')
+                        $input->getOption('dsn'),
                     );
                 } else {
                     $conParams[] = sprintf(
@@ -192,7 +195,7 @@ class TestPrepareCommand extends AbstractCommand
                         $con,
                         $input->getOption('dsn'),
                         $input->getOption('user'),
-                        $input->getOption('password')
+                        $input->getOption('password'),
                     );
                 }
             }
@@ -208,8 +211,16 @@ class TestPrepareCommand extends AbstractCommand
             $command->run($in, $output);
         }
 
-        chdir($this->root);
-
         return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Reset static members in builder classes. Necessary when test run commands repeatedly.
+     *
+     * @return void
+     */
+    protected function resetCounters(): void
+    {
+        AggregateMultipleColumnsBehavior::resetInsertedAggregationNames();
     }
 }

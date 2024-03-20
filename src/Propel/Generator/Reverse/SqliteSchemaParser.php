@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -38,7 +36,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      * There really aren't any SQLite native types, so we're just
      * using the MySQL ones here.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $sqliteTypeMap = [
         'tinyint' => PropelTypes::TINYINT,
@@ -58,7 +56,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'date' => PropelTypes::DATE,
         'time' => PropelTypes::TIME,
         'year' => PropelTypes::INTEGER,
-        'datetime' => PropelTypes::DATE,
+        'datetime' => PropelTypes::DATETIME,
         'timestamp' => PropelTypes::TIMESTAMP,
         'tinyblob' => PropelTypes::BINARY,
         'blob' => PropelTypes::BLOB,
@@ -70,25 +68,26 @@ class SqliteSchemaParser extends AbstractSchemaParser
         'text' => PropelTypes::LONGVARCHAR,
         'enum' => PropelTypes::CHAR,
         'set' => PropelTypes::CHAR,
+        'uuid' => PropelTypes::UUID,
     ];
 
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$sqliteTypeMap;
     }
 
     /**
      * @param \Propel\Generator\Model\Database $database
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         if ($this->getGeneratorConfig()) {
             $this->addVendorInfo = $this->getGeneratorConfig()->get()['migrations']['addVendorInfo'];
@@ -120,7 +119,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function parseTables(Database $database, ?Table $filterTable = null)
+    protected function parseTables(Database $database, ?Table $filterTable = null): void
     {
         $sql = "
         SELECT name
@@ -137,19 +136,24 @@ class SqliteSchemaParser extends AbstractSchemaParser
         $filter = '';
 
         if ($filterTable) {
-            if ($schema = $filterTable->getSchema()) {
+            $schema = $filterTable->getSchema();
+            if ($schema) {
                 $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
             }
             $filter .= sprintf(" AND (name = '%s' OR name LIKE '%%§%1\$s')", $filterTable->getCommonName());
-        } elseif ($schema = $database->getSchema()) {
-            $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+        } else {
+            $schema = $database->getSchema();
+            if ($schema) {
+                $filter = sprintf(" AND name LIKE '%s§%%'", $schema);
+            }
         }
 
         $sql = str_replace('%filter%', $filter, $sql);
 
+        /** @var \Traversable $dataFetcher */
         $dataFetcher = $this->dbh->query($sql);
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         foreach ($dataFetcher as $row) {
             $tableName = $row[0];
             $tableSchema = '';
@@ -158,7 +162,8 @@ class SqliteSchemaParser extends AbstractSchemaParser
                 continue;
             }
 
-            if (($pos = strpos($tableName, '§')) !== false) {
+            $pos = strpos($tableName, '§');
+            if ($pos !== false) {
                 $tableSchema = substr($tableName, 0, $pos);
                 $tableName = substr($tableName, $pos + 2);
             }
@@ -190,7 +195,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         $tableName = $table->getName();
 
@@ -206,11 +211,11 @@ class SqliteSchemaParser extends AbstractSchemaParser
 
             if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
-                $scale = $matches[3];
+                $size = (int)$matches[2];
+                $scale = (int)$matches[3];
             } elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/', $fulltype, $matches)) {
                 $type = $matches[1];
-                $size = $matches[2];
+                $size = (int)$matches[2];
             } else {
                 $type = $fulltype;
             }
@@ -278,7 +283,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table)
+    protected function addForeignKeys(Table $table): void
     {
         $database = $table->getDatabase();
 
@@ -329,7 +334,7 @@ class SqliteSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query('PRAGMA index_list("' . $table->getName() . '")');

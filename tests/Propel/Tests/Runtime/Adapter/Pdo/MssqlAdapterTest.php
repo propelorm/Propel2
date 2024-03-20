@@ -1,23 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Adapter\Pdo\MssqlAdapter;
-
-use Propel\Tests\TestCase;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Map\BookTableMap;
-use Propel\Tests\Bookstore\BookQuery;
+use Propel\Tests\TestCase;
 
 /**
  * Tests the MSSQL adapter
@@ -27,19 +23,15 @@ use Propel\Tests\Bookstore\BookQuery;
 class MssqlAdapterTest extends TestCase
 {
     /**
-     * The criteria to use in the test.
-     *
-     * @var Criteria
-     */
-    private $c;
-
-    /**
      * DB adapter saved for later.
      *
-     * @var AbstractAdapter
+     * @var \Propel\Runtime\Adapter\AdapterInterface
      */
     private $savedAdapter;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         Propel::init(__DIR__ . '/../../../../../Fixtures/bookstore/build/conf/bookstore-conf.php');
@@ -58,6 +50,9 @@ class MssqlAdapterTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         Propel::getServiceContainer()->setAdapter(
@@ -68,6 +63,9 @@ class MssqlAdapterTest extends TestCase
         parent::tearDown();
     }
 
+    /**
+     * @return string
+     */
     protected function getDriver()
     {
         return 'mssql';
@@ -75,6 +73,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with no offsetting
+     *
+     * @return void
      */
     public function testApplyLimitZeroOffset()
     {
@@ -95,6 +95,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with page offsetting
+     *
+     * @return void
      */
     public function testApplyLimitOffset()
     {
@@ -115,6 +117,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with no offsetting and additional virtual columns
+     *
+     * @return void
      */
     public function testApplyLimitZeroOffsetWithVirtualColumns()
     {
@@ -140,6 +144,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with page offsetting and additional virtual columns
+     *
+     * @return void
      */
     public function testApplyLimitOffsetWithVirtualColumns()
     {
@@ -165,6 +171,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with no offsetting and a subquery in the WHERE clause
+     *
+     * @return void
      */
     public function testApplyLimitZeroOffsetWithSubquery()
     {
@@ -186,6 +194,8 @@ class MssqlAdapterTest extends TestCase
 
     /**
      * Test `applyLimit` with page offsetting and a subquery in the WHERE clause
+     *
+     * @return void
      */
     public function testApplyLimitOffsetWithSubquery()
     {
@@ -208,6 +218,8 @@ class MssqlAdapterTest extends TestCase
     /**
      * Regression: Ensure correct parsing when `from` is used as a non-keyword
      * e.g. as a column name
+     *
+     * @return void
      */
     public function testApplyLimitWithFromNonKeyword()
     {

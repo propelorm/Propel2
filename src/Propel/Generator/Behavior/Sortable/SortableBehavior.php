@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Sortable;
@@ -25,7 +23,7 @@ class SortableBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'rank_column' => 'sortable_rank',
@@ -55,7 +53,7 @@ class SortableBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
 
@@ -78,7 +76,7 @@ class SortableBehavior extends Behavior
             if (count($scopes) === 0) {
                 throw new InvalidArgumentException(sprintf(
                     'The sortable behavior in `%s` needs a `scope_column` parameter.',
-                    $this->getTable()->getName()
+                    $this->getTable()->getName(),
                 ));
             }
         }
@@ -123,7 +121,7 @@ class SortableBehavior extends Behavior
     /**
      * @return bool
      */
-    public function useScope()
+    public function useScope(): bool
     {
         return $this->getParameter('use_scope') === 'true';
     }
@@ -134,7 +132,7 @@ class SortableBehavior extends Behavior
      *
      * @return array ($methodSignature, $paramsDoc, $scopeBuilder, $buildScopeVars)
      */
-    public function generateScopePhp()
+    public function generateScopePhp(): array
     {
         $methodSignature = '';
         $paramsDoc = '';
@@ -153,7 +151,7 @@ class SortableBehavior extends Behavior
 
                 $buildScope[] = "    \$scope[] = $param;\n";
                 $buildScopeVars[] = "    $param = \$scope[$idx];\n";
-                $paramsDoc[] = ' * @param     ' . $column->getPhpType() . " $param Scope value for column `" . $column->getPhpName() . '`';
+                $paramsDoc[] = ' * @param ' . $column->getPhpType() . " $param Scope value for column `" . $column->getPhpName() . '`';
 
                 if (!$column->isNotNull()) {
                     $param .= ' = null';
@@ -186,7 +184,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnGetter($name)
+    public function getColumnGetter(string $name): string
     {
         return 'get' . $this->getTable()->getColumn($name)->getPhpName();
     }
@@ -198,7 +196,7 @@ class SortableBehavior extends Behavior
      *
      * @return string
      */
-    public function getColumnSetter($name)
+    public function getColumnSetter(string $name): string
     {
         return 'set' . $this->getTable()->getColumn($name)->getPhpName();
     }
@@ -206,7 +204,7 @@ class SortableBehavior extends Behavior
     /**
      * @inheritDoc
      */
-    public function addParameter(array $parameter)
+    public function addParameter(array $parameter): void
     {
         if ($parameter['name'] === 'scope_column') {
             $this->parameters['scope_column'] .= ($this->parameters['scope_column'] ? ',' : '') . $parameter['value'];
@@ -218,9 +216,9 @@ class SortableBehavior extends Behavior
     /**
      * Returns all scope columns as array.
      *
-     * @return string[]
+     * @return list<string>
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->getParameter('scope_column')
             ? explode(',', str_replace(' ', '', trim($this->getParameter('scope_column'))))
@@ -232,7 +230,7 @@ class SortableBehavior extends Behavior
      *
      * @return bool
      */
-    public function hasMultipleScopes()
+    public function hasMultipleScopes(): bool
     {
         return count($this->getScopes()) > 1;
     }

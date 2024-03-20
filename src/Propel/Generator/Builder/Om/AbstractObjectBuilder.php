@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -32,15 +30,16 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addColumnAccessorMethods(&$script)
+    protected function addColumnAccessorMethods(string &$script): void
     {
         $table = $this->getTable();
 
         foreach ($table->getColumns() as $col) {
             $type = $col->getType();
-            // if they're not using the DateTime class than we will generate "compatibility" accessor method
+            // if they're not using the DateTime class then we will generate "compatibility" accessor method
             if (
                 $type === PropelTypes::DATE
+                || $type === PropelTypes::DATETIME
                 || $type === PropelTypes::TIME
                 || $type === PropelTypes::TIMESTAMP
             ) {
@@ -83,7 +82,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addColumnMutatorMethods(&$script)
+    protected function addColumnMutatorMethods(string &$script): void
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->getType() === PropelTypes::OBJECT) {
@@ -92,6 +91,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
                 $this->addLobMutator($script, $col);
             } elseif (
                 $col->getType() === PropelTypes::DATE
+                || $col->getType() === PropelTypes::DATETIME
                 || $col->getType() === PropelTypes::TIME
                 || $col->getType() === PropelTypes::TIMESTAMP
             ) {
@@ -123,9 +123,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the baseClass path if specified for table/db.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getBaseClass()
+    protected function getBaseClass(): ?string
     {
         return $this->getTable()->getBaseClass();
     }
@@ -133,9 +133,9 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * Gets the interface path if specified for current table.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getInterface()
+    protected function getInterface(): ?string
     {
         return $this->getTable()->getInterface();
     }
@@ -147,7 +147,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return bool
      */
-    protected function isAddGenericMutators()
+    protected function isAddGenericMutators(): bool
     {
         $table = $this->getTable();
 
@@ -161,7 +161,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return bool
      */
-    protected function isAddGenericAccessors()
+    protected function isAddGenericAccessors(): bool
     {
         $table = $this->getTable();
 
@@ -171,7 +171,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
     /**
      * @return bool
      */
-    protected function hasDefaultValues()
+    protected function hasDefaultValues(): bool
     {
         foreach ($this->getTable()->getColumns() as $col) {
             if ($col->getDefaultValue() !== null) {
@@ -190,7 +190,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = '')
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
          return parent::hasBehaviorModifier($hookName, 'ObjectBuilderModifier');
     }
@@ -204,7 +204,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'ObjectBuilderModifier', $script, $tab);
     }
@@ -216,7 +216,7 @@ abstract class AbstractObjectBuilder extends AbstractOMBuilder
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName)
+    public function getBehaviorContent(string $contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'ObjectBuilderModifier');
     }

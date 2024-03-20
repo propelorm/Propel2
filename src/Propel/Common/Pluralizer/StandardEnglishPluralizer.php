@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Pluralizer;
@@ -22,7 +20,7 @@ namespace Propel\Common\Pluralizer;
 class StandardEnglishPluralizer implements PluralizerInterface
 {
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     protected $plural = [
         '(matr|vert|ind)(ix|ex)' => '\1ices',
@@ -76,7 +74,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
     ];
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     protected $irregular = [
         'leaf' => 'leaves',
@@ -86,7 +84,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
         'goose' => 'geese',
         'genus' => 'genera',
         'sex' => 'sexes',
-        'ox' => 'oxen',
+        '^ox' => 'oxen',
         'child' => 'children',
         'man' => 'men',
         'tooth' => 'teeth',
@@ -100,7 +98,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
     ];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $uncountable = [
         'sheep',
@@ -123,10 +121,10 @@ class StandardEnglishPluralizer implements PluralizerInterface
      *
      * @return string The plural form of $root (e.g. Authors).
      */
-    public function getPluralForm($root)
+    public function getPluralForm(string $root): string
     {
         // save some time in the case that singular and plural are the same
-        if (in_array(strtolower($root), $this->uncountable)) {
+        if (in_array(strtolower($root), $this->uncountable, true)) {
             return $root;
         }
 
@@ -137,7 +135,7 @@ class StandardEnglishPluralizer implements PluralizerInterface
                 $replacement = preg_replace($searchPattern, $result, $root);
                 // look at the first char and see if it's upper case
                 // I know it won't handle more than one upper case char here (but I'm OK with that)
-                if (preg_match('/^[A-Z]/', $root)) {
+                if (ctype_upper($root[0])) {
                     $replacement = ucfirst($replacement);
                 }
 

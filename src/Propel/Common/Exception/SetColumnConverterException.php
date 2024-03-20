@@ -1,10 +1,9 @@
 <?php
+
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Exception;
@@ -30,7 +29,7 @@ class SetColumnConverterException extends InvalidArgumentException
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct($message, $value, $code = 0, ?Exception $previous = null)
+    public function __construct(string $message, $value, int $code = 0, ?Exception $previous = null)
     {
         $this->value = $value;
         parent::__construct($message, $code, $previous);

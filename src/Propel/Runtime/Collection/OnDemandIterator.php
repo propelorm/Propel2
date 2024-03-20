@@ -1,16 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
 
-use Iterator;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -21,7 +19,7 @@ use Propel\Runtime\Propel;
  *
  * @author Francois Zaninotto
  */
-class OnDemandIterator implements Iterator
+class OnDemandIterator implements IteratorInterface
 {
     /**
      * @var \Propel\Runtime\Formatter\ObjectFormatter
@@ -34,7 +32,7 @@ class OnDemandIterator implements Iterator
     protected $dataFetcher;
 
     /**
-     * @var array|null
+     * @var array|bool|null
      */
     protected $currentRow;
 
@@ -68,7 +66,7 @@ class OnDemandIterator implements Iterator
     /**
      * @return void
      */
-    public function closeCursor()
+    public function closeCursor(): void
     {
         $this->dataFetcher->close();
         if ($this->enableInstancePoolingOnFinish) {
@@ -82,7 +80,7 @@ class OnDemandIterator implements Iterator
      *
      * @return int Number of results
      */
-    public function count()
+    public function count(): int
     {
         return $this->dataFetcher->count();
     }
@@ -93,21 +91,31 @@ class OnDemandIterator implements Iterator
      * Gets the current Model object in the collection
      * This is where the hydration takes place.
      *
+     * @psalm-suppress ReservedWord
+     *
      * @see ObjectFormatter::getAllObjectsFromRow()
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function current()
+    #[\ReturnTypeWillChange]
+    public function current(): ActiveRecordInterface
     {
+        if (!is_array($this->currentRow)) {
+            $this->currentRow = [];
+        }
+
         return $this->formatter->getAllObjectsFromRow($this->currentRow);
     }
 
     /**
      * Gets the current key in the iterator
      *
+     * @psalm-suppress ReservedWord
+     *
      * @return int
      */
-    public function key()
+    #[\ReturnTypeWillChange]
+    public function key(): int
     {
         return $this->currentKey;
     }
@@ -118,7 +126,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->currentRow = $this->dataFetcher->fetch();
         $this->currentKey++;
@@ -136,7 +144,7 @@ class OnDemandIterator implements Iterator
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         // check that the hydration can begin
         if ($this->formatter === null) {
@@ -156,8 +164,8 @@ class OnDemandIterator implements Iterator
     /**
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
-        return (bool)$this->isValid;
+        return $this->isValid;
     }
 }

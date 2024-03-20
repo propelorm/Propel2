@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AutoAddPk;
@@ -22,7 +20,7 @@ class AutoAddPkBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'name' => 'id',
@@ -36,7 +34,7 @@ class AutoAddPkBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyDatabase()
+    public function modifyDatabase(): void
     {
         foreach ($this->getDatabase()->getTables() as $table) {
             if (!$table->hasPrimaryKey()) {
@@ -51,7 +49,7 @@ class AutoAddPkBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         if (!$table->hasPrimaryKey() && !$table->hasBehavior('concrete_inheritance')) {

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -30,29 +28,29 @@ abstract class AbstractParser
      *
      * @return mixed Converted data, depending on the parser format
      */
-    abstract public function fromArray($array, $rootKey = 'data');
+    abstract public function fromArray(array $array, string $rootKey = 'data');
 
     /**
      * Converts data from the parser format to an associative array.
      *
      * Override in the parser driver.
      *
-     * @param mixed $data Source data to convert, depending on the parser format
+     * @param string $data Source data to convert, depending on the parser format
      * @param string $rootKey The parser might use this name for converting from parser format
      *
      * @return array Converted data
      */
-    abstract public function toArray($data, $rootKey = 'data');
+    abstract public function toArray(string $data, string $rootKey = 'data'): array;
 
     /**
-     * @param array $data
+     * @param array $array
      * @param string|null $rootKey
      *
      * @return string
      */
-    public function listFromArray($data, $rootKey = 'data')
+    public function listFromArray(array $array, ?string $rootKey = 'data'): string
     {
-        return $this->fromArray($data, $rootKey);
+        return $this->fromArray($array, (string)$rootKey);
     }
 
     /**
@@ -61,7 +59,7 @@ abstract class AbstractParser
      *
      * @return array
      */
-    public function listToArray($data, $rootKey = 'data')
+    public function listToArray(string $data, string $rootKey = 'data'): array
     {
         return $this->toArray($data, $rootKey);
     }
@@ -75,7 +73,7 @@ abstract class AbstractParser
      *
      * @return string The file content processed by PHP
      */
-    public function load($path)
+    public function load(string $path): string
     {
         if (!file_exists($path)) {
             throw new FileNotFoundException(sprintf('File "%s" does not exist or is unreadable', $path));
@@ -83,9 +81,8 @@ abstract class AbstractParser
 
         ob_start();
         include $path;
-        $contents = ob_get_clean();
 
-        return $contents;
+        return (string)ob_get_clean();
     }
 
     /**
@@ -94,12 +91,12 @@ abstract class AbstractParser
      * @param string $data The file content
      * @param string|null $path Path of the file to create
      *
-     * @return mixed|null|void
+     * @return int|null|void
      */
-    public function dump($data, $path = null)
+    public function dump(string $data, ?string $path = null)
     {
         if ($path !== null) {
-            return file_put_contents($path, $data);
+            return (int)file_put_contents($path, $data);
         }
 
         echo $data;
@@ -112,10 +109,11 @@ abstract class AbstractParser
      *
      * @throws \Propel\Runtime\Exception\FileNotFoundException
      *
-     * @return \Propel\Runtime\Parser\AbstractParser A PropelParser subclass instance
+     * @return self A PropelParser subclass instance
      */
-    public static function getParser($type = 'XML')
+    public static function getParser(string $type = 'XML'): self
     {
+        /** @phpstan-var class-string<\Propel\Runtime\Parser\AbstractParser> $class */
         $class = sprintf('\Propel\Runtime\Parser\%sParser', ucfirst(strtolower($type)));
 
         if (!class_exists($class)) {

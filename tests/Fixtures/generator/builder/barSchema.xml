@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<database name="default" schema="bar">
+    <table name="table2">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="table1_id" type="INTEGER"/>
+        <foreign-key foreignTable="table1" foreignSchema="foo">
+            <reference local="table1_id" foreign="id"/>
+        </foreign-key>
+    </table>
+</database>

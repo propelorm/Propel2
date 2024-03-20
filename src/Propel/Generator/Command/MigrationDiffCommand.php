@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
@@ -102,7 +100,10 @@ class MigrationDiffCommand extends AbstractCommand
         $manager->setWorkingDirectory($generatorConfig->getSection('paths')['migrationDir']);
 
         if ($manager->hasPendingMigrations()) {
-            throw new RuntimeException('Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task');
+            throw new RuntimeException(sprintf(
+                'Uncommitted migrations have been found ; you should either execute or delete them before rerunning the \'diff\' task. %s',
+                "\n" . implode("\n", $manager->getValidMigrationTimestamps()),
+            ));
         }
 
         $totalNbTables = 0;
@@ -121,6 +122,8 @@ class MigrationDiffCommand extends AbstractCommand
 
             $conn = $manager->getAdapterConnection($name);
             $platform = $generatorConfig->getConfiguredPlatform($conn, $name);
+
+            $appDatabase->setPlatform($platform);
 
             if ($platform && !$platform->supportsMigrations()) {
                 $output->writeln(sprintf('Skipping database "%s" since vendor "%s" does not support migrations', $name, $platform->getDatabaseType()));
@@ -179,7 +182,8 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf('Comparing database "%s"', $name));
             }
 
-            if (!$appDataDatabase = $manager->getDatabase($name)) {
+            $appDataDatabase = $manager->getDatabase($name);
+            if (!$appDataDatabase) {
                 $output->writeln(sprintf('<error>Database "%s" does not exist in schema.xml. Skipped.</error>', $name));
 
                 continue;
@@ -201,7 +205,7 @@ class MigrationDiffCommand extends AbstractCommand
                 $output->writeln(sprintf(
                     '<info>Possible table renaming detected: "%s" to "%s". It will be deleted and recreated. Use --table-renaming to only rename it.</info>',
                     $fromTableName,
-                    $toTableName
+                    $toTableName,
                 ));
             }
 
@@ -230,7 +234,8 @@ class MigrationDiffCommand extends AbstractCommand
 
         $output->writeln(sprintf('"%s" file successfully created.', $file));
 
-        if (null !== $editorCmd = $input->getOption('editor')) {
+        $editorCmd = $input->getOption('editor');
+        if ($editorCmd !== null) {
             $output->writeln(sprintf('Using "%s" as text editor', $editorCmd));
             shell_exec($editorCmd . ' ' . escapeshellarg($file));
         } else {

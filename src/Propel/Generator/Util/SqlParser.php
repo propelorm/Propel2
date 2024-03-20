@@ -1,17 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Util;
 
-use PDOStatement;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 
 /**
  * Service class for parsing a large SQL string into an array of SQL statements
@@ -53,7 +51,7 @@ class SqlParser
      *
      * @return void
      */
-    public function setSQL($sql)
+    public function setSQL(string $sql): void
     {
         $this->sql = $sql;
         $this->pos = 0;
@@ -65,7 +63,7 @@ class SqlParser
      *
      * @return string The SQL string to parse
      */
-    public function getSQL()
+    public function getSQL(): string
     {
         return $this->sql;
     }
@@ -77,9 +75,9 @@ class SqlParser
      * @param string $input The SQL statements
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
-    public static function executeString($input, ConnectionInterface $connection)
+    public static function executeString(string $input, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseString($input), $connection);
     }
@@ -91,9 +89,9 @@ class SqlParser
      * @param string $file the path to the SQL file
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
-    public static function executeFile($file, ConnectionInterface $connection)
+    public static function executeFile(string $file, ConnectionInterface $connection): int
     {
         return self::executeStatements(self::parseFile($file), $connection);
     }
@@ -105,15 +103,15 @@ class SqlParser
      * @param array $statements a list of SQL statements
      * @param \Propel\Runtime\Connection\ConnectionInterface $connection a connection object
      *
-     * @return int the number of executed statements
+     * @return int The number of executed statements
      */
-    protected static function executeStatements($statements, ConnectionInterface $connection)
+    protected static function executeStatements(array $statements, ConnectionInterface $connection): int
     {
         $executed = 0;
 
         foreach ($statements as $statement) {
             $stmt = $connection->prepare($statement);
-            if ($stmt instanceof PDOStatement) {
+            if ($stmt instanceof StatementInterface) {
                 // only execute if has no error
                 $stmt->execute();
                 $executed++;
@@ -150,7 +148,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseString($input)
+    public static function parseString(string $input): array
     {
         $parser = new self();
         $parser->setSQL($input);
@@ -181,19 +179,19 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public static function parseFile($file)
+    public static function parseFile(string $file): array
     {
         if (!file_exists($file)) {
             return [];
         }
 
-        return self::parseString(file_get_contents($file));
+        return self::parseString((string)file_get_contents($file));
     }
 
     /**
      * @return void
      */
-    public function convertLineFeedsToUnixStyle()
+    public function convertLineFeedsToUnixStyle(): void
     {
         $this->setSQL(str_replace(["\r\n", "\r"], "\n", $this->sql));
     }
@@ -201,11 +199,11 @@ class SqlParser
     /**
      * @return void
      */
-    public function stripSQLCommentLines()
+    public function stripSQLCommentLines(): void
     {
         $this->setSQL(preg_replace([
-            '#^\s*(//|--|\#).*(\n|$)#m',    // //, --, or # style comments
-            '#^\s*/\*.*?\*/#s',              // c-style comments
+            '#^\s*(//|--|\#).*(\n|$)#m', // //, --, or # style comments
+            '#^\s*/\*.*?\*/#s', // c-style comments
         ], '', $this->sql));
     }
 
@@ -214,7 +212,7 @@ class SqlParser
      *
      * @return array A list of SQL statement strings
      */
-    public function explodeIntoStatements()
+    public function explodeIntoStatements(): array
     {
         $this->pos = 0;
         $sqlStatements = [];
@@ -231,7 +229,7 @@ class SqlParser
      *
      * @return string A SQL statement
      */
-    public function getNextStatement()
+    public function getNextStatement(): string
     {
         $isAfterBackslash = false;
         $isInString = false;
@@ -239,7 +237,7 @@ class SqlParser
         $parsedString = '';
         $lowercaseString = ''; // helper variable for performance sake
         while ($this->pos <= $this->len) {
-            $char = isset($this->sql[$this->pos]) ? $this->sql[$this->pos] : '';
+            $char = $this->sql[$this->pos] ?? '';
             // check flags for strings or escaper
             switch ($char) {
                 case '\\':

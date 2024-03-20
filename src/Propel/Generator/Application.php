@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator;
@@ -22,11 +20,11 @@ class Application extends SymfonyApplication
      *
      * @return int
      */
-    public function doRun(InputInterface $input, OutputInterface $output)
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         if (extension_loaded('xdebug')) {
             $output->writeln(
-                '<comment>You are running propel with xdebug enabled. This has a major impact on runtime performance.</comment>' . "\n"
+                '<comment>You are running propel with xdebug enabled. This has a major impact on runtime performance.</comment>' . "\n",
             );
         }
 

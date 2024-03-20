@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -23,26 +21,37 @@ use Propel\Generator\Model\Unique;
  */
 abstract class PlatformTestProvider extends PlatformTestBase
 {
+    /**
+     * @return void
+     */
+    public function assertCreateTableMatches(string $expected, $schema, ?string $tableName = 'foo' )
+    {
+        $table = $this->getTableFromSchema($schema, $tableName);
+        $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
+    }
 
+    /**
+     * @return string[][]
+     */
     public function providerForTestGetAddTablesDDL()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="title" type="VARCHAR" size="255" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="author">
-            <reference local="author_id" foreign="id" />
+            <reference local="author_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="author">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="first_name" type="VARCHAR" size="100"/>
+        <column name="last_name" type="VARCHAR" size="100"/>
     </table>
 </database>
 EOF;
@@ -55,27 +64,27 @@ EOF;
         $schema = <<<EOF
 <database name="test" schema="x" identifierQuoting="true">
     <table name="book">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="title" type="VARCHAR" size="255" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="author" foreignSchema="y">
-            <reference local="author_id" foreign="id" />
+            <reference local="author_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="author" schema="y">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="first_name" type="VARCHAR" size="100"/>
+        <column name="last_name" type="VARCHAR" size="100"/>
     </table>
     <table name="book_summary">
-        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER" />
-        <column name="book_id" required="true" type="INTEGER" />
-        <column name="summary" required="true" type="LONGVARCHAR" />
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="book_id" required="true" type="INTEGER"/>
+        <column name="summary" required="true" type="LONGVARCHAR"/>
         <foreign-key foreignTable="book" onDelete="cascade">
-            <reference local="book_id" foreign="id" />
+            <reference local="book_id" foreign="id"/>
         </foreign-key>
     </table>
 </database>
@@ -89,20 +98,20 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="book" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="title" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="title" type="VARCHAR" size="255" required="true"/>
         <index>
-            <index-column name="title" />
+            <index-column name="title"/>
         </index>
         <column name="author_id" type="INTEGER"/>
         <foreign-key foreignTable="author">
-            <reference local="author_id" foreign="id" />
+            <reference local="author_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="author" skipSql="true">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="first_name" type="VARCHAR" size="100" />
-        <column name="last_name" type="VARCHAR" size="100" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="first_name" type="VARCHAR" size="100"/>
+        <column name="last_name" type="VARCHAR" size="100"/>
     </table>
 </database>
 EOF;
@@ -115,8 +124,8 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo" description="This is foo table">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="VARCHAR" size="255" required="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="VARCHAR" size="255" required="true"/>
     </table>
 </database>
 EOF;
@@ -129,8 +138,8 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo" description="This is foo table">
-        <column name="foo" primaryKey="true" type="VARCHAR" />
-        <column name="bar" type="VARCHAR" size="255" required="true" />
+        <column name="foo" primaryKey="true" type="VARCHAR"/>
+        <column name="bar" type="VARCHAR" size="255" required="true"/>
     </table>
 </database>
 EOF;
@@ -143,9 +152,9 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="foo" primaryKey="true" type="INTEGER" />
-        <column name="bar" primaryKey="true" type="INTEGER" />
-        <column name="baz" type="VARCHAR" size="255" required="true" />
+        <column name="foo" primaryKey="true" type="INTEGER"/>
+        <column name="bar" primaryKey="true" type="INTEGER"/>
+        <column name="baz" type="VARCHAR" size="255" required="true"/>
     </table>
 </database>
 EOF;
@@ -158,10 +167,10 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <unique>
-            <unique-column name="bar" />
+            <unique-column name="bar"/>
         </unique>
     </table>
 </database>
@@ -175,8 +184,8 @@ EOF;
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo" schema="Woopah">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
     </table>
 </database>
 EOF;
@@ -200,7 +209,7 @@ EOF;
         $table->addUnique($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -223,7 +232,7 @@ EOF;
         $table->addIndex($index2);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -243,7 +252,7 @@ EOF;
         $table->addIndex($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -262,7 +271,7 @@ EOF;
         $table->addIndex($index);
 
         return [
-            [$index]
+        [$index],
         ];
     }
 
@@ -275,7 +284,7 @@ EOF;
         $table->addColumn($column);
 
         return [
-            [$table]
+        [$table],
         ];
     }
 
@@ -303,7 +312,7 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -314,7 +323,7 @@ EOF;
         $fk->setSkipSql(true);
 
         return [
-            [$fk]
+        [$fk],
         ];
     }
 
@@ -357,8 +366,35 @@ EOF;
         $table1->addForeignKey($fk);
 
         return [
-            [$table1]
+        [$table1],
         ];
     }
 
+    public function providerForTestCreateSchemaWithUuidColumns()
+    {
+        $schema = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="foo">
+        <column name="uuid" primaryKey="true" type="UUID" default="vendor_specific_default()"/>
+        <column name="other_uuid" type="UUID"/>
+    </table>
+</database>
+EOF;
+
+        return [[$schema]];
+    }
+
+    public function providerForTestCreateSchemaWithUuidBinaryColumns()
+    {
+        $schema = <<<EOF
+<database name="test" identifierQuoting="true">
+    <table name="foo">
+        <column name="uuid-bin" primaryKey="true" type="UUID_BINARY" default="vendor_specific_default()"/>
+        <column name="other_uuid-bin" type="UUID_BINARY"/>
+    </table>
+</database>
+EOF;
+
+        return [[$schema]];
+    }
 }

@@ -1,6 +1,5 @@
 <!--
     Propel XML database schema DTD
-    $Id: database.dtd,v 1.7 2005/03/30 11:38:18 hlellelid Exp $
 
     This is based very closely on the schema DTD for Torque, but
     some differences do exist.
@@ -127,8 +126,8 @@ PHP class or method name.
   phpName CDATA #IMPLIED
   refPhpName CDATA #IMPLIED
   interface CDATA #IMPLIED
-  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
-  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
+  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NOACTION|noaction|NONE|none) "none"
+  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NOACTION|noaction|NONE|none) "none"
   skipSql (true|false) "false"
 >
 

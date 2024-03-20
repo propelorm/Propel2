@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -36,7 +34,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         parent::initialize();
 
@@ -46,6 +44,7 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::CLOB, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'DATETIME2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BU_DATE, 'DATE'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'TIME'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'DATETIME2'));
@@ -58,12 +57,14 @@ class MssqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'VARCHAR(MAX)'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'TINYINT'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'UNIQUEIDENTIFIER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BINARY(16)'));
     }
 
     /**
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 128;
     }
@@ -73,7 +74,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getNullString($notNull)
+    public function getNullString(bool $notNull): string
     {
         return $notNull ? 'NOT NULL' : 'NULL';
     }
@@ -81,7 +82,7 @@ class MssqlPlatform extends DefaultPlatform
     /**
      * @return bool
      */
-    public function supportsNativeDeleteTrigger()
+    public function supportsNativeDeleteTrigger(): bool
     {
         return true;
     }
@@ -89,7 +90,7 @@ class MssqlPlatform extends DefaultPlatform
     /**
      * @return bool
      */
-    public function supportsInsertNullPk()
+    public function supportsInsertNullPk(): bool
     {
         return false;
     }
@@ -104,7 +105,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddTablesDDL(Database $database): string
     {
         $ret = $this->getBeginDDL();
         foreach ($database->getTablesForSql() as $table) {
@@ -129,7 +130,7 @@ class MssqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getDropTableDDL(Table $table)
+    public function getDropTableDDL(Table $table): string
     {
         $ret = '';
         foreach ($table->getForeignKeys() as $fk) {
@@ -176,7 +177,7 @@ END
      *
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Table $table): string
     {
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)';
@@ -184,7 +185,7 @@ END
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
-                $this->getColumnListDDL($table->getPrimaryKey())
+                $this->getColumnListDDL($table->getPrimaryKey()),
             );
         }
 
@@ -196,7 +197,7 @@ END
      *
      * @return string
      */
-    public function getAddForeignKeyDDL(ForeignKey $fk)
+    public function getAddForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return '';
@@ -212,7 +213,7 @@ END
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fk->getTable()->getName()),
-            $this->getForeignKeyDDL($fk)
+            $this->getForeignKeyDDL($fk),
         );
     }
 
@@ -223,14 +224,14 @@ END
      *
      * @return string
      */
-    public function getUniqueDDL(Unique $unique)
+    public function getUniqueDDL(Unique $unique): string
     {
         $pattern = 'CONSTRAINT %s UNIQUE NONCLUSTERED (%s) ON [PRIMARY]';
 
         return sprintf(
             $pattern,
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -239,7 +240,7 @@ END
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return '';
@@ -251,7 +252,7 @@ END
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
         if ($fk->hasOnUpdate() && $fk->getOnUpdate() != ForeignKey::SETNULL) {
             $script .= ' ON UPDATE ' . $fk->getOnUpdate();
@@ -268,7 +269,7 @@ END
      *
      * @return bool
      */
-    public function supportsSchemas()
+    public function supportsSchemas(): bool
     {
         return true;
     }
@@ -278,17 +279,17 @@ END
      *
      * @return bool
      */
-    public function hasSize($sqlType)
+    public function hasSize(string $sqlType): bool
     {
         $nosize = ['INT', 'TEXT', 'GEOMETRY', 'VARCHAR(MAX)', 'VARBINARY(MAX)', 'SMALLINT', 'DATETIME', 'TINYINT', 'REAL', 'BIGINT'];
 
-        return !(in_array($sqlType, $nosize));
+        return !(in_array($sqlType, $nosize, true));
     }
 
     /**
      * @inheritDoc
      */
-    public function doQuoting($text)
+    public function doQuoting(string $text): string
     {
         return '[' . strtr($text, ['.' => '].[']) . ']';
     }
@@ -296,7 +297,7 @@ END
     /**
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s';
     }

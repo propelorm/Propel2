@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
@@ -22,8 +20,19 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DatabaseReverseCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_OUTPUT_DIRECTORY = 'generated-reversed-database';
+
+    /**
+     * @var string
+     */
     public const DEFAULT_DATABASE_NAME = 'default';
+
+    /**
+     * @var string
+     */
     public const DEFAULT_SCHEMA_NAME = 'schema';
 
     /**
@@ -42,7 +51,7 @@ class DatabaseReverseCommand extends AbstractCommand
                 'connection',
                 InputArgument::OPTIONAL,
                 'Connection name or dsn to use. Example: \'mysql:host=127.0.0.1;dbname=test;user=root;password=foobar\' (don\'t forget the quote for dsn)',
-                'default'
+                'default',
             )
             ->setName('database:reverse')
             ->setAliases(['reverse'])
@@ -68,7 +77,7 @@ class DatabaseReverseCommand extends AbstractCommand
             $configOptions += $this->connectionToProperties('reverseconnection=' . $connection, 'reverse');
             $configOptions['propel']['reverse']['parserClass'] = sprintf(
                 '\\Propel\\Generator\\Reverse\\%sSchemaParser',
-                ucfirst($configOptions['propel']['database']['connections']['reverseconnection']['adapter'])
+                ucfirst($configOptions['propel']['database']['connections']['reverseconnection']['adapter']),
             );
 
             if (!$input->getOption('database-name')) {
@@ -81,7 +90,7 @@ class DatabaseReverseCommand extends AbstractCommand
 
         $manager = new ReverseManager(new XmlDumper());
         $manager->setGeneratorConfig($generatorConfig);
-        $manager->setLoggerClosure(function ($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output): void {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

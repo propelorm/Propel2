@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveRecord;
 
+use Propel\Runtime\Map\TableMap;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
@@ -24,6 +23,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
 {
     private $book;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -59,7 +61,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Id>1234</Id>
     <Name><![CDATA[Penguin]]></Name>
     <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
+      <Book>
+        <Book><![CDATA[*RECURSION*]]></Book>
+      </Book>
     </Books>
   </Publisher>
   <Author>
@@ -69,7 +73,9 @@ class ActiveRecordConvertTest extends TestCaseFixtures
     <Email></Email>
     <Age></Age>
     <Books>
-      <Book><![CDATA[*RECURSION*]]></Book>
+      <Book>
+        <Book><![CDATA[*RECURSION*]]></Book>
+      </Book>
     </Books>
   </Author>
 </data>
@@ -81,6 +87,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testToXML($expected)
     {
@@ -89,6 +97,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testFromXML($expected)
     {
@@ -120,7 +130,7 @@ Publisher:
     Id: 1234
     Name: Penguin
     Books:
-        - '*RECURSION*'
+        - ['*RECURSION*']
 Author:
     Id: 5678
     FirstName: George
@@ -128,7 +138,7 @@ Author:
     Email: null
     Age: null
     Books:
-        - '*RECURSION*'
+        - ['*RECURSION*']
 
 EOF;
 
@@ -137,6 +147,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testToYAML($expected)
     {
@@ -145,6 +157,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testFromYAML($expected)
     {
@@ -165,28 +179,46 @@ EOF;
 
     public function toJsonDataProvider()
     {
-        $expected = <<<EOF
-{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":["*RECURSION*"]},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":["*RECURSION*"]}}
+        $phpName = <<<EOF
+{"Id":9012,"Title":"Don Juan","ISBN":"0140422161","Price":12.99,"PublisherId":1234,"AuthorId":5678,"Publisher":{"Id":1234,"Name":"Penguin","Books":[["*RECURSION*"]]},"Author":{"Id":5678,"FirstName":"George","LastName":"Byron","Email":null,"Age":null,"Books":[["*RECURSION*"]]}}
+EOF;
+        $camelName = <<<EOF
+{"id":9012,"title":"Don Juan","iSBN":"0140422161","price":12.99,"publisherId":1234,"authorId":5678,"publisher":{"id":1234,"name":"Penguin","books":[["*RECURSION*"]]},"author":{"id":5678,"firstName":"George","lastName":"Byron","email":null,"age":null,"books":[["*RECURSION*"]]}}
 EOF;
 
-        return [[$expected]];
+        $colName = <<<EOF
+{"book.id":9012,"book.title":"Don Juan","book.isbn":"0140422161","book.price":12.99,"book.publisher_id":1234,"book.author_id":5678,"Publisher":{"publisher.id":1234,"publisher.name":"Penguin","Books":[["*RECURSION*"]]},"Author":{"author.id":5678,"author.first_name":"George","author.last_name":"Byron","author.email":null,"author.age":null,"Books":[["*RECURSION*"]]}}
+EOF;
+
+        $fieldName = <<<EOF
+{"id":9012,"title":"Don Juan","isbn":"0140422161","price":12.99,"publisher_id":1234,"author_id":5678,"publisher":{"id":1234,"name":"Penguin","books":[["*RECURSION*"]]},"author":{"id":5678,"first_name":"George","last_name":"Byron","email":null,"age":null,"books":[["*RECURSION*"]]}}
+EOF;
+
+        return [[$phpName, TableMap::TYPE_PHPNAME],
+                [$camelName, TableMap::TYPE_CAMELNAME],
+                [$colName, TableMap::TYPE_COLNAME],
+                [$fieldName, TableMap::TYPE_FIELDNAME]];
     }
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
-    public function testToJSON($expected)
+    public function testToJSON($expected, $type)
     {
-        $this->assertEquals($expected, $this->book->toJSON());
+        $this->assertEquals($expected, $this->book->toJSON(true, $type));
     }
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
-    public function testfromJSON($expected)
+    public function testfromJSON($expected, $type)
     {
         $book = new Book();
-        $book->fromJSON($expected);
+        $book->fromJSON($expected, $type);
         // FIXME: fromArray() doesn't take related objects into account
         $book->resetModified();
         $author = $this->book->getAuthor();
@@ -202,13 +234,15 @@ EOF;
 
     public function toCsvDataProvider()
     {
-        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}\"\r\n";
+        $expected = "Id,Title,ISBN,Price,PublisherId,AuthorId,Publisher,Author\r\n9012,Don Juan,0140422161,12.99,1234,5678,\"a:3:{s:2:\\\"Id\\\";i:1234;s:4:\\\"Name\\\";s:7:\\\"Penguin\\\";s:5:\\\"Books\\\";a:1:{i:0;a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}}\",\"a:6:{s:2:\\\"Id\\\";i:5678;s:9:\\\"FirstName\\\";s:6:\\\"George\\\";s:8:\\\"LastName\\\";s:5:\\\"Byron\\\";s:5:\\\"Email\\\";N;s:3:\\\"Age\\\";N;s:5:\\\"Books\\\";a:1:{i:0;a:1:{i:0;s:11:\\\"*RECURSION*\\\";}}}\"\r\n";
 
         return [[$expected]];
     }
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testToCSV($expected)
     {
@@ -217,6 +251,8 @@ EOF;
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testfromCSV($expected)
     {
@@ -234,5 +270,4 @@ EOF;
 
         $this->assertEquals($this->book, $book);
     }
-
 }

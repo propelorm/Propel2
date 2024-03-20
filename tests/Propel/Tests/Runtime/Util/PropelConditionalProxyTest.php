@@ -1,95 +1,96 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Util;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
-use Propel\Runtime\Util\PropelConditionalProxy;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Util\PropelConditionalProxy;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for PropelConditionalProxy.
  *
  * @author Julien Muetton <julien_muetton@carpe-hora.com>
- * @version    $Id: CriteriaCombineTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class PropelConditionalProxyTest extends BaseTestCase
 {
-  public function testFluidInterface()
-  {
-    $criteria = new ProxyTestCriteria();
-    $p = new TestPropelConditionalProxy($criteria, false);
+    /**
+     * @return void
+     */
+    public function testFluidInterface()
+    {
+        $criteria = new ProxyTestCriteria();
+        $p = new TestPropelConditionalProxy($criteria, false);
 
-    $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_elseif(true), $criteria, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(true), $criteria, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_else(), $p, '_else returns fluid interface');
+        $this->assertEquals($p->_else(), $p, '_else returns fluid interface');
 
-    $criteria = new ProxyTestCriteria();
+        $criteria = new ProxyTestCriteria();
 
-    $p = new TestPropelConditionalProxy($criteria, true);
+        $p = new TestPropelConditionalProxy($criteria, true);
 
-    $this->assertEquals($p->_elseif(true), $p, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(true), $p, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_else(), $p, '_else returns fluid interface');
+        $this->assertEquals($p->_else(), $p, '_else returns fluid interface');
 
-    $criteria = new ProxyTestCriteria();
-    $p = new TestPropelConditionalProxy($criteria, false);
+        $criteria = new ProxyTestCriteria();
+        $p = new TestPropelConditionalProxy($criteria, false);
 
-    $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
+        $this->assertEquals($p->_elseif(false), $p, '_elseif returns fluid interface');
 
-    $this->assertEquals($p->_else(), $criteria, '_else returns fluid interface');
+        $this->assertEquals($p->_else(), $criteria, '_else returns fluid interface');
+    }
 
-  }
+    /**
+     * @return void
+     */
+    public function testHierarchy()
+    {
+        $criteria = new ProxyTestCriteria();
+        $p = new TestPropelConditionalProxy($criteria, true);
 
-  public function testHierarchy()
-  {
-    $criteria = new ProxyTestCriteria();
-    $p = new TestPropelConditionalProxy($criteria, true);
+        $this->assertEquals($p->getCriteria(), $criteria, 'main object is the given one');
 
-    $this->assertEquals($p->getCriteria(), $criteria, 'main object is the given one');
+        $this->assertInstanceOf('\Propel\Runtime\Util\PropelConditionalProxy', $p2 = $p->_if(true), '_if returns fluid interface');
 
-    $this->assertInstanceOf('\Propel\Runtime\Util\PropelConditionalProxy', $p2 = $p->_if(true), '_if returns fluid interface');
+        $this->assertEquals($p2->getCriteria(), $criteria, 'main object is the given one, even with nested proxies');
 
-    $this->assertEquals($p2->getCriteria(), $criteria, 'main object is the given one, even with nested proxies');
+        $this->assertEquals($p2->getParentProxy(), $p, 'nested proxy is respected');
 
-    $this->assertEquals($p2->getParentProxy(), $p, 'nested proxy is respected');
+        $p = new PropelConditionalProxy($criteria, true);
 
-    $p = new PropelConditionalProxy($criteria, true);
-
-    $this->assertEquals($criteria, $p->_if(true), '_if returns fluid interface');
-  }
+        $this->assertEquals($criteria, $p->_if(true), '_if returns fluid interface');
+    }
 }
 
 class TestPropelConditionalProxy extends PropelConditionalProxy
 {
-  public function _if($cond)
-  {
-    return new TestPropelConditionalProxy($this->criteria, $cond, $this);
-  }
+    public function _if($cond)
+    {
+        return new TestPropelConditionalProxy($this->criteria, $cond, $this);
+    }
 
-  public function getParentProxy()
-  {
-    return $this->parent;
-  }
+    public function getParentProxy(): ?self
+    {
+        return $this->parent;
+    }
 
-  public function getCriteria()
-  {
-    return $this->criteria;
-  }
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
 }
 
 class ProxyTestCriteria extends Criteria

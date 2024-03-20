@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -18,18 +16,25 @@ namespace Propel\Generator\Model;
  */
 class ColumnDefaultValue
 {
+    /**
+     * @var string
+     */
     public const TYPE_VALUE = 'value';
+
+    /**
+     * @var string
+     */
     public const TYPE_EXPR = 'expr';
 
     /**
-     * @var string|null The default value, as specified in the schema.
+     * @var string|int|null The default value, as specified in the schema.
      */
     private $value;
 
     /**
      * @var string The type of value represented by this object (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR).
      */
-    private $type = ColumnDefaultValue::TYPE_VALUE;
+    private $type = self::TYPE_VALUE;
 
     /**
      * Creates a new DefaultValue object.
@@ -37,7 +42,7 @@ class ColumnDefaultValue
      * @param string|null $value The default value, as specified in the schema.
      * @param string|null $type The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
-    public function __construct($value, $type = null)
+    public function __construct(?string $value, ?string $type = null)
     {
         $this->setValue($value);
 
@@ -49,7 +54,7 @@ class ColumnDefaultValue
     /**
      * @return string The type of default value (DefaultValue::TYPE_VALUE or DefaultValue::TYPE_EXPR)
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -59,7 +64,7 @@ class ColumnDefaultValue
      *
      * @return void
      */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -69,13 +74,13 @@ class ColumnDefaultValue
      *
      * @return bool Whether value this object holds is an expression.
      */
-    public function isExpression()
+    public function isExpression(): bool
     {
         return $this->type === self::TYPE_EXPR;
     }
 
     /**
-     * @return string|null The value, as specified in the schema.
+     * @return string|int|null The value, as specified in the schema.
      */
     public function getValue()
     {
@@ -83,11 +88,11 @@ class ColumnDefaultValue
     }
 
     /**
-     * @param string|null $value The value, as specified in the schema.
+     * @param string|int|null $value The value, as specified in the schema.
      *
      * @return void
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -101,7 +106,7 @@ class ColumnDefaultValue
      *
      * @return bool Whether this object represents same default value as $other
      */
-    public function equals(ColumnDefaultValue $other)
+    public function equals(ColumnDefaultValue $other): bool
     {
         if ($this->getType() !== $other->getType()) {
             return false;
@@ -112,11 +117,10 @@ class ColumnDefaultValue
         }
 
         // special case for current timestamp
-        $equivalents = [ 'CURRENT_TIMESTAMP', 'NOW()' ];
-        if (in_array(strtoupper($this->getValue()), $equivalents) && in_array(strtoupper($other->getValue()), $equivalents)) {
-            return true;
-        }
+        $equivalents = ['CURRENT_TIMESTAMP', 'NOW()'];
+        $value = strtoupper((string)$this->getValue());
+        $otherValue = strtoupper((string)$other->getValue());
 
-        return false; // Can't help, they are different
+        return in_array($value, $equivalents, true) && in_array($otherValue, $equivalents, true);
     }
 }

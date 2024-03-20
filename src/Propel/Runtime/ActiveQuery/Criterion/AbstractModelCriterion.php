@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -29,11 +27,11 @@ abstract class AbstractModelCriterion extends AbstractCriterion
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
      * @param string $clause A simple pseudo-SQL clause, e.g. 'foo.BAR LIKE ?'
-     * @param \Propel\Runtime\Map\ColumnMap $column A Column object to help escaping the value
+     * @param \Propel\Runtime\Map\ColumnMap|string $column A Column object to help escaping the value
      * @param mixed $value
      * @param string|null $tableAlias optional table alias
      */
-    public function __construct(Criteria $outer, $clause, $column, $value = null, $tableAlias = null)
+    public function __construct(Criteria $outer, string $clause, $column, $value = null, ?string $tableAlias = null)
     {
         $this->value = $value;
         $this->setColumn($column);
@@ -47,7 +45,7 @@ abstract class AbstractModelCriterion extends AbstractCriterion
     /**
      * @return string
      */
-    public function getClause()
+    public function getClause(): string
     {
         return $this->clause;
     }
@@ -60,14 +58,14 @@ abstract class AbstractModelCriterion extends AbstractCriterion
      *
      * @return bool
      */
-    public function equals($obj)
+    public function equals(?object $obj): bool
     {
         // TODO: optimize me with early outs
         if ($this === $obj) {
             return true;
         }
 
-        if ($obj === null || !($obj instanceof AbstractModelCriterion)) {
+        if (!$obj instanceof AbstractModelCriterion) {
             return false;
         }
 

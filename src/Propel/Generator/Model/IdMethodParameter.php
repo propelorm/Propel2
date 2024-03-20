@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -38,7 +36,7 @@ class IdMethodParameter extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->name = $this->getAttribute('name');
         $this->value = $this->getAttribute('value');
@@ -49,7 +47,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -61,7 +59,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -83,7 +81,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return void
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
@@ -95,7 +93,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return void
      */
-    public function setTable(Table $parent)
+    public function setTable(Table $parent): void
     {
         $this->parentTable = $parent;
     }
@@ -105,7 +103,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->parentTable;
     }
@@ -115,7 +113,7 @@ class IdMethodParameter extends MappingModel
      *
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->parentTable->getName();
     }

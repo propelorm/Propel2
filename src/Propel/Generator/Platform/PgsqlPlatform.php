@@ -1,17 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
 
 use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\ColumnDiff;
 use Propel\Generator\Model\Diff\TableDiff;
@@ -42,9 +41,9 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize()
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BOOLEAN, 'BOOLEAN'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TINYINT, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SMALLINT, 'INT2'));
@@ -63,12 +62,15 @@ class PgsqlPlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'INT2'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'INT4'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DECIMAL, 'NUMERIC'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'TIMESTAMP'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'uuid'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'BYTEA'));
     }
 
     /**
      * @return string
      */
-    public function getNativeIdMethod()
+    public function getNativeIdMethod(): string
     {
         return PlatformInterface::SERIAL;
     }
@@ -76,15 +78,15 @@ class PgsqlPlatform extends DefaultPlatform
     /**
      * @return string
      */
-    public function getAutoIncrement()
+    public function getAutoIncrement(): string
     {
         return '';
     }
 
     /**
-     * @return int[]
+     * @return array<int>
      */
-    public function getDefaultTypeSizes()
+    public function getDefaultTypeSizes(): array
     {
         return [
             'char' => 1,
@@ -99,29 +101,29 @@ class PgsqlPlatform extends DefaultPlatform
     /**
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 63;
     }
 
     /**
-     * @param mixed $b
+     * @param mixed $value
      *
      * @return string
      */
-    public function getBooleanString($b)
+    public function getBooleanString($value): string
     {
         // parent method does the checking for allows string
         // representations & returns integer
-        $b = parent::getBooleanString($b);
+        $value = parent::getBooleanString($value);
 
-        return ($b ? "'t'" : "'f'");
+        return ($value ? "'t'" : "'f'");
     }
 
     /**
      * @return bool
      */
-    public function supportsNativeDeleteTrigger()
+    public function supportsNativeDeleteTrigger(): bool
     {
         return true;
     }
@@ -134,13 +136,12 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    public function getSequenceName(Table $table)
+    public function getSequenceName(Table $table): string
     {
         $result = null;
         if ($table->getIdMethod() == IdMethod::NATIVE) {
             $idMethodParams = $table->getIdMethodParameters();
-            if (empty($idMethodParams)) {
-                $result = null;
+            if (!$idMethodParams) {
                 // We're going to ignore a check for max length (mainly
                 // because I'm not sure how Postgres would handle this w/ SERIAL anyway)
                 foreach ($table->getColumns() as $col) {
@@ -163,7 +164,7 @@ class PgsqlPlatform extends DefaultPlatform
      *
      * @return string
      */
-    protected function getAddSequenceDDL(Table $table)
+    protected function getAddSequenceDDL(Table $table): string
     {
         if (
             $table->getIdMethod() == IdMethod::NATIVE
@@ -175,7 +176,7 @@ CREATE SEQUENCE %s;
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($table))),
             );
         }
 
@@ -187,7 +188,7 @@ CREATE SEQUENCE %s;
      *
      * @return string
      */
-    protected function getDropSequenceDDL(Table $table)
+    protected function getDropSequenceDDL(Table $table): string
     {
         if (
             $table->getIdMethod() == IdMethod::NATIVE
@@ -199,7 +200,7 @@ DROP SEQUENCE %s;
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier(strtolower($this->getSequenceName($table)))
+                $this->quoteIdentifier(strtolower($this->getSequenceName($table))),
             );
         }
 
@@ -211,7 +212,7 @@ DROP SEQUENCE %s;
      *
      * @return string
      */
-    public function getAddSchemasDDL(Database $database)
+    public function getAddSchemasDDL(Database $database): string
     {
         $ret = '';
         $schemas = [];
@@ -231,7 +232,7 @@ DROP SEQUENCE %s;
      *
      * @return string
      */
-    public function getAddSchemaDDL(Table $table)
+    public function getAddSchemaDDL(Table $table): string
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
@@ -250,7 +251,7 @@ CREATE SCHEMA %s;
      *
      * @return string
      */
-    public function getUseSchemaDDL(Table $table)
+    public function getUseSchemaDDL(Table $table): string
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
@@ -269,7 +270,7 @@ SET search_path TO %s;
      *
      * @return string
      */
-    public function getResetSchemaDDL(Table $table)
+    public function getResetSchemaDDL(Table $table): string
     {
         $vi = $table->getVendorInfoForType('pgsql');
         if ($vi->hasParameter('schema')) {
@@ -286,7 +287,7 @@ SET search_path TO public;
      *
      * @return string
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddTablesDDL(Database $database): string
     {
         $ret = $this->getAddSchemasDDL($database);
 
@@ -304,7 +305,7 @@ SET search_path TO public;
             $ret .= $this->getAddForeignKeysDDL($table);
         }
 
-        if (!empty($ret)) {
+        if ($ret) {
             $ret = $this->getBeginDDL() . $ret . $this->getEndDDL();
         }
 
@@ -316,17 +317,15 @@ SET search_path TO public;
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getForeignKeyDDL(ForeignKey $fk): string
     {
         $script = parent::getForeignKeyDDL($fk);
 
         $pgVendorInfo = $fk->getVendorInfoForType('pgsql');
-        if ($pgVendorInfo) {
-            if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
-                $script .= ' DEFERRABLE';
-                if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
-                    $script .= ' INITIALLY DEFERRED';
-                }
+        if (filter_var($pgVendorInfo->getParameter('deferrable'), FILTER_VALIDATE_BOOLEAN)) {
+            $script .= ' DEFERRABLE';
+            if (filter_var($pgVendorInfo->getParameter('initiallyDeferred'), FILTER_VALIDATE_BOOLEAN)) {
+                $script .= ' INITIALLY DEFERRED';
             }
         }
 
@@ -336,7 +335,7 @@ SET search_path TO public;
     /**
      * @return string
      */
-    public function getBeginDDL()
+    public function getBeginDDL(): string
     {
         return "
 BEGIN;
@@ -346,7 +345,7 @@ BEGIN;
     /**
      * @return string
      */
-    public function getEndDDL()
+    public function getEndDDL(): string
     {
         return "
 COMMIT;
@@ -356,7 +355,7 @@ COMMIT;
     /**
      * @inheritDoc
      */
-    public function getAddForeignKeysDDL(Table $table)
+    public function getAddForeignKeysDDL(Table $table): string
     {
         $ret = '';
         foreach ($table->getForeignKeys() as $fk) {
@@ -371,10 +370,9 @@ COMMIT;
      *
      * @return string
      */
-    public function getAddTableDDL(Table $table)
+    public function getAddTableDDL(Table $table): string
     {
-        $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
+        $ret = $this->getUseSchemaDDL($table);
         $ret .= $this->getAddSequenceDDL($table);
 
         $lines = [];
@@ -402,7 +400,7 @@ CREATE TABLE %s
         $ret .= sprintf(
             $pattern,
             $this->quoteIdentifier($table->getName()),
-            implode($sep, $lines)
+            implode($sep, $lines),
         );
 
         if ($table->hasDescription()) {
@@ -412,7 +410,7 @@ COMMENT ON TABLE %s IS %s;
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),
-                $this->quote($table->getDescription())
+                $this->quote($table->getDescription()),
             );
         }
 
@@ -427,7 +425,7 @@ COMMENT ON TABLE %s IS %s;
      *
      * @return string
      */
-    protected function getAddColumnsComments(Table $table)
+    protected function getAddColumnsComments(Table $table): string
     {
         $ret = '';
         foreach ($table->getColumns() as $column) {
@@ -442,17 +440,17 @@ COMMENT ON TABLE %s IS %s;
      *
      * @return string
      */
-    protected function getAddColumnComment(Column $column)
+    protected function getAddColumnComment(Column $column): string
     {
         $pattern = "
 COMMENT ON COLUMN %s.%s IS %s;
 ";
-        if ($description = $column->getDescription()) {
+        if ($column->getDescription()) {
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($column->getTable()->getName()),
                 $this->quoteIdentifier($column->getName()),
-                $this->quote($description)
+                $this->quote($column->getDescription()),
             );
         }
 
@@ -464,10 +462,9 @@ COMMENT ON COLUMN %s.%s IS %s;
      *
      * @return string
      */
-    public function getDropTableDDL(Table $table)
+    public function getDropTableDDL(Table $table): string
     {
-        $ret = '';
-        $ret .= $this->getUseSchemaDDL($table);
+        $ret = $this->getUseSchemaDDL($table);
         $pattern = "
 DROP TABLE IF EXISTS %s CASCADE;
 ";
@@ -483,7 +480,7 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @return string
      */
-    public function getPrimaryKeyName(Table $table)
+    public function getPrimaryKeyName(Table $table): string
     {
         $tableName = $table->getCommonName();
 
@@ -495,7 +492,7 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @return string
      */
-    public function getColumnDDL(Column $col)
+    public function getColumnDDL(Column $col): string
     {
         $domain = $col->getDomain();
 
@@ -518,13 +515,29 @@ DROP TABLE IF EXISTS %s CASCADE;
         } else {
             $ddl[] = $sqlType;
         }
-        if ($default = $this->getColumnDefaultValueDDL($col)) {
+
+        if (
+            $col->getDefaultValue()
+            && $col->getDefaultValue()->isExpression()
+            && $col->getDefaultValue()->getValue() === 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
+        ) {
+            $col->setDefaultValue(
+                new ColumnDefaultValue('CURRENT_TIMESTAMP', ColumnDefaultValue::TYPE_EXPR),
+            );
+        }
+
+        $default = $this->getColumnDefaultValueDDL($col);
+        if ($default) {
             $ddl[] = $default;
         }
-        if ($notNull = $this->getNullString($col->isNotNull())) {
+
+        $notNull = $this->getNullString($col->isNotNull());
+        if ($notNull) {
             $ddl[] = $notNull;
         }
-        if ($autoIncrement = $col->getAutoIncrementString()) {
+
+        $autoIncrement = $col->getAutoIncrementString();
+        if ($autoIncrement) {
             $ddl[] = $autoIncrement;
         }
 
@@ -536,12 +549,12 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @return string
      */
-    public function getUniqueDDL(Unique $unique)
+    public function getUniqueDDL(Unique $unique): string
     {
         return sprintf(
             'CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -551,9 +564,10 @@ DROP TABLE IF EXISTS %s CASCADE;
      *
      * @return string
      */
-    public function getRenameTableDDL($fromTableName, $toTableName)
+    public function getRenameTableDDL(string $fromTableName, string $toTableName): string
     {
-        if (($pos = strpos($toTableName, '.')) !== false) {
+        $pos = strpos($toTableName, '.');
+        if ($pos !== false) {
             $toTableName = substr($toTableName, $pos + 1);
         }
 
@@ -564,7 +578,7 @@ ALTER TABLE %s RENAME TO %s;
         return sprintf(
             $pattern,
             $this->quoteIdentifier($fromTableName),
-            $this->quoteIdentifier($toTableName)
+            $this->quoteIdentifier($toTableName),
         );
     }
 
@@ -573,7 +587,7 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @return bool
      */
-    public function supportsSchemas()
+    public function supportsSchemas(): bool
     {
         return true;
     }
@@ -583,15 +597,15 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @return bool
      */
-    public function hasSize($sqlType)
+    public function hasSize(string $sqlType): bool
     {
-        return !in_array($sqlType, ['BYTEA', 'TEXT', 'DOUBLE PRECISION']);
+        return !in_array(strtoupper($sqlType), ['BYTEA', 'TEXT', 'DOUBLE PRECISION'], true);
     }
 
     /**
      * @return bool
      */
-    public function hasStreamBlobImpl()
+    public function hasStreamBlobImpl(): bool
     {
         return true;
     }
@@ -599,7 +613,7 @@ ALTER TABLE %s RENAME TO %s;
     /**
      * @return bool
      */
-    public function supportsVarcharWithoutSize()
+    public function supportsVarcharWithoutSize(): bool
     {
         return true;
     }
@@ -609,7 +623,7 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @return string
      */
-    public function getModifyTableDDL(TableDiff $tableDiff)
+    public function getModifyTableDDL(TableDiff $tableDiff): string
     {
         $ret = parent::getModifyTableDDL($tableDiff);
 
@@ -633,7 +647,7 @@ ALTER TABLE %s RENAME TO %s;
      *
      * @return string
      */
-    public function getModifyColumnDDL(ColumnDiff $columnDiff)
+    public function getModifyColumnDDL(ColumnDiff $columnDiff): string
     {
         $ret = '';
         $changedProperties = $columnDiff->getChangedProperties();
@@ -650,12 +664,12 @@ ALTER TABLE %s RENAME TO %s;
 ALTER TABLE %s ALTER COLUMN %s;
 ";
 
-        if (isset($changedProperties['autoIncrement'])) {
+        if ($table && isset($changedProperties['autoIncrement'])) {
             $tableName = $table->getName();
             $colPlainName = $toColumn->getName();
             $seqName = "{$tableName}_{$colPlainName}_seq";
 
-            if ($toColumn->isAutoIncrement() && $table && $table->getIdMethodParameters() == null) {
+            if ($toColumn->isAutoIncrement() && $table->getIdMethodParameters() == null) {
                 $defaultValue = "nextval('$seqName'::regclass)";
                 $toColumn->setDefaultValue($defaultValue);
                 $changedProperties['defaultValueValue'] = [null, $defaultValue];
@@ -666,23 +680,20 @@ ALTER TABLE %s ALTER COLUMN %s;
                         "
 CREATE SEQUENCE %s;
 ",
-                        $seqName
+                        $seqName,
                     );
                     $fromTable->getDatabase()->addSequence($seqName);
                 }
             }
 
             if (!$toColumn->isAutoIncrement() && $fromColumn->isAutoIncrement()) {
-                $changedProperties['defaultValueValue'] = [$fromColumn->getDefaultValueString(), null];
-                $toColumn->setDefaultValue(null);
-
                 //remove sequence
                 if ($fromTable->getDatabase()->hasSequence($seqName)) {
                     $this->createOrDropSequences .= sprintf(
                         "
 DROP SEQUENCE %s CASCADE;
 ",
-                        $seqName
+                        $seqName,
                     );
                     $fromTable->getDatabase()->removeSequence($seqName);
                 }
@@ -702,13 +713,15 @@ DROP SEQUENCE %s CASCADE;
                 }
             }
 
-            if ($using = $this->getUsingCast($fromColumn, $toColumn)) {
+            $using = $this->getUsingCast($fromColumn, $toColumn);
+            if ($using) {
                 $sqlType .= $using;
             }
+
             $ret .= sprintf(
                 $pattern,
                 $this->quoteIdentifier($table->getName()),
-                $colName . ' TYPE ' . $sqlType
+                $colName . ' TYPE ' . $sqlType,
             );
         }
 
@@ -738,11 +751,11 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
-    public function isString($type)
+    public function isUuid(string $type): bool
     {
-        $strings = ['VARCHAR'];
+        $strings = ['UUID'];
 
-        return in_array(strtoupper($type), $strings);
+        return in_array(strtoupper($type), $strings, true);
     }
 
     /**
@@ -750,11 +763,23 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return bool
      */
-    public function isNumber($type)
+    public function isString(string $type): bool
+    {
+        $strings = ['VARCHAR'];
+
+        return in_array(strtoupper($type), $strings, true);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function isNumber(string $type): bool
     {
         $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
 
-        return in_array(strtoupper($type), $numbers);
+        return in_array(strtoupper($type), $numbers, true);
     }
 
     /**
@@ -763,16 +788,12 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return string
      */
-    public function getUsingCast(Column $fromColumn, Column $toColumn)
+    public function getUsingCast(Column $fromColumn, Column $toColumn): string
     {
         $fromSqlType = strtoupper($fromColumn->getDomain()->getSqlType());
         $toSqlType = strtoupper($toColumn->getDomain()->getSqlType());
         $name = $fromColumn->getName();
 
-        if ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) {
-            //cast from int to string
-            return '  ';
-        }
         if ($this->isString($fromSqlType) && $this->isNumber($toSqlType)) {
             //cast from string to int
             return "
@@ -785,16 +806,18 @@ DROP SEQUENCE %s CASCADE;
             return " USING decode(CAST($name as text), 'escape')";
         }
 
-        if ($fromSqlType === 'DATE' && $toSqlType === 'TIME') {
-            return ' USING NULL';
-        }
-
-        if ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) {
+        if (
+            ($this->isNumber($fromSqlType) && $this->isNumber($toSqlType)) ||
+            ($this->isString($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isNumber($fromSqlType) && $this->isString($toSqlType)) ||
+            ($this->isUuid($fromSqlType) && $this->isString($toSqlType))
+        ) {
+            // no cast necessary
             return '';
         }
 
-        if ($this->isString($fromSqlType) && $this->isString($toSqlType)) {
-            return '';
+        if ($this->isString($fromSqlType) && $this->isUuid($toSqlType)) {
+            return " USING $name::uuid";
         }
 
         return ' USING NULL';
@@ -807,11 +830,11 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getModifyColumnsDDL
      *
-     * @param \Propel\Generator\Model\Diff\ColumnDiff[] $columnDiffs
+     * @param array<\Propel\Generator\Model\Diff\ColumnDiff> $columnDiffs
      *
      * @return string
      */
-    public function getModifyColumnsDDL($columnDiffs)
+    public function getModifyColumnsDDL(array $columnDiffs): string
     {
         $ret = '';
         foreach ($columnDiffs as $columnDiff) {
@@ -828,11 +851,11 @@ DROP SEQUENCE %s CASCADE;
      *
      * @see DefaultPlatform::getAddColumnsDLL
      *
-     * @param \Propel\Generator\Model\Column[] $columns
+     * @param array<\Propel\Generator\Model\Column> $columns
      *
      * @return string
      */
-    public function getAddColumnsDDL($columns)
+    public function getAddColumnsDDL(array $columns): string
     {
         $ret = '';
         foreach ($columns as $column) {
@@ -853,7 +876,7 @@ DROP SEQUENCE %s CASCADE;
      *
      * @return string
      */
-    public function getDropIndexDDL(Index $index)
+    public function getDropIndexDDL(Index $index): string
     {
         if ($index instanceof Unique) {
             $pattern = "
@@ -863,7 +886,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             return sprintf(
                 $pattern,
                 $this->quoteIdentifier($index->getTable()->getName()),
-                $this->quoteIdentifier($index->getName())
+                $this->quoteIdentifier($index->getName()),
             );
         }
 
@@ -883,10 +906,15 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|string[]|null
+     * @return string
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
-    {
+    public function getIdentifierPhp(
+        string $columnValueMutator,
+        string $connectionVariableName = '$con',
+        string $sequenceName = '',
+        string $tab = '            ',
+        ?string $phpType = null
+    ): string {
         if (!$sequenceName) {
             throw new EngineException('PostgreSQL needs a sequence name to fetch primary keys');
         }
@@ -898,7 +926,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
             $connectionVariableName,
             $sequenceName,
             $columnValueMutator,
-            $phpType ? '(' . $phpType . ') ' : ''
+            $phpType ? '(' . $phpType . ') ' : '',
         );
 
         return preg_replace('/^/m', $tab, $script);
@@ -909,7 +937,7 @@ ALTER TABLE %s DROP CONSTRAINT %s;
      *
      * @return string
      */
-    public function getAddIndexDDL(Index $index)
+    public function getAddIndexDDL(Index $index): string
     {
         if (!$index->isUnique()) {
             return parent::getAddIndexDDL($index);
@@ -923,7 +951,7 @@ ALTER TABLE %s ADD CONSTRAINT %s UNIQUE (%s);
             $pattern,
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->quoteIdentifier($index->getName()),
-            $this->getColumnListDDL($index->getColumnObjects())
+            $this->getColumnListDDL($index->getColumnObjects()),
         );
     }
 }

@@ -1,17 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter;
 
-use PDOStatement;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 use Propel\Runtime\Map\DatabaseMap;
 
@@ -27,7 +26,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The upper case string.
      */
-    public function toUpperCase($in);
+    public function toUpperCase(string $in): string;
 
     /**
      * This method is used to ignore case.
@@ -36,7 +35,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCase($in);
+    public function ignoreCase(string $in): string;
 
     /**
      * Allows manipulation of the query string before StatementPdo is instantiated.
@@ -48,7 +47,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return void
      */
-    public function cleanupSQL(&$sql, array &$params, Criteria $values, DatabaseMap $dbMap);
+    public function cleanupSQL(string &$sql, array &$params, Criteria $values, DatabaseMap $dbMap): void;
 
     /**
      * Modifies the passed-in SQL to add LIMIT and/or OFFSET.
@@ -56,29 +55,30 @@ interface SqlAdapterInterface extends AdapterInterface
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit);
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void;
+
+    /**
+     * Modifies the passed-in SQL to add locking capabilities
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(string &$sql, Lock $lock): void;
 
     /**
      * Gets the SQL string that this adapter uses for getting a random number.
      *
-     * @param mixed $seed (optional) seed value for databases that support this
+     * @param string|null $seed (optional) seed value for databases that support this
      *
      * @return string
      */
-    public function random($seed = null);
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
+    public function random(?string $seed = null): string;
 
     /**
      * Builds the SELECT part of a SQL statement based on a Criteria
@@ -90,7 +90,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return string
      */
-    public function createSelectSqlPart(Criteria $criteria, &$fromClause, $aliasAll = false);
+    public function createSelectSqlPart(Criteria $criteria, array &$fromClause, bool $aliasAll = false): string;
 
     /**
      * Ensures uniqueness of select column names by turning them all into aliases
@@ -102,7 +102,7 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return \Propel\Runtime\ActiveQuery\Criteria The input, with Select columns replaced by aliases
      */
-    public function turnSelectColumnsToAliases(Criteria $criteria);
+    public function turnSelectColumnsToAliases(Criteria $criteria): Criteria;
 
     /**
      * Binds values in a prepared statement.
@@ -115,24 +115,24 @@ interface SqlAdapterInterface extends AdapterInterface
      * $adapter = Propel::getServiceContainer()->getAdapter($criteria->getDbName());
      * $sql = $criteria->createSelectSql($params);
      * $stmt = $con->prepare($sql);
-     * $params = array();
+     * $params = [];
      * $adapter->populateStmtValues($stmt, $params, Propel::getServiceContainer()->getDatabaseMap($criteria->getDbName()));
      * $stmt->execute();
      * </code>
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param array $params array('column' => ..., 'table' => ..., 'value' => ...)
      * @param \Propel\Runtime\Map\DatabaseMap $dbMap
      *
      * @return void
      */
-    public function bindValues(PDOStatement $stmt, array $params, DatabaseMap $dbMap);
+    public function bindValues(StatementInterface $stmt, array $params, DatabaseMap $dbMap): void;
 
     /**
      * Binds a value to a positioned parameter in a statement,
      * given a ColumnMap object to infer the binding type.
      *
-     * @param \PDOStatement $stmt The statement to bind
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt The statement to bind
      * @param string $parameter Parameter identifier
      * @param mixed $value The value to bind
      * @param \Propel\Runtime\Map\ColumnMap $cMap The ColumnMap of the column to bind
@@ -140,5 +140,13 @@ interface SqlAdapterInterface extends AdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null);
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool;
+
+    /**
+     * Indicates if the database system can process DELETE statements with
+     * aliases like 'DELETE t FROM my_table t JOIN my_other_table o ON ...'
+     *
+     * @return bool
+     */
+    public function supportsAliasesInDelete(): bool;
 }

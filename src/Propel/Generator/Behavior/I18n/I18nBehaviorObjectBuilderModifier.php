@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\I18n;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\PropelTypes;
 
@@ -39,7 +38,7 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\I18n\I18nBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(I18nBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -50,7 +49,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string|null
      */
-    public function postDelete($builder)
+    public function postDelete(ObjectBuilder $builder): ?string
     {
         $this->builder = $builder;
         if (!$builder->getPlatform()->supportsNativeDeleteTrigger() && !$builder->getBuildProperty('generator.objectModel.emulateForeignKeyConstraints')) {
@@ -70,7 +69,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectAttributes($builder)
+    public function objectAttributes(ObjectBuilder $builder): string
     {
         return $this->behavior->renderTemplate('objectAttributes', [
             'defaultLocale' => $this->behavior->getDefaultLocale(),
@@ -83,7 +82,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectClearReferences($builder)
+    public function objectClearReferences(ObjectBuilder $builder): string
     {
         return $this->behavior->renderTemplate('objectClearReferences', [
             'defaultLocale' => $this->behavior->getDefaultLocale(),
@@ -95,15 +94,15 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $this->builder = $builder;
 
-        $script = '';
-        $script .= $this->addSetLocale();
+        $script = $this->addSetLocale();
         $script .= $this->addGetLocale();
 
-        if ($alias = $this->behavior->getParameter('locale_alias')) {
+        $alias = $this->behavior->getParameter('locale_alias');
+        if ($alias) {
             $script .= $this->addGetLocaleAlias($alias);
             $script .= $this->addSetLocaleAlias($alias);
         }
@@ -123,7 +122,7 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @return string
      */
-    protected function addSetLocale()
+    protected function addSetLocale(): string
     {
         return $this->behavior->renderTemplate('objectSetLocale', [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
@@ -135,7 +134,7 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @return string
      */
-    protected function addGetLocale()
+    protected function addGetLocale(): string
     {
         return $this->behavior->renderTemplate('objectGetLocale', [
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
@@ -147,7 +146,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addSetLocaleAlias($alias)
+    protected function addSetLocaleAlias(string $alias): string
     {
         return $this->behavior->renderTemplate('objectSetLocaleAlias', [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
@@ -162,7 +161,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addGetLocaleAlias($alias)
+    protected function addGetLocaleAlias(string $alias): string
     {
         return $this->behavior->renderTemplate('objectGetLocaleAlias', [
             'alias' => ucfirst($alias),
@@ -173,9 +172,8 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @return string
      */
-    protected function addGetTranslation()
+    protected function addGetTranslation(): string
     {
-        $plural = false;
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
 
@@ -185,14 +183,14 @@ class I18nBehaviorObjectBuilderModifier
             'i18nListVariable' => $this->builder->getRefFKCollVarName($fk),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
             'i18nQueryName' => $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
-            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk, $plural),
+            'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk),
         ]);
     }
 
     /**
      * @return string
      */
-    protected function addRemoveTranslation()
+    protected function addRemoveTranslation(): string
     {
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
@@ -209,7 +207,7 @@ class I18nBehaviorObjectBuilderModifier
     /**
      * @return string
      */
-    protected function addGetCurrentTranslation()
+    protected function addGetCurrentTranslation(): string
     {
         return $this->behavior->renderTemplate('objectGetCurrentTranslation', [
             'i18nTablePhpName' => $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())),
@@ -224,7 +222,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addTranslatedColumnGetter(Column $column)
+    protected function addTranslatedColumnGetter(Column $column): string
     {
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
@@ -255,22 +253,23 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return string
      */
-    protected function addTranslatedColumnSetter(Column $column)
+    protected function addTranslatedColumnSetter(Column $column): string
     {
         $i18nTablePhpName = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable()));
         $tablePhpName = $this->builder->getObjectClassName();
         $objectBuilder = $this->builder->getNewObjectBuilder($this->behavior->getI18nTable());
         $comment = '';
         $functionStatement = '';
+
         if ($this->isDateType($column->getType())) {
             $objectBuilder->addTemporalMutatorComment($comment, $column);
-            $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         } else {
             $objectBuilder->addMutatorComment($comment, $column);
-            $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         }
+
+        $objectBuilder->addMutatorOpenOpen($functionStatement, $column);
         $comment = preg_replace('/^\t/m', '', $comment);
-        $comment = str_replace('@return     $this|' . $i18nTablePhpName, '@return     $this|' . $tablePhpName, $comment);
+        $comment = str_replace('@return $this|' . $i18nTablePhpName, '@return $this|' . $tablePhpName, $comment);
         $functionStatement = preg_replace('/^\t/m', '', $functionStatement);
         preg_match_all('/\$[a-z]+/i', $functionStatement, $params);
 
@@ -288,7 +287,7 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return void
      */
-    public function objectFilter(&$script, $builder)
+    public function objectFilter(string &$script, ObjectBuilder $builder): void
     {
         $i18nTable = $this->behavior->getI18nTable();
         $i18nTablePhpName = $this->builder->getNewStubObjectBuilder($i18nTable)->getUnprefixedClassName();
@@ -308,10 +307,11 @@ class I18nBehaviorObjectBuilderModifier
      *
      * @return bool
      */
-    protected function isDateType($columnType)
+    protected function isDateType(string $columnType): bool
     {
         return in_array($columnType, [
             PropelTypes::DATE,
+            PropelTypes::DATETIME,
             PropelTypes::TIME,
             PropelTypes::TIMESTAMP,
         ], true);

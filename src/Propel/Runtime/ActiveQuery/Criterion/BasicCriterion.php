@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -28,11 +26,11 @@ class BasicCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
-     * @param string $column ignored
-     * @param string $value The condition to be added to the query string
-     * @param string $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
+     * @param \Propel\Runtime\Map\ColumnMap|string $column ignored
+     * @param mixed $value The condition to be added to the query string
+     * @param string|null $comparison One of Criteria::LIKE and Criteria::NOT_LIKE
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::EQUAL)
+    public function __construct(Criteria $outer, $column, $value, ?string $comparison = null)
     {
         parent::__construct($outer, $column, $value, $comparison);
     }
@@ -44,9 +42,9 @@ class BasicCriterion extends AbstractCriterion
      *
      * @return $this A modified Criterion object.
      */
-    public function setIgnoreCase($b)
+    public function setIgnoreCase(bool $b)
     {
-        $this->ignoreStringCase = (bool)$b;
+        $this->ignoreStringCase = $b;
 
         return $this;
     }
@@ -56,7 +54,7 @@ class BasicCriterion extends AbstractCriterion
      *
      * @return bool True if case is ignored.
      */
-    public function isIgnoreCase()
+    public function isIgnoreCase(): bool
     {
         return $this->ignoreStringCase;
     }
@@ -71,7 +69,7 @@ class BasicCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         $field = ($this->table === null) ? $this->column : $this->table . '.' . $this->column;
         // NULL VALUES need special treatment because the SQL syntax is different
@@ -86,7 +84,9 @@ class BasicCriterion extends AbstractCriterion
                 // default case, it is a normal col = value expression; value
                 // will be replaced w/ '?' and will be inserted later using PDO bindValue()
                 if ($this->ignoreStringCase) {
-                    $sb .= $this->getAdapter()->ignoreCase($field) . $this->comparison . $this->getAdapter()->ignoreCase(':p' . count($params));
+                    /** @var \Propel\Runtime\Adapter\SqlAdapterInterface $sqlAdapter */
+                    $sqlAdapter = $this->getAdapter();
+                    $sb .= $sqlAdapter->ignoreCase($field) . $this->comparison . $sqlAdapter->ignoreCase(':p' . count($params));
                 } else {
                     $sb .= $field . $this->comparison . ':p' . count($params);
                 }
@@ -100,7 +100,7 @@ class BasicCriterion extends AbstractCriterion
                 $sb .= $field . Criteria::ISNOTNULL;
             } else {
                 // for now throw an exception, because not sure how to interpret this
-                throw new InvalidValueException(sprintf('Could not build SQL for expression: %s %s NULL', $field, $this->comparison));
+                throw new InvalidValueException(sprintf('Could not build SQL for expression: `%s %s NULL`', $field, $this->comparison));
             }
         }
     }

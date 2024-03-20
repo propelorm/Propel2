@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
@@ -46,6 +44,7 @@ class ModelBuildCommand extends AbstractCommand
             ->addOption('disable-package-object-model', null, InputOption::VALUE_NONE, 'Disable schema database merging (packageObjectModel)')
             ->addOption('disable-namespace-auto-package', null, InputOption::VALUE_NONE, 'Disable namespace auto-packaging')
             ->addOption('composer-dir', null, InputOption::VALUE_REQUIRED, 'Directory in which your composer.json resides', null)
+            ->addOption('loader-script-dir', null, InputOption::VALUE_REQUIRED, 'Target folder of the database table map loader script. Defaults to paths.loaderScriptDir', null)
             ->setName('model:build')
             ->setAliases(['build'])
             ->setDescription('Build the model classes based on Propel XML schemas');
@@ -68,6 +67,10 @@ class ModelBuildCommand extends AbstractCommand
                         break;
                     case 'output-dir':
                         $configOptions['propel']['paths']['phpDir'] = $option;
+
+                        break;
+                    case 'loader-script-dir':
+                        $configOptions['propel']['paths']['loaderScriptDir'] = $option;
 
                         break;
                     case 'object-class':
@@ -137,7 +140,7 @@ class ModelBuildCommand extends AbstractCommand
         $manager->setFilesystem($this->getFilesystem());
         $manager->setGeneratorConfig($generatorConfig);
         $manager->setSchemas($this->getSchemas($generatorConfig->getSection('paths')['schemaDir'], $generatorConfig->getSection('generator')['recursive']));
-        $manager->setLoggerClosure(function ($message) use ($input, $output) {
+        $manager->setLoggerClosure(function ($message) use ($input, $output): void {
             if ($input->getOption('verbose')) {
                 $output->writeln($message);
             }

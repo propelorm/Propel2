@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Runtime\Validator\Constraints;
@@ -18,11 +16,11 @@ class UniqueValidator extends ConstraintValidator
 {
     /**
      * @param mixed $value
-     * @param \Symfony\Component\Validator\Constraint $constraint
+     * @param \Propel\Runtime\Validator\Constraints\Unique $constraint
      *
      * @return void
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {
             return;
@@ -39,7 +37,7 @@ class UniqueValidator extends ConstraintValidator
         $object = $this->context->getObject();
         if ($object->isNew() && $matches->count() > 0) {
             $this->context->addViolation($constraint->message);
-        } elseif ($object->isModified() && $matches->count() > (in_array($columnName, $object->getModifiedColumns()) ? 0 : 1)) {
+        } elseif ($object->isModified() && $matches->count() > (in_array($columnName, $object->getModifiedColumns(), true) ? 0 : 1)) {
             $this->context->addViolation($constraint->message);
         }
     }

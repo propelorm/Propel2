@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config\Exception;
@@ -24,7 +22,7 @@ class XmlParseException extends RuntimeException implements ExceptionInterface
         $numErrors = count($errors);
 
         $message = '';
-        if ($numErrors == 1) {
+        if ($numErrors === 1) {
             $message = 'An error occurred ';
         } elseif ($numErrors > 1) {
             $message = 'Some errors occurred ';

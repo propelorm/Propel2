@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -25,7 +23,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getTable()->getPhpName() . 'Query';
     }
@@ -37,11 +35,12 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(string &$script): void
     {
         $table = $this->getTable();
         $tableName = $table->getName();
         $tableDesc = $table->getDescription();
+        $className = $this->getUnqualifiedClassName();
         $baseClassName = $this->getClassNameFromBuilder($this->getQueryBuilder());
 
         if ($this->getBuildProperty('generator.objectModel.addClassLevelComment')) {
@@ -66,7 +65,7 @@ class ExtensionQueryBuilder extends AbstractOMBuilder
  */";
         }
         $script .= "
-class " . $this->getUnqualifiedClassName() . " extends $baseClassName
+class $className extends $baseClassName
 {
 ";
     }
@@ -83,7 +82,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(string &$script): void
     {
     }
 
@@ -94,7 +93,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(string &$script): void
     {
         $script .= "
 }
@@ -110,7 +109,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @return bool
      */
-    public function hasBehaviorModifier($hookName, $modifier = '')
+    public function hasBehaviorModifier(string $hookName, string $modifier = ''): bool
     {
          return parent::hasBehaviorModifier($hookName, 'QueryBuilderModifier');
     }
@@ -124,7 +123,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @return void
      */
-    public function applyBehaviorModifier($hookName, &$script, $tab = '        ')
+    public function applyBehaviorModifier(string $hookName, string &$script, string $tab = '        '): void
     {
         $this->applyBehaviorModifierBase($hookName, 'QueryBuilderModifier', $script, $tab);
     }
@@ -136,7 +135,7 @@ class " . $this->getUnqualifiedClassName() . " extends $baseClassName
      *
      * @return string|null
      */
-    public function getBehaviorContent($contentName)
+    public function getBehaviorContent(string $contentName): ?string
     {
         return $this->getBehaviorContentBase($contentName, 'QueryBuilderModifier');
     }

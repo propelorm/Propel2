@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Runtime\DataFetcher;
 
 use Propel\Runtime\Map\TableMap;
@@ -19,7 +25,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         if ($this->dataObject !== null) {
             next($this->dataObject);
@@ -27,17 +33,20 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->dataObject === null ? null : current($this->dataObject);
     }
 
     /**
-     * @inheritDoc
+     * @return array|null
      */
-    public function fetch()
+    public function fetch(): ?array
     {
         $row = $this->valid() ? $this->current() : null;
         $this->next();
@@ -46,8 +55,11 @@ class ArrayDataFetcher extends AbstractDataFetcher
     }
 
     /**
+     * @psalm-suppress ReservedWord
+     *
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->dataObject === null ? null : key($this->dataObject);
@@ -56,7 +68,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function valid()
+    public function valid(): bool
     {
         return ($this->dataObject !== null && key($this->dataObject) !== null);
     }
@@ -64,7 +76,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->dataObject === null) {
             return;
@@ -76,7 +88,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function getIndexType()
+    public function getIndexType(): string
     {
         return $this->indexType;
     }
@@ -84,9 +96,9 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @inheritDoc
      */
-    public function count()
+    public function count(): int
     {
-        return $this->dataObject === null ? null : count($this->dataObject);
+        return $this->dataObject === null ? 0 : count($this->dataObject);
     }
 
     /**
@@ -96,7 +108,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
      *
      * @return void
      */
-    public function setIndexType($indexType)
+    public function setIndexType(string $indexType): void
     {
         $this->indexType = $indexType;
     }
@@ -104,7 +116,7 @@ class ArrayDataFetcher extends AbstractDataFetcher
     /**
      * @return void
      */
-    public function close()
+    public function close(): void
     {
         $this->dataObject = null;
     }

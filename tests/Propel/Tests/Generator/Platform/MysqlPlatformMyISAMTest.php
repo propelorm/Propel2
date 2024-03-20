@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
@@ -20,18 +18,16 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\VendorInfo;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
 
-/**
- *
- */
 class MysqlPlatformMyISAMTest extends PlatformTestProvider
 {
     /**
      * Get the Platform object for this class
      *
-     * @return MysqlPlatform
+     * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         static $platform;
 
@@ -48,6 +44,9 @@ class MysqlPlatformMyISAMTest extends PlatformTestProvider
         return $platform;
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameDefault()
     {
         $table = new Table('foo');
@@ -56,6 +55,9 @@ class MysqlPlatformMyISAMTest extends PlatformTestProvider
         $this->assertEquals($expected, $this->getPlatform()->getSequenceName($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetSequenceNameCustom()
     {
         $table = new Table('foo');
@@ -70,6 +72,8 @@ class MysqlPlatformMyISAMTest extends PlatformTestProvider
 
     /**
      * @dataProvider providerForTestGetAddTablesDDLSchema
+     *
+     * @return void
      */
     public function testGetAddTablesDDLSchema($schema)
     {
@@ -134,6 +138,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTablesDDL
+     *
+     * @return void
      */
     public function testGetAddTablesDDL($schema)
     {
@@ -183,16 +189,20 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetAddTablesSkipSQLDDL
+     *
+     * @return void
      */
     public function testGetAddTablesSkipSQLDDL($schema)
     {
         $database = $this->getDatabaseFromSchema($schema);
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getAddTablesDDL($database));
     }
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSimplePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLSimplePK($schema)
     {
@@ -210,6 +220,8 @@ CREATE TABLE `foo`
 
     /**
      * @dataProvider providerForTestGetAddTableDDLCompositePK
+     *
+     * @return void
      */
     public function testGetAddTableDDLCompositePK($schema)
     {
@@ -228,6 +240,8 @@ CREATE TABLE `foo`
 
     /**
      * @dataProvider providerForTestGetAddTableDDLUniqueIndex
+     *
+     * @return void
      */
     public function testGetAddTableDDLUniqueIndex($schema)
     {
@@ -244,15 +258,18 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAddTableDDLIndex()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar" type="INTEGER"/>
         <index>
-            <index-column name="bar" />
+            <index-column name="bar"/>
         </index>
     </table>
 </database>
@@ -270,19 +287,22 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAddTableDDLForeignKey()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -299,19 +319,22 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAddTableDDLForeignKeySkipSql()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_id" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_id" type="INTEGER"/>
         <foreign-key foreignTable="bar" skipSql="true">
-            <reference local="bar_id" foreign="id" />
+            <reference local="bar_id" foreign="id"/>
         </foreign-key>
     </table>
     <table name="bar">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -328,12 +351,15 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAddTableDDLEngine()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
     </table>
 </database>
 EOF;
@@ -353,12 +379,15 @@ CREATE TABLE `foo`
         $this->assertEquals($expected, $platform->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetAddTableDDLVendor()
     {
         $schema = <<<EOF
 <database name="test" identifierQuoting="true">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <vendor type="mysql">
             <parameter name="Engine" value="InnoDB"/>
             <parameter name="Charset" value="utf8"/>
@@ -380,6 +409,8 @@ CREATE TABLE `foo`
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSchema
+     *
+     * @return void
      */
     public function testGetAddTableDDLSchema($schema)
     {
@@ -395,6 +426,9 @@ CREATE TABLE `Woopah`.`foo`
         $this->assertEquals($expected, $this->getPlatform()->getAddTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetDropTableDDL()
     {
         $table = new Table('foo');
@@ -407,6 +441,8 @@ DROP TABLE IF EXISTS `foo`;
 
     /**
      * @dataProvider providerForTestGetAddTableDDLSchema
+     *
+     * @return void
      */
     public function testGetDropTableDDLSchema($schema)
     {
@@ -417,6 +453,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getDropTableDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDL()
     {
         $column = new Column('foo');
@@ -429,6 +468,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCharsetVendor()
     {
         $column = new Column('foo');
@@ -440,6 +482,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCharsetCollation()
     {
         $column = new Column('foo');
@@ -459,6 +504,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLComment()
     {
         $column = new Column('foo');
@@ -468,6 +516,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCharsetNotNull()
     {
         $column = new Column('foo');
@@ -480,6 +531,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetColumnDDLCustomSqlType()
     {
         $column = new Column('foo');
@@ -493,6 +547,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLSimpleKey()
     {
         $table = new Table('foo');
@@ -504,6 +561,9 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $this->assertEquals($expected, $this->getPlatform()->getPrimaryKeyDDL($table));
     }
 
+    /**
+     * @return void
+     */
     public function testGetPrimaryKeyDDLCompositeKey()
     {
         $table = new Table('foo');
@@ -520,6 +580,8 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetDropPrimaryKeyDDL($table)
     {
@@ -531,6 +593,8 @@ ALTER TABLE `foo` DROP PRIMARY KEY;
 
     /**
      * @dataProvider providerForTestPrimaryKeyDDL
+     *
+     * @return void
      */
     public function testGetAddPrimaryKeyDDL($table)
     {
@@ -542,6 +606,8 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`bar`);
 
     /**
      * @dataProvider providerForTestGetIndicesDDL
+     *
+     * @return void
      */
     public function testAddIndicesDDL($table)
     {
@@ -555,6 +621,8 @@ CREATE INDEX `foo_index` ON `foo` (`bar1`);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testAddIndexDDL($index)
     {
@@ -566,6 +634,8 @@ CREATE INDEX `babar` ON `foo` (`bar1`, `bar2`);
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testDropIndexDDL($index)
     {
@@ -577,6 +647,8 @@ DROP INDEX `babar` ON `foo`;
 
     /**
      * @dataProvider providerForTestGetIndexDDL
+     *
+     * @return void
      */
     public function testGetIndexDDL($index)
     {
@@ -584,6 +656,9 @@ DROP INDEX `babar` ON `foo`;
         $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
+    /**
+     * @return void
+     */
     public function testGetIndexDDLKeySize()
     {
         $table = new Table('foo');
@@ -599,6 +674,9 @@ DROP INDEX `babar` ON `foo`;
         $this->assertEquals($expected, $this->getPlatform()->getIndexDDL($index));
     }
 
+    /**
+     * @return void
+     */
     public function testGetIndexDDLFulltext()
     {
         $table = new Table('foo');
@@ -618,6 +696,8 @@ DROP INDEX `babar` ON `foo`;
 
     /**
      * @dataProvider providerForTestGetUniqueDDL
+     *
+     * @return void
      */
     public function testGetUniqueDDL($index)
     {
@@ -627,24 +707,30 @@ DROP INDEX `babar` ON `foo`;
 
     /**
      * @dataProvider providerForTestGetForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeysDDL($table)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeysDDL($table));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeyDDL($fk)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getAddForeignKeyDDL($fk));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetAddForeignKeySkipSqlDDL($fk)
     {
@@ -654,15 +740,19 @@ DROP INDEX `babar` ON `foo`;
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeyDDL($fk)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getDropForeignKeyDDL($fk));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetDropForeignKeySkipSqlDDL($fk)
     {
@@ -672,15 +762,19 @@ DROP INDEX `babar` ON `foo`;
 
     /**
      * @dataProvider providerForTestGetForeignKeyDDL
+     *
+     * @return void
      */
     public function testGetForeignKeyDDL($fk)
     {
-        $expected = "";
+        $expected = '';
         $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
     /**
      * @dataProvider providerForTestGetForeignKeySkipSqlDDL
+     *
+     * @return void
      */
     public function testGetForeignKeySkipSqlDDL($fk)
     {
@@ -688,6 +782,9 @@ DROP INDEX `babar` ON `foo`;
         $this->assertEquals($expected, $this->getPlatform()->getForeignKeyDDL($fk));
     }
 
+    /**
+     * @return void
+     */
     public function testGetCommentBlockDDL()
     {
         $expected = "
@@ -698,6 +795,9 @@ DROP INDEX `babar` ON `foo`;
         $this->assertEquals($expected, $this->getPlatform()->getCommentBlockDDL('foo bar'));
     }
 
+    /**
+     * @return void
+     */
     public function testAddExtraIndicesForeignKeys()
     {
         $schema = '
@@ -737,5 +837,4 @@ CREATE TABLE `bar`
 
         $this->assertEquals($expectedRelationSql, $relationTableSql);
     }
-
 }

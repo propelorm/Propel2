@@ -1,18 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Collection;
 
-use Propel\Runtime\Collection\Collection;
 use Propel\Runtime\Collection\ObjectCollection;
-
 use Propel\Tests\Bookstore\Book;
 use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\TestCaseFixtures;
@@ -21,12 +17,14 @@ use Propel\Tests\TestCaseFixtures;
  * Test class for Collection.
  *
  * @author Francois Zaninotto
- * @version    $Id: CollectionTest.php 1348 2009-12-03 21:49:00Z francois $
  */
 class CollectionConvertTest extends TestCaseFixtures
 {
     private $coll;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,8 +45,8 @@ class CollectionConvertTest extends TestCaseFixtures
 
         $this->coll = new ObjectCollection();
         $this->coll->setModel('\Propel\Tests\Bookstore\Book');
-        $this->coll[]= $book1;
-        $this->coll[]= $book2;
+        $this->coll[] = $book1;
+        $this->coll[] = $book2;
     }
 
     public function toXmlDataProvider()
@@ -81,6 +79,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testToXML($expected)
     {
@@ -89,6 +89,8 @@ EOF;
 
     /**
      * @dataProvider toXmlDataProvider
+     *
+     * @return void
      */
     public function testFromXML($expected)
     {
@@ -129,6 +131,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testToYAML($expected)
     {
@@ -137,6 +141,8 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testFromYAML($expected)
     {
@@ -162,6 +168,8 @@ EOF;
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
     public function testToJSON($expected)
     {
@@ -170,6 +178,8 @@ EOF;
 
     /**
      * @dataProvider toJsonDataProvider
+     *
+     * @return void
      */
     public function testfromJSON($expected)
     {
@@ -193,6 +203,8 @@ EOF;
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testToCSV($expected)
     {
@@ -201,6 +213,8 @@ EOF;
 
     /**
      * @dataProvider toCsvDataProvider
+     *
+     * @return void
      */
     public function testfromCSV($expected)
     {
@@ -217,12 +231,17 @@ EOF;
 
     /**
      * @dataProvider toYamlDataProvider
+     *
+     * @return void
      */
     public function testToStringUsesDefaultStringFormat($expected)
     {
-        $this->assertEquals($expected, (string) $this->coll, 'Collection::__toString() uses the YAML representation by default');
+        $this->assertEquals($expected, (string)$this->coll, 'Collection::__toString() uses the YAML representation by default');
     }
 
+    /**
+     * @return void
+     */
     public function testToStringUsesCustomStringFormat()
     {
         $coll = new ObjectCollection();
@@ -230,7 +249,7 @@ EOF;
         $publisher = new Publisher();
         $publisher->setId(12345);
         $publisher->setName('Penguinoo');
-        $coll[]= $publisher;
+        $coll[] = $publisher;
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <Publishers>
@@ -241,7 +260,6 @@ EOF;
 </Publishers>
 
 EOF;
-        $this->assertEquals($expected, (string) $coll);
+        $this->assertEquals($expected, (string)$coll);
     }
-
 }

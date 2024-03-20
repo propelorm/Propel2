@@ -1,21 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\collection;
 
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
-use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
-
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveQuery\PropelQuery;
+use Propel\Runtime\Propel;
+use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for OnDemandIterator.
@@ -26,12 +23,18 @@ use Propel\Runtime\ActiveQuery\PropelQuery;
  */
 class OnDemandIteratorTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         BookstoreDataPopulator::populate($this->con);
     }
 
+    /**
+     * @return void
+     */
     public function testInstancePoolingDisabled()
     {
         Propel::enableInstancePooling();
@@ -43,6 +46,9 @@ class OnDemandIteratorTest extends BookstoreEmptyTestBase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testInstancePoolingReenabled()
     {
         Propel::enableInstancePooling();
@@ -62,5 +68,4 @@ class OnDemandIteratorTest extends BookstoreEmptyTestBase
         $this->assertFalse(Propel::isInstancePoolingEnabled());
         Propel::enableInstancePooling();
     }
-
 }

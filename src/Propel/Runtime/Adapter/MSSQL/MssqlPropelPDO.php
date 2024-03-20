@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\MSSQL;
@@ -27,13 +25,13 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
         if ($opcount === 0) {
             $return = (bool)$this->exec('BEGIN TRANSACTION');
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Begin transaction: ' . __METHOD__);
             }
             $this->isUncommitable = false;
@@ -53,7 +51,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -64,7 +62,7 @@ class MssqlPropelPDO extends PropelPDO
                 }
 
                 $return = (bool)$this->exec('COMMIT TRANSACTION');
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Commit transaction: ' . __METHOD__);
                 }
             }
@@ -82,14 +80,14 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function rollBack()
+    public function rollBack(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
         if ($opcount > 0) {
             if ($opcount === 1) {
                 $return = (bool)$this->exec('ROLLBACK TRANSACTION');
-                if ($this->useDebug) {
+                if ($this->isInDebugMode()) {
                     $this->log('Rollback transaction: ' . __METHOD__);
                 }
             } else {
@@ -110,7 +108,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return bool
      */
-    public function forceRollBack()
+    public function forceRollBack(): bool
     {
         $return = true;
         $opcount = $this->getNestedTransactionCount();
@@ -123,7 +121,7 @@ class MssqlPropelPDO extends PropelPDO
             // try to commit (or rollback) the transaction outside this scope.
             $this->nestedTransactionCount = 0;
 
-            if ($this->useDebug) {
+            if ($this->isInDebugMode()) {
                 $this->log('Rollback transaction: ' . __METHOD__);
             }
         }
@@ -132,11 +130,11 @@ class MssqlPropelPDO extends PropelPDO
     }
 
     /**
-     * @param string|null $seqname
+     * @param string|null $name
      *
      * @return int
      */
-    public function lastInsertId($seqname = null)
+    public function lastInsertId(?string $name = null): int
     {
         $result = $this->query('SELECT SCOPE_IDENTITY()');
 
@@ -148,7 +146,7 @@ class MssqlPropelPDO extends PropelPDO
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier(string $text): string
     {
         return '[' . $text . ']';
     }

@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\QueryCache;
 
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Model\Behavior;
 
 /**
@@ -22,7 +21,7 @@ class QueryCacheBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'backend' => 'apc',
@@ -39,13 +38,13 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryAttributes($builder)
+    public function queryAttributes(AbstractOMBuilder $builder): string
     {
         $script = "protected \$queryKey = '';
 ";
         switch ($this->getParameter('backend')) {
             case 'backend':
-                $script .= "protected static \$cacheBackend = array();
+                $script .= "protected static \$cacheBackend = [];
             ";
 
                 break;
@@ -67,7 +66,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return string
      */
-    public function queryMethods($builder)
+    public function queryMethods(AbstractOMBuilder $builder): string
     {
         $builder->declareClasses('\Propel\Runtime\Propel');
         $this->tableClassName = $builder->getTableMapClassName();
@@ -88,7 +87,7 @@ class QueryCacheBehavior extends Behavior
      *
      * @return void
      */
-    protected function addSetQueryKey(&$script)
+    protected function addSetQueryKey(string &$script): void
     {
         $script .= "
 public function setQueryKey(\$key)
@@ -105,7 +104,7 @@ public function setQueryKey(\$key)
      *
      * @return void
      */
-    protected function addGetQueryKey(&$script)
+    protected function addGetQueryKey(string &$script): void
     {
         $script .= "
 public function getQueryKey()
@@ -120,7 +119,7 @@ public function getQueryKey()
      *
      * @return void
      */
-    protected function addCacheContains(&$script)
+    protected function addCacheContains(string &$script): void
     {
         $script .= "
 public function cacheContains(\$key)
@@ -155,7 +154,7 @@ public function cacheContains(\$key)
      *
      * @return void
      */
-    protected function addCacheStore(&$script)
+    protected function addCacheStore(string &$script): void
     {
         $script .= "
 public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter('lifetime') . ")
@@ -188,7 +187,7 @@ public function cacheStore(\$key, \$value, \$lifetime = " . $this->getParameter(
      *
      * @return void
      */
-    protected function addCacheFetch(&$script)
+    protected function addCacheFetch(string &$script): void
     {
         $script .= "
 public function cacheFetch(\$key)
@@ -223,10 +222,10 @@ public function cacheFetch(\$key)
      *
      * @return void
      */
-    protected function addDoSelect(&$script)
+    protected function addDoSelect(string &$script): void
     {
         $script .= "
-public function doSelect(ConnectionInterface \$con = null)
+public function doSelect(?ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     // check that the columns of the main class are already added (if this is the primary ModelCriteria)
     if (!\$this->hasSelectClause() && !\$this->getPrimaryCriteria()) {
@@ -242,7 +241,7 @@ public function doSelect(ConnectionInterface \$con = null)
         \$params = \$this->getParams();
         \$sql = \$this->cacheFetch(\$key);
     } else {
-        \$params = array();
+        \$params = [];
         \$sql = \$this->createSelectSql(\$params);
     }
 
@@ -269,10 +268,10 @@ public function doSelect(ConnectionInterface \$con = null)
      *
      * @return void
      */
-    protected function addDoCount(&$script)
+    protected function addDoCount(string &$script): void
     {
         $script .= "
-public function doCount(ConnectionInterface \$con = null)
+public function doCount(?ConnectionInterface \$con = null): \Propel\Runtime\DataFetcher\DataFetcherInterface
 {
     \$dbMap = Propel::getServiceContainer()->getDatabaseMap(\$this->getDbName());
     \$db = Propel::getServiceContainer()->getAdapter(\$this->getDbName());
@@ -297,7 +296,7 @@ public function doCount(ConnectionInterface \$con = null)
             || count(\$this->selectQueries) > 0
         ;
 
-        \$params = array();
+        \$params = [];
         if (\$needsComplexCount) {
             if (\$this->needsSelectAliases()) {
                 if (\$this->getHaving()) {
@@ -326,7 +325,6 @@ public function doCount(ConnectionInterface \$con = null)
     if (\$key && !\$this->cacheContains(\$key)) {
             \$this->cacheStore(\$key, \$sql);
     }
-
 
     return \$con->getDataFetcher(\$stmt);
 }

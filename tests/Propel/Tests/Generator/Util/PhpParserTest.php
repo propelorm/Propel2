@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Util;
 
 use Propel\Generator\Util\PhpParser;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
-/**
- *
- */
 class PhpParserTest extends TestCase
 {
     public function basicClassCodeProvider()
@@ -55,6 +52,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testFindMethodNotExistsReturnsFalse($code)
     {
@@ -64,6 +63,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testFindMethodNReturnsMethod($code)
     {
@@ -80,6 +81,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testFindMethodPrecededByAttribute($code)
     {
@@ -97,6 +100,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testFindMethodPrecededByComment($code)
     {
@@ -117,6 +122,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testFindMethodWithWrongCurlyBraces($code)
     {
@@ -135,6 +142,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testRemoveMethodNotExistsReturnsFalse($code)
     {
@@ -144,6 +153,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testRemoveMethodReturnsMethod($code)
     {
@@ -160,6 +171,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testRemoveMethodRemovesMethod($code)
     {
@@ -197,6 +210,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testReplaceMethodNotExistsReturnsFalse($code)
     {
@@ -206,6 +221,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testReplaceMethodReturnsMethod($code)
     {
@@ -222,6 +239,8 @@ EOF;
 
     /**
      * @dataProvider basicClassCodeProvider
+     *
+     * @return void
      */
     public function testReplaceMethodReplacesMethod($code)
     {

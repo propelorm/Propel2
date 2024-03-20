@@ -1,28 +1,39 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config\Loader;
 
-use Propel\Common\Config\Loader\JsonFileLoader;
+use InvalidArgumentException;
+use Propel\Common\Config\Exception\InputOutputException;
+use Propel\Common\Config\Exception\JsonParseException;
 use Propel\Common\Config\FileLocator;
-use Propel\Tests\Common\Config\ConfigTestCase;
+use Propel\Common\Config\Loader\JsonFileLoader;
+use Propel\Tests\TestCase;
+use Propel\Generator\Util\VfsTrait;
 
-class JsonFileLoaderTest extends ConfigTestCase
+class JsonFileLoaderTest extends TestCase
 {
+    use VfsTrait;
+
+    /** @var JsonFileLoader */
     protected $loader;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
-        $this->loader = new JsonFileLoader(new FileLocator(sys_get_temp_dir()));
+        $this->loader = new JsonFileLoader(new FileLocator($this->getRoot()->url()));
     }
 
+    /**
+     * @return void
+     */
     public function testSupports()
     {
         $this->assertTrue($this->loader->supports('foo.json'), '->supports() returns true if the resource is loadable');
@@ -31,6 +42,9 @@ class JsonFileLoaderTest extends ConfigTestCase
         $this->assertFalse($this->loader->supports('foo.bar.dist'), '->supports() returns true if the resource is loadable');
     }
 
+    /**
+     * @return void
+     */
     public function testJsonFileCanBeLoaded()
     {
         $content = <<<EOF
@@ -39,7 +53,7 @@ class JsonFileLoaderTest extends ConfigTestCase
   "bar": "baz"
 }
 EOF;
-        $this->dumpTempFile('parameters.json', $content);
+        $this->newFile('parameters.json', $content);
 
         $actual = $this->loader->load('parameters.json');
         $this->assertEquals('bar', $actual['foo']);
@@ -47,33 +61,39 @@ EOF;
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage The file "inexistent.json" does not exist (in:
+     * @return void
      */
     public function testJsonFileDoesNotExist()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The file "inexistent.json" does not exist (in:');
+
         $this->loader->load('inexistent.json');
     }
 
     /**
-     * @expectedException        Propel\Common\Config\Exception\JsonParseException
+     * @return void
      */
     public function testJsonFileHasInvalidContent()
     {
+        $this->expectException(JsonParseException::class);
+
         $content = <<<EOF
 not json content
 only plain
 text
 EOF;
-        $this->dumpTempFile('nonvalid.json', $content);
+        $this->newFile('nonvalid.json', $content);
 
         $this->loader->load('nonvalid.json');
     }
 
+    /**
+     * @return void
+     */
     public function testJsonFileIsEmpty()
     {
-        $content = '';
-        $this->dumpTempFile('empty.json', $content);
+        $this->newFile('empty.json');
 
         $actual = $this->loader->load('empty.json');
 
@@ -81,25 +101,25 @@ EOF;
     }
 
     /**
-     * @expectedException Propel\Common\Config\Exception\InputOutputException
-     * @expectedExceptionMessage You don't have permissions to access configuration file notreadable.json.
      * @requires OS ^(?!Win.*)
+     *
+     * @return void
      */
     public function testJsonFileNotReadableThrowsException()
     {
+        $this->expectException(InputOutputException::class);
+        $this->expectExceptionMessage("You don't have permissions to access configuration file notreadable.json.");
+
         $content = <<<EOF
 {
   "foo": "bar",
   "bar": "baz"
 }
 EOF;
-
-        $this->dumpTempFile('notreadable.json', $content);
-        $this->getFilesystem()->chmod(sys_get_temp_dir() . '/notreadable.json', 0200);
+        $this->newFile('notreadable.json', $content)->chmod(200);
 
         $actual = $this->loader->load('notreadable.json');
         $this->assertEquals('bar', $actual['foo']);
         $this->assertEquals('baz', $actual['bar']);
-
     }
 }

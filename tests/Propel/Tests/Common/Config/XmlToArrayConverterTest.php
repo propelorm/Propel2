@@ -1,25 +1,31 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Common\Config;
 
+use org\bovigo\vfs\vfsStream;
+use Propel\Common\Config\Exception\InvalidArgumentException;
+use Propel\Common\Config\Exception\XmlParseException;
 use Propel\Common\Config\XmlToArrayConverter;
+use Propel\Tests\TestCase;
+use Propel\Generator\Util\VfsTrait;
 
-class XmlToArrayConverterTest extends ConfigTestCase
+class XmlToArrayConverterTest extends TestCase
 {
+    use VfsTrait;
     use DataProviderTrait;
 
     /**
      * @dataProvider providerForXmlToArrayConverter
+     *
+     * @return void
      */
-    public function testConvertFromString($xml, $expected)
+    public function testConvertFromString(string $xml, $expected)
     {
         $actual = XmlToArrayConverter::convert($xml);
 
@@ -28,64 +34,65 @@ class XmlToArrayConverterTest extends ConfigTestCase
 
     /**
      * @dataProvider providerForXmlToArrayConverter
+     *
+     * @return void
      */
     public function testConvertFromFile($xml, $expected)
     {
-        $this->dumpTempFile('testconvert.xml', $xml);
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/testconvert.xml');
+        $file = $this->newFile('testconvert.xml', $xml);
+        $actual = XmlToArrayConverter::convert($file->url());
 
         $this->assertEquals($expected, $actual);
     }
 
     /**
      * @dataProvider providerForXmlToArrayConverterXmlInclusions
+     *
+     * @return void
      */
     public function testConvertFromFileWithXmlInclusion($xmlLoad, $xmlInclude, $expected)
     {
-        $this->dumpTempFile('testconvert.xml', $xmlLoad);
-        $this->dumpTempFile('testconvert_include.xml', $xmlInclude);
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/testconvert.xml');
+        $this->newFile('testconvert.xml', $xmlLoad);
+        $this->newFile('testconvert_include.xml', $xmlInclude);
+        $actual = XmlToArrayConverter::convert(vfsStream::url('root/testconvert.xml'));
         $this->assertEquals($expected, $actual);
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage XmlToArrayConverter::convert method expects an xml file to parse, or a string containing valid xml
-     */
-    public function testInvalidFileNameThrowsException()
-    {
-        XmlToArrayConverter::convert(1);
-    }
-
-    /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid xml content
+     * @return void
      */
     public function testInexistentFileThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid xml content');
+
         XmlToArrayConverter::convert('nonexistent.xml');
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid xml content
+     * @return void
      */
     public function testInvalidXmlThrowsException()
     {
-        $invalidXml = <<< XML
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid xml content');
+
+        $invalidXml = <<< INVALID_XML
 No xml
 only plain text
 ---------
-XML;
+INVALID_XML;
         XmlToArrayConverter::convert($invalidXml);
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\XmlParseException
-     * @expectedExceptionMessage An error occurred while parsing XML configuration file:
+     * @return void
      */
     public function testErrorInXmlThrowsException()
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('An error occurred while parsing XML configuration file:');
+
         $xmlWithError = <<< XML
 <?xml version='1.0' standalone='yes'?>
 <movies>
@@ -101,14 +108,13 @@ XML;
     }
 
     /**
-     * @expectedException \Propel\Common\Config\Exception\XmlParseException
-     * @expectedExceptionMessage Some errors occurred while parsing XML configuration file:
-    - Fatal Error 76: Opening and ending tag mismatch: titles line 4 and title
-    - Fatal Error 73: expected '>'
-    - Fatal Error 5: Extra content at the end of the document
+     * @return void
      */
     public function testMultipleErrorsInXmlThrowsException()
     {
+        $this->expectException(XmlParseException::class);
+        $this->expectExceptionMessage('Some errors occurred while parsing XML configuration file:');
+
         $xmlWithErrors = <<< XML
 <?xml version='1.0' standalone='yes'?>
 <movies>
@@ -123,10 +129,13 @@ XML;
         XmlToArrayConverter::convert($xmlWithErrors);
     }
 
+    /**
+     * @return void
+     */
     public function testEmptyFileReturnsEmptyArray()
     {
-        $this->dumpTempFile('empty.xml', '');
-        $actual = XmlToArrayConverter::convert(sys_get_temp_dir() . '/empty.xml');
+        $file = $this->newFile('empty.xml', '');
+        $actual = XmlToArrayConverter::convert($file->url());
 
         $this->assertEquals([], $actual);
     }

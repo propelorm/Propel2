@@ -1,17 +1,22 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime;
 
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionManagerInterface;
+use Propel\Runtime\Exception\PropelException;
+use Propel\Runtime\Map\DatabaseMap;
 use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Propel\Runtime\ServiceContainer\StandardServiceContainer;
+use Propel\Runtime\Util\Profiler;
+use Psr\Log\LoggerInterface;
 
 /**
  * Propel's main resource pool and initialization & configuration class.
@@ -32,51 +37,71 @@ class Propel
 {
     /**
      * The Propel version.
+     *
+     * @var string
      */
     public const VERSION = '2.0.0-dev';
 
     /**
      * A constant for <code>default</code>.
+     *
+     * @var string
      */
     public const DEFAULT_NAME = 'default';
 
     /**
      * A constant defining 'System is unusable' logging level
+     *
+     * @var int
      */
     public const LOG_EMERG = 550;
 
     /**
      * A constant defining 'Immediate action required' logging level
+     *
+     * @var int
      */
     public const LOG_ALERT = 550;
 
     /**
      * A constant defining 'Critical conditions' logging level
+     *
+     * @var int
      */
     public const LOG_CRIT = 500;
 
     /**
      * A constant defining 'Error conditions' logging level
+     *
+     * @var int
      */
     public const LOG_ERR = 400;
 
     /**
      * A constant defining 'Warning conditions' logging level
+     *
+     * @var int
      */
     public const LOG_WARNING = 300;
 
     /**
      * A constant defining 'Normal but significant' logging level
+     *
+     * @var int
      */
     public const LOG_NOTICE = 200;
 
     /**
      * A constant defining 'Informational' logging level
+     *
+     * @var int
      */
     public const LOG_INFO = 200;
 
     /**
      * A constant defining 'Debug-level messages' logging level
+     *
+     * @var int
      */
     public const LOG_DEBUG = 100;
 
@@ -99,7 +124,7 @@ class Propel
      *
      * @return void
      */
-    public static function init($configFile)
+    public static function init(string $configFile): void
     {
         $serviceContainer = self::getServiceContainer();
         $serviceContainer->closeConnections();
@@ -112,7 +137,7 @@ class Propel
      *
      * @return \Propel\Runtime\ServiceContainer\ServiceContainerInterface
      */
-    public static function getServiceContainer()
+    public static function getServiceContainer(): ServiceContainerInterface
     {
         if (self::$serviceContainer === null) {
             self::$serviceContainer = new StandardServiceContainer();
@@ -122,13 +147,36 @@ class Propel
     }
 
     /**
+     * Returns the service container if it is an instance of
+     * StandardServiceContainer or throws an error if another service container
+     * is used.
+     *
+     * This method allows type-safe access to methods of
+     * StandardServiceContainer, it provides no other advantage over
+     * {@link Propel::getServiceContainer()}
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return \Propel\Runtime\ServiceContainer\StandardServiceContainer
+     */
+    public static function getStandardServiceContainer(): StandardServiceContainer
+    {
+        $sc = self::getServiceContainer();
+        if ($sc instanceof StandardServiceContainer) {
+            return $sc;
+        }
+
+        throw new PropelException('Instance was configured to not use StandardServiceContainer. Use Propel::getServiceContainer()');
+    }
+
+    /**
      * Set the service container instance.
      *
      * @param \Propel\Runtime\ServiceContainer\ServiceContainerInterface $serviceContainer
      *
      * @return void
      */
-    public static function setServiceContainer(ServiceContainerInterface $serviceContainer)
+    public static function setServiceContainer(ServiceContainerInterface $serviceContainer): void
     {
         self::$serviceContainer = $serviceContainer;
     }
@@ -136,7 +184,7 @@ class Propel
     /**
      * @return string
      */
-    public static function getDefaultDatasource()
+    public static function getDefaultDatasource(): string
     {
         return self::$serviceContainer->getDefaultDatasource();
     }
@@ -150,7 +198,7 @@ class Propel
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public static function getAdapter($name = null)
+    public static function getAdapter(?string $name = null): AdapterInterface
     {
         return self::$serviceContainer->getAdapter($name);
     }
@@ -164,7 +212,7 @@ class Propel
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public static function getDatabaseMap($name = null)
+    public static function getDatabaseMap(?string $name = null): DatabaseMap
     {
         return self::$serviceContainer->getDatabaseMap($name);
     }
@@ -174,7 +222,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public static function getConnectionManager($name)
+    public static function getConnectionManager(string $name): ConnectionManagerInterface
     {
         return self::$serviceContainer->getConnectionManager($name);
     }
@@ -187,7 +235,7 @@ class Propel
      *
      * @return void
      */
-    public static function closeConnections()
+    public static function closeConnections(): void
     {
         self::$serviceContainer->closeConnections();
     }
@@ -203,7 +251,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getConnection($name = null, $mode = ServiceContainerInterface::CONNECTION_WRITE)
+    public static function getConnection(?string $name = null, string $mode = ServiceContainerInterface::CONNECTION_WRITE): ConnectionInterface
     {
         return self::$serviceContainer->getConnection($name, $mode);
     }
@@ -219,7 +267,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getWriteConnection($name)
+    public static function getWriteConnection(string $name): ConnectionInterface
     {
         return self::$serviceContainer->getWriteConnection($name);
     }
@@ -236,7 +284,7 @@ class Propel
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public static function getReadConnection($name)
+    public static function getReadConnection(string $name): ConnectionInterface
     {
         return self::$serviceContainer->getReadConnection($name);
     }
@@ -246,7 +294,7 @@ class Propel
      *
      * @return \Propel\Runtime\Util\Profiler
      */
-    public static function getProfiler()
+    public static function getProfiler(): Profiler
     {
         return self::$serviceContainer->getProfiler();
     }
@@ -256,7 +304,7 @@ class Propel
      *
      * @return \Psr\Log\LoggerInterface Configured log class
      */
-    public static function getLogger()
+    public static function getLogger(): LoggerInterface
     {
         return self::$serviceContainer->getLogger();
     }
@@ -271,7 +319,7 @@ class Propel
      *
      * @return void
      */
-    public static function log($message, $level = self::LOG_DEBUG)
+    public static function log(string $message, int $level = self::LOG_DEBUG): void
     {
         $logger = self::$serviceContainer->getLogger();
 
@@ -315,7 +363,7 @@ class Propel
      * @return bool true if the method changed the instance pooling state,
      * false if it was already disabled
      */
-    public static function disableInstancePooling()
+    public static function disableInstancePooling(): bool
     {
         if (!self::$isInstancePoolingEnabled) {
             return false;
@@ -331,7 +379,7 @@ class Propel
      * @return bool true if the method changed the instance pooling state,
      * false if it was already enabled
      */
-    public static function enableInstancePooling()
+    public static function enableInstancePooling(): bool
     {
         if (self::$isInstancePoolingEnabled) {
             return false;
@@ -346,7 +394,7 @@ class Propel
      *
      * @return bool Whether the pooling is enabled or not.
      */
-    public static function isInstancePoolingEnabled()
+    public static function isInstancePoolingEnabled(): bool
     {
         return self::$isInstancePoolingEnabled;
     }

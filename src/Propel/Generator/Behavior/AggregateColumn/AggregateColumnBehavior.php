@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\AggregateColumn;
@@ -13,6 +11,9 @@ namespace Propel\Generator\Behavior\AggregateColumn;
 use InvalidArgumentException;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Keeps an aggregate column updated with related table
@@ -24,7 +25,7 @@ class AggregateColumnBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'name' => null,
@@ -39,7 +40,7 @@ class AggregateColumnBehavior extends Behavior
      *
      * @return bool
      */
-    public function allowMultiple()
+    public function allowMultiple(): bool
     {
         return true;
     }
@@ -51,7 +52,7 @@ class AggregateColumnBehavior extends Behavior
      *
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         $columnName = $this->getParameter('name');
@@ -87,13 +88,12 @@ class AggregateColumnBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods(ObjectBuilder $builder)
+    public function objectMethods(ObjectBuilder $builder): string
     {
         if (!$this->getParameter('foreign_table')) {
             throw new InvalidArgumentException(sprintf('You must define a \'foreign_table\' parameter for the \'aggregate_column\' behavior in the \'%s\' table', $this->getTable()->getName()));
         }
-        $script = '';
-        $script .= $this->addObjectCompute($builder);
+        $script = $this->addObjectCompute($builder);
         $script .= $this->addObjectUpdate();
 
         return $script;
@@ -106,7 +106,7 @@ class AggregateColumnBehavior extends Behavior
      *
      * @return string
      */
-    protected function addObjectCompute(ObjectBuilder $builder)
+    protected function addObjectCompute(ObjectBuilder $builder): string
     {
         $conditions = [];
         if ($this->getParameter('condition')) {
@@ -136,7 +136,7 @@ class AggregateColumnBehavior extends Behavior
             'SELECT %s FROM %s WHERE %s',
             $this->getParameter('expression'),
             $builder->getTable()->quoteIdentifier($tableName),
-            implode(' AND ', $conditions)
+            implode(' AND ', $conditions),
         );
 
         return $this->renderTemplate('objectCompute', [
@@ -149,7 +149,7 @@ class AggregateColumnBehavior extends Behavior
     /**
      * @return string
      */
-    protected function addObjectUpdate()
+    protected function addObjectUpdate(): string
     {
         return $this->renderTemplate('objectUpdate', [
             'column' => $this->getColumn(),
@@ -159,7 +159,7 @@ class AggregateColumnBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Table|null
      */
-    protected function getForeignTable()
+    protected function getForeignTable(): ?Table
     {
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('foreign_table');
@@ -175,7 +175,7 @@ class AggregateColumnBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\ForeignKey
      */
-    protected function getForeignKey()
+    protected function getForeignKey(): ForeignKey
     {
         $foreignTable = $this->getForeignTable();
         // let's infer the relation from the foreign table
@@ -191,7 +191,7 @@ class AggregateColumnBehavior extends Behavior
     /**
      * @return \Propel\Generator\Model\Column|null
      */
-    protected function getColumn()
+    protected function getColumn(): ?Column
     {
         return $this->getTable()->getColumn($this->getParameter('name'));
     }

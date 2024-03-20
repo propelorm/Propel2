@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter;
@@ -19,18 +17,29 @@ use Propel\Runtime\Map\ColumnMap;
  */
 interface AdapterInterface
 {
+    /**
+     * @var int
+     */
     public const ID_METHOD_NONE = 0;
+
+    /**
+     * @var int
+     */
     public const ID_METHOD_AUTOINCREMENT = 1;
+
+    /**
+     * @var int
+     */
     public const ID_METHOD_SEQUENCE = 2;
 
     /**
      * Build database connection
      *
-     * @param array $conparams connection parameters
+     * @param array $params connection parameters
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public function getConnection($conparams);
+    public function getConnection(array $params): ConnectionInterface;
 
     /**
      * Sets the character encoding using SQL standard SET NAMES statement.
@@ -45,7 +54,7 @@ interface AdapterInterface
      *
      * @return void
      */
-    public function setCharset(ConnectionInterface $con, $charset);
+    public function setCharset(ConnectionInterface $con, string $charset): void;
 
     /**
      * This method is used to ignore case in an ORDER BY clause.
@@ -57,7 +66,7 @@ interface AdapterInterface
      *
      * @return string The string in a case that can be ignored.
      */
-    public function ignoreCaseInOrderBy($in);
+    public function ignoreCaseInOrderBy(string $in): string;
 
     /**
      * Returns the character used to indicate the beginning and end of
@@ -66,7 +75,7 @@ interface AdapterInterface
      *
      * @return string The text delimiter.
      */
-    public function getStringDelimiter();
+    public function getStringDelimiter(): string;
 
     /**
      * Returns SQL which concatenates the second string to the first.
@@ -76,7 +85,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2);
+    public function concatString(string $s1, string $s2): string;
 
     /**
      * Returns SQL which extracts a substring.
@@ -87,7 +96,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len);
+    public function subString(string $s, int $pos, int $len): string;
 
     /**
      * Returns SQL which calculates the length (in chars) of a string.
@@ -96,7 +105,7 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function strLength($s);
+    public function strLength(string $s): string;
 
     /**
      * Quotes database object identifiers (table names, col names, sequences, etc.).
@@ -105,7 +114,7 @@ interface AdapterInterface
      *
      * @return string The quoted identifier.
      */
-    public function quoteIdentifier($text);
+    public function quoteIdentifier(string $text): string;
 
     /**
      * Quotes a database table which could have space separating it from an alias,
@@ -117,7 +126,7 @@ interface AdapterInterface
      *
      * @return string The quoted table name
      */
-    public function quoteIdentifierTable($table);
+    public function quoteIdentifierTable(string $table): string;
 
     /**
      * Quotes full qualified column names and table names.
@@ -129,31 +138,21 @@ interface AdapterInterface
      *
      * @return string
      */
-    public function quote($text);
+    public function quote(string $text): string;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return bool
      */
-    public function isGetIdBeforeInsert();
+    public function isGetIdBeforeInsert(): bool;
 
     /**
      * Whether this adapter uses an ID generation system that requires getting ID _before_ performing INSERT.
      *
      * @return bool
      */
-    public function isGetIdAfterInsert();
-
-    /**
-     * Returns the "DELETE FROM <table> [AS <alias>]" part of DELETE query.
-     *
-     * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function getDeleteFromClause(Criteria $criteria, $tableName);
+    public function isGetIdAfterInsert(): bool;
 
     /**
      * Gets the generated ID (either last ID for autoincrement or next sequence ID).
@@ -161,9 +160,9 @@ interface AdapterInterface
      * @param \Propel\Runtime\Connection\ConnectionInterface $con
      * @param string|null $name
      *
-     * @return mixed
+     * @return string|int|null
      */
-    public function getId(ConnectionInterface $con, $name = null);
+    public function getId(ConnectionInterface $con, ?string $name = null);
 
     /**
      * Formats a temporal value before binding, given a ColumnMap object
@@ -173,33 +172,33 @@ interface AdapterInterface
      *
      * @return string The formatted temporal value
      */
-    public function formatTemporalValue($value, ColumnMap $cMap);
+    public function formatTemporalValue($value, ColumnMap $cMap): string;
 
     /**
      * Returns timestamp formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimestampFormatter();
+    public function getTimestampFormatter(): string;
 
     /**
      * Returns date formatter string for use in date() function.
      *
      * @return string
      */
-    public function getDateFormatter();
+    public function getDateFormatter(): string;
 
     /**
      * Returns time formatter string for use in date() function.
      *
      * @return string
      */
-    public function getTimeFormatter();
+    public function getTimeFormatter(): string;
 
     /**
      * @param \Propel\Runtime\ActiveQuery\Criteria $criteria
      *
      * @return string
      */
-    public function getGroupBy(Criteria $criteria);
+    public function getGroupBy(Criteria $criteria): string;
 }

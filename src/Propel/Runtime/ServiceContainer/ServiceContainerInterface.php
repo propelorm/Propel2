@@ -1,46 +1,61 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ServiceContainer;
+
+use Propel\Runtime\Adapter\AdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\ConnectionManagerInterface;
+use Propel\Runtime\Map\DatabaseMap;
+use Propel\Runtime\Util\Profiler;
+use Psr\Log\LoggerInterface;
 
 interface ServiceContainerInterface
 {
     /**
      * Constant used to request a READ connection (applies to replication).
+     *
+     * @var string
      */
     public const CONNECTION_READ = 'read';
 
     /**
      * Constant used to request a WRITE connection (applies to replication).
+     *
+     * @var string
      */
     public const CONNECTION_WRITE = 'write';
 
     /**
      * The default DatabaseMap class created by getDatabaseMap()
+     *
+     * @var string
      */
-    public const DEFAULT_DATABASE_MAP_CLASS = '\Propel\Runtime\Map\DatabaseMap';
+    public const DEFAULT_DATABASE_MAP_CLASS = DatabaseMap::class;
 
     /**
      * The name of the default datasource.
+     *
+     * @var string
      */
     public const DEFAULT_DATASOURCE_NAME = 'default';
 
     /**
      * The name of the default Profiler class created by getProfiler()
+     *
+     * @var string
      */
-    public const DEFAULT_PROFILER_CLASS = '\Propel\Runtime\Util\Profiler';
+    public const DEFAULT_PROFILER_CLASS = Profiler::class;
 
     /**
      * @return string
      */
-    public function getDefaultDatasource();
+    public function getDefaultDatasource(): string;
 
     /**
      * Get the adapter for a given datasource.
@@ -51,7 +66,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Adapter\AdapterInterface
      */
-    public function getAdapter($name = null);
+    public function getAdapter(?string $name = null): AdapterInterface;
 
     /**
      * Get the adapter class for a given datasource.
@@ -60,7 +75,7 @@ interface ServiceContainerInterface
      *
      * @return string
      */
-    public function getAdapterClass($name = null);
+    public function getAdapterClass(?string $name = null): string;
 
     /**
      * Get the database map for a given datasource.
@@ -71,21 +86,21 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Map\DatabaseMap
      */
-    public function getDatabaseMap($name = null);
+    public function getDatabaseMap(?string $name = null): DatabaseMap;
 
     /**
      * @param string $name The datasource name
      *
      * @return \Propel\Runtime\Connection\ConnectionManagerInterface
      */
-    public function getConnectionManager($name);
+    public function getConnectionManager(string $name): ConnectionManagerInterface;
 
     /**
      * @param string $name
      *
      * @return bool true if a connectionManager with $name has been registered
      */
-    public function hasConnectionManager($name);
+    public function hasConnectionManager(string $name): bool;
 
     /**
      * Close any associated resource handles.
@@ -95,7 +110,7 @@ interface ServiceContainerInterface
      *
      * @return void
      */
-    public function closeConnections();
+    public function closeConnections(): void;
 
     /**
      * Get a connection for a given datasource.
@@ -108,7 +123,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getConnection($name = null, $mode = self::CONNECTION_WRITE);
+    public function getConnection(?string $name = null, string $mode = self::CONNECTION_WRITE): ConnectionInterface;
 
     /**
      * Get a write connection for a given datasource.
@@ -123,7 +138,7 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getWriteConnection($name);
+    public function getWriteConnection(string $name): ConnectionInterface;
 
     /**
      * Get a read connection for a given datasource.
@@ -137,21 +152,30 @@ interface ServiceContainerInterface
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface A database connection
      */
-    public function getReadConnection($name);
+    public function getReadConnection(string $name): ConnectionInterface;
 
     /**
      * Get a profiler instance.
      *
      * @return \Propel\Runtime\Util\Profiler
      */
-    public function getProfiler();
+    public function getProfiler(): Profiler;
 
     /**
      * Get a logger for a given datasource, or the default logger.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger($name = 'defaultLogger');
+    public function getLogger(?string $name = null): LoggerInterface;
+
+    /**
+     * Initialize the internal database maps array
+     *
+     * @param array $databaseNameToTableMapClassNames
+     *
+     * @return void
+     */
+    public function initDatabaseMaps(array $databaseNameToTableMapClassNames = []): void;
 }

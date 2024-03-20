@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery;
@@ -26,7 +24,7 @@ class PropelQuery
      *
      * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
-    public static function from($queryClassAndAlias)
+    public static function from(string $queryClassAndAlias): ModelCriteria
     {
         [$class, $alias] = ModelCriteria::getClassAndAlias($queryClassAndAlias);
         $queryClass = $class . 'Query';

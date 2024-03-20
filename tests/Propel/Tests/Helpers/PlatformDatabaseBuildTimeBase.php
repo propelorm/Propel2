@@ -1,33 +1,35 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Helpers;
 
 use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Database;
 use Propel\Generator\Model\Diff\DatabaseComparator;
-use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Propel;
-use Propel\Tests\TestCase;
 use Propel\Tests\TestCaseFixtures;
 
 class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
 {
-
     /**
-     * @var Database
+     * @var \Propel\Generator\Model\Database
      */
     public $database;
 
     /**
-     * @var MysqlSchemaParser
+     * @var \Propel\Generator\Reverse\MysqlSchemaParser
      */
     public $parser;
 
     /**
-     * @var MysqlPlatform
+     * @var \Propel\Generator\Platform\MysqlPlatform
      */
     public $platform;
 
@@ -41,6 +43,9 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      */
     public $con;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         $config = sprintf('%s-conf.php', $this->databaseName);
@@ -57,6 +62,9 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
         parent::setUp();
     }
 
+    /**
+     * @return void
+     */
     public function readDatabase()
     {
         $this->database = new Database();
@@ -69,11 +77,13 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      * Builds all classes and migrates the database.
      *
      * @param string $schema xml schema
+     *
+     * @return void
      */
     public function buildAndMigrate($schema)
     {
         $builder = new QuickBuilder();
-        $platform  = $this->getPlatform();
+        $platform = $this->getPlatform();
 
         $builder->setPlatform($platform);
         $builder->setParser($this->getParser($this->con));
@@ -88,11 +98,13 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      * Migrates the database.
      *
      * @param string $schema xml schema
+     *
+     * @return void
      */
     public function migrate($schema)
     {
         $builder = new QuickBuilder();
-        $platform  = $this->getPlatform();
+        $platform = $this->getPlatform();
 
         $builder->setPlatform($platform);
         $builder->setParser($this->getParser($this->con));
@@ -106,7 +118,9 @@ class PlatformDatabaseBuildTimeBase extends TestCaseFixtures
      * Detects the differences between current connected database and $pDatabase
      * and updates the schema. This does not DROP tables.
      *
-     * @param Database $pDatabase
+     * @param \Propel\Generator\Model\Database $pDatabase
+     *
+     * @return void
      */
     public function updateSchema($pDatabase)
     {

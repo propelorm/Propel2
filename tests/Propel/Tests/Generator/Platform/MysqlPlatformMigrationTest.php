@@ -1,33 +1,34 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Config\GeneratorConfig;
-use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Diff\DatabaseComparator;
 use Propel\Generator\Platform\MysqlPlatform;
+use Propel\Generator\Platform\PlatformInterface;
+use Propel\Generator\Util\VfsTrait;
 
-/**
- *
- */
 class MysqlPlatformMigrationTest extends MysqlPlatformMigrationTestProvider
 {
+    use VfsTrait;
+
+    /**
+     * @var \Propel\Generator\Platform\MysqlPlatform|null
+     */
     protected $platform;
 
     /**
      * Get the Platform object for this class
      *
-     * @return Platform
+     * @return \Propel\Generator\Platform\MysqlPlatform
      */
-    protected function getPlatform()
+    protected function getPlatform(): PlatformInterface
     {
         if (!$this->platform) {
             $this->platform = new MysqlPlatform();
@@ -56,9 +57,8 @@ propel:
       - bookstore
 EOF;
 
-            $configFile = sys_get_temp_dir().'/propel.yaml';
-            file_put_contents($configFile, $configFileContent);
-            $config = new GeneratorConfig($configFile);
+            $configFile = $this->newFile('propel.yaml', $configFileContent);
+            $config = new GeneratorConfig($configFile->url());
 
             $this->platform->setGeneratorConfig($config);
         }
@@ -68,6 +68,8 @@ EOF;
 
     /**
      * @dataProvider providerForTestGetModifyDatabaseDDL
+     *
+     * @return void
      */
     public function testRenameTableDDL($databaseDiff)
     {
@@ -104,6 +106,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 
     /**
      * @dataProvider providerForTestGetRenameTableDDL
+     *
+     * @return void
      */
     public function testGetRenameTableDDL($fromName, $toName)
     {
@@ -115,6 +119,8 @@ RENAME TABLE `foo1` TO `foo2`;
 
     /**
      * @dataProvider providerForTestGetModifyTableDDL
+     *
+     * @return void
      */
     public function testGetModifyTableDDL($tableDiff)
     {
@@ -150,6 +156,8 @@ ALTER TABLE `foo` ADD CONSTRAINT `foo1_fk_1`
 
     /**
      * @dataProvider providerForTestGetModifyTableColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyTableColumnsDDL($tableDiff)
     {
@@ -165,6 +173,8 @@ ALTER TABLE `foo` ADD `baz3` TEXT AFTER `baz`;
 
     /**
      * @dataProvider providerForTestGetModifyTablePrimaryKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTablePrimaryKeysDDL($tableDiff)
     {
@@ -178,6 +188,8 @@ ALTER TABLE `foo` ADD PRIMARY KEY (`id`,`bar`);
 
     /**
      * @dataProvider providerForTestGetModifyTableIndicesDDL
+     *
+     * @return void
      */
     public function testGetModifyTableIndicesDDL($tableDiff)
     {
@@ -199,6 +211,8 @@ CREATE INDEX `bar_baz_fk` ON `foo` (`id`, `bar`, `baz`);
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysDDL($tableDiff)
     {
@@ -220,6 +234,8 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_2`
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSqlDDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSqlDDL($tableDiff)
     {
@@ -237,6 +253,8 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_1`
 
     /**
      * @dataProvider providerForTestGetModifyTableForeignKeysSkipSql2DDL
+     *
+     * @return void
      */
     public function testGetModifyTableForeignKeysSkipSql2DDL($tableDiff)
     {
@@ -248,6 +266,8 @@ ALTER TABLE `foo1` ADD CONSTRAINT `foo1_fk_1`
 
     /**
      * @dataProvider providerForTestGetRemoveColumnDDL
+     *
+     * @return void
      */
     public function testGetRemoveColumnDDL($column)
     {
@@ -259,6 +279,8 @@ ALTER TABLE `foo` DROP `bar`;
 
     /**
      * @dataProvider providerForTestGetRenameColumnDDL
+     *
+     * @return void
      */
     public function testGetRenameColumnDDL($fromColumn, $toColumn)
     {
@@ -270,6 +292,8 @@ ALTER TABLE `foo` CHANGE `bar1` `bar2` DOUBLE(2);
 
     /**
      * @dataProvider providerForTestGetModifyColumnDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnDDL($columnDiff)
     {
@@ -281,6 +305,8 @@ ALTER TABLE `foo` CHANGE `bar` `bar` DOUBLE(3);
 
     /**
      * @dataProvider providerForTestGetModifyColumnsDDL
+     *
+     * @return void
      */
     public function testGetModifyColumnsDDL($columnDiffs)
     {
@@ -294,6 +320,8 @@ ALTER TABLE `foo` CHANGE `bar2` `bar2` INTEGER NOT NULL;
 
     /**
      * @dataProvider providerForTestGetAddColumnDDL
+     *
+     * @return void
      */
     public function testGetAddColumnDDL($column)
     {
@@ -305,6 +333,8 @@ ALTER TABLE `foo` ADD `bar` INTEGER AFTER `id`;
 
     /**
      * @dataProvider providerForTestGetAddColumnFirstDDL
+     *
+     * @return void
      */
     public function testGetAddColumnFirstDDL($column)
     {
@@ -316,6 +346,8 @@ ALTER TABLE `foo` ADD `bar` INTEGER FIRST;
 
     /**
      * @dataProvider providerForTestGetAddColumnsDDL
+     *
+     * @return void
      */
     public function testGetAddColumnsDDL($columns)
     {
@@ -327,23 +359,26 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
         $this->assertEquals($expected, $this->getPlatform()->getAddColumnsDDL($columns));
     }
 
+    /**
+     * @return void
+     */
     public function testColumnRenaming()
     {
         $schema1 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';
         $schema2 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar_la1" type="INTEGER" />
-        <column name="bar_la2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar_la1" type="INTEGER"/>
+        <column name="bar_la2" type="INTEGER"/>
     </table>
 </database>
 ';
@@ -370,33 +405,36 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
         $this->assertEquals('bar_la2', $secondPair[1]->getName());
     }
 
+    /**
+     * @return void
+     */
     public function testTableRenaming()
     {
         $schema1 = '
 <database name="test">
     <table name="foo">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
     <table name="foo2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';
         $schema2 = '
 <database name="test">
     <table name="foo_bla">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
     <table name="foo_bla2">
-        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true" />
-        <column name="bar1" type="INTEGER" />
-        <column name="bar2" type="INTEGER" />
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="bar1" type="INTEGER"/>
+        <column name="bar2" type="INTEGER"/>
     </table>
 </database>
 ';
@@ -420,5 +458,66 @@ ALTER TABLE `foo` ADD `bar2` DOUBLE(3,2) DEFAULT -1 NOT NULL AFTER `bar1`;
             $secondPair[1],
             'Table `Foo2` should not renamed to `foo_bla` since we have already renamed a table to this name.'
         );
+    }
+
+    /**
+     * @dataProvider providerForTestMigrateToUuidBinColumn
+     *
+     * @return void
+     */
+    public function testGetMigrateToUuidBinaryColumn($tableDiff)
+    {
+        $expected = <<<'EOT'
+
+;--sql statement block;
+# START migration of UUIDs in column 'foo.id'.
+# This can break your DB. Validate and edit these statements as you see fit.
+# Please be aware of Propel's ABSOLUTELY NO WARRANTY policy!
+
+;--sql statement block;
+
+ALTER TABLE `foo` DROP PRIMARY KEY;
+ALTER TABLE `foo` ADD COLUMN `id_%x` BINARY(16) AFTER `id`;
+UPDATE `foo` SET `id_%x` = UUID_TO_BIN(`id`, true);
+ALTER TABLE `foo` DROP COLUMN `id`;
+ALTER TABLE `foo` CHANGE COLUMN `id_%x` `id` BINARY(16) DEFAULT vendor_specific_uuid_generator_function() NOT NULL;
+ALTER TABLE `foo` ADD PRIMARY KEY (`id`);
+# END migration of UUIDs in column 'id'
+
+;--sql statement block;
+
+EOT;
+        $actual = $this->getPlatform()->getModifyTableColumnsDDL($tableDiff);
+        $this->assertStringMatchesFormat($expected, $actual);
+    }
+
+    /**
+     * @dataProvider providerForTestMigrateFromUuidBinColumn
+     *
+     * @return void
+     */
+    public function testGetMigrateFromUuidBinaryColumn($tableDiff)
+    {
+        $expected = <<<EOT
+
+;--sql statement block;
+# START migration of UUIDs in column 'foo.id'.
+# This can break your DB. Validate and edit these statements as you see fit.
+# Please be aware of Propel's ABSOLUTELY NO WARRANTY policy!
+
+;--sql statement block;
+
+ALTER TABLE `foo` DROP PRIMARY KEY;
+ALTER TABLE `foo` ADD COLUMN `id_%x` VARCHAR(36) AFTER `id`;
+UPDATE `foo` SET `id_%x` = BIN_TO_UUID(`id`, true);
+ALTER TABLE `foo` DROP COLUMN `id`;
+ALTER TABLE `foo` CHANGE COLUMN `id_%x` `id` VARCHAR(36) NOT NULL;
+ALTER TABLE `foo` ADD PRIMARY KEY (`id`);
+# END migration of UUIDs in column 'id'
+
+;--sql statement block;
+EOT;
+        $actual = $this->getPlatform()->getModifyTableColumnsDDL($tableDiff);
+        $this->assertStringMatchesFormat($expected, $actual);
     }
 }

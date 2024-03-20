@@ -1,12 +1,45 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Generator\Builder\Om;
 
-use Propel\Generator\Platform\MysqlPlatform;
-use Propel\Generator\Util\QuickBuilder;
-use Propel\Runtime\Collection\ObjectCollection;
+use Map\Relation2UserTableMap;
 use Propel\Runtime\Collection\ObjectCombinationCollection;
 use Propel\Tests\Helpers\PlatformDatabaseBuildTimeBase;
+use Relation2Group;
+use Relation2GroupQuery;
+use Relation2Position;
+use Relation2PositionQuery;
+use Relation2User;
+use Relation2UserGroupQuery;
+use Relation2UserQuery;
+use Relation3Group;
+use Relation3GroupQuery;
+use Relation3Relation;
+use Relation3RelationQuery;
+use Relation3User;
+use Relation3UserGroupQuery;
+use Relation3UserQuery;
+use Relation4Group;
+use Relation4GroupQuery;
+use Relation4User;
+use Relation4UserGroupQuery;
+use Relation4UserQuery;
+use Relation5Group;
+use Relation5GroupQuery;
+use Relation5User;
+use Relation5UserGroupQuery;
+use Relation5UserQuery;
+use Relation6Group;
+use Relation6GroupQuery;
+use Relation6User;
+use Relation6UserGroupQuery;
+use Relation6UserQuery;
 
 /**
  * Tests for a M2M relation with three pks where each is a FK.
@@ -17,6 +50,9 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 {
     protected $databaseName = 'migration';
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -44,17 +80,17 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation2_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation2_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation2_position">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
     </database>
         ';
@@ -64,36 +100,35 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
     }
 
     /**
-     *
-     *           add     |    remove     |    set     |    get
+     *           add | remove | set | get
      *        +---------------------------------------------------
-     * add    |    1             2             3            4
-     * remove |    5             6             7            8
-     * set    |    9            10            11           12
-     *
+     * add | 1 2 3 4
+     * remove | 5 6 7 8
+     * set | 9 10 11 12
      */
-
-
 
     /*
      * ####################################
      * 1. add, add
      */
+
+    /**
+     * @return void
+     */
     public function test1()
     {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
         $hans->addGroup($admins, $position);
@@ -101,195 +136,209 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(1, $admins->getUserPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
-        $positionLead = new \Relation2Position();
+        $positionLead = new Relation2Position();
         $positionLead->setName('Lead');
         $hans->addGroup($admins, $positionLead);
         $this->assertCount(2, $hans->getGroupPositions());
         $this->assertCount(2, $admins->getUserPositions());
         $hans->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
         //try to add the same combination on a new instance
-        \Map\Relation2UserTableMap::clearInstancePool();
-        /** @var $newHansObject \Relation2User */
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        /** @var \Relation2User $newHansObject */
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
 
         $newHansObject->addGroup($admins, $positionLead);
         $this->assertCount(2, $newHansObject->getGroupPositions());
         $this->assertCount(2, $admins->getUserPositions()); //wrong
         $newHansObject->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
     }
-
 
     /*
      * ####################################
      * 2. add, remove
      */
+
+    /**
+     * @return void
+     */
     public function test2()
     {
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
         $hans->addGroup($admins, $position);
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
         $hans->removeGroupPosition($admins, $position);
         $this->assertCount(0, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(0, \Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
-
+        $this->assertEquals(0, Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
     }
 
     /*
      * ####################################
      * 3. add, set
      */
+
+    /**
+     * @return void
+     */
     public function test3()
     {
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
         $hans->addGroup($admins, $position);
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
         $emptyColl = new ObjectCombinationCollection();
         $hans->setGroupPositions($emptyColl);
         $this->assertCount(0, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(0, \Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(0, Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
     }
 
     /*
      * ####################################
      * 4. and 5. add, get
      */
+
+    /**
+     * @return void
+     */
     public function test4_5()
     {
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
         $hans->addGroup($admins, $position);
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
-        \Map\Relation2UserTableMap::clearInstancePool();
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
         $this->assertCount(1, $newHansObject->getGroupPositions(), 'Makes a extra query and returns the correct one group list');
 
-        \Map\Relation2UserTableMap::clearInstancePool();
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $newHansObject->addGroup($cleaner, $position2);
         $this->assertCount(2, $newHansObject->getGroupPositions(), 'getGroupPositions makes a query and adds then the added group, thus we have 2');
         $newHansObject->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
     }
 
     /*
      * ####################################
      * 6. remove, remove
      */
+
+    /**
+     * @return void
+     */
     public function test6()
     {
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $hans->addGroup($admins, $position);
@@ -297,97 +346,99 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(2, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
         $hans->removeGroupPosition($admins, $position);
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
         $hans->removeGroupPosition($cleaner, $position2);
         $this->assertCount(0, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(0, \Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(0, Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
         //add two groupPositions again and made the same removing with a complete new object instance each time
         $hans->addGroup($admins, $position);
         $hans->addGroup($cleaner, $position2);
         $this->assertCount(2, $hans->getGroupPositions());
         $hans->save();
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
-        \Map\Relation2UserTableMap::clearInstancePool();
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
 
         $newHansObject->removeGroupPosition($admins, $position);
         $this->assertCount(1, $newHansObject->getGroupPositions());
         $newHansObject->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
-        \Map\Relation2UserTableMap::clearInstancePool();
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
         $newHansObject->removeGroupPosition($cleaner, $position2);
         $this->assertCount(0, $newHansObject->getGroupPositions());
         $newHansObject->save();
 
-        $this->assertEquals(0, \Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(0, Relation2UserGroupQuery::create()->count(), 'We have zero connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
     }
 
     /**
      * 7. remove, set
+     *
+     * @return void
      */
-    public function test7(){
+    public function test7()
+    {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
         $hans->addGroup($admins, $position);
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
         $hans->removeGroupPosition($admins, $position);
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
         $col = new ObjectCombinationCollection();
         $col[] = [$cleaner, $position2];
@@ -396,39 +447,41 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertEquals([$cleaner, $position2], $hans->getGroupPositions()->getFirst());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have still one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have still one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
-        $userGroup = \Relation2UserGroupQuery::create()->filterByUser($hans)->findOne();
+        $userGroup = Relation2UserGroupQuery::create()->filterByUser($hans)->findOne();
         $this->assertEquals($position2->getId(), $userGroup->getPositionId());
         $this->assertEquals($cleaner->getId(), $userGroup->getGroupId());
     }
 
     /**
      * 8. remove, get
+     *
+     * @return void
      */
-    public function test8(){
+    public function test8()
+    {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $hans->addGroup($admins, $position);
@@ -436,42 +489,44 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(2, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have still two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have still two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
         $hans->removeGroupPosition($admins, $position);
         $hans->save();
 
-        \Map\Relation2UserTableMap::clearInstancePool();
-        $newHansObject = \Relation2UserQuery::create()->findOneByName('hans');
+        Relation2UserTableMap::clearInstancePool();
+        $newHansObject = Relation2UserQuery::create()->findOneByName('hans');
         $this->assertCount(1, $newHansObject->getGroupPositions());
     }
 
     /**
      * 9. set, add
+     *
+     * @return void
      */
-    public function test9(){
+    public function test9()
+    {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $col = new ObjectCombinationCollection();
@@ -481,35 +536,37 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(2, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(2, \Relation2UserGroupQuery::create()->count(), 'We have still two connections.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(2, Relation2UserGroupQuery::create()->count(), 'We have still two connections.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
     }
 
     /**
      * 10. set, remove
+     *
+     * @return void
      */
-    public function test10(){
+    public function test10()
+    {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $col = new ObjectCombinationCollection();
@@ -521,29 +578,31 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
     }
 
     /**
      * 11-12. set, set - set, get
+     *
+     * @return void
      */
-    public function test11_12(){
+    public function test11_12()
+    {
+        Relation2UserQuery::create()->deleteAll();
+        Relation2GroupQuery::create()->deleteAll();
+        Relation2UserGroupQuery::create()->deleteAll();
+        Relation2PositionQuery::create()->deleteAll();
 
-        \Relation2UserQuery::create()->deleteAll();
-        \Relation2GroupQuery::create()->deleteAll();
-        \Relation2UserGroupQuery::create()->deleteAll();
-        \Relation2PositionQuery::create()->deleteAll();
-
-        $hans = new \Relation2User();
+        $hans = new Relation2User();
         $hans->setName('hans');
 
-        $admins = new \Relation2Group();
+        $admins = new Relation2Group();
         $admins->setName('Admins');
 
-        $position = new \Relation2Position();
+        $position = new Relation2Position();
         $position->setName('Trainee');
 
         $col = new ObjectCombinationCollection();
@@ -552,15 +611,15 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation2GroupQuery::create()->count(), 'We have one group.');
-        $this->assertEquals(1, \Relation2PositionQuery::create()->count(), 'We have one position.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation2GroupQuery::create()->count(), 'We have one group.');
+        $this->assertEquals(1, Relation2PositionQuery::create()->count(), 'We have one position.');
 
-        $cleaner = new \Relation2Group();
+        $cleaner = new Relation2Group();
         $cleaner->setName('Cleaner');
 
-        $position2 = new \Relation2Position();
+        $position2 = new Relation2Position();
         $position2->setName('Chef');
 
         $col = new ObjectCombinationCollection();
@@ -569,17 +628,19 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
         $this->assertCount(1, $hans->getGroupPositions());
         $hans->save();
 
-        $this->assertEquals(1, \Relation2UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation2UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(2, \Relation2GroupQuery::create()->count(), 'We have two groups.');
-        $this->assertEquals(2, \Relation2PositionQuery::create()->count(), 'We have two positions.');
+        $this->assertEquals(1, Relation2UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation2UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(2, Relation2GroupQuery::create()->count(), 'We have two groups.');
+        $this->assertEquals(2, Relation2PositionQuery::create()->count(), 'We have two positions.');
 
-        $userGroup = \Relation2UserGroupQuery::create()->filterByUser($hans)->findOne();
+        $userGroup = Relation2UserGroupQuery::create()->filterByUser($hans)->findOne();
         $this->assertEquals($position2->getId(), $userGroup->getPositionId());
         $this->assertEquals($cleaner->getId(), $userGroup->getGroupId());
     }
 
-
+    /**
+     * @return void
+     */
     public function testRelationThree3()
     {
         $schema = '
@@ -606,37 +667,37 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation3_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation3_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation3_relation">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
     </database>
         ';
 
         $this->buildAndMigrate($schema);
 
-        \Relation3UserGroupQuery::create()->deleteAll();
-        \Relation3UserQuery::create()->deleteAll();
-        \Relation3GroupQuery::create()->deleteAll();
-        \Relation3RelationQuery::create()->deleteAll();
+        Relation3UserGroupQuery::create()->deleteAll();
+        Relation3UserQuery::create()->deleteAll();
+        Relation3GroupQuery::create()->deleteAll();
+        Relation3RelationQuery::create()->deleteAll();
 
-        $hans = new \Relation3User();
+        $hans = new Relation3User();
         $hans->setName('hans');
 
-        $admins = new \Relation3Group();
+        $admins = new Relation3Group();
         $admins->setName('Admins');
         $admins->setId2(1);
 
-        $relation = new \Relation3Relation();
+        $relation = new Relation3Relation();
         $relation->setName('Leader');
 
         $this->assertCount(0, $hans->getGroupRelations(), 'no groups');
@@ -645,22 +706,23 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation3UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation3UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation3UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
+        $this->assertEquals(1, Relation3UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation3UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation3UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
 
         $hans->removeGroupRelation($admins, $relation);
         $this->assertCount(0, $hans->getGroupRelations(), 'no groups');
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation3UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(0, \Relation3UserGroupQuery::create()->count(), 'We have zero connection.');
-        $this->assertEquals(0, \Relation3UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
-
+        $this->assertEquals(1, Relation3UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(0, Relation3UserGroupQuery::create()->count(), 'We have zero connection.');
+        $this->assertEquals(0, Relation3UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
     }
 
-
+    /**
+     * @return void
+     */
     public function testRelationThree4()
     {
         $schema = '
@@ -683,13 +745,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation4_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation4_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>
@@ -697,14 +759,14 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $this->buildAndMigrate($schema);
 
-        \Relation4UserGroupQuery::create()->deleteAll();
-        \Relation4UserQuery::create()->deleteAll();
-        \Relation4GroupQuery::create()->deleteAll();
+        Relation4UserGroupQuery::create()->deleteAll();
+        Relation4UserQuery::create()->deleteAll();
+        Relation4GroupQuery::create()->deleteAll();
 
-        $hans = new \Relation4User();
+        $hans = new Relation4User();
         $hans->setName('hans');
 
-        $admins = new \Relation4Group();
+        $admins = new Relation4Group();
         $admins->setName('Admins');
         $admins->setId2(1);
 
@@ -714,20 +776,23 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation4UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation4UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation4UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
+        $this->assertEquals(1, Relation4UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation4UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation4UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
 
         $hans->removeGroupRelation($admins, 'teamLeader');
         $this->assertCount(0, $hans->getGroupRelations(), 'no groups');
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation4UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(0, \Relation4UserGroupQuery::create()->count(), 'We have zero connection.');
-        $this->assertEquals(0, \Relation4UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
+        $this->assertEquals(1, Relation4UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(0, Relation4UserGroupQuery::create()->count(), 'We have zero connection.');
+        $this->assertEquals(0, Relation4UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
     }
 
+    /**
+     * @return void
+     */
     public function testRelationThree5()
     {
         $schema = '
@@ -750,13 +815,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation5_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation5_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>
@@ -764,14 +829,14 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $this->buildAndMigrate($schema);
 
-        \Relation5UserGroupQuery::create()->deleteAll();
-        \Relation5UserQuery::create()->deleteAll();
-        \Relation5GroupQuery::create()->deleteAll();
+        Relation5UserGroupQuery::create()->deleteAll();
+        Relation5UserQuery::create()->deleteAll();
+        Relation5GroupQuery::create()->deleteAll();
 
-        $hans = new \Relation5User();
+        $hans = new Relation5User();
         $hans->setName('hans');
 
-        $admins = new \Relation5Group();
+        $admins = new Relation5Group();
         $admins->setName('Admins');
         $admins->setId2(1);
 
@@ -781,20 +846,23 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation5UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation5UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation5UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
+        $this->assertEquals(1, Relation5UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation5UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation5UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
 
         $hans->removeGroupRelation($admins, 'teamLeader');
         $this->assertCount(0, $hans->getGroupRelations(), 'no groups');
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation5UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(0, \Relation5UserGroupQuery::create()->count(), 'We have zero connection.');
-        $this->assertEquals(0, \Relation5UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
+        $this->assertEquals(1, Relation5UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(0, Relation5UserGroupQuery::create()->count(), 'We have zero connection.');
+        $this->assertEquals(0, Relation5UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
     }
 
+    /**
+     * @return void
+     */
     public function testRelationThree6()
     {
         $schema = '
@@ -816,13 +884,13 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         <table name="relation6_user">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
         <table name="relation6_group">
             <column name="id" type="integer" primaryKey="true" autoIncrement="true"/>
             <column name="id2" type="integer" primaryKey="true"/>
-            <column name="name" />
+            <column name="name"/>
         </table>
 
     </database>
@@ -830,14 +898,14 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $this->buildAndMigrate($schema);
 
-        \Relation6UserGroupQuery::create()->deleteAll();
-        \Relation6UserQuery::create()->deleteAll();
-        \Relation6GroupQuery::create()->deleteAll();
+        Relation6UserGroupQuery::create()->deleteAll();
+        Relation6UserQuery::create()->deleteAll();
+        Relation6GroupQuery::create()->deleteAll();
 
-        $hans = new \Relation6User();
+        $hans = new Relation6User();
         $hans->setName('hans');
 
-        $admins = new \Relation6Group();
+        $admins = new Relation6Group();
         $admins->setName('Admins');
         $admins->setId2(1);
 
@@ -847,18 +915,17 @@ class GeneratedObjectM2MRelationThreePKsTest extends PlatformDatabaseBuildTimeBa
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation6UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(1, \Relation6UserGroupQuery::create()->count(), 'We have one connection.');
-        $this->assertEquals(1, \Relation6UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
+        $this->assertEquals(1, Relation6UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(1, Relation6UserGroupQuery::create()->count(), 'We have one connection.');
+        $this->assertEquals(1, Relation6UserQuery::create()->filterByGroup($admins)->count(), 'Hans has one group.');
 
         $hans->removeGroup($admins);
         $this->assertCount(0, $hans->getGroups(), 'no groups');
 
         $hans->save();
 
-        $this->assertEquals(1, \Relation6UserQuery::create()->count(), 'We have one user.');
-        $this->assertEquals(0, \Relation6UserGroupQuery::create()->count(), 'We have zero connection.');
-        $this->assertEquals(0, \Relation6UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
+        $this->assertEquals(1, Relation6UserQuery::create()->count(), 'We have one user.');
+        $this->assertEquals(0, Relation6UserGroupQuery::create()->count(), 'We have zero connection.');
+        $this->assertEquals(0, Relation6UserQuery::create()->filterByGroup($admins)->count(), 'Hans has zero groups.');
     }
-
 }

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -27,7 +25,7 @@ class SeveralModelCriterion extends AbstractModelCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         if (!is_array($this->value)) {
             throw new InvalidValueException('Only array values are supported by this Criterion');
@@ -60,7 +58,7 @@ class SeveralModelCriterion extends AbstractModelCriterion
      *
      * @return string
      */
-    protected static function strReplaceOnce($search, $replace, $subject)
+    protected static function strReplaceOnce(string $search, string $replace, string $subject): string
     {
         $firstChar = strpos($subject, $search);
         if ($firstChar !== false) {

@@ -1,16 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
 
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
+use Propel\Generator\Builder\Om\TableMapLoaderScriptBuilder;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -35,7 +34,7 @@ class ModelManager extends AbstractManager
      *
      * @return void
      */
-    public function setFilesystem(Filesystem $filesystem)
+    public function setFilesystem(Filesystem $filesystem): void
     {
         $this->filesystem = $filesystem;
     }
@@ -43,7 +42,7 @@ class ModelManager extends AbstractManager
     /**
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         $this->validate();
 
@@ -79,10 +78,9 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // these classes are only generated if they don't already exist
-                        $overwrite = false;
                         foreach (['objectstub', 'querystub'] as $target) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, $target);
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                            $nbWrittenFiles += $this->doBuild($builder, false);
                         }
 
                         // -----------------------------------------------------------------------------------------
@@ -94,7 +92,6 @@ class ModelManager extends AbstractManager
                         if ($col) {
                             if ($col->isEnumeratedClasses()) {
                                 foreach ($col->getChildren() as $child) {
-                                    $overwrite = true;
                                     foreach (['queryinheritance'] as $target) {
                                         if (!$child->getAncestor() && $child->getClassName() === $table->getPhpName()) {
                                             continue;
@@ -102,14 +99,14 @@ class ModelManager extends AbstractManager
                                         /** @var \Propel\Generator\Builder\Om\QueryInheritanceBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                                        $nbWrittenFiles += $this->doBuild($builder);
                                     }
-                                    $overwrite = false;
+
                                     foreach (['objectmultiextend', 'queryinheritancestub'] as $target) {
                                         /** @var \Propel\Generator\Builder\Om\MultiExtendObjectBuilder $builder */
                                         $builder = $generatorConfig->getConfiguredBuilder($table, $target);
                                         $builder->setChild($child);
-                                        $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                                        $nbWrittenFiles += $this->doBuild($builder, false);
                                     }
                                 }
                             }
@@ -120,10 +117,9 @@ class ModelManager extends AbstractManager
                         // -----------------------------------------------------------------------------------------
 
                         // Create [empty] interface if it does not already exist
-                        $overwrite = false;
                         if ($table->getInterface()) {
                             $builder = $generatorConfig->getConfiguredBuilder($table, 'interface');
-                            $nbWrittenFiles += $this->doBuild($builder, $overwrite);
+                            $nbWrittenFiles += $this->doBuild($builder, false);
                         }
 
                         // ----------------------------------
@@ -131,9 +127,10 @@ class ModelManager extends AbstractManager
                         // ----------------------------------
                         if ($table->hasAdditionalBuilders()) {
                             foreach ($table->getAdditionalBuilders() as $builderClass) {
+                                /** @var \Propel\Generator\Builder\Om\AbstractOMBuilder $builder */
                                 $builder = new $builderClass($table);
                                 $builder->setGeneratorConfig($generatorConfig);
-                                $nbWrittenFiles += $this->doBuild($builder, isset($builder->overwrite) ? $builder->overwrite : true);
+                                $nbWrittenFiles += $this->doBuild($builder, $builder->overwrite ?? true);
                             }
                         }
 
@@ -145,6 +142,7 @@ class ModelManager extends AbstractManager
                 }
             }
         }
+        $totalNbFiles += $this->createTableMapLoaderScript();
 
         if ($totalNbFiles) {
             $this->log(sprintf('Object model generation complete - %d files written', $totalNbFiles));
@@ -163,7 +161,7 @@ class ModelManager extends AbstractManager
      *
      * @return int
      */
-    protected function doBuild(AbstractOMBuilder $builder, $overwrite = true)
+    protected function doBuild(AbstractOMBuilder $builder, bool $overwrite = true): int
     {
         $path = $builder->getClassFilePath();
         $file = new SplFileInfo($this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $path);
@@ -193,6 +191,35 @@ class ModelManager extends AbstractManager
         $action = $file->isFile() ? 'Updating' : 'Creating';
         $this->log(sprintf("\t-> %s %s (table: %s, builder: %s)", $action, $builder->getClassFilePath(), $builder->getTable()->getName(), get_class($builder)));
         file_put_contents($file->getPathname(), $script);
+
+        return 1;
+    }
+
+    /**
+     * Create script to import all table map files into database map.
+     *
+     * @return int Number of changed files
+     */
+    protected function createTableMapLoaderScript(): int
+    {
+        $schemas = $this->getDataModels();
+        $builder = new TableMapLoaderScriptBuilder($this->getGeneratorConfig());
+        $fileContent = $builder->build($schemas);
+
+        $file = $builder->getFile();
+        $filePath = $file->getPathname();
+
+        $action = $file->isFile() ? 'Updating' : 'Creating';
+        $this->log("\t-> $action $filePath");
+
+        if ($file->isFile() && file_get_contents($filePath) === $fileContent) {
+            $this->log("\t\t(no change)");
+
+            return 0;
+        }
+        $this->log('Generating script for loading table maps at ' . $file->getRealPath());
+        $this->filesystem->mkdir($file->getPath());
+        file_put_contents($filePath, $fileContent);
 
         return 1;
     }

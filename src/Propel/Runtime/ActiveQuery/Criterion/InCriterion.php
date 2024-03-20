@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery\Criterion;
@@ -22,11 +20,11 @@ class InCriterion extends AbstractCriterion
      * Create a new instance.
      *
      * @param \Propel\Runtime\ActiveQuery\Criteria $outer The outer class (this is an "inner" class).
-     * @param string $column ignored
-     * @param string $value The condition to be added to the query string
+     * @param \Propel\Runtime\Map\ColumnMap|string $column ignored
+     * @param mixed $value The condition to be added to the query string
      * @param string $comparison One of Criteria::IN and Criteria::NOT_IN
      */
-    public function __construct(Criteria $outer, $column, $value, $comparison = Criteria::IN)
+    public function __construct(Criteria $outer, $column, $value, string $comparison = Criteria::IN)
     {
         parent::__construct($outer, $column, $value, $comparison);
     }
@@ -39,7 +37,7 @@ class InCriterion extends AbstractCriterion
      *
      * @return void
      */
-    protected function appendPsForUniqueClauseTo(&$sb, array &$params)
+    protected function appendPsForUniqueClauseTo(string &$sb, array &$params): void
     {
         $bindParams = [];
         $index = count($params); // to avoid counting the number of parameters for each element in the array

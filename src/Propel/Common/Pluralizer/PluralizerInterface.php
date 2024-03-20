@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Pluralizer;
@@ -24,5 +22,5 @@ interface PluralizerInterface
      *
      * @return string The plural form of $root.
      */
-    public function getPluralForm($root);
+    public function getPluralForm(string $root): string;
 }

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -22,19 +20,27 @@ class ClassTools
     /**
      * Gets just classname, given a dot-path to class.
      *
-     * @param string $qualifiedName
+     * @param string|null $qualifiedName
      *
-     * @return string
+     * @return string|null
      */
-    public static function classname($qualifiedName)
+    public static function classname(?string $qualifiedName): ?string
     {
-        if (false !== $pos = strrpos($qualifiedName, '.')) {
-            return substr($qualifiedName, $pos + 1); // start just after '.'
-        } elseif (false !== $pos = strrpos($qualifiedName, '\\')) {
-            return substr($qualifiedName, $pos + 1);
-        } else {
-            return $qualifiedName;  // there is no '.' in the qualified name
+        if ($qualifiedName === null) {
+            return null;
         }
+
+        $pos = strrpos($qualifiedName, '.');
+        if ($pos !== false) {
+            return substr($qualifiedName, $pos + 1); // start just after '.'
+        }
+
+        $pos = strrpos($qualifiedName, '\\');
+        if ($pos !== false) {
+            return substr($qualifiedName, $pos + 1);
+        }
+
+        return $qualifiedName; // there is no '.' in the qualified name
     }
 
     /**
@@ -48,13 +54,13 @@ class ClassTools
      *
      * @return string The constructed file path.
      */
-    public static function createFilePath($path, $classname = null, $extension = '.php')
+    public static function createFilePath(string $path, ?string $classname = null, string $extension = '.php'): string
     {
         if ($classname === null) {
             return $path . $extension;
         }
 
-        if (!empty($path)) {
+        if ($path) {
             $path .= '/';
         }
 
@@ -66,9 +72,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getBaseClass(Table $table)
+    public static function getBaseClass(Table $table): ?string
     {
         return $table->getBaseClass();
     }
@@ -78,9 +84,9 @@ class ClassTools
      *
      * @param \Propel\Generator\Model\Table $table
      *
-     * @return string
+     * @return string|null
      */
-    public static function getInterface(Table $table)
+    public static function getInterface(Table $table): ?string
     {
         return $table->getInterface();
     }
@@ -88,9 +94,9 @@ class ClassTools
     /**
      * Gets a list of PHP reserved words.
      *
-     * @return string[]
+     * @return array<string>
      */
-    public static function getPhpReservedWords()
+    public static function getPhpReservedWords(): array
     {
         return [
             'and', 'or', 'xor', 'exception', '__FILE__', '__LINE__',
@@ -107,9 +113,9 @@ class ClassTools
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
-    public static function getPropelReservedMethods()
+    public static function getPropelReservedMethods(): array
     {
         return [
             'isModified', 'isColumnModified', 'isNew', 'isDeleted',

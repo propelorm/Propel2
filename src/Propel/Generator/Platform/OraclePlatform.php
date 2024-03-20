@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Platform;
@@ -35,9 +33,9 @@ class OraclePlatform extends DefaultPlatform
      *
      * @return void
      */
-    protected function initialize()
+    protected function initializeTypeMap(): void
     {
-        parent::initialize();
+        parent::initializeTypeMap();
         $this->schemaDomainMap[PropelTypes::BOOLEAN] = new Domain(PropelTypes::BOOLEAN_EMU, 'NUMBER', 1, 0);
         $this->schemaDomainMap[PropelTypes::CLOB] = new Domain(PropelTypes::CLOB_EMU, 'CLOB');
         $this->schemaDomainMap[PropelTypes::CLOB_EMU] = $this->schemaDomainMap[PropelTypes::CLOB];
@@ -53,6 +51,7 @@ class OraclePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::LONGVARCHAR, 'NVARCHAR2', 2000));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIME, 'DATE'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::DATE, 'DATE'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::DATETIME, 'TIMESTAMP'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::TIMESTAMP, 'TIMESTAMP'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::BINARY, 'LONG RAW'));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::VARBINARY, 'BLOB'));
@@ -61,12 +60,14 @@ class OraclePlatform extends DefaultPlatform
         $this->setSchemaDomainMapping(new Domain(PropelTypes::PHP_ARRAY, 'NVARCHAR2', 2000));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::ENUM, 'NUMBER', 3, 0));
         $this->setSchemaDomainMapping(new Domain(PropelTypes::SET, 'NUMBER'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID, 'UUID'));
+        $this->setSchemaDomainMapping(new Domain(PropelTypes::UUID_BINARY, 'RAW(16)'));
     }
 
     /**
      * @return int
      */
-    public function getMaxColumnNameLength()
+    public function getMaxColumnNameLength(): int
     {
         return 30;
     }
@@ -74,7 +75,7 @@ class OraclePlatform extends DefaultPlatform
     /**
      * @return string
      */
-    public function getNativeIdMethod()
+    public function getNativeIdMethod(): string
     {
         return PlatformInterface::SEQUENCE;
     }
@@ -82,7 +83,7 @@ class OraclePlatform extends DefaultPlatform
     /**
      * @return string
      */
-    public function getAutoIncrement()
+    public function getAutoIncrement(): string
     {
         return '';
     }
@@ -90,7 +91,7 @@ class OraclePlatform extends DefaultPlatform
     /**
      * @return bool
      */
-    public function supportsNativeDeleteTrigger()
+    public function supportsNativeDeleteTrigger(): bool
     {
         return true;
     }
@@ -98,7 +99,7 @@ class OraclePlatform extends DefaultPlatform
     /**
      * @return string
      */
-    public function getBeginDDL()
+    public function getBeginDDL(): string
     {
         return "
 ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD';
@@ -111,7 +112,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
      *
      * @return string
      */
-    public function getAddTablesDDL(Database $database)
+    public function getAddTablesDDL(Database $database): string
     {
         $ret = $this->getBeginDDL();
         foreach ($database->getTablesForSql() as $table) {
@@ -137,7 +138,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
      *
      * @return string
      */
-    public function getAddTableDDL(Table $table)
+    public function getAddTableDDL(Table $table): string
     {
         $tableDescription = $table->hasDescription() ? $this->getCommentLineDDL($table->getDescription()) : '';
 
@@ -165,7 +166,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
             $tableDescription,
             $this->quoteIdentifier($table->getName()),
             implode($sep, $lines),
-            $this->generateBlockStorage($table)
+            $this->generateBlockStorage($table),
         );
 
         $ret .= $this->getAddPrimaryKeyDDL($table);
@@ -179,7 +180,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
      *
      * @return string
      */
-    public function getAddPrimaryKeyDDL(Table $table)
+    public function getAddPrimaryKeyDDL(Table $table): string
     {
         if (is_array($table->getPrimaryKey()) && count($table->getPrimaryKey())) {
             return parent::getAddPrimaryKeyDDL($table);
@@ -193,7 +194,7 @@ ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS';
      *
      * @return string
      */
-    public function getAddSequencesDDL(Table $table)
+    public function getAddSequencesDDL(Table $table): string
     {
         if ($table->getIdMethod() === 'native') {
             $pattern = "
@@ -203,7 +204,7 @@ CREATE SEQUENCE %s
 
             return sprintf(
                 $pattern,
-                $this->quoteIdentifier($this->getSequenceName($table))
+                $this->quoteIdentifier($this->getSequenceName($table)),
             );
         }
 
@@ -215,7 +216,7 @@ CREATE SEQUENCE %s
      *
      * @return string
      */
-    public function getDropTableDDL(Table $table)
+    public function getDropTableDDL(Table $table): string
     {
         $ret = "
 DROP TABLE " . $this->quoteIdentifier($table->getName()) . " CASCADE CONSTRAINTS;
@@ -234,7 +235,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string
      */
-    public function getPrimaryKeyName(Table $table)
+    public function getPrimaryKeyName(Table $table): string
     {
         $tableName = $table->getName();
         // pk constraint name must be 30 chars at most
@@ -248,7 +249,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string
      */
-    public function getPrimaryKeyDDL(Table $table)
+    public function getPrimaryKeyDDL(Table $table): string
     {
         if ($table->hasPrimaryKey()) {
             $pattern = 'CONSTRAINT %s PRIMARY KEY (%s)%s';
@@ -257,7 +258,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
                 $pattern,
                 $this->quoteIdentifier($this->getPrimaryKeyName($table)),
                 $this->getColumnListDDL($table->getPrimaryKey()),
-                $this->generateBlockStorage($table, true)
+                $this->generateBlockStorage($table, true),
             );
         }
 
@@ -269,12 +270,12 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string
      */
-    public function getUniqueDDL(Unique $unique)
+    public function getUniqueDDL(Unique $unique): string
     {
         return sprintf(
             'CONSTRAINT %s UNIQUE (%s)',
             $this->quoteIdentifier($unique->getName()),
-            $this->getColumnListDDL($unique->getColumnObjects())
+            $this->getColumnListDDL($unique->getColumnObjects()),
         );
     }
 
@@ -283,7 +284,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string
      */
-    public function getForeignKeyDDL(ForeignKey $fk)
+    public function getForeignKeyDDL(ForeignKey $fk): string
     {
         if ($fk->isSkipSql() || $fk->isPolymorphic()) {
             return '';
@@ -296,7 +297,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
             $this->quoteIdentifier($fk->getName()),
             $this->getColumnListDDL($fk->getLocalColumnObjects()),
             $this->quoteIdentifier($fk->getForeignTableName()),
-            $this->getColumnListDDL($fk->getForeignColumnObjects())
+            $this->getColumnListDDL($fk->getForeignColumnObjects()),
         );
         if ($fk->hasOnDelete()) {
             $script .= "
@@ -311,7 +312,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return bool
      */
-    public function hasStreamBlobImpl()
+    public function hasStreamBlobImpl(): bool
     {
         return true;
     }
@@ -319,7 +320,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * @inheritDoc
      */
-    public function doQuoting($text)
+    public function doQuoting(string $text): string
     {
         return $text;
     }
@@ -327,7 +328,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
     /**
      * @return string
      */
-    public function getTimestampFormatter()
+    public function getTimestampFormatter(): string
     {
         return 'Y-m-d H:i:s';
     }
@@ -341,7 +342,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return bool
      */
-    public function supportsSchemas()
+    public function supportsSchemas(): bool
     {
         return false;
     }
@@ -354,7 +355,7 @@ DROP SEQUENCE " . $this->quoteIdentifier($this->getSequenceName($table)) . ";
      *
      * @return string oracle vendor sql part
      */
-    public function generateBlockStorage($object, $isPrimaryKey = false)
+    public function generateBlockStorage($object, bool $isPrimaryKey = false): string
     {
         $vendorSpecific = $object->getVendorInfoForType('oracle');
         if ($vendorSpecific->isEmpty()) {
@@ -412,7 +413,7 @@ USING INDEX
      *
      * @return string
      */
-    public function getAddIndexDDL(Index $index)
+    public function getAddIndexDDL(Index $index): string
     {
         // don't create index form primary key
         if ($this->getPrimaryKeyName($index->getTable()) == $this->quoteIdentifier($index->getName())) {
@@ -429,7 +430,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
             $this->quoteIdentifier($index->getName()),
             $this->quoteIdentifier($index->getTable()->getName()),
             $this->getColumnListDDL($index->getColumnObjects()),
-            $this->generateBlockStorage($index)
+            $this->generateBlockStorage($index),
         );
     }
 
@@ -445,7 +446,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @return string
      */
-    public function getColumnBindingPHP(Column $column, $identifier, $columnValueAccessor, $tab = '            ')
+    public function getColumnBindingPHP(Column $column, string $identifier, string $columnValueAccessor, string $tab = '            '): string
     {
         if ($column->getType() === PropelTypes::CLOB_EMU) {
             return sprintf(
@@ -455,7 +456,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
                 $identifier,
                 $columnValueAccessor,
                 PropelTypes::getPdoTypeString($column->getType()),
-                $columnValueAccessor
+                $columnValueAccessor,
             );
         }
 
@@ -475,10 +476,15 @@ CREATE %sINDEX %s ON %s (%s)%s;
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|string[]|null
+     * @return string
      */
-    public function getIdentifierPhp($columnValueMutator, $connectionVariableName = '$con', $sequenceName = '', $tab = '            ', $phpType = null)
-    {
+    public function getIdentifierPhp(
+        string $columnValueMutator,
+        string $connectionVariableName = '$con',
+        string $sequenceName = '',
+        string $tab = '            ',
+        ?string $phpType = null
+    ): string {
         if (!$sequenceName) {
             throw new EngineException('Oracle needs a sequence name to fetch primary keys');
         }
@@ -490,7 +496,7 @@ CREATE %sINDEX %s ON %s (%s)%s;
             $connectionVariableName,
             $sequenceName,
             $columnValueMutator,
-            $phpType ? '(' . $phpType . ') ' : ''
+            $phpType ? '(' . $phpType . ') ' : '',
         );
 
         return preg_replace('/^/m', $tab, $script);

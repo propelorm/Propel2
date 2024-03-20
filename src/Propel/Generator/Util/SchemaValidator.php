@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Util;
@@ -36,7 +34,7 @@ class SchemaValidator
     protected $schema;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     protected $errors = [];
 
@@ -51,7 +49,7 @@ class SchemaValidator
     /**
      * @return bool true if valid, false otherwise
      */
-    public function validate()
+    public function validate(): bool
     {
         foreach ($this->schema->getDatabases() as $database) {
             $this->validateDatabaseTables($database);
@@ -65,11 +63,12 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateDatabaseTables(Database $database)
+    protected function validateDatabaseTables(Database $database): void
     {
         $phpNames = [];
         $namespaces = [];
         foreach ($database->getTables() as $table) {
+            /** @var array<string> $list */
             $list = &$phpNames;
             if ($table->getNamespace()) {
                 if (!isset($namespaces[$table->getNamespace()])) {
@@ -78,7 +77,7 @@ class SchemaValidator
 
                 $list = &$namespaces[$table->getNamespace()];
             }
-            if (in_array($table->getPhpName(), $list)) {
+            if (in_array($table->getPhpName(), $list, true)) {
                 $this->errors[] = sprintf('Table "%s" declares a phpName already used in another table', $table->getName());
             }
             $list[] = $table->getPhpName();
@@ -92,11 +91,11 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateTableAttributes(Table $table)
+    protected function validateTableAttributes(Table $table): void
     {
         $reservedTableNames = ['table_name'];
         $tableName = strtolower($table->getName());
-        if (in_array($tableName, $reservedTableNames)) {
+        if (in_array($tableName, $reservedTableNames, true)) {
             $this->errors[] = sprintf('Table "%s" uses a reserved keyword as name', $table->getName());
         }
     }
@@ -106,14 +105,14 @@ class SchemaValidator
      *
      * @return void
      */
-    protected function validateTableColumns(Table $table)
+    protected function validateTableColumns(Table $table): void
     {
         if (!$table->hasPrimaryKey() && !$table->isSkipSql()) {
             $this->errors[] = sprintf('Table "%s" does not have a primary key defined. Propel requires all tables to have a primary key.', $table->getName());
         }
         $phpNames = [];
         foreach ($table->getColumns() as $column) {
-            if (in_array($column->getPhpName(), $phpNames)) {
+            if (in_array($column->getPhpName(), $phpNames, true)) {
                 $this->errors[] = sprintf('Column "%s" declares a phpName already used in table "%s"', $column->getName(), $table->getName());
             }
             $phpNames[] = $column->getPhpName();
@@ -125,7 +124,7 @@ class SchemaValidator
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

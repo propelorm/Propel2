@@ -1,18 +1,19 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Adapter\Pdo;
 
 use PDO;
-use PDOStatement;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Lock;
 use Propel\Runtime\Adapter\SqlAdapterInterface;
+use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Connection\StatementInterface;
 use Propel\Runtime\Map\ColumnMap;
 
 /**
@@ -33,7 +34,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function concatString($s1, $s2)
+    public function concatString(string $s1, string $s2): string
     {
         return "CONCAT($s1, $s2)";
     }
@@ -47,7 +48,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function subString($s, $pos, $len)
+    public function subString(string $s, int $pos, int $len): string
     {
         return "SUBSTRING($s, $pos, $len)";
     }
@@ -59,7 +60,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return string
      */
-    public function strLength($s)
+    public function strLength(string $s): string
     {
         return "CHAR_LENGTH($s)";
     }
@@ -72,7 +73,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function lockTable($con, $table)
+    public function lockTable(ConnectionInterface $con, string $table): void
     {
         $con->exec("LOCK TABLE $table WRITE");
     }
@@ -85,50 +86,48 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return void
      */
-    public function unlockTable($con, $table)
+    public function unlockTable(ConnectionInterface $con, string $table): void
     {
         $con->exec('UNLOCK TABLES');
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifier()
+     * @see SqlAdapterInterface::quoteIdentifier()
      *
      * @param string $text
      *
      * @return string
      */
-    public function quoteIdentifier($text)
+    public function quoteIdentifier(string $text): string
     {
         return '`' . $text . '`';
     }
 
     /**
-     * @see AdapterInterface::quoteIdentifierTable()
+     * @see SqlAdapterInterface::quoteIdentifierTable()
      *
      * @param string $table
      *
      * @return string
      */
-    public function quoteIdentifierTable($table)
+    public function quoteIdentifierTable(string $table): string
     {
         // e.g. 'database.table alias' should be escaped as '`database`.`table` `alias`'
         return '`' . strtr($table, ['.' => '`.`', ' ' => '` `']) . '`';
     }
 
     /**
-     * @see AdapterInterface::applyLimit()
+     * @see SqlAdapterInterface::applyLimit()
      *
      * @param string $sql
      * @param int $offset
      * @param int $limit
+     * @param \Propel\Runtime\ActiveQuery\Criteria|null $criteria
      *
      * @return void
      */
-    public function applyLimit(&$sql, $offset, $limit)
+    public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void
     {
-        $offset = (int)$offset;
-        $limit = (int)$limit;
-
         if ($limit >= 0) {
             $sql .= ' LIMIT ' . ($offset > 0 ? $offset . ', ' : '') . $limit;
         } elseif ($offset > 0) {
@@ -137,21 +136,21 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
-     * @see AdapterInterface::random()
+     * @see SqlAdapterInterface::random()
      *
      * @param string|null $seed
      *
      * @return string
      */
-    public function random($seed = null)
+    public function random(?string $seed = null): string
     {
         return 'rand(' . ((int)$seed) . ')';
     }
 
     /**
-     * @see AdapterInterface::bindValue()
+     * @see SqlAdapterInterface::bindValue()
      *
-     * @param \PDOStatement $stmt
+     * @param \Propel\Runtime\Connection\StatementInterface $stmt
      * @param string $parameter
      * @param mixed $value
      * @param \Propel\Runtime\Map\ColumnMap $cMap
@@ -159,7 +158,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return bool
      */
-    public function bindValue(PDOStatement $stmt, $parameter, $value, ColumnMap $cMap, $position = null)
+    public function bindValue(StatementInterface $stmt, string $parameter, $value, ColumnMap $cMap, ?int $position = null): bool
     {
         $pdoType = $cMap->getPdoType();
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
@@ -192,7 +191,7 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
      *
      * @return array the modified parameters
      */
-    protected function prepareParams($params)
+    protected function prepareParams(array $params): array
     {
         if (isset($params['settings']['charset'])) {
             if (strpos($params['dsn'], ';charset=') === false) {
@@ -202,5 +201,24 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
         }
 
         return parent::prepareParams($params);
+    }
+
+    /**
+     * @see SqlAdapterInterface::applyLock()
+     *
+     * @param string $sql
+     * @param \Propel\Runtime\ActiveQuery\Lock $lock
+     *
+     * @return void
+     */
+    public function applyLock(string &$sql, Lock $lock): void
+    {
+        $type = $lock->getType();
+
+        if ($type === Lock::SHARED) {
+            $sql .= ' LOCK IN SHARE MODE';
+        } elseif ($type === Lock::EXCLUSIVE) {
+            $sql .= ' FOR UPDATE';
+        }
     }
 }

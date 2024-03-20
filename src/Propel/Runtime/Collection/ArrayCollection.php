@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Collection;
 
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Exception\ReadOnlyModelException;
+use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -21,7 +21,7 @@ use Propel\Runtime\Exception\PropelException;
 class ArrayCollection extends Collection
 {
     /**
-     * @var object
+     * @var \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
     protected $workerObject;
 
@@ -34,7 +34,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function save($con = null)
+    public function save(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'save')) {
             throw new ReadOnlyModelException('Cannot save objects on a read-only model');
@@ -42,7 +42,7 @@ class ArrayCollection extends Collection
         if ($con === null) {
             $con = $this->getWriteConnection();
         }
-        $con->transaction(function () use ($con) {
+        $con->transaction(function () use ($con): void {
             $obj = $this->getWorkerObject();
             foreach ($this as $element) {
                 $obj->clear();
@@ -62,7 +62,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function delete($con = null)
+    public function delete(?ConnectionInterface $con = null): void
     {
         if (!method_exists($this->getFullyQualifiedModel(), 'delete')) {
             throw new ReadOnlyModelException('Cannot delete objects on a read-only model');
@@ -70,7 +70,7 @@ class ArrayCollection extends Collection
         if ($con === null) {
             $con = $this->getWriteConnection();
         }
-        $con->transaction(function () use ($con) {
+        $con->transaction(function () use ($con): void {
             foreach ($this as $element) {
                 $obj = $this->getWorkerObject();
                 $obj->setDeleted(false);
@@ -87,14 +87,14 @@ class ArrayCollection extends Collection
      *
      * @return array The list of the primary keys of the collection
      */
-    public function getPrimaryKeys($usePrefix = true)
+    public function getPrimaryKeys(bool $usePrefix = true): array
     {
         $ret = [];
-        $callable = [$this->getTableMapClass(), 'getPrimaryKeyFromRow'];
+        $tableMapClass = $this->getTableMapClass();
 
         foreach ($this as $key => $element) {
             $key = $usePrefix ? ($this->getModel() . '_' . $key) : $key;
-            $ret[$key] = call_user_func($callable, array_values($element));
+            $ret[$key] = $tableMapClass::getPrimaryKeyFromRow(array_values($element));
         }
 
         return $ret;
@@ -109,7 +109,7 @@ class ArrayCollection extends Collection
      *
      * @return void
      */
-    public function fromArray($arr)
+    public function fromArray(array $arr): void
     {
         $obj = $this->getWorkerObject();
         foreach ($arr as $element) {
@@ -147,7 +147,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function toArray($keyColumn = null, $usePrefix = false)
+    public function toArray(?string $keyColumn = null, bool $usePrefix = false): array
     {
         $ret = [];
         foreach ($this as $key => $element) {
@@ -167,7 +167,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function getArrayCopy($keyColumn = null, $usePrefix = false)
+    public function getArrayCopy(?string $keyColumn = null, bool $usePrefix = false): array
     {
         if ($keyColumn === null && $usePrefix === false) {
             return parent::getArrayCopy();
@@ -189,7 +189,7 @@ class ArrayCollection extends Collection
      *
      * @return array
      */
-    public function toKeyValue($keyColumn, $valueColumn)
+    public function toKeyValue(string $keyColumn, string $valueColumn): array
     {
         $ret = [];
         foreach ($this as $obj) {
@@ -204,13 +204,14 @@ class ArrayCollection extends Collection
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    protected function getWorkerObject()
+    protected function getWorkerObject(): ActiveRecordInterface
     {
         if ($this->workerObject === null) {
             $model = $this->getModel();
-            if (empty($model)) {
+            if (!$model) {
                 throw new PropelException('You must set the collection model before interacting with it');
             }
+            /** @phpstan-var class-string<\Propel\Runtime\ActiveRecord\ActiveRecordInterface> $class */
             $class = $this->getFullyQualifiedModel();
             $this->workerObject = new $class();
         }

@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -22,7 +20,7 @@ class GraphvizManager extends AbstractManager
     /**
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         foreach ($this->getDatabases() as $database) {
             $dotSyntax = "digraph G {\n";
@@ -82,7 +80,7 @@ class GraphvizManager extends AbstractManager
      *
      * @return void
      */
-    protected function writeDot($dotSyntax, $baseFilename)
+    protected function writeDot(string $dotSyntax, string $baseFilename): void
     {
         $file = $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . $baseFilename . '.schema.dot';
 

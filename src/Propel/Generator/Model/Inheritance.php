@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -47,9 +45,9 @@ class Inheritance extends MappingModel
     /**
      * Returns a key name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -59,7 +57,7 @@ class Inheritance extends MappingModel
      *
      * @return string
      */
-    public function getConstantSuffix()
+    public function getConstantSuffix(): string
     {
         $separator = PhpNameGenerator::STD_SEPARATOR_CHAR;
 
@@ -73,7 +71,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setKey($key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -85,7 +83,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setColumn(Column $column)
+    public function setColumn(Column $column): void
     {
         $this->column = $column;
     }
@@ -93,9 +91,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the parent column.
      *
-     * @return \Propel\Generator\Model\Column
+     * @return \Propel\Generator\Model\Column|null
      */
-    public function getColumn()
+    public function getColumn(): ?Column
     {
         return $this->column;
     }
@@ -103,9 +101,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the class name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName()
+    public function getClassName(): ?string
     {
         return $this->className;
     }
@@ -117,7 +115,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setClassName($name)
+    public function setClassName(string $name): void
     {
         $this->className = $name;
     }
@@ -125,9 +123,9 @@ class Inheritance extends MappingModel
     /**
      * Returns the package.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return $this->package;
     }
@@ -139,7 +137,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setPackage($package)
+    public function setPackage(string $package): void
     {
         $this->package = $package;
     }
@@ -149,7 +147,7 @@ class Inheritance extends MappingModel
      *
      * @return string|null
      */
-    public function getAncestor()
+    public function getAncestor(): ?string
     {
         return $this->ancestor;
     }
@@ -161,7 +159,7 @@ class Inheritance extends MappingModel
      *
      * @return void
      */
-    public function setAncestor($ancestor)
+    public function setAncestor(string $ancestor): void
     {
         $this->ancestor = $ancestor;
     }
@@ -169,7 +167,7 @@ class Inheritance extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
         $this->key = $this->getAttribute('key');
         $this->className = $this->getAttribute('class');

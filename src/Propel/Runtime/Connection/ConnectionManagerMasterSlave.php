@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -24,7 +22,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @return bool
      */
-    public function isForceMasterConnection()
+    public function isForceMasterConnection(): bool
     {
         return $this->isForcePrimaryConnection();
     }
@@ -38,7 +36,7 @@ class ConnectionManagerMasterSlave extends ConnectionManagerPrimaryReplica
      *
      * @return void
      */
-    public function setForceMasterConnection($isForceMasterConnection)
+    public function setForceMasterConnection(bool $isForceMasterConnection): void
     {
         $this->setForcePrimaryConnection($isForceMasterConnection);
     }

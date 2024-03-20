@@ -1,41 +1,45 @@
 <?php
 
-/*
- *	$Id: TableTest.php 1891 2010-08-09 15:03:18Z francois $
- * This file is part of the Propel package.
+/**
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
+
+namespace Propel\Tests\Generator\Model\Diff;
 
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
-use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Diff\TableComparator;
 use Propel\Generator\Model\Diff\TableDiff;
+use Propel\Generator\Model\Table;
 use Propel\Generator\Platform\MysqlPlatform;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for the Column methods of the TableComparator service class.
- *
  */
 class PropelTablePkColumnComparatorTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->platform = new MysqlPlatform();
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSamePks()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->setPrimaryKey(true);
@@ -44,13 +48,16 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertFalse(TableComparator::computeDiff($t1, $t2));
     }
 
+    /**
+     * @return void
+     */
     public function testCompareNotSamePks()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $t2->addColumn($c2);
 
@@ -58,10 +65,13 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertTrue($diff instanceof TableDiff);
     }
 
+    /**
+     * @return void
+     */
     public function testCompareAddedPkColumn()
     {
-        $t1 = new Table();
-        $t2 = new Table();
+        $t1 = new Table('');
+        $t2 = new Table('');
         $c2 = new Column('Foo');
         $c2->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c2->setPrimaryKey(true);
@@ -80,9 +90,12 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertEquals(['Foo' => $c2], $tableDiff->getAddedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRemovedPkColumn()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c1->setPrimaryKey(true);
@@ -90,7 +103,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c2 = new Column('Bar');
         $c2->getDomain()->copy($this->platform->getDomainForType('LONGVARCHAR'));
         $t1->addColumn($c2);
-        $t2 = new Table();
+        $t2 = new Table('');
 
         $tc = new TableComparator();
         $tc->setFromTable($t1);
@@ -102,9 +115,12 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertEquals(['Foo' => $c1], $tableDiff->getRemovedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareRenamedPkColumn()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('Foo');
         $c1->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c1->getDomain()->replaceScale(2);
@@ -113,7 +129,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c1->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $c1->setPrimaryKey(true);
         $t1->addColumn($c1);
-        $t2 = new Table();
+        $t2 = new Table('');
         $c2 = new Column('Bar');
         $c2->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c2->getDomain()->replaceScale(2);
@@ -135,9 +151,12 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertEquals([], $tableDiff->getRemovedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSeveralPrimaryKeyDifferences()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('col1');
         $c1->getDomain()->copy($this->platform->getDomainForType('VARCHAR'));
         $c1->getDomain()->replaceSize(255);
@@ -154,7 +173,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c3->setPrimaryKey(true);
         $t1->addColumn($c3);
 
-        $t2 = new Table();
+        $t2 = new Table('');
         $c4 = new Column('col1');
         $c4->getDomain()->copy($this->platform->getDomainForType('DOUBLE'));
         $c4->getDomain()->replaceScale(2);
@@ -185,9 +204,12 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertEquals(['col3' => $c3], $tableDiff->getRemovedPkColumns());
     }
 
+    /**
+     * @return void
+     */
     public function testCompareSeveralRenamedSamePrimaryKeys()
     {
-        $t1 = new Table();
+        $t1 = new Table('');
         $c1 = new Column('col1');
         $c1->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c1->setNotNull(true);
@@ -204,7 +226,7 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $c3->setPrimaryKey(true);
         $t1->addColumn($c3);
 
-        $t2 = new Table();
+        $t2 = new Table('');
         $c4 = new Column('col4');
         $c4->getDomain()->copy($this->platform->getDomainForType('INTEGER'));
         $c4->setNotNull(true);
@@ -232,5 +254,4 @@ class PropelTablePkColumnComparatorTest extends TestCase
         $this->assertEquals([], $tableDiff->getAddedPkColumns());
         $this->assertEquals([], $tableDiff->getRemovedPkColumns());
     }
-
 }

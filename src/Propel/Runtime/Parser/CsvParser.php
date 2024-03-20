@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -19,32 +17,49 @@ namespace Propel\Runtime\Parser;
  */
 class CsvParser extends AbstractParser
 {
+    /**
+     * @var int
+     */
     public const QUOTE_NONE = 0;
+
+    /**
+     * @var int
+     */
     public const QUOTE_ALL = 1;
+
+    /**
+     * @var int
+     */
     public const QUOTE_NONNUMERIC = 2;
+
+    /**
+     * @var int
+     */
     public const QUOTE_MINIMAL = 3;
 
-    // these settings are predefined for Excel CSV format
+    /**
+     * @phpstan-var non-empty-string
+     *
+     * @var string
+     */
+    public string $delimiter = ',';
+
+    /**
+     * @phpstan-var non-empty-string
+     *
+     * @var string
+     */
+    public string $lineTerminator = "\r\n";
 
     /**
      * @var string
      */
-    public $delimiter = ',';
+    public string $quotechar = '"';
 
     /**
      * @var string
      */
-    public $lineTerminator = "\r\n";
-
-    /**
-     * @var string
-     */
-    public $quotechar = '"';
-
-    /**
-     * @var string
-     */
-    public $escapechar = '\\';
+    public string $escapechar = '\\';
 
     /**
      * @var int
@@ -61,12 +76,14 @@ class CsvParser extends AbstractParser
      *
      * @return string Converted data, as a CSV string
      */
-    public function fromArray($array, $rootKey = null, $isList = false, $includeHeading = true)
+    public function fromArray(array $array, ?string $rootKey = null, bool $isList = false, bool $includeHeading = true): string
     {
         $rows = [];
         if ($isList) {
             if ($includeHeading) {
-                $rows[] = implode($this->delimiter, $this->formatRow(array_keys(reset($array))));
+                /** @var array $indexedRow */
+                $indexedRow = reset($array);
+                $rows[] = implode($this->delimiter, $this->formatRow(array_keys($indexedRow)));
             }
             foreach ($array as $row) {
                 $rows[] = implode($this->delimiter, $this->formatRow($row));
@@ -87,7 +104,7 @@ class CsvParser extends AbstractParser
      *
      * @return string
      */
-    public function listFromArray($array, $rootKey = null)
+    public function listFromArray(array $array, ?string $rootKey = null): string
     {
         return $this->fromArray($array, $rootKey, true);
     }
@@ -99,7 +116,7 @@ class CsvParser extends AbstractParser
      *
      * @return array The formatted array
      */
-    protected function formatRow($row)
+    protected function formatRow(array $row): array
     {
         foreach ($row as &$column) {
             if (!is_scalar($column)) {
@@ -110,19 +127,19 @@ class CsvParser extends AbstractParser
                     // do nothing... no quoting is happening here
                     break;
                 case self::QUOTE_ALL:
-                    $column = $this->quote($this->escape($column));
+                    $column = $this->quote($this->escape((string)$column));
 
                     break;
                 case self::QUOTE_NONNUMERIC:
-                    if (preg_match('/[^0-9]/', $column)) {
-                        $column = $this->quote($this->escape($column));
+                    if (preg_match('/[^0-9]/', (string)$column)) {
+                        $column = $this->quote($this->escape((string)$column));
                     }
 
                     break;
                 case self::QUOTE_MINIMAL:
                 default:
-                    if ($this->containsSpecialChars($column)) {
-                        $column = $this->quote($this->escape($column));
+                    if ($this->containsSpecialChars((string)$column)) {
+                        $column = $this->quote($this->escape((string)$column));
                     }
 
                     break;
@@ -139,12 +156,12 @@ class CsvParser extends AbstractParser
      *
      * @return string Escaped input value
      */
-    protected function escape($input)
+    protected function escape(string $input): string
     {
         return str_replace(
             $this->quotechar,
             $this->escapechar . $this->quotechar,
-            $input
+            $input,
         );
     }
 
@@ -155,7 +172,7 @@ class CsvParser extends AbstractParser
      *
      * @return string Quoted input value
      */
-    protected function quote($input)
+    protected function quote(string $input): string
     {
         return $this->quotechar . $input . $this->quotechar;
     }
@@ -167,12 +184,12 @@ class CsvParser extends AbstractParser
      *
      * @return bool True if contains any special characters
      */
-    protected function containsSpecialChars($input)
+    protected function containsSpecialChars(string $input): bool
     {
-        $special_chars = str_split($this->lineTerminator, 1);
-        $special_chars[] = $this->quotechar;
-        $special_chars[] = $this->delimiter;
-        foreach ($special_chars as $char) {
+        $specialChars = str_split($this->lineTerminator);
+        $specialChars[] = $this->quotechar;
+        $specialChars[] = $this->delimiter;
+        foreach ($specialChars as $char) {
             if (strpos($input, $char) !== false) {
                 return true;
             }
@@ -188,7 +205,7 @@ class CsvParser extends AbstractParser
      *
      * @return string
      */
-    protected function serialize($input)
+    protected function serialize($input): string
     {
         return serialize($input);
     }
@@ -202,7 +219,7 @@ class CsvParser extends AbstractParser
      *
      * @return string Converted data, as a CSV string
      */
-    public function toCSV($array, $isList = false, $includeHeading = true)
+    public function toCSV(array $array, bool $isList = false, bool $includeHeading = true): string
     {
         return $this->fromArray($array, null, $isList, $includeHeading);
     }
@@ -217,7 +234,7 @@ class CsvParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function toArray($data, $rootKey = null, $isList = false, $includeHeading = true)
+    public function toArray(string $data, ?string $rootKey = null, bool $isList = false, bool $includeHeading = true): array
     {
         $rows = explode($this->lineTerminator, $data);
         if ($includeHeading) {
@@ -235,7 +252,7 @@ class CsvParser extends AbstractParser
                 }
             }
         } else {
-            $values = $this->cleanupRow($this->getColumns(array_shift($rows)));
+            $values = $this->cleanupRow($this->getColumns((string)array_shift($rows)));
             if ($keys === [''] && $values === []) {
                 $array = [];
             } else {
@@ -256,7 +273,7 @@ class CsvParser extends AbstractParser
      *
      * @return array
      */
-    public function listToArray($data, $rootKey = null)
+    public function listToArray(string $data, ?string $rootKey = null): array
     {
         return $this->toArray($data, $rootKey, true);
     }
@@ -266,7 +283,7 @@ class CsvParser extends AbstractParser
      *
      * @return array
      */
-    protected function getColumns($row)
+    protected function getColumns(string $row): array
     {
         $delim = preg_quote($this->delimiter, '/');
         preg_match_all('/(".+?"|[^' . $delim . ']+)(' . $delim . '|$)/', $row, $matches);
@@ -281,7 +298,7 @@ class CsvParser extends AbstractParser
      *
      * @return array The cleaned up array
      */
-    protected function cleanupRow($row)
+    protected function cleanupRow(array $row): array
     {
         foreach ($row as $key => $column) {
             if ($this->isQuoted($column)) {
@@ -304,7 +321,7 @@ class CsvParser extends AbstractParser
      *
      * @return int|false
      */
-    protected function isQuoted($input)
+    protected function isQuoted(string $input)
     {
         $quote = preg_quote($this->quotechar, '/');
 
@@ -316,12 +333,12 @@ class CsvParser extends AbstractParser
      *
      * @return string
      */
-    protected function unescape($input)
+    protected function unescape(string $input): string
     {
         return str_replace(
             $this->escapechar . $this->quotechar,
             $this->quotechar,
-            $input
+            $input,
         );
     }
 
@@ -330,7 +347,7 @@ class CsvParser extends AbstractParser
      *
      * @return string
      */
-    protected function unquote($input)
+    protected function unquote(string $input): string
     {
         return trim($input, $this->quotechar);
     }
@@ -342,7 +359,7 @@ class CsvParser extends AbstractParser
      *
      * @return int|false
      */
-    protected function isSerialized($input)
+    protected function isSerialized(string $input)
     {
         return preg_match('/^\w\:\d+\:\{/', $input);
     }
@@ -354,7 +371,7 @@ class CsvParser extends AbstractParser
      *
      * @return mixed
      */
-    protected function unserialize($input)
+    protected function unserialize(string $input)
     {
         return unserialize($input);
     }
@@ -368,7 +385,7 @@ class CsvParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function fromCSV($data, $isList = false, $includeHeading = true)
+    public function fromCSV(string $data, bool $isList = false, bool $includeHeading = true): array
     {
         return $this->toArray($data, null, $isList, $includeHeading);
     }

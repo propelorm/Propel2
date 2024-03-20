@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -43,7 +41,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *   DECIMAL (NUMBER with scale),
      *   DOUBLE (FLOAT with precision = 126)
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $oracleTypeMap = [
         'BLOB' => PropelTypes::BLOB,
@@ -60,15 +58,16 @@ class OracleSchemaParser extends AbstractSchemaParser
         'NUMBER' => PropelTypes::INTEGER,
         'NVARCHAR2' => PropelTypes::VARCHAR,
         'TIMESTAMP' => PropelTypes::TIMESTAMP,
+        'UUID' => PropelTypes::UUID,
         'VARCHAR2' => PropelTypes::VARCHAR,
     ];
 
     /**
      * Gets a type mapping from native types to Propel types
      *
-     * @return string[]
+     * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$oracleTypeMap;
     }
@@ -77,11 +76,11 @@ class OracleSchemaParser extends AbstractSchemaParser
      * Searches for tables in the database. Maybe we want to search also the views.
      *
      * @param \Propel\Generator\Model\Database $database The Database model class to add tables to.
-     * @param \Propel\Generator\Model\Table[] $additionalTables
+     * @param array<\Propel\Generator\Model\Table> $additionalTables
      *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         $tables = [];
         /** @var \PDOStatement $stmt */
@@ -89,7 +88,7 @@ class OracleSchemaParser extends AbstractSchemaParser
 
         $seqPattern = $this->getGeneratorConfig()->get()['database']['adapters']['oracle']['autoincrementSequencePattern'];
 
-        // First load the tables (important that this happen before filling out details of tables)
+        // First load the tables (important that this happens before filling out details of tables)
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             if (strpos($row['OBJECT_NAME'], '$') !== false) {
                 // this is an Oracle internal table or materialized view - prune
@@ -140,7 +139,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLUMN_NAME, DATA_TYPE, NULLABLE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, DATA_DEFAULT FROM USER_TAB_COLS WHERE TABLE_NAME = '" . $table->getName() . "'");
@@ -149,7 +148,7 @@ class OracleSchemaParser extends AbstractSchemaParser
                 // this is an Oracle internal column - prune
                 continue;
             }
-            $size = $row['DATA_PRECISION'] ? $row['DATA_PRECISION'] : $row['DATA_LENGTH'];
+            $size = $row['DATA_PRECISION'] ?: $row['DATA_LENGTH'];
             $scale = $row['DATA_SCALE'];
             $default = $row['DATA_DEFAULT'];
             $type = $row['DATA_TYPE'];
@@ -164,7 +163,8 @@ class OracleSchemaParser extends AbstractSchemaParser
                 $type = 'DOUBLE';
             }
             if (strpos($type, 'TIMESTAMP(') !== false) {
-                $type = substr($type, 0, strpos($type, '('));
+                $length = strpos($type, '(') ?: null;
+                $type = substr($type, 0, $length);
                 $default = '0000-00-00 00:00:00';
                 $size = null;
                 $scale = null;
@@ -203,18 +203,13 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
-        /** @var \PDOStatement $stmt */
-        $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+        $columnNamesIndexedByIndexName = $this->getColumnNamesIndexedByIndexName($table);
 
-        $indices = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $indices[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
-        }
-
-        foreach ($indices as $indexName => $columnNames) {
-            $index = new Index($indexName);
+        foreach ($columnNamesIndexedByIndexName as $indexName => $columnNames) {
+            $index = new Index((string)$indexName);
+            /** @phpstan-var string $columnName */
             foreach ($columnNames as $columnName) {
                 // Oracle deals with complex indices using an internal reference, so...
                 // let's ignore this kind of index
@@ -230,13 +225,31 @@ class OracleSchemaParser extends AbstractSchemaParser
     }
 
     /**
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return array<scalar, non-empty-list<null|scalar>>
+     */
+    protected function getColumnNamesIndexedByIndexName(Table $table): array
+    {
+        /** @var \PDOStatement $stmt */
+        $stmt = $this->dbh->query("SELECT INDEX_NAME, COLUMN_NAME FROM USER_IND_COLUMNS WHERE TABLE_NAME = '" . $table->getName() . "' ORDER BY COLUMN_NAME");
+
+        $columnNamesIndexedByIndexName = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $columnNamesIndexedByIndexName[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
+        }
+
+        return $columnNamesIndexedByIndexName;
+    }
+
+    /**
      * Load foreign keys for this table.
      *
      * @param \Propel\Generator\Model\Table $table The Table model class to add FKs to
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table)
+    protected function addForeignKeys(Table $table): void
     {
         // local store to avoid duplicates
         $foreignKeys = [];
@@ -254,7 +267,7 @@ class OracleSchemaParser extends AbstractSchemaParser
             $stmt3 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '" . $row['R_CONSTRAINT_NAME'] . "'");
             $foreignReferenceInfo = $stmt3->fetch(PDO::FETCH_ASSOC);
 
-            if (!isset($foreignKeys[$row['CONSTRAINT_NAME']])) {
+            if (!isset($foreignKeys[(string)$row['CONSTRAINT_NAME']])) {
                 $fk = new ForeignKey($row['CONSTRAINT_NAME']);
                 $fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
                 $onDelete = ($row['DELETE_RULE'] === 'NO ACTION') ? 'NONE' : $row['DELETE_RULE'];
@@ -274,7 +287,7 @@ class OracleSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addPrimaryKey(Table $table)
+    protected function addPrimaryKey(Table $table): void
     {
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '" . $table->getName() . "' AND CONS.CONSTRAINT_TYPE = 'P'");

@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-
-use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableTable11Query;
 
 /**
  * Tests for SortableBehavior class
@@ -24,6 +21,9 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable11TableMap;
  */
 class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -31,11 +31,17 @@ class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
         $this->populateTable11();
     }
 
+    /**
+     * @return void
+     */
     public function testStaticAttributes()
     {
         $this->assertEquals('sortable_table11.sortable_rank', SortableTable11TableMap::RANK_COL);
     }
 
+    /**
+     * @return void
+     */
     public function testGetMaxRank()
     {
         $this->assertEquals(4, SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns the maximum rank');
@@ -45,6 +51,10 @@ class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
         SortableTable11TableMap::doDeleteAll();
         $this->assertNull(SortableTable11Query::create()->getMaxRank(), 'getMaxRank() returns null for empty tables');
     }
+
+    /**
+     * @return void
+     */
     public function testRetrieveByRank()
     {
         $t = SortableTable11Query::retrieveByRank(5);
@@ -54,12 +64,15 @@ class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
         $this->assertEquals('row3', $t3->getTitle(), 'retrieveByRank() returns the object with the required rank');
     }
 
+    /**
+     * @return void
+     */
     public function testReorder()
     {
         $objects = SortableTable11Query::create()->find();
         $ids = [];
         foreach ($objects as $object) {
-            $ids[]= $object->getPrimaryKey();
+            $ids[] = $object->getPrimaryKey();
         }
         $ranks = [4, 3, 2, 1];
         $order = array_combine($ids, $ranks);
@@ -68,6 +81,9 @@ class SortableBehaviorQueryUtilsBuilderModifierTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArray(), 'reorder() reorders the suite');
     }
 
+    /**
+     * @return void
+     */
     public function testDoSelectOrderByRank()
     {
         $objects = SortableTable11Query::doSelectOrderByRank()->getArrayCopy();

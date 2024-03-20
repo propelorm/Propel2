@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Reverse;
@@ -20,6 +18,7 @@ use Propel\Generator\Model\Index;
 use Propel\Generator\Model\PropelTypes;
 use Propel\Generator\Model\Table;
 use Propel\Generator\Model\Unique;
+use RuntimeException;
 
 /**
  * Microsoft SQL Server database schema parser.
@@ -32,7 +31,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * Map MSSQL native types to Propel types.
      *
-     * @var string[]
+     * @var array<string>
      */
     private static $mssqlTypeMap = [
         'binary' => PropelTypes::BINARY,
@@ -62,7 +61,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
         'timestamp' => PropelTypes::BINARY,
         'tinyint identity' => PropelTypes::TINYINT,
         'tinyint' => PropelTypes::TINYINT,
-        'uniqueidentifier' => PropelTypes::CHAR,
+        'uniqueidentifier' => PropelTypes::UUID,
         'varbinary' => PropelTypes::VARBINARY,
         'varbinary(max)' => PropelTypes::CLOB,
         'varchar' => PropelTypes::VARCHAR,
@@ -77,9 +76,9 @@ class MssqlSchemaParser extends AbstractSchemaParser
     /**
      * @see AbstractSchemaParser::getTypeMapping()
      *
-     * @return string[]
+     * @return array<string>
      */
-    protected function getTypeMapping()
+    protected function getTypeMapping(): array
     {
         return self::$mssqlTypeMap;
     }
@@ -88,13 +87,19 @@ class MssqlSchemaParser extends AbstractSchemaParser
      * @param \Propel\Generator\Model\Database $database
      * @param array $additionalTables
      *
+     * @throws \RuntimeException
+     *
      * @return int
      */
-    public function parse(Database $database, array $additionalTables = [])
+    public function parse(Database $database, array $additionalTables = []): int
     {
         $dataFetcher = $this->dbh->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'dtproperties'");
 
-        // First load the tables (important that this happen before filling out details of tables)
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
+
+        // First load the tables (important that this happens before filling out details of tables)
         $tables = [];
         foreach ($dataFetcher as $row) {
             $name = $this->cleanDelimitedIdentifiers($row[0]);
@@ -129,7 +134,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addColumns(Table $table)
+    protected function addColumns(Table $table): void
     {
         /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_columns '" . $table->getName() . "'");
@@ -177,7 +182,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addForeignKeys(Table $table)
+    protected function addForeignKeys(Table $table): void
     {
         $database = $table->getDatabase();
 
@@ -222,7 +227,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @return void
      */
-    protected function addIndexes(Table $table)
+    protected function addIndexes(Table $table): void
     {
         /** @var \Propel\Runtime\DataFetcher\PDODataFetcher $dataFetcher */
         $dataFetcher = $this->dbh->query("sp_indexes_rowset '" . $table->getName() . "'");
@@ -269,9 +274,11 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @param \Propel\Generator\Model\Table $table
      *
+     * @throws \RuntimeException
+     *
      * @return void
      */
-    protected function addPrimaryKey(Table $table)
+    protected function addPrimaryKey(Table $table): void
     {
         $dataFetcher = $this->dbh->query("SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
@@ -279,6 +286,10 @@ class MssqlSchemaParser extends AbstractSchemaParser
             INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_NAME = INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE.constraint_name
             WHERE     (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'PRIMARY KEY') AND
             (INFORMATION_SCHEMA.TABLE_CONSTRAINTS.TABLE_NAME = '" . $table->getName() . "')");
+
+        if ($dataFetcher === false) {
+            throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
+        }
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
@@ -298,7 +309,7 @@ class MssqlSchemaParser extends AbstractSchemaParser
      *
      * @return string
      */
-    protected function cleanDelimitedIdentifiers($identifier)
+    protected function cleanDelimitedIdentifiers(string $identifier): string
     {
         return preg_replace('/^\'(.*)\'$/U', '$1', $identifier);
     }

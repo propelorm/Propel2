@@ -1,16 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\ActiveQuery;
 
 use Propel\Runtime\Map\RelationMap;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Data object to describe a joined hydration in a Model Query
@@ -93,7 +92,7 @@ class ModelWith
      *
      * @return void
      */
-    public function init(ModelJoin $join)
+    public function init(ModelJoin $join): void
     {
         $tableMap = $join->getTableMap();
         $this->setModelName($tableMap->getClassName());
@@ -124,7 +123,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setModelName($modelName)
+    public function setModelName(string $modelName): void
     {
         if (strpos($modelName, '\\') === 0) {
             $this->modelName = substr($modelName, 1);
@@ -136,7 +135,7 @@ class ModelWith
     /**
      * @return \Propel\Runtime\Map\TableMap
      */
-    public function getTableMap()
+    public function getTableMap(): TableMap
     {
         return $this->getTableMap;
     }
@@ -144,7 +143,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function getModelName()
+    public function getModelName(): string
     {
         return $this->modelName;
     }
@@ -154,7 +153,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsSingleTableInheritance($isSingleTableInheritance)
+    public function setIsSingleTableInheritance(bool $isSingleTableInheritance): void
     {
         $this->isSingleTableInheritance = $isSingleTableInheritance;
     }
@@ -162,7 +161,7 @@ class ModelWith
     /**
      * @return bool
      */
-    public function isSingleTableInheritance()
+    public function isSingleTableInheritance(): bool
     {
         return $this->isSingleTableInheritance;
     }
@@ -172,7 +171,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsAdd($isAdd)
+    public function setIsAdd(bool $isAdd): void
     {
         $this->isAdd = $isAdd;
     }
@@ -180,7 +179,7 @@ class ModelWith
     /**
      * @return bool
      */
-    public function isAdd()
+    public function isAdd(): bool
     {
         return $this->isAdd;
     }
@@ -190,7 +189,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setIsWithOneToMany($isWithOneToMany)
+    public function setIsWithOneToMany(bool $isWithOneToMany): void
     {
         $this->isWithOneToMany = $isWithOneToMany;
     }
@@ -198,7 +197,7 @@ class ModelWith
     /**
      * @return bool
      */
-    public function isWithOneToMany()
+    public function isWithOneToMany(): bool
     {
         return $this->isWithOneToMany;
     }
@@ -208,7 +207,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setRelationName($relationName)
+    public function setRelationName(string $relationName): void
     {
         $this->relationName = $relationName;
     }
@@ -216,7 +215,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function getRelationName()
+    public function getRelationName(): string
     {
         return $this->relationName;
     }
@@ -226,7 +225,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setRelationMethod($relationMethod)
+    public function setRelationMethod(string $relationMethod): void
     {
         $this->relationMethod = $relationMethod;
     }
@@ -234,7 +233,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function getRelationMethod()
+    public function getRelationMethod(): string
     {
         return $this->relationMethod;
     }
@@ -244,7 +243,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setInitMethod($initMethod)
+    public function setInitMethod(string $initMethod): void
     {
         $this->initMethod = $initMethod;
     }
@@ -252,7 +251,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function getInitMethod()
+    public function getInitMethod(): string
     {
         return $this->initMethod;
     }
@@ -262,7 +261,7 @@ class ModelWith
      *
      * @return void
      */
-    public function setResetPartialMethod($resetPartialMethod)
+    public function setResetPartialMethod(string $resetPartialMethod): void
     {
         $this->resetPartialMethod = $resetPartialMethod;
     }
@@ -270,7 +269,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function getResetPartialMethod()
+    public function getResetPartialMethod(): string
     {
         return $this->resetPartialMethod;
     }
@@ -280,15 +279,15 @@ class ModelWith
      *
      * @return void
      */
-    public function setLeftPhpName($leftPhpName)
+    public function setLeftPhpName(string $leftPhpName): void
     {
         $this->leftPhpName = $leftPhpName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLeftPhpName()
+    public function getLeftPhpName(): ?string
     {
         return $this->leftPhpName;
     }
@@ -298,15 +297,15 @@ class ModelWith
      *
      * @return void
      */
-    public function setRightPhpName($rightPhpName)
+    public function setRightPhpName(string $rightPhpName): void
     {
         $this->rightPhpName = $rightPhpName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getRightPhpName()
+    public function getRightPhpName(): ?string
     {
         return $this->rightPhpName;
     }
@@ -316,7 +315,7 @@ class ModelWith
     /**
      * @return bool
      */
-    public function isPrimary()
+    public function isPrimary(): bool
     {
         return $this->leftPhpName === null;
     }
@@ -324,7 +323,7 @@ class ModelWith
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('modelName: %s, relationName: %s, relationMethod: %s, leftPhpName: %s, rightPhpName: %s', $this->modelName, $this->relationName, $this->relationMethod, $this->leftPhpName, $this->rightPhpName);
     }

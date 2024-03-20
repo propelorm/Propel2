@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
@@ -27,7 +25,7 @@ class StatementFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
      */
-    public function format(?DataFetcherInterface $dataFetcher = null)
+    public function format(?DataFetcherInterface $dataFetcher = null): DataFetcherInterface
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -43,7 +41,7 @@ class StatementFormatter extends AbstractFormatter
      *
      * @return \Propel\Runtime\DataFetcher\DataFetcherInterface|null
      */
-    public function formatOne(?DataFetcherInterface $dataFetcher = null)
+    public function formatOne(?DataFetcherInterface $dataFetcher = null): ?DataFetcherInterface
     {
         if ($dataFetcher) {
             $this->setDataFetcher($dataFetcher);
@@ -59,7 +57,7 @@ class StatementFormatter extends AbstractFormatter
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|null|void
+     * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface|array
      */
     public function formatRecord(?ActiveRecordInterface $record = null)
     {
@@ -69,7 +67,7 @@ class StatementFormatter extends AbstractFormatter
     /**
      * @return bool
      */
-    public function isObjectFormatter()
+    public function isObjectFormatter(): bool
     {
         return false;
     }

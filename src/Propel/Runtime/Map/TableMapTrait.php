@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Map;
@@ -25,7 +23,7 @@ trait TableMapTrait
      *
      * @return array A list of field names
      */
-    public static function getFieldNames($type = TableMap::TYPE_PHPNAME)
+    public static function getFieldNames(string $type = TableMap::TYPE_PHPNAME): array
     {
         if (!array_key_exists($type, static::$fieldNames)) {
             throw new PropelException('Method getFieldNames() expects the parameter \$type to be one of the class constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME, TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM. ' . $type . ' was given.');
@@ -46,10 +44,10 @@ trait TableMapTrait
      *
      * @return string translated name of the field.
      */
-    public static function translateFieldName($name, $fromType, $toType)
+    public static function translateFieldName(string $name, string $fromType, string $toType): string
     {
         $toNames = static::getFieldNames($toType);
-        $key = isset(static::$fieldKeys[$fromType][$name]) ? static::$fieldKeys[$fromType][$name] : null;
+        $key = static::$fieldKeys[$fromType][$name] ?? null;
         if ($key === null) {
             throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(static::$fieldKeys[$fromType], true));
         }
@@ -64,7 +62,7 @@ trait TableMapTrait
      *
      * @return array
      */
-    public static function translateFieldNames($row, $fromType, $toType)
+    public static function translateFieldNames(array $row, string $fromType, string $toType): array
     {
         $toNames = static::getFieldNames($toType);
         $newRow = [];
@@ -93,7 +91,7 @@ trait TableMapTrait
      *
      * @return string
      */
-    public static function alias($alias, $column)
+    public static function alias(string $alias, string $column): string
     {
         return str_replace(static::TABLE_NAME . '.', $alias . '.', $column);
     }

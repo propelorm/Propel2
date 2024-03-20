@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -21,27 +19,27 @@ use Propel\Generator\Model\Table;
 class DatabaseDiff
 {
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<string, \Propel\Generator\Model\Table>
      */
     protected $addedTables;
 
     /**
-     * @var \Propel\Generator\Model\Table[]
+     * @var array<string, \Propel\Generator\Model\Table>
      */
     protected $removedTables;
 
     /**
-     * @var \Propel\Generator\Model\Diff\TableDiff[]
+     * @var array<\Propel\Generator\Model\Diff\TableDiff>
      */
     protected $modifiedTables;
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     protected $renamedTables;
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
     protected $possibleRenamedTables;
 
@@ -61,7 +59,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function setAddedTables($tables)
+    public function setAddedTables(array $tables): void
     {
         $this->addedTables = $tables;
     }
@@ -74,7 +72,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addAddedTable($name, Table $table)
+    public function addAddedTable(string $name, Table $table): void
     {
         $this->addedTables[$name] = $table;
     }
@@ -86,15 +84,15 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function removeAddedTable($name)
+    public function removeAddedTable(string $name): void
     {
         unset($this->addedTables[$name]);
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
-    public function getPossibleRenamedTables()
+    public function getPossibleRenamedTables(): array
     {
         return $this->possibleRenamedTables;
     }
@@ -107,7 +105,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addPossibleRenamedTable($fromName, $toName)
+    public function addPossibleRenamedTable(string $fromName, string $toName): void
     {
         $this->possibleRenamedTables[$fromName] = $toName;
     }
@@ -115,9 +113,9 @@ class DatabaseDiff
     /**
      * Returns the list of added tables.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<\Propel\Generator\Model\Table>
      */
-    public function getAddedTables()
+    public function getAddedTables(): array
     {
         return $this->addedTables;
     }
@@ -127,7 +125,7 @@ class DatabaseDiff
      *
      * @return int
      */
-    public function countAddedTables()
+    public function countAddedTables(): int
     {
         return count($this->addedTables);
     }
@@ -139,7 +137,7 @@ class DatabaseDiff
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getAddedTable($name)
+    public function getAddedTable(string $name): Table
     {
         return $this->addedTables[$name];
     }
@@ -147,11 +145,11 @@ class DatabaseDiff
     /**
      * Sets the removes tables.
      *
-     * @param \Propel\Generator\Model\Table[] $tables
+     * @param array<string, \Propel\Generator\Model\Table> $tables
      *
      * @return void
      */
-    public function setRemovedTables($tables)
+    public function setRemovedTables(array $tables): void
     {
         $this->removedTables = $tables;
     }
@@ -164,7 +162,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addRemovedTable($name, Table $table)
+    public function addRemovedTable(string $name, Table $table): void
     {
         $this->removedTables[$name] = $table;
     }
@@ -176,7 +174,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function removeRemovedTable($name)
+    public function removeRemovedTable(string $name): void
     {
         unset($this->removedTables[$name]);
     }
@@ -184,9 +182,9 @@ class DatabaseDiff
     /**
      * Returns the list of removed tables.
      *
-     * @return \Propel\Generator\Model\Table[]
+     * @return array<string, \Propel\Generator\Model\Table>
      */
-    public function getRemovedTables()
+    public function getRemovedTables(): array
     {
         return $this->removedTables;
     }
@@ -196,7 +194,7 @@ class DatabaseDiff
      *
      * @return int
      */
-    public function countRemovedTables()
+    public function countRemovedTables(): int
     {
         return count($this->removedTables);
     }
@@ -208,7 +206,7 @@ class DatabaseDiff
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getRemovedTable($name)
+    public function getRemovedTable(string $name): Table
     {
         return $this->removedTables[$name];
     }
@@ -216,11 +214,11 @@ class DatabaseDiff
     /**
      * Sets the modified tables
      *
-     * @param \Propel\Generator\Model\Diff\TableDiff[] $tables
+     * @param array<string, \Propel\Generator\Model\Diff\TableDiff> $tables
      *
      * @return void
      */
-    public function setModifiedTables($tables)
+    public function setModifiedTables(array $tables): void
     {
         $this->modifiedTables = $tables;
     }
@@ -233,7 +231,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addModifiedTable($name, TableDiff $difference)
+    public function addModifiedTable(string $name, TableDiff $difference): void
     {
         $this->modifiedTables[$name] = $difference;
     }
@@ -243,7 +241,7 @@ class DatabaseDiff
      *
      * @return int
      */
-    public function countModifiedTables()
+    public function countModifiedTables(): int
     {
         return count($this->modifiedTables);
     }
@@ -251,9 +249,9 @@ class DatabaseDiff
     /**
      * Returns the modified tables.
      *
-     * @return \Propel\Generator\Model\Diff\TableDiff[]
+     * @return array<string, \Propel\Generator\Model\Diff\TableDiff>
      */
-    public function getModifiedTables()
+    public function getModifiedTables(): array
     {
         return $this->modifiedTables;
     }
@@ -261,11 +259,11 @@ class DatabaseDiff
     /**
      * Sets the renamed tables.
      *
-     * @param string[] $tables
+     * @param array<string, string> $tables
      *
      * @return void
      */
-    public function setRenamedTables($tables)
+    public function setRenamedTables(array $tables): void
     {
         $this->renamedTables = $tables;
     }
@@ -278,7 +276,7 @@ class DatabaseDiff
      *
      * @return void
      */
-    public function addRenamedTable($fromName, $toName)
+    public function addRenamedTable(string $fromName, string $toName): void
     {
         $this->renamedTables[$fromName] = $toName;
     }
@@ -286,9 +284,9 @@ class DatabaseDiff
     /**
      * Returns the list of renamed tables.
      *
-     * @return string[]
+     * @return array<string, string>
      */
-    public function getRenamedTables()
+    public function getRenamedTables(): array
     {
         return $this->renamedTables;
     }
@@ -298,7 +296,7 @@ class DatabaseDiff
      *
      * @return int
      */
-    public function countRenamedTables()
+    public function countRenamedTables(): int
     {
         return count($this->renamedTables);
     }
@@ -306,9 +304,9 @@ class DatabaseDiff
     /**
      * Returns the reverse diff for this diff.
      *
-     * @return \Propel\Generator\Model\Diff\DatabaseDiff
+     * @return self
      */
-    public function getReverseDiff()
+    public function getReverseDiff(): self
     {
         $diff = new self();
         $diff->setAddedTables($this->getRemovedTables());
@@ -335,20 +333,28 @@ class DatabaseDiff
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
+        $numberOfAddedTables = $this->countAddedTables();
+        $numberOfRemovedTables = $this->countRemovedTables();
+        $numberOfModifiedTables = $this->countModifiedTables();
+        $numberOfRenamedTables = $this->countRenamedTables();
         $changes = [];
-        if ($count = $this->countAddedTables()) {
-            $changes[] = sprintf('%d added tables', $count);
+
+        if ($numberOfAddedTables) {
+            $changes[] = sprintf('%d added tables', $numberOfAddedTables);
         }
-        if ($count = $this->countRemovedTables()) {
-            $changes[] = sprintf('%d removed tables', $count);
+
+        if ($numberOfRemovedTables) {
+            $changes[] = sprintf('%d removed tables', $numberOfRemovedTables);
         }
-        if ($count = $this->countModifiedTables()) {
-            $changes[] = sprintf('%d modified tables', $count);
+
+        if ($numberOfModifiedTables) {
+            $changes[] = sprintf('%d modified tables', $numberOfModifiedTables);
         }
-        if ($count = $this->countRenamedTables()) {
-            $changes[] = sprintf('%d renamed tables', $count);
+
+        if ($numberOfRenamedTables) {
+            $changes[] = sprintf('%d renamed tables', $numberOfRenamedTables);
         }
 
         return implode(', ', $changes);
@@ -357,29 +363,88 @@ class DatabaseDiff
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $ret = '';
-        if ($addedTables = $this->getAddedTables()) {
+        $ret = $this->appendAddedTablesToString($ret);
+        $ret = $this->appendRemovedTablesToString($ret);
+        $ret = $this->appendModifiedTablesToString($ret);
+
+        return $this->appendRenamedTablesToString($ret);
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendAddedTablesToString(string $ret): string
+    {
+        $addedTables = $this->getAddedTables();
+
+        if ($addedTables) {
             $ret .= "addedTables:\n";
+
             foreach ($addedTables as $tableName => $table) {
                 $ret .= sprintf("  - %s\n", $tableName);
             }
         }
-        if ($removedTables = $this->getRemovedTables()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRemovedTablesToString(string $ret): string
+    {
+        $removedTables = $this->getRemovedTables();
+
+        if ($removedTables) {
             $ret .= "removedTables:\n";
+
             foreach ($removedTables as $tableName => $table) {
                 $ret .= sprintf("  - %s\n", $tableName);
             }
         }
-        if ($modifiedTables = $this->getModifiedTables()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendModifiedTablesToString(string $ret): string
+    {
+        $modifiedTables = $this->getModifiedTables();
+
+        if ($modifiedTables) {
             $ret .= "modifiedTables:\n";
+
             foreach ($modifiedTables as $tableDiff) {
                 $ret .= $tableDiff->__toString();
             }
         }
-        if ($renamedTables = $this->getRenamedTables()) {
+
+        return $ret;
+    }
+
+    /**
+     * @param string $ret
+     *
+     * @return string
+     */
+    protected function appendRenamedTablesToString(string $ret): string
+    {
+        $renamedTables = $this->getRenamedTables();
+
+        if ($renamedTables) {
             $ret .= "renamedTables:\n";
+
             foreach ($renamedTables as $fromName => $toName) {
                 $ret .= sprintf("  %s: %s\n", $fromName, $toName);
             }

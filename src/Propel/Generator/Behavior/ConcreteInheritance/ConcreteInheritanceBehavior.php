@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\ConcreteInheritance;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
 use Propel\Generator\Model\ForeignKey;
+use Propel\Generator\Model\Table;
 
 /**
  * Makes a model inherit another one. The model with this behavior gets a copy
@@ -33,7 +33,7 @@ class ConcreteInheritanceBehavior extends Behavior
     /**
      * Default parameters value
      *
-     * @var string[]
+     * @var array<string, mixed>
      */
     protected $parameters = [
         'extends' => '',
@@ -47,7 +47,7 @@ class ConcreteInheritanceBehavior extends Behavior
     /**
      * @return void
      */
-    public function modifyTable()
+    public function modifyTable(): void
     {
         $table = $this->getTable();
         $parentTable = $this->getParentTable();
@@ -145,7 +145,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return \Propel\Generator\Model\Table
      */
-    protected function getParentTable()
+    protected function getParentTable(): Table
     {
         $database = $this->getTable()->getDatabase();
         $tableName = $database->getTablePrefix() . $this->getParameter('extends');
@@ -164,13 +164,13 @@ class ConcreteInheritanceBehavior extends Behavior
     /**
      * @return bool
      */
-    protected function isCopyData()
+    protected function isCopyData(): bool
     {
         return $this->getParameter('copy_data_to_parent') === 'true';
     }
 
     /**
-     * @return string[]|bool
+     * @return array<string>|bool
      */
     protected function getCopyToChild()
     {
@@ -190,7 +190,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return string|null
      */
-    public function parentClass($builder)
+    public function parentClass($builder): ?string
     {
         $parentTable = $this->getParentTable();
         switch (get_class($builder)) {
@@ -206,7 +206,7 @@ class ConcreteInheritanceBehavior extends Behavior
     /**
      * @return string
      */
-    public function preSave()
+    public function preSave(): string
     {
         if ($this->isCopyData()) {
             $script = "\$parent = \$this->getSyncParent(\$con);
@@ -225,11 +225,11 @@ class ConcreteInheritanceBehavior extends Behavior
     }
 
     /**
-     * @param string $script
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
      *
      * @return string
      */
-    public function postDelete($script)
+    public function postDelete(ObjectBuilder $builder): string
     {
         if ($this->isCopyData()) {
             return "\$this->getParentOrCreate(\$con)->delete(\$con);
@@ -244,7 +244,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $script = '';
         $this->builder = $builder;
@@ -266,7 +266,7 @@ class ConcreteInheritanceBehavior extends Behavior
      *
      * @return void
      */
-    protected function addSyncParentToChild(&$script)
+    protected function addSyncParentToChild(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
@@ -282,7 +282,7 @@ class ConcreteInheritanceBehavior extends Behavior
  *
  * @param $parentClass \$parent The parent object
  */
-public function syncParentToChild($parentClass \$parent)
+public function syncParentToChild($parentClass \$parent): void
 {
     ";
 
@@ -322,7 +322,7 @@ public function syncParentToChild($parentClass \$parent)
      *
      * @return void
      */
-    protected function addObjectGetParentOrCreate(&$script)
+    protected function addObjectGetParentOrCreate(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $parentClass = $this->builder->getClassNameFromBuilder($this->builder->getNewStubObjectBuilder($parentTable));
@@ -330,9 +330,9 @@ public function syncParentToChild($parentClass \$parent)
 /**
  * Get or Create the parent " . $parentClass . " object of the current object
  *
- * @return    " . $parentClass . " The parent object
+ * @return " . $parentClass . " The parent object
  */
-public function getParentOrCreate(\$con = null)
+public function getParentOrCreate(?ConnectionInterface \$con = null)
 {
     if (\$this->isNew()) {
         if (\$this->isPrimaryKeyNull()) {
@@ -362,7 +362,7 @@ public function getParentOrCreate(\$con = null)
      *
      * @return void
      */
-    protected function addObjectGetSyncParent(&$script)
+    protected function addObjectGetSyncParent(string &$script): void
     {
         $parentTable = $this->getParentTable();
         $pkeys = $parentTable->getPrimaryKey();
@@ -372,9 +372,9 @@ public function getParentOrCreate(\$con = null)
  * Create or Update the parent " . $parentTable->getPhpName() . " object
  * And return its primary key
  *
- * @return    " . $cptype . " The primary key of the parent object
+ * @return " . $cptype . " The primary key of the parent object
  */
-public function getSyncParent(\$con = null)
+public function getSyncParent(?ConnectionInterface \$con = null)
 {
     \$parent = \$this->getParentOrCreate(\$con);";
         foreach ($parentTable->getColumns() as $column) {

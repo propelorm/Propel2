@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Formatter;
 
 use Propel\Runtime\ActiveQuery\BaseModelCriteria;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+use Propel\Runtime\Collection\OnDemandCollection;
 use Propel\Runtime\DataFetcher\DataFetcherInterface;
 use Propel\Runtime\Exception\LogicException;
 use ReflectionClass;
@@ -49,9 +49,9 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @throws \Propel\Runtime\Exception\LogicException
      *
-     * @return array|\Propel\Runtime\Collection\Collection|\Propel\Runtime\Collection\OnDemandCollection
+     * @return \Propel\Runtime\Collection\OnDemandCollection
      */
-    public function format(?DataFetcherInterface $dataFetcher = null)
+    public function format(?DataFetcherInterface $dataFetcher = null): OnDemandCollection
     {
         $this->checkInit();
         if ($dataFetcher) {
@@ -71,9 +71,11 @@ class OnDemandFormatter extends ObjectFormatter
     }
 
     /**
-     * @return string|null
+     * @psalm-return class-string<\Propel\Runtime\Collection\OnDemandCollection>
+     *
+     * @return string
      */
-    public function getCollectionClassName()
+    public function getCollectionClassName(): string
     {
         return '\Propel\Runtime\Collection\OnDemandCollection';
     }
@@ -81,7 +83,7 @@ class OnDemandFormatter extends ObjectFormatter
     /**
      * @return \Propel\Runtime\Collection\OnDemandCollection
      */
-    public function getCollection()
+    public function getCollection(): OnDemandCollection
     {
         $class = $this->getCollectionClassName();
 
@@ -101,20 +103,31 @@ class OnDemandFormatter extends ObjectFormatter
      *
      * @return \Propel\Runtime\ActiveRecord\ActiveRecordInterface
      */
-    public function getAllObjectsFromRow($row)
+    public function getAllObjectsFromRow(array $row): ActiveRecordInterface
     {
         $col = 0;
 
         // main object
-        $class = $this->isSingleTableInheritance ? call_user_func([$this->tableMap, 'getOMClass'], $row, $col, false) : $this->class;
+        $this->checkInit();
+        /** @var \Propel\Runtime\Map\TableMap $tableMap */
+        $tableMap = $this->tableMap;
+        $class = $this->isSingleTableInheritance ? $tableMap::getOMClass($row, $col, false) : $this->class;
         $obj = $this->getSingleObjectFromRow($row, $class, $col);
+
+        //TODO: is this var even useable?
+        /** @var array<string, object> $hydrationChain */
+        $hydrationChain = [];
+
         // related objects using 'with'
         foreach ($this->getWith() as $modelWith) {
             if ($modelWith->isSingleTableInheritance()) {
-                $class = call_user_func([$modelWith->getTableMap(), 'getOMClass'], $row, $col, false);
-                $refl = new ReflectionClass($class);
-                if ($refl->isAbstract()) {
-                    $col += constant('Map\\' . $class . 'TableMap::NUM_COLUMNS');
+                /** @var class-string<object>|object $class */
+                $class = $modelWith->getTableMap()::getOMClass($row, $col, false);
+                $reflectionClass = new ReflectionClass($class);
+                $class = $reflectionClass->getName();
+                if ($reflectionClass->isAbstract()) {
+                    $tableMapClass = "Map\\{$class}TableMap";
+                    $col += $tableMapClass::NUM_COLUMNS;
 
                     continue;
                 }
@@ -124,7 +137,7 @@ class OnDemandFormatter extends ObjectFormatter
             $endObject = $this->getSingleObjectFromRow($row, $class, $col);
             if ($modelWith->isPrimary()) {
                 $startObject = $obj;
-            } elseif (isset($hydrationChain)) {
+            } elseif ($hydrationChain && isset($hydrationChain[$modelWith->getLeftPhpName()])) {
                 $startObject = $hydrationChain[$modelWith->getLeftPhpName()];
             } else {
                 continue;
@@ -133,17 +146,16 @@ class OnDemandFormatter extends ObjectFormatter
             // in which case it should not be related to the previous object
             if ($endObject->isPrimaryKeyNull()) {
                 if ($modelWith->isAdd()) {
-                    call_user_func([$startObject, $modelWith->getInitMethod()], false);
+                    $initMethod = $modelWith->getInitMethod();
+                    $startObject->$initMethod(false);
                 }
 
                 continue;
             }
-            if (isset($hydrationChain)) {
-                $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
-            } else {
-                $hydrationChain = [$modelWith->getRightPhpName() => $endObject];
-            }
-            call_user_func([$startObject, $modelWith->getRelationMethod()], $endObject);
+
+            $hydrationChain[$modelWith->getRightPhpName()] = $endObject;
+            $relationMethod = $modelWith->getRelationMethod();
+            $startObject->$relationMethod($endObject);
         }
         foreach ($this->getAsColumns() as $alias => $clause) {
             $obj->setVirtualColumn($alias, $row[$col]);

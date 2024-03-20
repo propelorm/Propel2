@@ -1,14 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Sortable;
+
+use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 /**
  * Behavior to add sortable methods
@@ -30,7 +30,7 @@ class SortableBehaviorTableMapBuilderModifier
     /**
      * @param \Propel\Generator\Behavior\Sortable\SortableBehavior $behavior
      */
-    public function __construct($behavior)
+    public function __construct(SortableBehavior $behavior)
     {
         $this->behavior = $behavior;
         $this->table = $behavior->getTable();
@@ -41,7 +41,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    public function staticAttributes($builder)
+    public function staticAttributes(AbstractOMBuilder $builder): string
     {
         $tableName = $this->table->getName();
         $col = '';
@@ -74,7 +74,7 @@ class SortableBehaviorTableMapBuilderModifier
      *
      * @return string
      */
-    protected function getColumnConstant($name)
+    protected function getColumnConstant(string $name): string
     {
         return $this->behavior->getColumnForParameter($name)->getName();
     }

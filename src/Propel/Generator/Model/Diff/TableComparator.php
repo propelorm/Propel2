@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model\Diff;
@@ -41,7 +39,7 @@ class TableComparator
      *
      * @return \Propel\Generator\Model\Diff\TableDiff
      */
-    public function getTableDiff()
+    public function getTableDiff(): TableDiff
     {
         return $this->tableDiff;
     }
@@ -53,7 +51,7 @@ class TableComparator
      *
      * @return void
      */
-    public function setFromTable(Table $fromTable)
+    public function setFromTable(Table $fromTable): void
     {
         $this->tableDiff->setFromTable($fromTable);
     }
@@ -61,9 +59,9 @@ class TableComparator
     /**
      * Returns the table the comparator starts from.
      *
-     * @return \Propel\Generator\Model\Table
+     * @return \Propel\Generator\Model\Table|null
      */
-    public function getFromTable()
+    public function getFromTable(): ?Table
     {
         return $this->tableDiff->getFromTable();
     }
@@ -75,7 +73,7 @@ class TableComparator
      *
      * @return void
      */
-    public function setToTable(Table $toTable)
+    public function setToTable(Table $toTable): void
     {
         $this->tableDiff->setToTable($toTable);
     }
@@ -85,7 +83,7 @@ class TableComparator
      *
      * @return \Propel\Generator\Model\Table
      */
-    public function getToTable()
+    public function getToTable(): Table
     {
         return $this->tableDiff->getToTable();
     }
@@ -97,9 +95,9 @@ class TableComparator
      * @param \Propel\Generator\Model\Table $toTable
      * @param bool $caseInsensitive
      *
-     * @return \Propel\Generator\Model\Diff\TableDiff|bool
+     * @return \Propel\Generator\Model\Diff\TableDiff|false
      */
-    public static function computeDiff(Table $fromTable, Table $toTable, $caseInsensitive = false)
+    public static function computeDiff(Table $fromTable, Table $toTable, bool $caseInsensitive = false)
     {
         $tc = new self();
 
@@ -125,7 +123,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareColumns($caseInsensitive = false)
+    public function compareColumns(bool $caseInsensitive = false): int
     {
         $fromTableColumns = $this->getFromTable()->getColumns();
         $toTableColumns = $this->getToTable()->getColumns();
@@ -188,7 +186,7 @@ class TableComparator
      *
      * @return int
      */
-    public function comparePrimaryKeys($caseInsensitive = false)
+    public function comparePrimaryKeys(bool $caseInsensitive = false): int
     {
         $pkDifferences = 0;
         $fromTablePk = $this->getFromTable()->getPrimaryKey();
@@ -245,7 +243,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareIndices($caseInsensitive = false)
+    public function compareIndices(bool $caseInsensitive = false): int
     {
         $indexDifferences = 0;
         $fromTableIndices = array_merge($this->getFromTable()->getIndices(), $this->getFromTable()->getUnices());
@@ -295,7 +293,7 @@ class TableComparator
      *
      * @return int
      */
-    public function compareForeignKeys($caseInsensitive = false)
+    public function compareForeignKeys(bool $caseInsensitive = false): int
     {
         $fkDifferences = 0;
         $fromTableFks = $this->getFromTable()->getForeignKeys();
@@ -306,18 +304,17 @@ class TableComparator
                 $sameName = $caseInsensitive ?
                     strtolower($fromTableFk->getName()) == strtolower($toTableFk->getName()) :
                     $fromTableFk->getName() == $toTableFk->getName();
-                if ($sameName && !$toTableFk->isPolymorphic()) {
-                    if (ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive) === false) {
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
-                    } else {
-                        // same name, but different columns
-                        $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
-                        unset($fromTableFks[$fromTableFkPos]);
-                        unset($toTableFks[$toTableFkPos]);
-                        $fkDifferences++;
-                    }
+                if (!$sameName || $toTableFk->isPolymorphic()) {
+                    continue;
                 }
+                $hasChanged = ForeignKeyComparator::computeDiff($fromTableFk, $toTableFk, $caseInsensitive);
+                if ($hasChanged) {
+                    // same name, but different columns
+                    $this->tableDiff->addModifiedFk($fromTableFk->getName(), $fromTableFk, $toTableFk);
+                    $fkDifferences++;
+                }
+                unset($fromTableFks[$fromTableFkPos]);
+                unset($toTableFks[$toTableFkPos]);
             }
         }
 

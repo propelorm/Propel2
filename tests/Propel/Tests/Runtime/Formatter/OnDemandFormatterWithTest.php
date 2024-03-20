@@ -1,29 +1,27 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\Formatter;
 
-use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Exception\LogicException;
+use Propel\Runtime\Propel;
 use Propel\Tests\Bookstore\Author;
 use Propel\Tests\Bookstore\Book;
-use Propel\Tests\Bookstore\BookstoreEmployee;
 use Propel\Tests\Bookstore\Essay;
-use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\Map\AuthorTableMap;
-use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\BookstoreEmployeeTableMap;
+use Propel\Tests\Bookstore\Map\BookTableMap;
 use Propel\Tests\Bookstore\Map\EssayTableMap;
 use Propel\Tests\Bookstore\Map\ReviewTableMap;
-use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
+use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
+use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
  * Test class for OnDemandFormatter when Criteria uses with().
@@ -34,6 +32,9 @@ use Propel\Tests\Helpers\Bookstore\BookstoreDataPopulator;
  */
 class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
 {
+    /**
+     * @return void
+     */
     protected function assertCorrectHydration1($c, $msg)
     {
         $con = Propel::getServiceContainer()->getConnection(BookTableMap::DATABASE_NAME);
@@ -52,6 +53,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals($publisher->getName(), 'Penguin', 'Related object is correctly hydrated ' . $msg);
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWith()
     {
         BookstoreDataPopulator::populate();
@@ -67,6 +71,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertCorrectHydration1($c, 'without instance pool');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithAlias()
     {
         BookstoreDataPopulator::populate();
@@ -82,6 +89,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertCorrectHydration1($c, 'with alias');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithMainAlias()
     {
         BookstoreDataPopulator::populate();
@@ -98,6 +108,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertCorrectHydration1($c, 'with main alias');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithUsingInstancePool()
     {
         BookstoreDataPopulator::populate();
@@ -112,6 +125,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertCorrectHydration1($c, 'with instance pool');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithEmptyLeftJoin()
     {
         // save a book with no author
@@ -135,6 +151,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertNull($author, 'Related object is not hydrated if empty');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithRelationName()
     {
         BookstoreDataPopulator::populate();
@@ -156,6 +175,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals($sup->getName(), 'John', 'Related object is correctly hydrated');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithDuplicateRelation()
     {
         EssayTableMap::doDeleteAll();
@@ -195,6 +217,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals($count + 1, $con->getQueryCount(), 'with() does not hydrate objects not in with');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithDistantClass()
     {
         BookstoreDataPopulator::populate();
@@ -224,6 +249,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals('J.K.', $author->getFirstName(), 'Related object is correctly hydrated');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithDistantClassRenamedRelation()
     {
         BookstoreDataPopulator::populate();
@@ -248,10 +276,12 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
     }
 
     /**
-     * @expectedException \Propel\Runtime\Exception\LogicException
+     * @return void
      */
     public function testFindOneWithOneToMany()
     {
+        $this->expectException(LogicException::class);
+
         BookstoreDataPopulator::populate();
         BookTableMap::clearInstancePool();
         AuthorTableMap::clearInstancePool();
@@ -264,6 +294,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $books = $c->find();
     }
 
+    /**
+     * @return void
+     */
     public function testFindWithLeftJoinWithManyToOneAndNullObject()
     {
         if (!$this->runningOnSQLite()) {
@@ -286,6 +319,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertTrue(true);
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithColumn()
     {
         BookstoreDataPopulator::populate();
@@ -311,6 +347,9 @@ class OnDemandFormatterWithTest extends BookstoreEmptyTestBase
         $this->assertEquals('Gunter', $book->getAuthorName(), 'ObjectFormatter adds withColumns as virtual columns');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneWithClassAndColumn()
     {
         BookstoreDataPopulator::populate();

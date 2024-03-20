@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -23,69 +21,340 @@ use PDO;
  */
 class PropelTypes
 {
+    /**
+     * @var string
+     */
     public const CHAR = 'CHAR';
+
+    /**
+     * @var string
+     */
     public const VARCHAR = 'VARCHAR';
+
+    /**
+     * @var string
+     */
     public const LONGVARCHAR = 'LONGVARCHAR';
+
+    /**
+     * @var string
+     */
     public const CLOB = 'CLOB';
+
+    /**
+     * @var string
+     */
     public const CLOB_EMU = 'CLOB_EMU';
+
+    /**
+     * @var string
+     */
     public const NUMERIC = 'NUMERIC';
+
+    /**
+     * @var string
+     */
     public const DECIMAL = 'DECIMAL';
+
+    /**
+     * @var string
+     */
     public const TINYINT = 'TINYINT';
+
+    /**
+     * @var string
+     */
     public const SMALLINT = 'SMALLINT';
+
+    /**
+     * @var string
+     */
     public const INTEGER = 'INTEGER';
+
+    /**
+     * @var string
+     */
     public const BIGINT = 'BIGINT';
+
+    /**
+     * @var string
+     */
     public const REAL = 'REAL';
+
+    /**
+     * @var string
+     */
     public const FLOAT = 'FLOAT';
+
+    /**
+     * @var string
+     */
     public const DOUBLE = 'DOUBLE';
+
+    /**
+     * @var string
+     */
     public const BINARY = 'BINARY';
+
+    /**
+     * @var string
+     */
     public const VARBINARY = 'VARBINARY';
+
+    /**
+     * @var string
+     */
     public const LONGVARBINARY = 'LONGVARBINARY';
+
+    /**
+     * @var string
+     */
     public const BLOB = 'BLOB';
+
+    /**
+     * @var string
+     */
     public const DATE = 'DATE';
+
+    /**
+     * @var string
+     */
+    public const DATETIME = 'DATETIME';
+
+    /**
+     * @var string
+     */
     public const TIME = 'TIME';
+
+    /**
+     * @var string
+     */
     public const TIMESTAMP = 'TIMESTAMP';
+
+    /**
+     * @var string
+     */
     public const BU_DATE = 'BU_DATE';
+
+    /**
+     * @var string
+     */
     public const BU_TIMESTAMP = 'BU_TIMESTAMP';
+
+    /**
+     * @var string
+     */
     public const BOOLEAN = 'BOOLEAN';
+
+    /**
+     * @var string
+     */
     public const BOOLEAN_EMU = 'BOOLEAN_EMU';
+
+    /**
+     * @var string
+     */
     public const OBJECT = 'OBJECT';
+
+    /**
+     * @var string
+     */
     public const PHP_ARRAY = 'ARRAY';
+
+    /**
+     * @var string
+     */
     public const ENUM = 'ENUM';
+
+    /**
+     * @var string
+     */
     public const SET = 'SET';
+
+    /**
+     * @var string
+     */
     public const GEOMETRY = 'GEOMETRY';
+
+    /**
+     * @var string
+     */
     public const JSON = 'JSON';
 
+    /**
+     * @var string
+     */
     public const CHAR_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const VARCHAR_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const LONGVARCHAR_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const CLOB_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const CLOB_EMU_NATIVE_TYPE = 'resource';
+
+    /**
+     * @var string
+     */
     public const NUMERIC_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const DECIMAL_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const TINYINT_NATIVE_TYPE = 'int';
+
+    /**
+     * @var string
+     */
     public const SMALLINT_NATIVE_TYPE = 'int';
+
+    /**
+     * @var string
+     */
     public const INTEGER_NATIVE_TYPE = 'int';
+
+    /**
+     * @var string
+     */
     public const BIGINT_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const REAL_NATIVE_TYPE = 'double';
+
+    /**
+     * @var string
+     */
     public const FLOAT_NATIVE_TYPE = 'double';
+
+    /**
+     * @var string
+     */
     public const DOUBLE_NATIVE_TYPE = 'double';
+
+    /**
+     * @var string
+     */
     public const BINARY_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const VARBINARY_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const LONGVARBINARY_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const BLOB_NATIVE_TYPE = 'resource';
+
+    /**
+     * @var string
+     */
     public const BU_DATE_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const DATE_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
+    public const DATETIME_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const TIME_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const TIMESTAMP_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const BU_TIMESTAMP_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
     public const BOOLEAN_NATIVE_TYPE = 'boolean';
+
+    /**
+     * @var string
+     */
     public const BOOLEAN_EMU_NATIVE_TYPE = 'boolean';
+
+    /**
+     * @var string
+     */
     public const OBJECT_NATIVE_TYPE = '';
+
+    /**
+     * @var string
+     */
     public const PHP_ARRAY_NATIVE_TYPE = 'array';
+
+    /**
+     * @var string
+     */
     public const ENUM_NATIVE_TYPE = 'int';
+
+    /**
+     * @var string
+     */
     public const SET_NATIVE_TYPE = 'int';
+
+    /**
+     * @var string
+     */
     public const GEOMETRY_NATIVE_TYPE = 'resource';
+
+    /**
+     * @var string
+     */
     public const JSON_TYPE = 'string';
+
+    /**
+     * @var string
+     */
+    public const UUID = 'UUID';
+
+    /**
+     * @var string
+     */
+    public const UUID_NATIVE_TYPE = 'string';
+
+    /**
+     * @var string
+     */
+    public const UUID_BINARY = 'UUID_BINARY';
 
     /**
      * Propel mapping types.
@@ -111,6 +380,7 @@ class PropelTypes
         self::LONGVARBINARY,
         self::BLOB,
         self::DATE,
+        self::DATETIME,
         self::TIME,
         self::TIMESTAMP,
         self::BOOLEAN,
@@ -126,6 +396,8 @@ class PropelTypes
         self::BU_TIMESTAMP,
         self::SET,
         self::JSON,
+        self::UUID,
+        self::UUID_BINARY,
     ];
 
     /**
@@ -153,6 +425,7 @@ class PropelTypes
         self::LONGVARBINARY => self::LONGVARBINARY_NATIVE_TYPE,
         self::BLOB => self::BLOB_NATIVE_TYPE,
         self::DATE => self::DATE_NATIVE_TYPE,
+        self::DATETIME => self::DATETIME_NATIVE_TYPE,
         self::BU_DATE => self::BU_DATE_NATIVE_TYPE,
         self::TIME => self::TIME_NATIVE_TYPE,
         self::TIMESTAMP => self::TIMESTAMP_NATIVE_TYPE,
@@ -165,13 +438,15 @@ class PropelTypes
         self::SET => self::SET_NATIVE_TYPE,
         self::GEOMETRY => self::GEOMETRY,
         self::JSON => self::JSON_TYPE,
+        self::UUID => self::UUID_NATIVE_TYPE,
+        self::UUID_BINARY => self::UUID_NATIVE_TYPE,
     ];
 
     /**
      * Mapping between mapping types and PDO type constants (for prepared
      * statement settings).
      *
-     * @var int[]
+     * @var array<int>
      */
     private static $mappingTypeToPDOTypeMap = [
         self::CHAR => PDO::PARAM_STR,
@@ -193,6 +468,7 @@ class PropelTypes
         self::LONGVARBINARY => PDO::PARAM_LOB,
         self::BLOB => PDO::PARAM_LOB,
         self::DATE => PDO::PARAM_STR,
+        self::DATETIME => PDO::PARAM_STR,
         self::TIME => PDO::PARAM_STR,
         self::TIMESTAMP => PDO::PARAM_STR,
         self::BOOLEAN => PDO::PARAM_BOOL,
@@ -209,10 +485,12 @@ class PropelTypes
         self::BU_DATE => PDO::PARAM_STR,
         self::BU_TIMESTAMP => PDO::PARAM_STR,
         self::JSON => PDO::PARAM_STR,
+        self::UUID => PDO::PARAM_STR,
+        self::UUID_BINARY => PDO::PARAM_LOB,
     ];
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     private static $pdoTypeNames = [
         PDO::PARAM_BOOL => 'PDO::PARAM_BOOL',
@@ -230,7 +508,7 @@ class PropelTypes
      *
      * @return string
      */
-    public static function getPhpNative($mappingType)
+    public static function getPhpNative(string $mappingType): string
     {
         return self::$mappingToPHPNativeMap[$mappingType];
     }
@@ -242,7 +520,7 @@ class PropelTypes
      *
      * @return int
      */
-    public static function getPDOType($type)
+    public static function getPDOType(string $type): int
     {
         return self::$mappingTypeToPDOTypeMap[$type];
     }
@@ -254,7 +532,7 @@ class PropelTypes
      *
      * @return string
      */
-    public static function getPdoTypeString($type)
+    public static function getPdoTypeString(string $type): string
     {
         return self::$pdoTypeNames[self::$mappingTypeToPDOTypeMap[$type]];
     }
@@ -264,37 +542,38 @@ class PropelTypes
      *
      * @return array
      */
-    public static function getPropelTypes()
+    public static function getPropelTypes(): array
     {
         return self::$mappingTypes;
     }
 
     /**
-     * Returns whether or not the given type is a temporal type.
+     * Returns whether the given type is a temporal type.
      *
      * @param string $type
      *
      * @return bool
      */
-    public static function isTemporalType($type)
+    public static function isTemporalType(string $type): bool
     {
         return in_array($type, [
             self::DATE,
+            self::DATETIME,
             self::TIME,
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
-        ]);
+        ], true);
     }
 
     /**
-     * Returns whether or not the given type is a text type.
+     * Returns whether the given type is a text type.
      *
      * @param string $mappingType
      *
      * @return bool
      */
-    public static function isTextType($mappingType)
+    public static function isTextType(string $mappingType): bool
     {
         return in_array($mappingType, [
             self::CHAR,
@@ -302,22 +581,23 @@ class PropelTypes
             self::LONGVARCHAR,
             self::CLOB,
             self::DATE,
+            self::DATETIME,
             self::TIME,
             self::TIMESTAMP,
             self::BU_DATE,
             self::BU_TIMESTAMP,
             self::JSON,
-        ]);
+        ], true);
     }
 
     /**
-     * Returns whether or not the given type is a numeric type.
+     * Returns whether the given type is a numeric type.
      *
      * @param string $mappingType
      *
      * @return bool
      */
-    public static function isNumericType($mappingType)
+    public static function isNumericType(string $mappingType): bool
     {
         return in_array($mappingType, [
             self::SMALLINT,
@@ -329,67 +609,82 @@ class PropelTypes
             self::NUMERIC,
             self::DECIMAL,
             self::REAL,
-        ]);
+        ], true);
     }
 
     /**
-     * Returns whether or not this column is a boolean type.
+     * Returns whether this column is a boolean type.
      *
      * @param string $mappingType
      *
      * @return bool
      */
-    public static function isBooleanType($mappingType)
+    public static function isBooleanType(string $mappingType): bool
     {
-        return in_array($mappingType, [ self::BOOLEAN, self::BOOLEAN_EMU ]);
+        return in_array($mappingType, [self::BOOLEAN, self::BOOLEAN_EMU], true);
     }
 
     /**
-     * Returns whether or not this column is a lob/blob type.
+     * Returns whether this column is a lob/blob type.
      *
      * @param string $mappingType
      *
      * @return bool
      */
-    public static function isLobType($mappingType)
+    public static function isLobType(string $mappingType): bool
     {
-        return in_array($mappingType, [ self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY ]);
+        return in_array($mappingType, [self::VARBINARY, self::LONGVARBINARY, self::BLOB, self::OBJECT, self::GEOMETRY], true);
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is a primitive type.
+     * Returns whether the given type is a UUID type.
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isUuidType(string $type): bool
+    {
+        return in_array($type, [
+            self::UUID,
+            self::UUID_BINARY,
+        ], true);
+    }
+
+    /**
+     * Returns whether a passed-in PHP type is a primitive type.
      *
      * @param string $phpType
      *
      * @return bool
      */
-    public static function isPhpPrimitiveType($phpType)
+    public static function isPhpPrimitiveType(string $phpType): bool
     {
-        return in_array($phpType, [ 'boolean', 'int', 'double', 'float', 'string' ]);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string'], true);
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is a primitive numeric type.
+     * Returns whether a passed-in PHP type is a primitive numeric type.
      *
      * @param string $phpType
      *
      * @return bool
      */
-    public static function isPhpPrimitiveNumericType($phpType)
+    public static function isPhpPrimitiveNumericType(string $phpType): bool
     {
-        return in_array($phpType, [ 'boolean', 'int', 'double', 'float' ]);
+        return in_array($phpType, ['boolean', 'int', 'double', 'float'], true);
     }
 
     /**
-     * Returns whether or not a passed-in PHP type is an object.
+     * Returns whether a passed-in PHP type is an object.
      *
      * @param string $phpType
      *
      * @return bool
      */
-    public static function isPhpObjectType($phpType)
+    public static function isPhpObjectType(string $phpType): bool
     {
-        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, [ 'resource', 'array' ]);
+        return !self::isPhpPrimitiveType($phpType) && !in_array($phpType, ['resource', 'array'], true);
     }
 
     /**
@@ -399,7 +694,7 @@ class PropelTypes
      *
      * @return bool
      */
-    public static function isPhpArrayType($phpType)
+    public static function isPhpArrayType(string $phpType): bool
     {
         return strtoupper($phpType) === self::PHP_ARRAY;
     }

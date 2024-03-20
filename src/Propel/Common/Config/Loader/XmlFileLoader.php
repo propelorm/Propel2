@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config\Loader;
@@ -22,17 +20,16 @@ class XmlFileLoader extends FileLoader
     /**
      * Loads an Xml file.
      *
-     * @param string $file The resource
+     * @param string $resource The resource
      * @param string|null $type The resource type
      *
      * @return array
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null): array
     {
-        $content = XmlToArrayConverter::convert($this->getPath($file));
-        $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
+        $content = XmlToArrayConverter::convert($this->getPath($resource));
 
-        return $content;
+        return $this->resolveParams($content); //Resolve parameter placeholders (%name%)
     }
 
     /**
@@ -43,8 +40,8 @@ class XmlFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports('xml', $resource);
+        return static::checkSupports('xml', $resource);
     }
 }

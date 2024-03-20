@@ -1,21 +1,18 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Collection\ObjectCollection;
-
-use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
-use Propel\Tests\Bookstore\Behavior\SortableTable12;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableTable12;
+use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 
 /**
  * Tests for SortableBehavior class query modifier when the scope is enabled
@@ -26,6 +23,9 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  */
 class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -33,6 +33,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->populateTable12();
     }
 
+    /**
+     * @return void
+     */
     public function testInList()
     {
         /* List used for tests
@@ -52,6 +55,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, $query->count(), 'inList() filters the query by scope');
     }
 
+    /**
+     * @return void
+     */
     public function testFilterByRank()
     {
         /* List used for tests
@@ -67,6 +73,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertNull(SortableTable12Query::create()->filterByRank(4, 2)->findOne(), 'filterByRank() filters on the rank and the scope, which makes the query return no result on a non-existent rank');
     }
 
+    /**
+     * @return void
+     */
     public function testOrderByRank()
     {
         $this->assertTrue(SortableTable12Query::create()->orderByRank() instanceof SortableTable12Query, 'orderByRank() returns the current query object');
@@ -84,6 +93,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expectedQuery, $query, 'orderByRank() orders the query by rank, using the argument as sort direction');
     }
 
+    /**
+     * @return void
+     */
     public function testFindList()
     {
         $ts = SortableTable12Query::create()->findList(1);
@@ -99,6 +111,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals('row6', $ts[1]->getTitle(), 'findList() returns an ordered scoped list');
     }
 
+    /**
+     * @return void
+     */
     public function testFindOneByRank()
     {
         $this->assertTrue(SortableTable12Query::create()->findOneByRank(1, 1) instanceof SortableTable12, 'findOneByRank() returns an instance of the model object');
@@ -108,6 +123,9 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertNull(SortableTable12Query::create()->findOneByRank(4, 2), 'findOneByRank() returns no result on a non-existent rank and scope');
     }
 
+    /**
+     * @return void
+     */
     public function testGetMaxRank()
     {
         $this->assertEquals(4, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank in the scope');
@@ -131,12 +149,15 @@ class SortableBehaviorQueryBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(1, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank');
     }
 
+    /**
+     * @return void
+     */
     public function testReorder()
     {
         $objects = SortableTable12Query::create()->findList(1);
         $ids = [];
         foreach ($objects as $object) {
-            $ids[]= $object->getPrimaryKey();
+            $ids[] = $object->getPrimaryKey();
         }
         $ranks = [4, 3, 2, 1];
         $order = array_combine($ids, $ranks);

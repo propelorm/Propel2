@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Manager;
@@ -15,6 +13,8 @@ use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Util\SqlParser;
 use Propel\Runtime\Adapter\AdapterFactory;
 use Propel\Runtime\Connection\ConnectionFactory;
+use Propel\Runtime\Connection\ConnectionInterface;
+use RuntimeException;
 
 /**
  * Service class for managing SQL.
@@ -40,7 +40,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setConnections($connections)
+    public function setConnections(array $connections): void
     {
         $this->connections = $connections;
     }
@@ -50,7 +50,7 @@ class SqlManager extends AbstractManager
      *
      * @return array
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         return $this->connections;
     }
@@ -60,7 +60,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function hasConnection($connection)
+    public function hasConnection(string $connection): bool
     {
         return isset($this->connections[$connection]);
     }
@@ -68,7 +68,7 @@ class SqlManager extends AbstractManager
     /**
      * @return bool
      */
-    public function isOverwriteSqlMap()
+    public function isOverwriteSqlMap(): bool
     {
         return $this->overwriteSqlMap;
     }
@@ -78,9 +78,9 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function setOverwriteSqlMap($overwriteSqlMap)
+    public function setOverwriteSqlMap(bool $overwriteSqlMap): void
     {
-        $this->overwriteSqlMap = (bool)$overwriteSqlMap;
+        $this->overwriteSqlMap = $overwriteSqlMap;
     }
 
     /**
@@ -90,7 +90,7 @@ class SqlManager extends AbstractManager
      *
      * @return array
      */
-    public function getConnection($datasource)
+    public function getConnection(string $datasource): array
     {
         if (!$this->hasConnection($datasource)) {
             throw new InvalidArgumentException(sprintf('Unknown datasource "%s"', $datasource));
@@ -102,7 +102,7 @@ class SqlManager extends AbstractManager
     /**
      * @return string
      */
-    public function getSqlDbMapFilename()
+    public function getSqlDbMapFilename(): string
     {
         return $this->getWorkingDirectory() . DIRECTORY_SEPARATOR . 'sqldb.map';
     }
@@ -112,7 +112,7 @@ class SqlManager extends AbstractManager
      *
      * @return void
      */
-    public function buildSql()
+    public function buildSql(): void
     {
         $sqlDbMapContent = "# Sqlfile -> Database map\n";
         foreach ($this->getDatabases() as $datasource => $database) {
@@ -141,7 +141,7 @@ class SqlManager extends AbstractManager
      *
      * @return bool
      */
-    public function existSqlMap()
+    public function existSqlMap(): bool
     {
         return file_exists($this->getSqlDbMapFilename());
     }
@@ -149,11 +149,9 @@ class SqlManager extends AbstractManager
     /**
      * @param string|null $datasource A datasource name.
      *
-     * @throws \Exception
-     *
      * @return bool
      */
-    public function insertSql($datasource = null)
+    public function insertSql(?string $datasource = null): bool
     {
         $statementsToInsert = [];
         foreach ($this->getProperties($this->getSqlDbMapFilename()) as $sqlFile => $database) {
@@ -189,10 +187,15 @@ class SqlManager extends AbstractManager
             }
 
             $con = $this->getConnectionInstance($database);
-            $con->transaction(function () use ($con, $sqls) {
+            $con->transaction(function () use ($con, $sqls): void {
                 foreach ($sqls as $sql) {
                     try {
                         $stmt = $con->prepare($sql);
+
+                        if ($stmt === false) {
+                            throw new RuntimeException('PdoConnection::prepare() failed and did not return statement object for execution.');
+                        }
+
                         $stmt->execute();
                     } catch (Exception $e) {
                         $message = sprintf('SQL insert failed: %s', $sql);
@@ -215,7 +218,7 @@ class SqlManager extends AbstractManager
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    protected function getConnectionInstance($datasource)
+    protected function getConnectionInstance(string $datasource): ConnectionInterface
     {
         $buildConnection = $this->getConnection($datasource);
 

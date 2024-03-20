@@ -1,27 +1,26 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Runtime\ActiveQuery;
 
-use Propel\Tests\Helpers\BaseTestCase;
-
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Tests\Helpers\BaseTestCase;
 
 /**
  * Test class for Criteria fluid conditions.
  *
  * @author Francois Zaninotto
- * @version    $Id: CriteriaCombineTest.php 1347 2009-12-03 21:06:36Z francois $
  */
 class CriteriaFluidConditionTest extends BaseTestCase
 {
+    /**
+     * @return void
+     */
     public function testIf()
     {
         $f = new TestableCriteria();
@@ -52,6 +51,9 @@ class CriteriaFluidConditionTest extends BaseTestCase
         $this->assertFalse($f->getTest(), '_if() does not execute the next methods until _endif() if the test is false');
     }
 
+    /**
+     * @return void
+     */
     public function testNestedIf()
     {
         $f = new TestableCriteria();
@@ -136,6 +138,9 @@ class CriteriaFluidConditionTest extends BaseTestCase
         $this->assertFalse($f->getTest(), '_if() can be nested on 3 levels');
     }
 
+    /**
+     * @return void
+     */
     public function testElseIf()
     {
         $f = new TestableCriteria();
@@ -184,6 +189,9 @@ class CriteriaFluidConditionTest extends BaseTestCase
         $this->assertFalse($f->getTest(), '_elseif() does not executes the next method if the main test is true and the elseif test is true');
     }
 
+    /**
+     * @return void
+     */
     public function testElse()
     {
         $f = new TestableCriteria();
@@ -227,6 +235,9 @@ class CriteriaFluidConditionTest extends BaseTestCase
         $this->assertTrue($f->getTest(), '_else() executes the next method if all the previous tests are false');
     }
 
+    /**
+     * @return void
+     */
     public function testEndif()
     {
         $f = new TestableCriteria();
@@ -255,6 +266,9 @@ class CriteriaFluidConditionTest extends BaseTestCase
         $this->assertTrue($f->getTest(), '_endif() stops the condition check');
     }
 
+    /**
+     * @return void
+     */
     public function testHierarchy()
     {
         $f = new TestableCriteria();

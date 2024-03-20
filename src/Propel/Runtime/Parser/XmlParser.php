@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Parser;
@@ -13,6 +11,7 @@ namespace Propel\Runtime\Parser;
 use DateTime;
 use DateTimeInterface;
 use DOMDocument;
+use DOMElement;
 use DOMNode;
 
 /**
@@ -31,11 +30,12 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function fromArray($array, $rootKey = 'data', $charset = null)
+    public function fromArray(array $array, string $rootKey = 'data', ?string $charset = null): string
     {
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
 
+        /** @phpstan-var string */
         return $rootNode->ownerDocument->saveXML();
     }
 
@@ -46,7 +46,7 @@ class XmlParser extends AbstractParser
      *
      * @return string
      */
-    public function listFromArray($array, $rootKey = 'data', $charset = null)
+    public function listFromArray(array $array, ?string $rootKey = 'data', ?string $charset = null): string
     {
         $rootNode = $this->getRootNode($rootKey);
         $this->arrayToDOM($array, $rootNode, $charset);
@@ -61,7 +61,7 @@ class XmlParser extends AbstractParser
      *
      * @return \DOMElement The root DOMNode
      */
-    protected function getRootNode($rootElementName)
+    protected function getRootNode(string $rootElementName): DOMElement
     {
         $xml = new DOMDocument('1.0', 'UTF-8');
         $xml->preserveWhiteSpace = false;
@@ -81,7 +81,7 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function toXML($array, $rootElementName = 'data', $charset = null)
+    public function toXML(array $array, string $rootElementName = 'data', ?string $charset = null): string
     {
         return $this->fromArray($array, $rootElementName, $charset);
     }
@@ -95,7 +95,7 @@ class XmlParser extends AbstractParser
      *
      * @return string Converted data, as an XML string
      */
-    public function listToXML($array, $rootElementName = 'data', $charset = null)
+    public function listToXML(array $array, string $rootElementName = 'data', ?string $charset = null): string
     {
         return $this->listFromArray($array, $rootElementName, $charset);
     }
@@ -107,7 +107,7 @@ class XmlParser extends AbstractParser
      *
      * @return \DOMElement
      */
-    protected function arrayToDOM($array, $rootElement, $charset = null)
+    protected function arrayToDOM(array $array, DOMElement $rootElement, ?string $charset = null): DOMElement
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {
@@ -121,12 +121,13 @@ class XmlParser extends AbstractParser
 
             $element = $rootElement->ownerDocument->createElement($key);
             if (is_array($value)) {
-                if (!empty($value)) {
+                if ($value) {
                     $element = $this->arrayToDOM($value, $element, $charset);
                 }
             } elseif (is_string($value)) {
-                $charset = $charset ? $charset : 'utf-8';
+                $charset = $charset ?: 'utf-8';
                 if (function_exists('iconv') && strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
+                    /** @var string $value */
                     $value = iconv($charset, 'UTF-8', $value);
                 }
                 $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
@@ -134,7 +135,7 @@ class XmlParser extends AbstractParser
                 $element->appendChild($child);
             } elseif ($value instanceof DateTimeInterface) {
                 $element->setAttribute('type', 'xsd:dateTime');
-                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ISO8601));
+                $child = $element->ownerDocument->createTextNode($value->format(DateTime::ATOM));
                 $element->appendChild($child);
             } else {
                 $child = $element->ownerDocument->createTextNode((string)$value);
@@ -154,7 +155,7 @@ class XmlParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function toArray($data, $rootKey = 'data')
+    public function toArray(string $data, string $rootKey = 'data'): array
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
         $doc->loadXML($data);
@@ -171,7 +172,7 @@ class XmlParser extends AbstractParser
      *
      * @return array Converted data
      */
-    public function fromXML($data, $rootKey = 'data')
+    public function fromXML(string $data, string $rootKey = 'data'): array
     {
         return $this->toArray($data, $rootKey);
     }
@@ -181,7 +182,7 @@ class XmlParser extends AbstractParser
      *
      * @return array
      */
-    protected function convertDOMElementToArray(DOMNode $data)
+    protected function convertDOMElementToArray(DOMNode $data): array
     {
         $array = [];
         $elementNames = [];
@@ -225,7 +226,7 @@ class XmlParser extends AbstractParser
      *
      * @return bool
      */
-    protected function hasOnlyTextNodes(DOMNode $node)
+    protected function hasOnlyTextNodes(DOMNode $node): bool
     {
         foreach ($node->childNodes as $childNode) {
             if ($childNode->nodeType != XML_CDATA_SECTION_NODE && $childNode->nodeType != XML_TEXT_NODE) {

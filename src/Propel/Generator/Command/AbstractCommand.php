@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
@@ -24,9 +22,19 @@ use Symfony\Component\Finder\Finder;
  */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_CONFIG_DIRECTORY = '.';
 
+    /**
+     * @var int
+     */
     public const CODE_SUCCESS = 0;
+
+    /**
+     * @var int
+     */
     public const CODE_ERROR = 1;
 
     /**
@@ -56,7 +64,7 @@ abstract class AbstractCommand extends Command
      *
      * @return \Propel\Generator\Config\GeneratorConfig
      */
-    protected function getGeneratorConfig(?array $properties = null, ?InputInterface $input = null)
+    protected function getGeneratorConfig(?array $properties = null, ?InputInterface $input = null): GeneratorConfig
     {
         if ($input === null) {
             return new GeneratorConfig(null, $properties);
@@ -76,12 +84,12 @@ abstract class AbstractCommand extends Command
     /**
      * Find every schema files.
      *
-     * @param string|string[] $directory Path to the input directory
+     * @param array<string>|string $directory Path to the input directory
      * @param bool $recursive Search for file inside the input directory and all subdirectories
      *
      * @return array List of schema files
      */
-    protected function getSchemas($directory, $recursive = false)
+    protected function getSchemas($directory, bool $recursive = false): array
     {
         $finder = new Finder();
         $finder
@@ -100,7 +108,7 @@ abstract class AbstractCommand extends Command
      *
      * @return \Symfony\Component\Filesystem\Filesystem
      */
-    protected function getFilesystem()
+    protected function getFilesystem(): Filesystem
     {
         if ($this->filesystem === null) {
             $this->filesystem = new Filesystem();
@@ -116,7 +124,7 @@ abstract class AbstractCommand extends Command
      *
      * @return void
      */
-    protected function createDirectory($directory)
+    protected function createDirectory(string $directory): void
     {
         $filesystem = $this->getFilesystem();
 
@@ -128,25 +136,24 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * Parse a connection string and return an array with name, dsn and extra informations
+     * Parses a connection string and returns an array with name, DSN and extra information.
      *
      * @param string $connection The connection string
      *
      * @return array
      */
-    protected function parseConnection($connection)
+    protected function parseConnection(string $connection): array
     {
-        $pos = strpos($connection, '=');
-        $name = substr($connection, 0, $pos);
-        $dsn = substr($connection, $pos + 1, strlen($connection));
+        $length = strpos($connection, '=') ?: null;
+        $name = substr($connection, 0, $length);
+        $dsn = substr($connection, $length + 1, strlen($connection));
 
-        $pos = strpos($dsn, ':');
-        $adapter = substr($dsn, 0, $pos);
+        $length = strpos($dsn, ':') ?: null;
+        $adapter = substr($dsn, 0, $length);
 
         $extras = [];
         foreach (explode(';', $dsn) as $element) {
-            $parts = preg_split('/=/', $element);
-
+            $parts = explode('=', $element);
             if (count($parts) === 2) {
                 $extras[strtolower($parts[0])] = urldecode($parts[1]);
             }
@@ -167,14 +174,14 @@ abstract class AbstractCommand extends Command
      *
      * @return array
      */
-    protected function connectionToProperties($connection, $section = null)
+    protected function connectionToProperties(string $connection, ?string $section = null): array
     {
         [$name, $dsn, $infos] = $this->parseConnection($connection);
         $config['propel']['database']['connections'][$name]['classname'] = '\Propel\Runtime\Connection\ConnectionWrapper';
         $config['propel']['database']['connections'][$name]['adapter'] = strtolower($infos['adapter']);
         $config['propel']['database']['connections'][$name]['dsn'] = $dsn;
         $config['propel']['database']['connections'][$name]['user'] = isset($infos['user']) && $infos['user'] ? $infos['user'] : null;
-        $config['propel']['database']['connections'][$name]['password'] = isset($infos['password']) ? $infos['password'] : null;
+        $config['propel']['database']['connections'][$name]['password'] = $infos['password'] ?? null;
 
         if ($section === null) {
             $section = 'generator';
@@ -197,7 +204,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputOption($option, $input)
+    protected function hasInputOption(string $option, InputInterface $input): bool
     {
         return $input->hasOption($option) && $input->getOption($option) !== null;
     }
@@ -210,7 +217,7 @@ abstract class AbstractCommand extends Command
      *
      * @return bool
      */
-    protected function hasInputArgument($argument, $input)
+    protected function hasInputArgument(string $argument, InputInterface $input): bool
     {
         return $input->hasArgument($argument) && $input->getArgument($argument) !== null;
     }

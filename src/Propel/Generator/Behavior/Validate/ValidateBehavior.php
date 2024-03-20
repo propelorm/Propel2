@@ -1,15 +1,14 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Behavior\Validate;
 
+use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Exception\ConstraintNotFoundException;
 use Propel\Generator\Exception\InvalidArgumentException;
 use Propel\Generator\Model\Behavior;
@@ -23,7 +22,7 @@ use Symfony\Component\Yaml\Parser;
 class ValidateBehavior extends Behavior
 {
     /**
-     * @var \Propel\Generator\Builder\Om\ObjectBuilder $builder The current builder
+     * @var \Propel\Generator\Builder\Om\ObjectBuilder
      */
     protected $builder;
 
@@ -36,10 +35,10 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    public function objectMethods($builder)
+    public function objectMethods(ObjectBuilder $builder): string
     {
         $array = $this->getParameters();
-        if (empty($array)) {
+        if (!$array) {
             throw new InvalidArgumentException('Please, define your rules for validation.');
         }
         $this->cleanupParameters();
@@ -50,7 +49,7 @@ class ValidateBehavior extends Behavior
             'Symfony\\Component\\Validator\\DefaultTranslator',
             'Symfony\\Component\\Validator\\Mapping\\Loader\\StaticMethodLoader',
             'Symfony\\Component\\Validator\\ConstraintValidatorFactory',
-            'Symfony\\Component\\Validator\\ConstraintViolationList'
+            'Symfony\\Component\\Validator\\ConstraintViolationList',
         );
 
         $this->builder->declareClasses(
@@ -59,7 +58,7 @@ class ValidateBehavior extends Behavior
             'Symfony\\Component\\Validator\\Mapping\\Factory\LazyLoadingMetadataFactory',
             'Symfony\\Component\\Validator\\Context\\ExecutionContextInterface',
             'Symfony\\Component\\Validator\\Validator\\ValidatorInterface',
-            'Symfony\\Component\\Translation\\IdentityTranslator'
+            'Symfony\\Component\\Translation\\IdentityTranslator',
         );
 
         $script = $this->addLoadValidatorMetadataMethod();
@@ -74,7 +73,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string The code to be added to model class
      */
-    public function objectAttributes()
+    public function objectAttributes(): string
     {
         return $this->renderTemplate('objectAttributes');
     }
@@ -87,7 +86,7 @@ class ValidateBehavior extends Behavior
      *
      * @return array The array of parameters associated to given column
      */
-    public function getParametersFromColumnName($columnName = null)
+    public function getParametersFromColumnName(?string $columnName = null): array
     {
         $array = [];
         if ($columnName !== null) {
@@ -110,7 +109,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function removeParametersFromColumnName($columnName = null)
+    public function removeParametersFromColumnName(?string $columnName = null): void
     {
         if ($columnName !== null) {
             $newParams = [];
@@ -133,7 +132,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function addRuleOnPk()
+    public function addRuleOnPk(): void
     {
         if (!count($this->getParameters())) {
             $pk = $this->getTable()->getPrimaryKey();
@@ -158,17 +157,17 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    public function mergeParameters(?array $params = null)
+    public function mergeParameters(?array $params = null): void
     {
         if ($params !== null) {
             $parameters = $this->getParameters();
             $out = [];
             $i = 1;
-            foreach ($parameters as $key => $parameter) {
+            foreach ($parameters as $parameter) {
                 $out["rule$i"] = $parameter;
                 $i++;
             }
-            foreach ($params as $key => $param) {
+            foreach ($params as $param) {
                 $out["rule$i"] = $param;
                 $i++;
             }
@@ -183,7 +182,7 @@ class ValidateBehavior extends Behavior
      *
      * @return void
      */
-    protected function cleanupParameters()
+    protected function cleanupParameters(): void
     {
         $parser = new Parser();
         $params = $this->getParameters();
@@ -202,12 +201,12 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function addLoadValidatorMetadataMethod()
+    protected function addLoadValidatorMetadataMethod(): string
     {
         $params = $this->getParameters();
         $constraints = [];
 
-        foreach ($params as $key => $properties) {
+        foreach ($params as $properties) {
             if (!isset($properties['column'])) {
                 throw new InvalidArgumentException('Please, define the column to validate.');
             }
@@ -245,7 +244,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function getClassConstraint(array $properties)
+    protected function getClassConstraint(array $properties): string
     {
         $constraintCandidates = [
             sprintf('Propel\\Runtime\\Validator\\Constraints\\%s', $properties['validator']),
@@ -266,7 +265,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string The code to be added to model class
      */
-    protected function addValidateMethod()
+    protected function addValidateMethod(): string
     {
         $table = $this->getTable();
         $foreignKeys = $table->getForeignKeys();
@@ -302,7 +301,7 @@ class ValidateBehavior extends Behavior
      *
      * @return string
      */
-    protected function addGetValidationFailuresMethod()
+    protected function addGetValidationFailuresMethod(): string
     {
         return $this->renderTemplate('objectGetValidationFailures');
     }

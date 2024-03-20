@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license    MIT License
  */
 
 namespace Propel\Generator\Command;
@@ -85,7 +83,8 @@ class MigrationCreateCommand extends AbstractCommand
 
         $output->writeln(sprintf('"%s" file successfully created.', $file));
 
-        if (null !== $editorCmd = $input->getOption('editor')) {
+        $editorCmd = $input->getOption('editor');
+        if ($editorCmd !== null) {
             $output->writeln(sprintf('Using "%s" as text editor', $editorCmd));
             shell_exec($editorCmd . ' ' . escapeshellarg($file));
         } else {

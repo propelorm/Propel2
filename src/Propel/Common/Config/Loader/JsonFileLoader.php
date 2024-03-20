@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Common\Config\Loader;
@@ -22,20 +20,20 @@ class JsonFileLoader extends FileLoader
     /**
      * Loads an Json file.
      *
-     * @param string $file The resource
+     * @param string $resource The resource
      * @param string|null $type The resource type
      *
      * @throws \Propel\Common\Config\Exception\JsonParseException if invalid json file
      *
      * @return array
      */
-    public function load($file, $type = null)
+    public function load($resource, $type = null): array
     {
-        $json = file_get_contents($this->getPath($file));
+        $json = file_get_contents($this->getPath($resource));
 
         $content = [];
 
-        if ($json !== '') {
+        if ($json && $json !== '') {
             $content = json_decode($json, true);
             $error = json_last_error();
 
@@ -44,9 +42,7 @@ class JsonFileLoader extends FileLoader
             }
         }
 
-        $content = $this->resolveParams($content); //Resolve parameter placeholders (%name%)
-
-        return $content;
+        return $this->resolveParams($content); //Resolve parameter placeholders (%name%)
     }
 
     /**
@@ -57,8 +53,8 @@ class JsonFileLoader extends FileLoader
      *
      * @return bool true if this class supports the given resource, false otherwise
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return $this->checkSupports('json', $resource);
+        return static::checkSupports('json', $resource);
     }
 }

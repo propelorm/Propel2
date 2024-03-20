@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Builder\Om;
@@ -27,7 +25,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * The current child "object" we are operating on.
      *
-     * @var \Propel\Generator\Model\Inheritance|null $child
+     * @var \Propel\Generator\Model\Inheritance|null
      */
     private $child;
 
@@ -36,7 +34,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return string
      */
-    public function getUnprefixedClassName()
+    public function getUnprefixedClassName(): string
     {
         return $this->getChild()->getClassName();
     }
@@ -44,9 +42,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Overrides method to return child package, if specified.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPackage()
+    public function getPackage(): ?string
     {
         return ($this->getChild()->getPackage() ?: parent::getPackage());
     }
@@ -58,7 +56,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    public function setChild(Inheritance $child)
+    public function setChild(Inheritance $child): void
     {
         $this->child = $child;
     }
@@ -70,7 +68,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return \Propel\Generator\Model\Inheritance
      */
-    public function getChild()
+    public function getChild(): Inheritance
     {
         if (!$this->child) {
             throw new BuildException('The MultiExtendObjectBuilder needs to be told which child class to build (via setChild() method) before it can build the stub class.');
@@ -82,9 +80,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classpath to parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClasspath()
+    protected function getParentClasspath(): ?string
     {
         if ($this->getChild()->getAncestor()) {
             return $this->getChild()->getAncestor();
@@ -96,9 +94,9 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
     /**
      * Returns classname of parent class.
      *
-     * @return string
+     * @return string|null
      */
-    protected function getParentClassName()
+    protected function getParentClassName(): ?string
     {
         return ClassTools::classname($this->getParentClasspath());
     }
@@ -110,7 +108,7 @@ class MultiExtendObjectBuilder extends AbstractObjectBuilder
      *
      * @return void
      */
-    protected function addClassOpen(&$script)
+    protected function addClassOpen(string &$script): void
     {
         if ($this->getChild()->getAncestor()) {
             $ancestorClassName = $this->getChild()->getAncestor();
@@ -166,7 +164,7 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassBody(&$script)
+    protected function addClassBody(string &$script): void
     {
         $child = $this->getChild();
         $col = $child->getColumn();
@@ -194,10 +192,10 @@ class " . $this->getUnqualifiedClassName() . ' extends ' . $this->getParentClass
      *
      * @return void
      */
-    protected function addClassClose(&$script)
+    protected function addClassClose(string &$script): void
     {
         $script .= "
-} // " . $this->getUnqualifiedClassName() . "
+}
 ";
     }
 }

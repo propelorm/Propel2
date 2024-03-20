@@ -1,15 +1,15 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
+namespace Propel\Tests\Generator\Model;
+
 use Propel\Generator\Model\PhpNameGenerator;
-use \Propel\Tests\TestCase;
+use Propel\Tests\TestCase;
 
 /**
  * Tests for PhpNameGenerator
@@ -34,11 +34,13 @@ class PhpNameGeneratorTest extends TestCase
 
     /**
      * @dataProvider phpnameMethodDataProvider
+     *
+     * @return void
      */
     public function testPhpnameMethod($input, $output)
     {
         $generator = new TestablePhpNameGenerator();
-        $this->assertEquals($output, $generator->phpnameMethod($input));
+        $this->assertEquals($output, $generator->phpNameMethod($input));
     }
 
     public static function underscoreMethodDataProvider()
@@ -57,23 +59,24 @@ class PhpNameGeneratorTest extends TestCase
 
     /**
      * @dataProvider underscoreMethodDataProvider
+     *
+     * @return void
      */
     public function testUnderscoreMethod($input, $output)
     {
         $generator = new TestablePhpNameGenerator();
         $this->assertEquals($output, $generator->underscoreMethod($input));
     }
-
 }
 
 class TestablePhpNameGenerator extends PhpNameGenerator
 {
-    public function phpnameMethod($schemaName)
+    public function phpNameMethod(string $schemaName): string
     {
-        return parent::phpnameMethod($schemaName);
+        return parent::phpNameMethod($schemaName);
     }
 
-    public function underscoreMethod($schemaName)
+    public function underscoreMethod(string $schemaName): string
     {
         return parent::underscoreMethod($schemaName);
     }

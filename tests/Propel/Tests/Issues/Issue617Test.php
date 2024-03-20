@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * MIT License. This file is part of the Propel package.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Propel\Tests\Issues;
 
 use Propel\Generator\Model\Diff\DatabaseComparator;
@@ -19,16 +25,23 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 {
     /**
      * Contains the builder instance of the updated schema (removed FK)
-     * @var QuickBuilder
+     *
+     * @var \Propel\Generator\Util\QuickBuilder
      */
     private $updatedBuilder;
 
+    /**
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
         $this->removeTables();
     }
 
+    /**
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->removeTables();
@@ -37,6 +50,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 
     /**
      * Remove issue617 tables.
+     *
+     * @return void
      */
     public function removeTables()
     {
@@ -46,6 +61,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
 
     /**
      * Setups the initial schema.
+     *
+     * @return void
      */
     private function setupInitSchema()
     {
@@ -59,13 +76,13 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="full_name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="full_name" type="VARCHAR" size="50" required="true"/>
 
   <!-- this column (and FK) will be removed from schema, but not from DB on migrate -->
-  <column name="group_id" type="INTEGER" />
+  <column name="group_id" type="INTEGER"/>
   <foreign-key foreignTable="issue617_group" onDelete="setnull">
-    <reference local="group_id" foreign="id" />
+    <reference local="group_id" foreign="id"/>
   </foreign-key>
 </table>
 
@@ -74,8 +91,8 @@ class Issue617Test extends PlatformDatabaseBuildTimeBase
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="50" required="true"/>
 </table>
 </database>
 ';
@@ -110,14 +127,15 @@ CREATE TABLE `issue617_group`
 ) ENGINE=InnoDB CHARACTER SET=\'utf8\';
 ';
 
-        $this->assertContains($expected, $sql);
+        $this->assertStringContainsString($expected, $sql);
         $this->updateSchema($builder->getDatabase());
-
     }
 
     /**
      * Drop the foreign key in the `_user` table and check whether it generates
      * the correct `DROP` SQL.
+     *
+     * @return void
      */
     private function dropForeignKey()
     {
@@ -129,8 +147,8 @@ CREATE TABLE `issue617_group`
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="full_name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="full_name" type="VARCHAR" size="50" required="true"/>
 </table>
 
 <table name="issue617_group">
@@ -138,8 +156,8 @@ CREATE TABLE `issue617_group`
     <parameter name="Engine" value="InnoDB"/>
     <parameter name="Charset" value="utf8"/>
   </vendor>
-  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
-  <column name="name" type="VARCHAR" size="50" required="true" />
+  <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true"/>
+  <column name="name" type="VARCHAR" size="50" required="true"/>
 </table>
 </database>
 ';
@@ -162,12 +180,16 @@ ALTER TABLE `issue617_user`
   DROP `group_id`;
 ';
 
-        $this->assertContains($expected, $sql);
+        $this->assertStringContainsString($expected, $sql);
         $this->updateSchema($this->updatedBuilder->getDatabase());
     }
 
     /*
      * Checks if FKs are really deleted.
+     */
+
+    /**
+     * @return void
      */
     private function checkDeletedFk()
     {
@@ -177,12 +199,14 @@ ALTER TABLE `issue617_user`
 
         $expected = 'issue617_user';
 
-        $this->assertNotContains($expected, $sql);
+        $this->assertStringNotContainsString($expected, $sql);
     }
 
     /**
      * Checks if a changed schema with removed FK does really delete the FK.
      * Based on a real use-case, reverse classes and `computeDiff`.
+     *
+     * @return void
      */
     public function testDropForeignKey()
     {
@@ -191,6 +215,5 @@ ALTER TABLE `issue617_user`
         $this->setupInitSchema();
         $this->dropForeignKey();
         $this->checkDeletedFk();
-
     }
 }

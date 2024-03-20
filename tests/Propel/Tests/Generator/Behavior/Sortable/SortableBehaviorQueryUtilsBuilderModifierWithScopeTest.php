@@ -1,19 +1,16 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Sortable;
 
 use Propel\Runtime\ActiveQuery\Criteria;
-
-use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
+use Propel\Tests\Bookstore\Behavior\SortableTable12Query;
 
 /**
  * Tests for SortableBehavior class
@@ -24,6 +21,9 @@ use Propel\Tests\Bookstore\Behavior\Map\SortableTable12TableMap;
  */
 class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
 {
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -31,12 +31,18 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $this->populateTable12();
     }
 
+    /**
+     * @return void
+     */
     public function testStaticAttributes()
     {
         $this->assertEquals('sortable_table12.position', SortableTable12TableMap::RANK_COL);
         $this->assertEquals('sortable_table12.my_scope_column', SortableTable12TableMap::SCOPE_COL);
     }
 
+    /**
+     * @return void
+     */
     public function testGetMaxRank()
     {
         $this->assertEquals(4, SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns the maximum rank of the suite');
@@ -47,6 +53,10 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         SortableTable12TableMap::doDeleteAll();
         $this->assertNull(SortableTable12Query::create()->getMaxRank(1), 'getMaxRank() returns null for empty tables');
     }
+
+    /**
+     * @return void
+     */
     public function testRetrieveByRank()
     {
         $t = SortableTable12Query::retrieveByRank(5, 1);
@@ -59,6 +69,9 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals('row6', $t6->getTitle(), 'retrieveByRank() returns the object with the required rank in the required suite');
     }
 
+    /**
+     * @return void
+     */
     public function testReorder()
     {
         $c = new Criteria();
@@ -66,7 +79,7 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $objects = SortableTable12Query::doSelectOrderByRank($c);
         $ids = [];
         foreach ($objects as $object) {
-            $ids[]= $object->getPrimaryKey();
+            $ids[] = $object->getPrimaryKey();
         }
         $ranks = [4, 3, 2, 1];
         $order = array_combine($ids, $ranks);
@@ -77,6 +90,9 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals($expected, $this->getFixturesArrayWithScope(2), 'reorder() leaves other suites unchanged');
     }
 
+    /**
+     * @return void
+     */
     public function testDoSelectOrderByRank()
     {
         $c = new Criteria();
@@ -97,6 +113,9 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testRetrieveList()
     {
         $this->assertEquals(4, count(SortableTable12Query::retrieveList(null)), 'retrieveList() returns the list of objects in the scope');
@@ -104,6 +123,9 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, count(SortableTable12Query::retrieveList(2)), 'retrieveList() returns the list of objects in the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testCountList()
     {
         $this->assertEquals(4, SortableTable12Query::countList(null), 'countList() returns the list of objects in the scope');
@@ -111,6 +133,9 @@ class SortableBehaviorQueryUtilsBuilderModifierWithScopeTest extends TestCase
         $this->assertEquals(2, SortableTable12Query::countList(2), 'countList() returns the list of objects in the scope');
     }
 
+    /**
+     * @return void
+     */
     public function testDeleteList()
     {
         $this->assertEquals(4, SortableTable12Query::deleteList(null), 'deleteList() returns the list of deleted objects in the scope');

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.x-dev@">
+  <file src="src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$archiveTable-&gt;isArchiveTable</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Behavior/ConcreteInheritance/ConcreteInheritanceBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$fk-&gt;isParentChild</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php">
+    <UndefinedPropertyAssignment occurrences="1">
+      <code>$versionTable-&gt;isVersionTable</code>
+    </UndefinedPropertyAssignment>
+  </file>
+  <file src="src/Propel/Generator/Builder/DataModelBuilder.php">
+    <InvalidArgument occurrences="1">
+      <code>$this</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php">
+    <UndefinedMethod occurrences="25">
+      <code>addAddArrayElement</code>
+      <code>addAddArrayElement</code>
+      <code>addArrayAccessor</code>
+      <code>addArrayMutator</code>
+      <code>addBooleanAccessor</code>
+      <code>addBooleanMutator</code>
+      <code>addDefaultAccessor</code>
+      <code>addDefaultAccessor</code>
+      <code>addDefaultMutator</code>
+      <code>addEnumAccessor</code>
+      <code>addEnumMutator</code>
+      <code>addHasArrayElement</code>
+      <code>addHasArrayElement</code>
+      <code>addJsonAccessor</code>
+      <code>addJsonMutator</code>
+      <code>addLazyLoader</code>
+      <code>addLobMutator</code>
+      <code>addObjectAccessor</code>
+      <code>addObjectMutator</code>
+      <code>addRemoveArrayElement</code>
+      <code>addRemoveArrayElement</code>
+      <code>addSetAccessor</code>
+      <code>addSetMutator</code>
+      <code>addTemporalAccessor</code>
+      <code>addTemporalMutator</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Generator/Manager/AbstractManager.php">
+    <UndefinedMethod occurrences="1">
+      <code>getLocation</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Generator/Model/Index.php">
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$this-&gt;columnObjects</code>
+    </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="src/Propel/Generator/Reverse/OracleSchemaParser.php">
+    <InvalidArrayOffset occurrences="1">
+      <code>$row[0]</code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="src/Propel/Generator/Util/QuickBuilder.php">
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
+    <UndefinedConstant occurrences="2">
+      <code>T_NAME_FULLY_QUALIFIED</code>
+      <code>T_NAME_QUALIFIED</code>
+    </UndefinedConstant>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php">
+    <UndefinedMethod occurrences="1">
+      <code>find</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/Criteria.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$this-&gt;conditionalProxy-&gt;getCriteriaOrProxy()</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>$this|\Propel\Runtime\ActiveQuery\Criteria</code>
+    </InvalidReturnType>
+  </file>
+  <file src="src/Propel/Runtime/ActiveQuery/ModelCriteria.php">
+    <TooManyTemplateParams occurrences="4">
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+      <code>\Propel\Runtime\Collection\Collection&lt;\Propel\Runtime\ActiveRecord\ActiveRecordInterface&gt;|mixed</code>
+    </TooManyTemplateParams>
+    <UndefinedMethod occurrences="11">
+      <code>$modelTableMapName::clearInstancePool()</code>
+      <code>$modelTableMapName::clearRelatedInstancePool()</code>
+      <code>addSelectColumns</code>
+      <code>addSelfSelectColumns</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>getTableMap</code>
+      <code>setIgnoreCase</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/MssqlAdapter.php">
+    <InvalidArrayOffset occurrences="2">
+      <code>$orders[$orderArr[$selColArr[$selColCount]]['key']]</code>
+      <code>$orders[$orderArr[$selColArr[0]]['key']]</code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/OracleAdapter.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$dataFetcher-&gt;fetchColumn()</code>
+    </InvalidReturnStatement>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/PgsqlAdapter.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$dataFetcher-&gt;fetchColumn()</code>
+    </InvalidReturnStatement>
+  </file>
+  <file src="src/Propel/Runtime/Adapter/Pdo/SqlsrvAdapter.php">
+    <UndefinedConstant occurrences="5">
+      <code>PDO::SQLSRV_ATTR_ENCODING</code>
+      <code>PDO::SQLSRV_ATTR_ENCODING</code>
+      <code>PDO::SQLSRV_ENCODING_BINARY</code>
+      <code>PDO::SQLSRV_ENCODING_SYSTEM</code>
+      <code>PDO::SQLSRV_ENCODING_UTF8</code>
+    </UndefinedConstant>
+  </file>
+  <file src="src/Propel/Runtime/Collection/ArrayCollection.php">
+    <UndefinedMethod occurrences="1">
+      <code>$tableMapClass::getPrimaryKeyFromRow(array_values($element))</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/Propel/Runtime/Collection/CollectionIterator.php">
+    <InvalidArgument occurrences="2">
+      <code>$callback</code>
+      <code>$callback</code>
+    </InvalidArgument>
+  </file>
+  <file src="src/Propel/Runtime/Formatter/ObjectFormatter.php">
+    <UndefinedMethod occurrences="2">
+      <code>populateObject</code>
+      <code>populateObject</code>
+    </UndefinedMethod>
+  </file>
+</files>

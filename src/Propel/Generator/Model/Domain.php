@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Generator\Model;
@@ -24,7 +22,7 @@ use Propel\Generator\Exception\EngineException;
 class Domain extends MappingModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $name;
 
@@ -73,7 +71,7 @@ class Domain extends MappingModel
      * @param int|null $size
      * @param int|null $scale
      */
-    public function __construct($type = null, $sqlType = null, $size = null, $scale = null)
+    public function __construct(?string $type = null, ?string $sqlType = null, ?int $size = null, ?int $scale = null)
     {
         if ($type !== null) {
             $this->setType($type);
@@ -87,7 +85,7 @@ class Domain extends MappingModel
             $this->setScale($scale);
         }
 
-        $this->setSqlType($sqlType !== null ? $sqlType : $type);
+        $this->setSqlType($sqlType ?? $type);
     }
 
     /**
@@ -97,7 +95,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function copy(Domain $domain)
+    public function copy(Domain $domain): void
     {
         $this->defaultValue = $domain->getDefaultValue();
         $this->description = $domain->getDescription();
@@ -111,9 +109,12 @@ class Domain extends MappingModel
     /**
      * @return void
      */
-    protected function setupObject()
+    protected function setupObject(): void
     {
-        $schemaType = strtoupper($this->getAttribute('type'));
+        $schemaType = !$this->getAttribute('type')
+            ? ''
+            : strtoupper($this->getAttribute('type'));
+
         $this->copy($this->database->getPlatform()->getDomainForType($schemaType));
 
         // Name
@@ -139,7 +140,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setDatabase(Database $database)
+    public function setDatabase(Database $database): void
     {
         $this->database = $database;
     }
@@ -147,9 +148,9 @@ class Domain extends MappingModel
     /**
      * Returns the owning database object (if this domain was setup via XML).
      *
-     * @return \Propel\Generator\Model\Database
+     * @return \Propel\Generator\Model\Database|null
      */
-    public function getDatabase()
+    public function getDatabase(): ?Database
     {
         return $this->database;
     }
@@ -157,9 +158,9 @@ class Domain extends MappingModel
     /**
      * Returns the domain description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -167,11 +168,11 @@ class Domain extends MappingModel
     /**
      * Sets the domain description.
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return void
      */
-    public function setDescription($description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -179,9 +180,9 @@ class Domain extends MappingModel
     /**
      * Returns the domain description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -189,11 +190,11 @@ class Domain extends MappingModel
     /**
      * Sets the domain name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return void
      */
-    public function setName($name)
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
@@ -203,7 +204,7 @@ class Domain extends MappingModel
      *
      * @return int|null
      */
-    public function getScale()
+    public function getScale(): ?int
     {
         return $this->scale;
     }
@@ -211,13 +212,13 @@ class Domain extends MappingModel
     /**
      * Sets the scale value.
      *
-     * @param int $scale
+     * @param int|null $scale
      *
      * @return void
      */
-    public function setScale($scale)
+    public function setScale(?int $scale): void
     {
-        $this->scale = $scale === null ? null : (int)$scale;
+        $this->scale = $scale;
     }
 
     /**
@@ -227,19 +228,19 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceScale($scale)
+    public function replaceScale(?int $scale): void
     {
         if ($scale !== null) {
-            $this->scale = (int)$scale;
+            $this->scale = $scale;
         }
     }
 
     /**
      * Returns the size.
      *
-     * @return int
+     * @return int|null
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
@@ -251,9 +252,9 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setSize($size)
+    public function setSize(?int $size): void
     {
-        $this->size = $size === null ? null : (int)$size;
+        $this->size = $size;
     }
 
     /**
@@ -263,10 +264,10 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceSize($size)
+    public function replaceSize(?int $size): void
     {
         if ($size !== null) {
-            $this->size = (int)$size;
+            $this->size = $size;
         }
     }
 
@@ -275,19 +276,21 @@ class Domain extends MappingModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
-        return $this->mappingType;
+        // For some reason we're supporting null, but there are many functions that rely on the
+        // return value being a string.
+        return $this->mappingType ?: '';
     }
 
     /**
      * Sets the mapping type.
      *
-     * @param string $mappingType
+     * @param string|null $mappingType
      *
      * @return void
      */
-    public function setType($mappingType)
+    public function setType(?string $mappingType): void
     {
         $this->mappingType = $mappingType;
     }
@@ -299,7 +302,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceType($mappingType)
+    public function replaceType(?string $mappingType): void
     {
         if ($mappingType !== null) {
             $this->mappingType = $mappingType;
@@ -311,7 +314,7 @@ class Domain extends MappingModel
      *
      * @return \Propel\Generator\Model\ColumnDefaultValue|null
      */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?ColumnDefaultValue
     {
         return $this->defaultValue;
     }
@@ -321,7 +324,7 @@ class Domain extends MappingModel
      *
      * @throws \Propel\Generator\Exception\EngineException
      *
-     * @return string|array|bool|null
+     * @return array|string|int|bool|null
      */
     public function getPhpDefaultValue()
     {
@@ -333,15 +336,15 @@ class Domain extends MappingModel
             throw new EngineException('Cannot get PHP version of default value for default value EXPRESSION.');
         }
 
-        if (in_array($this->mappingType, [ PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU ])) {
+        if (in_array($this->mappingType, [PropelTypes::BOOLEAN, PropelTypes::BOOLEAN_EMU], true)) {
             return $this->booleanValue($this->defaultValue->getValue());
         }
 
         if ($this->mappingType === PropelTypes::PHP_ARRAY) {
-            return $this->getDefaultValueForArray($this->defaultValue->getValue());
+            return $this->getDefaultValueForArray((string)$this->defaultValue->getValue());
         }
         if ($this->mappingType === PropelTypes::SET) {
-            return $this->getDefaultValueForSet($this->defaultValue->getValue());
+            return $this->getDefaultValueForSet((string)$this->defaultValue->getValue());
         }
 
         return $this->defaultValue->getValue();
@@ -354,7 +357,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function setDefaultValue(ColumnDefaultValue $value)
+    public function setDefaultValue(ColumnDefaultValue $value): void
     {
         $this->defaultValue = $value;
     }
@@ -366,7 +369,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceDefaultValue(?ColumnDefaultValue $value = null)
+    public function replaceDefaultValue(?ColumnDefaultValue $value = null): void
     {
         if ($value !== null) {
             $this->defaultValue = $value;
@@ -376,9 +379,9 @@ class Domain extends MappingModel
     /**
      * Returns the SQL type.
      *
-     * @return string
+     * @return string|null
      */
-    public function getSqlType()
+    public function getSqlType(): ?string
     {
         return $this->sqlType;
     }
@@ -386,11 +389,11 @@ class Domain extends MappingModel
     /**
      * Sets the SQL type.
      *
-     * @param string $sqlType
+     * @param string|null $sqlType
      *
      * @return void
      */
-    public function setSqlType($sqlType)
+    public function setSqlType(?string $sqlType): void
     {
         $this->sqlType = $sqlType;
     }
@@ -402,7 +405,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function replaceSqlType($sqlType)
+    public function replaceSqlType(?string $sqlType): void
     {
         if ($sqlType !== null) {
             $this->sqlType = $sqlType;
@@ -414,7 +417,7 @@ class Domain extends MappingModel
      *
      * @return string
      */
-    public function getSizeDefinition()
+    public function getSizeDefinition(): string
     {
         if ($this->size === null) {
             return '';
@@ -444,7 +447,7 @@ class Domain extends MappingModel
      *
      * @return void
      */
-    public function appendXml(DOMNode $node)
+    public function appendXml(DOMNode $node): void
     {
         $doc = ($node instanceof DOMDocument) ? $node : $node->ownerDocument;
 
@@ -457,12 +460,12 @@ class Domain extends MappingModel
             $domainNode->setAttribute('sqlType', $this->sqlType);
         }
 
-        if ($def = $this->getDefaultValue()) {
-            if ($def->isExpression()) {
-                $domainNode->setAttribute('defaultExpr', $def->getValue());
-            } else {
-                $domainNode->setAttribute('defaultValue', $def->getValue());
-            }
+        $def = $this->getDefaultValue();
+        if ($def) {
+            $domainNode->setAttribute(
+                $def->isExpression() ? 'defaultExpr' : 'defaultValue',
+                (string)$def->getValue(),
+            );
         }
 
         if ($this->size) {

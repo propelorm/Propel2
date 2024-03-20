@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Tests\Generator\Behavior\Validate;
@@ -23,15 +21,22 @@ use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
  */
 class UniqueConstraintTest extends BookstoreTestBase
 {
+    /**
+     * @return void
+     */
     public function testUniqueValidatorPass()
     {
         $publisher = new Publisher();
         $publisher->setName('Happy Reading');
         $publisher->setWebsite('http://www.happyreading.com');
+        $publisher->save();
         $isValid = $publisher->validate();
         $this->assertTrue($isValid);
     }
 
+    /**
+     * @return void
+     */
     public function testUniqueValidatorIgnoresItself()
     {
         $publisher = new Publisher();
@@ -45,6 +50,9 @@ class UniqueConstraintTest extends BookstoreTestBase
         $publisher->delete();
     }
 
+    /**
+     * @return void
+     */
     public function testUniqueValidatorFail()
     {
         $publisher = new Publisher();
@@ -65,17 +73,23 @@ class UniqueConstraintTest extends BookstoreTestBase
         $publisher->delete();
     }
 
+    /**
+     * @return void
+     */
     public function testUniqueValidatorPassIfNull()
     {
         $book = new Book();
-        $book->setTitle("The return of Sherlock Holmes");
+        $book->setTitle('The return of Sherlock Holmes');
         $this->assertTrue($book->validate());
     }
 
+    /**
+     * @return void
+     */
     public function testUniqueValidatorAlwaysPassIfNull()
     {
         $book = new Book();
-        $book->setTitle("The return of Sherlock Holmes");
+        $book->setTitle('The return of Sherlock Holmes');
         $book->save();
 
         $book1 = new Book();
@@ -85,5 +99,4 @@ class UniqueConstraintTest extends BookstoreTestBase
 
         $book->delete();
     }
-
 }

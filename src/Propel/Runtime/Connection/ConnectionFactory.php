@@ -1,11 +1,9 @@
 <?php
 
 /**
- * This file is part of the Propel package.
+ * MIT License. This file is part of the Propel package.
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * @license MIT License
  */
 
 namespace Propel\Runtime\Connection;
@@ -17,7 +15,17 @@ use Propel\Runtime\Exception\InvalidArgumentException;
 
 class ConnectionFactory
 {
+    /**
+     * @var string
+     */
     public const DEFAULT_CONNECTION_CLASS = '\Propel\Runtime\Connection\ConnectionWrapper';
+
+    /**
+     * If true, ConnectionFactory will use ProfilerConnectionWrapper.
+     *
+     * @var bool
+     */
+    public static $useProfilerConnection = false;
 
     /**
      * Open a database connection based on a configuration.
@@ -27,13 +35,18 @@ class ConnectionFactory
      * @param string $defaultConnectionClass
      *
      * @throws \Propel\Runtime\Exception\InvalidArgumentException
-     * @throws Exception\ConnectionException
+     * @throws \Propel\Runtime\Connection\Exception\ConnectionException
      *
      * @return \Propel\Runtime\Connection\ConnectionInterface
      */
-    public static function create(array $configuration, AdapterInterface $adapter, $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS)
-    {
-        if (isset($configuration['classname'])) {
+    public static function create(
+        array $configuration,
+        AdapterInterface $adapter,
+        string $defaultConnectionClass = self::DEFAULT_CONNECTION_CLASS
+    ): ConnectionInterface {
+        if (static::$useProfilerConnection) {
+            $connectionClass = ProfilerConnectionWrapper::class;
+        } elseif (isset($configuration['classname'])) {
             $connectionClass = $configuration['classname'];
         } else {
             $connectionClass = $defaultConnectionClass;
