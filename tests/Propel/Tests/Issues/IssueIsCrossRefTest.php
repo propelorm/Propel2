@@ -19,7 +19,7 @@ use Propel\Tests\TestCase;
  * Regression test for https://github.com/propelorm/Propel2/pull/1994
  * @group test1
  */
-class IssuePr1994Test extends TestCase
+class IssueIsCrossRefTest extends TestCase
 {
     /**
      * @return void
@@ -54,8 +54,8 @@ class IssuePr1994Test extends TestCase
     </table>
     <table name="test_user_group_object_negative" isCrossRef="true">
         <column name="id" type="integer" primaryKey="true" required="true" />
-        <column name="user_negative_id" type="integer" required="true"/>
-        <column name="group_negative_id" type="integer" required="true"/>
+        <column name="user_negative_id" type="integer"/>
+        <column name="group_negative_id" type="integer"/>
         <foreign-key foreignTable="test_user_object_negative">
             <reference local="user_negative_id" foreign="id"/>
         </foreign-key>
@@ -87,11 +87,11 @@ EOF;
             method_exists($testUserObject, 'createTestGroupObjectsQuery'),
             'Class does not have method createTestUserObjectsQuery'
         );
-        $this->assertTrue(
+        $this->assertFalse(
             method_exists($testGroupNegative, 'createTestUserObjectNegativesQuery'),
             'Class does not have method createTestUserObjectsQuery'
         );
-        $this->assertTrue(
+        $this->assertFalse(
             method_exists($testUserNegative, 'createTestGroupObjectNegativesQuery'),
             'Class does not have method createTestUserObjectsQuery'
         );
