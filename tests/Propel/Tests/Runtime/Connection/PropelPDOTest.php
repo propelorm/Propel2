@@ -11,7 +11,6 @@ namespace Propel\Tests\Runtime\Connection;
 use Exception;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Logger;
-use Monolog\LogRecord;
 use PDO;
 use PDOException;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -565,7 +564,7 @@ class LastMessageHandler extends AbstractHandler
      *
      * @return bool
      */
-    public function handle(LogRecord $record): bool
+    public function handle(array $record): bool
     {
         $this->latestMessage = (string)$record['message'];
 
