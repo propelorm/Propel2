@@ -362,18 +362,14 @@ class FileLoaderTest extends TestCase
 
 class TestableFileLoader extends BaseFileLoader
 {
-    /**
-     * @return void
-     */
-    public function load($resource, $type = null)
+    public function load($resource, $type = null): ?array
     {
+        return null;
     }
 
-    /**
-     * @return void
-     */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
+        return false;
     }
 
     /**
