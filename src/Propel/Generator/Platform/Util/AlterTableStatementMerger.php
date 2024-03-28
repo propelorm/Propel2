@@ -67,10 +67,9 @@ class AlterTableStatementMerger
      */
     public function mergeStatements(string $sql): string
     {
-        $statements = explode(';', $sql);
-//        $sqlParser = new SqlParser();
-//        $sqlParser->setSQL($sql);
-//        $statements = $sqlParser->explodeIntoStatements();
+        $sqlParser = new SqlParser();
+        $sqlParser->setSQL($sql);
+        $statements = $sqlParser->explodeIntoStatements();
 
         $blocks = [];
         $currentBlock = [];
