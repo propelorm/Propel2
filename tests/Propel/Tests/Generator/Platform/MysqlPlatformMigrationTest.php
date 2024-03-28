@@ -139,7 +139,7 @@ ALTER TABLE `foo`
 
   CHANGE `bar` `bar1` INTEGER,
 
-  CHANGE `baz` `baz` VARCHAR(12),
+  CHANGE `baz` `baz` VARCHAR(12) DEFAULT 'pdf;jpg;png;doc;docx;xls;xlsx;txt',
 
   ADD `baz3` TEXT AFTER `baz`;
 

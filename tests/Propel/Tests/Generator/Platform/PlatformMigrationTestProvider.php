@@ -107,7 +107,7 @@ EOF;
     <table name="foo">
         <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
         <column name="bar1" type="INTEGER"/>
-        <column name="baz" type="VARCHAR" size="12" required="false"/>
+        <column name="baz" type="VARCHAR" size="12" required="false" defaultValue="pdf;jpg;png;doc;docx;xls;xlsx;txt"/>
         <column name="baz3" type="LONGVARCHAR"/>
         <foreign-key name="foo1_fk_1" foreignTable="foo2">
             <reference local="bar1" foreign="bar"/>

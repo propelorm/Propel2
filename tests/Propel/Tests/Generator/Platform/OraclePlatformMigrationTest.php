@@ -105,7 +105,7 @@ ALTER TABLE foo
 
   MODIFY
 (
-    baz NVARCHAR2(12)
+    baz NVARCHAR2(12) DEFAULT 'pdf;jpg;png;doc;docx;xls;xlsx;txt'
 ),
 
   ADD
