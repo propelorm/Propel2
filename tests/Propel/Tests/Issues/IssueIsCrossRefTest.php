@@ -17,7 +17,6 @@ use Propel\Tests\TestCase;
 
 /**
  * Regression test for https://github.com/propelorm/Propel2/pull/1994
- * @group test1
  */
 class IssueIsCrossRefTest extends TestCase
 {
