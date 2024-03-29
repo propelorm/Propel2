@@ -232,14 +232,30 @@ class SqlParser
     public function getNextStatement(): string
     {
         $isAfterBackslash = false;
+        $isCommentLine = false;
         $isInString = false;
         $stringQuotes = '';
         $parsedString = '';
         $lowercaseString = ''; // helper variable for performance sake
         while ($this->pos <= $this->len) {
             $char = $this->sql[$this->pos] ?? '';
+            if ($isCommentLine === true && $char !== "\n") {
+                $this->pos++;
+
+                continue;
+            }
             // check flags for strings or escaper
             switch ($char) {
+                case '#':
+                    $isCommentLine = true;
+
+                    continue 2;
+                case "\n":
+                    if ($isCommentLine === true) {
+                        $isCommentLine = false;
+                    }
+
+                    break;
                 case '\\':
                     $isAfterBackslash = true;
 
@@ -295,8 +311,9 @@ class SqlParser
                 // check for end of statement
                 if ($char . $nextChars == $this->delimiter) {
                     $this->pos += $i; // increase position
+                    $parsedTrimmedString = trim($parsedString);
 
-                    return trim($parsedString);
+                    return $parsedTrimmedString ? $parsedTrimmedString : $parsedString; // empty line
                 }
                 // avoid using strtolower on the whole parsed string every time new character is added
                 // there is also no point in adding characters which are in the string
