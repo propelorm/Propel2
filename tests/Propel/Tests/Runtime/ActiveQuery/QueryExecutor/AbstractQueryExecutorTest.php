@@ -27,10 +27,26 @@ class AbstractQueryExecutorTest extends BookstoreTestBase
      */
     public function queryExceptionOutputFormatDataProvider()
     {
-        // [$useDebug, $sqlStatement, $internalErrorMessage, $expectedPublicMessage]
         return [
-            [false, '<SQL>', '<ERROR>', 'Unable to execute statement [<SQL>]'],
-            [true, '<SQL>', '<ERROR>', "Unable to execute statement [<SQL>]\nReason: [<ERROR>]"],
+            [
+                '$useDebug' => false,
+                '$sqlStatement' => '<SQL>',
+                '$params' => [
+                    ['column' => 'some_column', 'value' => 'text'],
+                ],
+                '$internalErrorMessage' => '<ERROR>',
+                '$expectedPublicMessage' => 'Unable to execute statement [<SQL>] with params [column=`some_column` value=`text`, ]. Reason: [<ERROR>]',
+            ],
+            [
+                '$useDebug' => true,
+                '$sqlStatement' => '<SQL>',
+                '$params' => [
+                    ['column' => 'some_column', 'value' => 'text'],
+                    ['column' => 'id', 'value' => 1],
+                ],
+                '$internalErrorMessage' => '<ERROR>',
+                '$expectedPublicMessage' => 'Unable to execute statement [<SQL>] with params [column=`some_column` value=`text`, column=`id` value=`1`, ]. Reason: [<ERROR>]',
+            ],
         ];
     }
 
@@ -39,26 +55,27 @@ class AbstractQueryExecutorTest extends BookstoreTestBase
      *
      * @param bool $useDebug
      * @param string $sqlStatement
+     * @param array $params
      * @param string $internalErrorMessage
      * @param string $expectedPublicMessage
      *
      * @return void
      */
-    public function testQueryExceptionOutputFormat($useDebug, $sqlStatement, $internalErrorMessage, $expectedPublicMessage)
+    public function testQueryExceptionOutputFormat($useDebug, $sqlStatement, $params, $internalErrorMessage, $expectedPublicMessage)
     {
         $query = BookQuery::create();
         $con = new ConnectionWrapper($this->con->getWrappedConnection());
         $con->useDebug($useDebug);
 
         $c = new class ($query, $con) extends AbstractQueryExecutor {
-            public function simulateException($msg, $sql, $con)
+            public function simulateException($msg, $sql, $params, $con)
             {
-                return $this->handleStatementException(new PropelException($msg), $sql);
+                return $this->handleStatementException(new PropelException($msg), $params, $sql);
             }
         };
 
         try {
-            $c->simulateException($internalErrorMessage, $sqlStatement, $con);
+            $c->simulateException($internalErrorMessage, $sqlStatement, $params, $con);
             $this->fail('Cannot test without exception');
         } catch (QueryExecutionException $e) {
             $this->assertEquals($expectedPublicMessage, $e->getMessage());
