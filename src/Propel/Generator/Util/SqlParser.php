@@ -239,9 +239,15 @@ class SqlParser
         $lowercaseString = ''; // helper variable for performance sake
         while ($this->pos <= $this->len) {
             $char = $this->sql[$this->pos] ?? '';
+
+            $newLine = !isset($this->sql[$this->pos - 1]) || $this->sql[$this->pos - 1] === PHP_EOL;
+
             // Skip comments
-            if ($isCommentLine === true && $char !== PHP_EOL) {
+            if ($isCommentLine === true) {
                 $this->pos++;
+                if ($char === PHP_EOL) {
+                    $isCommentLine = false; // end of comments line
+                }
 
                 continue;
             }
@@ -249,14 +255,11 @@ class SqlParser
             switch ($char) {
                 case '#':
                     // detect comment line
-                    if ($this->sql[$this->pos--] === PHP_EOL) {
+                    if ($newLine === true && $isCommentLine === false) {
+                        $this->pos++;
                         $isCommentLine = true;
 
                         continue 2;
-                    }
-                case "\n":
-                    if ($isCommentLine === true) {
-                        $isCommentLine = false;
                     }
 
                     break;
