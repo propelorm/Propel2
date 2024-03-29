@@ -239,7 +239,8 @@ class SqlParser
         $lowercaseString = ''; // helper variable for performance sake
         while ($this->pos <= $this->len) {
             $char = $this->sql[$this->pos] ?? '';
-            if ($isCommentLine === true && $char !== "\n") {
+            // Skip comments
+            if ($isCommentLine === true && $char !== PHP_EOL) {
                 $this->pos++;
 
                 continue;
@@ -247,9 +248,12 @@ class SqlParser
             // check flags for strings or escaper
             switch ($char) {
                 case '#':
-                    $isCommentLine = true;
+                    // detect comment line
+                    if ($this->sql[$this->pos--] === PHP_EOL) {
+                        $isCommentLine = true;
 
-                    continue 2;
+                        continue 2;
+                    }
                 case "\n":
                     if ($isCommentLine === true) {
                         $isCommentLine = false;
@@ -313,7 +317,7 @@ class SqlParser
                     $this->pos += $i; // increase position
                     $parsedTrimmedString = trim($parsedString);
 
-                    return $parsedTrimmedString ? $parsedTrimmedString : $parsedString; // empty line
+                    return $parsedTrimmedString ?: $parsedString; // to check empty line to avoid stop parsing
                 }
                 // avoid using strtolower on the whole parsed string every time new character is added
                 // there is also no point in adding characters which are in the string
