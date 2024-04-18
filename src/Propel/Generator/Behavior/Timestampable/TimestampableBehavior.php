@@ -106,7 +106,7 @@ class TimestampableBehavior extends Behavior
                 : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()';
 
             return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('update_column') . "({$valueSource});
 }";
         }
 
@@ -131,7 +131,7 @@ $highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();
                 : '$highPrecision';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('create_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('create_column') . "({$valueSource});
 }";
         }
 
@@ -141,7 +141,7 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
                 : '$highPrecision';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
-    \$this->" . $this->getColumnSetter('update_column') . "(${valueSource});
+    \$this->" . $this->getColumnSetter('update_column') . "({$valueSource});
 }";
         }
 

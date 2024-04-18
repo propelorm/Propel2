@@ -9,6 +9,7 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use PDO;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
@@ -80,5 +81,16 @@ EOT;
         $bookTable = $this->parsedDatabase->getTable('book');
         $this->assertEquals('Book Table', $bookTable->getDescription());
         $this->assertEquals('Book Title', $bookTable->getColumn('title')->getDescription());
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnUpdateIsImported(): void
+    {
+        $onUpdateTable = $this->parsedDatabase->getTable('bookstore_employee_account');
+        $updatedAtColumn = $onUpdateTable->getColumn('updated');
+        $this->assertEquals(ColumnDefaultValue::TYPE_EXPR, $updatedAtColumn->getDefaultValue()->getType());
+        $this->assertEquals('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP', $updatedAtColumn->getDefaultValue()->getValue());
     }
 }
