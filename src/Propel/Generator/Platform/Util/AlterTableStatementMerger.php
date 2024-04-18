@@ -9,6 +9,7 @@
 namespace Propel\Generator\Platform\Util;
 
 use Propel\Generator\Model\Table;
+use Propel\Generator\Util\SqlParser;
 
 /**
  * Merges several ALTER TABLE statements when creating migrations.
@@ -66,7 +67,10 @@ class AlterTableStatementMerger
      */
     public function mergeStatements(string $sql): string
     {
-        $statements = explode(';', $sql);
+        $sqlParser = new SqlParser();
+        $sqlParser->setSQL($sql);
+        $statements = $sqlParser->explodeIntoStatements();
+
         $blocks = [];
         $currentBlock = [];
 

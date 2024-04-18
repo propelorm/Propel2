@@ -687,33 +687,42 @@ abstract class AbstractOMBuilder extends DataModelBuilder
      */
     protected function getCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, bool $plural = true): string
     {
+        $baseName = $this->buildCombineCrossFKsPhpNameAffix($crossFKs, false);
+
+        $existingTable = $this->getDatabase()->getTableByPhpName($baseName);
+        $isNameCollision = $existingTable && $this->getTable()->isConnectedWithTable($existingTable);
+
+        return ($plural || $isNameCollision) ? $this->buildCombineCrossFKsPhpNameAffix($crossFKs, $plural, $isNameCollision) : $baseName;
+    }
+
+    /**
+     * @param \Propel\Generator\Model\CrossForeignKeys $crossFKs
+     * @param bool $plural
+     * @param bool $withPrefix
+     *
+     * @return string
+     */
+    protected function buildCombineCrossFKsPhpNameAffix(CrossForeignKeys $crossFKs, bool $plural = true, bool $withPrefix = false): string
+    {
         $names = [];
+        if ($withPrefix) {
+            $names[] = 'Cross';
+        }
+        $fks = $crossFKs->getCrossForeignKeys();
+        $lastCrossFk = array_pop($fks);
+        $unclassifiedPrimaryKeys = $crossFKs->getUnclassifiedPrimaryKeys();
+        $lastIsPlural = $plural && !$unclassifiedPrimaryKeys;
 
-        if ($plural) {
-            if ($crossFKs->getUnclassifiedPrimaryKeys()) {
-                //we have a non fk as pk as well, so we need to make pluralisation on our own and can't
-                //rely on getFKPhpNameAffix's pluralisation
-                foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                    $names[] = $this->getFKPhpNameAffix($fk, false);
-                }
-            } else {
-                //we have only fks, so give us names with plural and return those
-                $lastIdx = count($crossFKs->getCrossForeignKeys()) - 1;
-                foreach ($crossFKs->getCrossForeignKeys() as $idx => $fk) {
-                    $needPlural = $idx === $lastIdx; //only last fk should be plural
-                    $names[] = $this->getFKPhpNameAffix($fk, $needPlural);
-                }
+        foreach ($fks as $fk) {
+            $names[] = $this->getFKPhpNameAffix($fk, false);
+        }
+        $names[] = $this->getFKPhpNameAffix($lastCrossFk, $lastIsPlural);
 
-                return implode('', $names);
-            }
-        } else {
-            // no plural, so $plural=false
-            foreach ($crossFKs->getCrossForeignKeys() as $fk) {
-                $names[] = $this->getFKPhpNameAffix($fk, false);
-            }
+        if (!$unclassifiedPrimaryKeys) {
+            return implode('', $names);
         }
 
-        foreach ($crossFKs->getUnclassifiedPrimaryKeys() as $pk) {
+        foreach ($unclassifiedPrimaryKeys as $pk) {
             $names[] = $pk->getPhpName();
         }
 

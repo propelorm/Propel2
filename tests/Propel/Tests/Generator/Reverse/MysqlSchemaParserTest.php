@@ -9,9 +9,9 @@
 namespace Propel\Tests\Generator\Reverse;
 
 use PDO;
-use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\Table;
+use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Reverse\MysqlSchemaParser;
 use Propel\Tests\Bookstore\Map\BookTableMap;
 
@@ -113,7 +113,7 @@ EOT;
     }
 
     public function testInvalidTypeBehavior(){
-        $args = ['(nonsense)', null, 'leTable.leColumn'];
+        $args = ['(nonsense)', null, 'leTable.leColumn', ''];
         /** @var \Propel\Generator\Model\Domain */
         $domain = $this->callMethod($this->parser, 'extractTypeDomain', $args);
         $this->assertSame(Column::DEFAULT_TYPE, $domain->getType());
@@ -127,7 +127,7 @@ EOT;
             'Null' => 'NO',
             'Key' => null,
             'Default' => null,
-            'Extra' => null,
+            'Extra' => '',
         ];
         $table = new Table('le_table');
         $args = [$row, $table];
@@ -138,5 +138,16 @@ EOT;
         /** @var \Propel\Generator\Model\Column */
         $column = $this->callMethod($parser, 'getColumnFromRow', $args);
         $this->assertNotEmpty($column->getVendorInformation());
+    }
+
+    /**
+     * @return void
+     */
+    public function testOnUpdateIsImported(): void
+    {
+        $onUpdateTable = $this->parsedDatabase->getTable('bookstore_employee_account');
+        $updatedAtColumn = $onUpdateTable->getColumn('updated');
+        $this->assertEquals(ColumnDefaultValue::TYPE_EXPR, $updatedAtColumn->getDefaultValue()->getType());
+        $this->assertEquals('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP', $updatedAtColumn->getDefaultValue()->getValue());
     }
 }
