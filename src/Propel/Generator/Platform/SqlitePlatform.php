@@ -492,7 +492,7 @@ PRAGMA foreign_keys = ON;
         if (
             $col->getDefaultValue()
             && $col->getDefaultValue()->isExpression()
-            && $col->getDefaultValue()->getValue() === 'CURRENT_TIMESTAMP'
+            && in_array($col->getDefaultValue()->getValue(), ['CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'])
         ) {
             //sqlite use CURRENT_TIMESTAMP different than mysql/pgsql etc
             //we set it to the more common behavior

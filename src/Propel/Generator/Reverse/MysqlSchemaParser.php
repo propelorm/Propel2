@@ -233,7 +233,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $column = new Column($columnName);
         $column->setTable($table);
 
-        $domain = $this->extractTypeDomain($type, $default, $column->getFullyQualifiedName());
+        $domain = $this->extractTypeDomain($type, $default, $column->getFullyQualifiedName(), $extra);
         $column->setDomain($domain);
 
         $autoincrement = (strpos($extra, 'auto_increment') !== false);
@@ -253,10 +253,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * @param string $typeDeclaration MySQL type declaration string (like "VARCHAR(16) CHARACTER SET utf8mb4", "INT UNSIGNED", etc)
      * @param string|null $defaultValueLiteral Default value declaration
      * @param string $columnName Used when printing warninga
+     * @param string $extra Additional type specification (i.e. UNSIGNED)
      *
      * @return \Propel\Generator\Model\Domain
      */
-    protected function extractTypeDomain(string $typeDeclaration, ?string $defaultValueLiteral, string $columnName): Domain
+    protected function extractTypeDomain(string $typeDeclaration, ?string $defaultValueLiteral, string $columnName, string $extra): Domain
     {
         [$nativeType, $sqlType, $size, $scale] = $this->parseType($typeDeclaration);
 
@@ -281,7 +282,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $domain->replaceSize($size);
         $domain->replaceScale($scale);
 
-        $defaultValue = $this->extractDefaultValue($defaultValueLiteral, $propelType, $nativeType);
+        $defaultValue = $this->extractDefaultValue($defaultValueLiteral, $propelType, $nativeType, $extra);
         if ($defaultValue) {
             $domain->setDefaultValue($defaultValue);
         }
@@ -343,10 +344,11 @@ class MysqlSchemaParser extends AbstractSchemaParser
      * @param string|null $parsedValue Default value declaration
      * @param string $propelType Column type indicator from \Propel\Generator\Model\PropelTypes
      * @param string $nativeType MySQL type name
+     * @param string $extra Additional type specification (i.e. UNSIGNED)
      *
      * @return \Propel\Generator\Model\ColumnDefaultValue|null
      */
-    protected function extractDefaultValue(?string $parsedValue, string $propelType, string $nativeType): ?ColumnDefaultValue
+    protected function extractDefaultValue(?string $parsedValue, string $propelType, string $nativeType, string $extra): ?ColumnDefaultValue
     {
         // BLOBs can't have any default values in MySQL
         $isBlob = preg_match('~blob|text~', $nativeType);
@@ -367,6 +369,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
 
         if (in_array($default, ['CURRENT_TIMESTAMP', 'current_timestamp()'], true)) {
             $default = 'CURRENT_TIMESTAMP';
+            if (strpos(strtolower($extra), 'on update current_timestamp') !== false) {
+                $default = 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
+            }
             $type = ColumnDefaultValue::TYPE_EXPR;
         } else {
             $type = ColumnDefaultValue::TYPE_VALUE;
