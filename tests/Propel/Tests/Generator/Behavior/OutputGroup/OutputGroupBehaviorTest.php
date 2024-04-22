@@ -32,7 +32,7 @@ class OutputGroupBehaviorTest extends TestCase
     public static function buildLocalSchemaClasses(): void
     {
         $schema = <<<EOF
-<database schema="output_group_test" namespace="\Propel\Tests\Generator\Behavior\OutputGroup">
+<database namespace="\Propel\Tests\Generator\Behavior\OutputGroup">
 
     <behavior name="output_group"/>
 
@@ -44,43 +44,32 @@ class OutputGroupBehaviorTest extends TestCase
         <column name="photo" type="BLOB" lazyLoad="true"/>
     </table>
 
-    <table name="og_account" reloadOnInsert="true" reloadOnUpdate="true">
-        <column name="employee_id" type="INTEGER" primaryKey="true" outputGroup="public,short"/>
-        <column name="login" type="VARCHAR" size="32" outputGroup="public,short"/>
-        <column name="password" type="VARCHAR" size="100" default="'@''34&quot;"/>
-        <column name="enabled" type="BOOLEAN" default="true"/>
-        <column name="not_enabled" type="BOOLEAN" default="false"/>
-        <column name="created" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP" outputGroup="public"/>
-        <column name="updated" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
-        <column name="role_id" type="INTEGER" required="false" default="null" outputGroup="public"/>
-        <column name="authenticator" type="VARCHAR" size="32" defaultExpr="'Password'" outputGroup="public"/>
+    <table name="og_account" outputGroup="public">
+        <column name="employee_id" type="INTEGER" primaryKey="true" outputGroup="short"/>
+        <column name="login" type="VARCHAR" size="32" outputGroup="short"/>
+        <column name="password" type="VARCHAR" size="100" ignoreGroup="public"/>
+        <column name="enabled" type="BOOLEAN" ignoreGroup="public"/>
+        <column name="not_enabled" type="BOOLEAN" ignoreGroup="public"/>
+        <column name="created" type="TIMESTAMP"/>
+        <column name="role_id" type="INTEGER"/>
+        <column name="authenticator" type="VARCHAR" size="32"/>
 
-        <foreign-key foreignTable="og_employee" onDelete="cascade" outputGroup="public,short" refOutputGroup="short">
+        <foreign-key foreignTable="og_employee" onDelete="cascade" outputGroup="short">
             <reference local="employee_id" foreign="id"/>
         </foreign-key>
-        <foreign-key foreignTable="og_role" onDelete="setnull" outputGroup="public">
+        <foreign-key foreignTable="og_role" onDelete="setnull">
             <reference local="role_id" foreign="id"/>
         </foreign-key>
-        <unique>
-            <unique-column name="login"/>
-        </unique>
     </table>
 
-    <table name="og_log">
-        <column name="id" type="INTEGER" primaryKey="true" outputGroup="public"/>
-        <column name="uid" type="VARCHAR" size="32" required="true"/>
-        <column name="message" type="VARCHAR" size="255" outputGroup="public,short"/>
-        <foreign-key foreignTable="og_account" onDelete="cascade" refOutputGroup="public">
+    <table name="og_log" outputGroup="public,short">
+        <column name="id" type="INTEGER" primaryKey="true" ignoreGroup="short"/>
+        <column name="uid" type="VARCHAR" size="32" required="true" ignoreGroup="public,short"/>
+        <column name="message" type="VARCHAR" size="255"/>
+
+        <foreign-key foreignTable="og_account" refIgnoreGroup="short">
             <reference local="uid" foreign="login"/>
         </foreign-key>
-        <index>
-            <index-column name="id"/>
-            <index-column name="uid"/>
-        </index>
-        <unique>
-            <unique-column name="uid"/>
-            <unique-column name="message"/>
-        </unique>
     </table>
 
     <table name="og_role">

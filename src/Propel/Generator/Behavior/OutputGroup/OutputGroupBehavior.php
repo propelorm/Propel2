@@ -9,8 +9,6 @@
 namespace Propel\Generator\Behavior\OutputGroup;
 
 use Propel\Generator\Model\Behavior;
-use Propel\Generator\Model\Column;
-use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\MappingModel;
 use Propel\Generator\Model\Table;
 
@@ -29,6 +27,26 @@ class OutputGroupBehavior extends Behavior
     protected $parameters = [
         self::PARAMETER_OBJECT_COLLECTION_CLASS => null,
     ];
+
+    /**
+     * @var string
+     */
+    public const SCHEMA_ATTRIBUTE_OUTPUT_GROUP = 'outputGroup';
+
+    /**
+     * @var string
+     */
+    public const SCHEMA_ATTRIBUTE_IGNORE_GROUP = 'ignoreGroup';
+
+    /**
+     * @var string
+     */
+    public const SCHEMA_ATTRIBUTE_REF_OUTPUT_GROUP = 'refOutputGroup';
+
+    /**
+     * @var string
+     */
+    public const SCHEMA_ATTRIBUTE_REF_IGNORE_GROUP = 'refIgnoreGroup';
 
     /**
      * @var \Propel\Generator\Behavior\OutputGroup\OgObjectModifier|null
@@ -124,33 +142,24 @@ class OutputGroupBehavior extends Behavior
     }
 
     /**
-     * @param \Propel\Generator\Model\Column $column
+     * @param \Propel\Generator\Model\Table $table
+     * @param \Propel\Generator\Model\MappingModel $model
+     * @param string $groupAttributeName
+     * @param string $ignoreGroupAttributeName
      *
      * @return array<string>
      */
-    public function getColumnOutputGroupNames(Column $column): array
-    {
-        return $this->parseOutputGroupAttribute($column, 'outputGroup');
-    }
+    public function getGroupNames(
+        Table $table,
+        MappingModel $model,
+        string $groupAttributeName = self::SCHEMA_ATTRIBUTE_OUTPUT_GROUP,
+        string $ignoreGroupAttributeName = self::SCHEMA_ATTRIBUTE_IGNORE_GROUP
+    ): array {
+        $tableGroupNames = $this->parseListAttribute($table, self::SCHEMA_ATTRIBUTE_OUTPUT_GROUP);
+        $localGroupNames = $this->parseListAttribute($model, $groupAttributeName);
+        $ignoredGroupNames = $this->parseListAttribute($model, $ignoreGroupAttributeName);
 
-    /**
-     * @param \Propel\Generator\Model\ForeignKey $fk
-     *
-     * @return array<string>
-     */
-    public function getForeignKeyLocalOutputGroupNames(ForeignKey $fk): array
-    {
-        return $this->parseOutputGroupAttribute($fk, 'outputGroup');
-    }
-
-    /**
-     * @param \Propel\Generator\Model\ForeignKey $fk
-     *
-     * @return array<string>
-     */
-    public function getForeignKeyRefOutputGroupNames(ForeignKey $fk): array
-    {
-        return $this->parseOutputGroupAttribute($fk, 'refOutputGroup');
+        return array_merge($localGroupNames, array_filter($tableGroupNames, fn (string $name) => !in_array($name, $ignoredGroupNames)));
     }
 
     /**
@@ -159,7 +168,7 @@ class OutputGroupBehavior extends Behavior
      *
      * @return array<string>
      */
-    protected function parseOutputGroupAttribute(MappingModel $model, string $attributeName): array
+    protected function parseListAttribute(MappingModel $model, string $attributeName): array
     {
         return $this->getDefaultValueForSet($model->getAttribute($attributeName, '')) ?? [];
     }
