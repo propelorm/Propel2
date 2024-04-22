@@ -74,7 +74,7 @@ class OgTableMapModifier
     protected function collectColumnIndexesByOutputGroup(Table $table, array &$outputGroups)
     {
         foreach ($table->getColumns() as $columnIndex => $column) {
-            $groupNames = $this->behavior->getColumnOutputGroupNames($column);
+            $groupNames = $this->behavior->getGroupNames($table, $column);
             foreach ($groupNames as $groupName) {
                 $outputGroups[$groupName]['column_index'][] = $columnIndex;
             }
@@ -92,14 +92,19 @@ class OgTableMapModifier
         $table = $builder->getTable();
 
         foreach ($table->getForeignKeys() as $fk) {
-            $groupNames = $this->behavior->getForeignKeyLocalOutputGroupNames($fk);
+            $groupNames = $this->behavior->getGroupNames($table, $fk);
             $fkName = $builder->getFKPhpNameAffix($fk);
             foreach ($groupNames as $groupName) {
                 $outputGroups[$groupName]['relation'][] = $fkName;
             }
         }
         foreach ($table->getReferrers() as $ref) {
-            $groupNames = $this->behavior->getForeignKeyRefOutputGroupNames($ref);
+            $groupNames = $this->behavior->getGroupNames(
+                $ref->getForeignTable(),
+                $ref,
+                OutputGroupBehavior::SCHEMA_ATTRIBUTE_REF_OUTPUT_GROUP,
+                OutputGroupBehavior::SCHEMA_ATTRIBUTE_REF_IGNORE_GROUP,
+            );
             $refName = $builder->getRefFKPhpNameAffix($ref);
             foreach ($groupNames as $groupName) {
                 $outputGroups[$groupName]['relation'][] = $refName;
