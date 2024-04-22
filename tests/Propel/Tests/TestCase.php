@@ -10,6 +10,8 @@ namespace Propel\Tests;
 
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Propel\Generator\Platform\PlatformInterface;
+use ReflectionClass;
+use ReflectionProperty;
 
 class TestCase extends PHPUnitTestCase
 {
@@ -37,13 +39,13 @@ class TestCase extends PHPUnitTestCase
             $target = $this->getDriver();
         }
 
-        if ('sqlite' === $target && 'mysql' === $source) {
+        if ($target === 'sqlite' && $source === 'mysql') {
             return preg_replace('/`([^`]*)`/', '[$1]', $sql);
         }
-        if ('pgsql' === $target && 'mysql' === $source) {
+        if ($target === 'pgsql' && $source === 'mysql') {
             return preg_replace('/`([^`]*)`/', '"$1"', $sql);
         }
-        if ('mysql' !== $target && 'mysql' === $source) {
+        if ($target !== 'mysql' && $source === 'mysql') {
             return str_replace('`', '', $sql);
         }
 
@@ -127,41 +129,70 @@ class TestCase extends PHPUnitTestCase
     }
 
     /**
-     * Run private or preotected method.
+     * Call private or protected method.
      *
      * @see https://stackoverflow.com/questions/249664/best-practices-to-test-protected-methods-with-phpunit
-     * 
+     *
      * @param object $obj Instance with protected or private methods
      * @param string $name Name of the protected or private method
      * @param array $args Argumens for method
+     *
      * @return mixed Result of method call
      */
     public function callMethod(object $obj, string $name, array $args = [])
     {
-        $class = new \ReflectionClass($obj);
+        $class = new ReflectionClass($obj);
         $method = $class->getMethod($name);
         if (version_compare(PHP_VERSION, '8.1.0', '<')) {
             $method->setAccessible(true); // Use this if you are running PHP older than 8.1.0
         }
+
         return $method->invokeArgs($obj, $args);
     }
 
-
     /**
-     * Set private or preotected property
-     * 
-     * @param object $obj Instance with protected or private property
+     * Get private or protected property.
+     *
+     * @param object|class-string $obj Instance with protected or private property
      * @param string $name Name of the protected or private property
-     * @param mixed $value New value for property
+     *
      * @return void
      */
-    public function setProperty(object $obj, string $name, $value): void
+    public function getProperty($obj, string $name): ReflectionProperty
     {
-        $reflection = new \ReflectionClass($obj);
+        $reflection = new ReflectionClass($obj);
         $property = $reflection->getProperty($name);
         if (version_compare(PHP_VERSION, '8.1.0', '<')) {
             $property->setAccessible(true);
         }
-        $property->setValue($obj, $value);
+
+        return $property;
+    }
+
+    /**
+     * Get private or protected property value.
+     *
+     * @param object|class-string $obj Instance with protected or private property
+     * @param string $name Name of the protected or private property
+     *
+     * @return mixed
+     */
+    public function getValue($obj, string $name)
+    {
+        return $this->getProperty($obj, $name)->getValue();
+    }
+
+    /**
+     * Set private or protected property
+     *
+     * @param object|class-string $obj Instance with protected or private property
+     * @param string $name Name of the protected or private property
+     * @param mixed $value New value for property
+     *
+     * @return void
+     */
+    public function setProperty($obj, string $name, $value): void
+    {
+        $this->getProperty($obj, $name)->setValue($obj, $value);
     }
 }

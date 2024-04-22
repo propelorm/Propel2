@@ -41,6 +41,18 @@ class TableMapBuilderTest extends BookstoreTestBase
         $this->databaseMap = Propel::getServiceContainer()->getDatabaseMap('bookstore');
     }
 
+    public function buildTableMapBuilderForSchema(string $databaseXml, string $tableName): TableMapBuilder
+    {
+        $reader = new SchemaReader();
+        $schema = $reader->parseString($databaseXml);
+        $table = $schema->getDatabase()->getTable($tableName);
+
+        $tableMapBuilder = new TableMapBuilder($table);
+        $tableMapBuilder->setGeneratorConfig(new QuickGeneratorConfig());
+
+        return $tableMapBuilder;
+    }
+
     /**
      * @return void
      */
@@ -379,21 +391,9 @@ class TableMapBuilderTest extends BookstoreTestBase
     </table>
 </database>
 ';
-        $reader = new SchemaReader();
-        $schema = $reader->parseString($databaseXml);
-        $table = $schema->getDatabase()->getTable('email');
-
-        $tableMapBuilder = new class ($table) extends TableMapBuilder {
-            public function getNormalizedColumnNameMapDefinition(): string
-            {
-                $script = '';
-                $this->addNormalizedColumnNameMap($script);
-
-                return $script;
-            }
-        };
-        $tableMapBuilder->setGeneratorConfig(new QuickGeneratorConfig());
-        $normalizedColumnMapDefinition = $tableMapBuilder->getNormalizedColumnNameMapDefinition();
+        $tableMapBuilder = $this->buildTableMapBuilderForSchema($databaseXml, 'email');
+        $normalizedColumnMapDefinition = '';
+        $this->callMethod($tableMapBuilder, 'addNormalizedColumnNameMap', [&$normalizedColumnMapDefinition]);
 
         // extract inner part of the array
         $this->assertEquals(1, preg_match('/= \[\n(.*)\n\s*\]/ms', $normalizedColumnMapDefinition, $matches));

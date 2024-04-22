@@ -142,7 +142,7 @@ class ObjectBuilder extends AbstractObjectBuilder
      *
      * @return string|null
      */
-    protected function getTemporalFormatter(Column $column): ?string
+    public function getTemporalFormatter(Column $column): ?string
     {
         switch ($column->getType()) {
             case PropelTypes::DATE:
@@ -3110,6 +3110,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
  // addToArray()
 
+
     /**
      * Adds the switch-statement for looking up the array-key name for toArray
      *
@@ -3121,7 +3122,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return string
      */
-    protected function addToArrayKeyLookUp(?string $phpName, Table $table, bool $plural): string
+    public function addToArrayKeyLookUp(?string $phpName, Table $table, bool $plural): string
     {
         if (!$phpName) {
             $phpName = $table->getPhpName();
