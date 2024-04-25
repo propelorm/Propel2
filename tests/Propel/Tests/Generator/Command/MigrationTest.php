@@ -26,6 +26,23 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class MigrationTest extends TestCaseFixturesDatabase
 {
+
+    /**
+     * Directory with default connection (can be any, schema.xml files use a
+     * schema prefix for tables, so initial connection does not matter)
+     *
+     * @var string
+     */
+    private const CONNECTION_CONFIG_DIR = __DIR__ . '/../../../../Fixtures/migration';
+
+    /**
+     * Used when retrieving connection by name
+     * (can be any, same as CONNECTION_CONFIG_DIR)
+     *
+     * @var string
+     */
+    private const DATABASE_NAME = 'migration';
+
     /**
      * @var bool
      */
@@ -34,7 +51,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @var string
      */
-    private const SCHEMA_DIR = __DIR__ . '/../../../../Fixtures/migration-command';
+    private const BASE_SCHEMA_DIR = __DIR__ . '/util/migrate-to-version/base';
 
     /**
      * @var string
@@ -44,7 +61,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     /**
      * @var string
      */
-    private const SCHEMA_DIR_MIGRATE_TO_VERSION = __DIR__ . '/../../../../Fixtures/migrate-to-version';
+    private const SCHEMA_DIR_MIGRATE_TO_VERSION_PATTERN = __DIR__ . '/util/migrate-to-version/version-*';
 
     /**
      * @see \Propel\Generator\Command\MigrationMigrateCommand::COMMAND_OPTION_MIGRATE_TO_VERSION
@@ -78,7 +95,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     public function testDiffCommandCreatesFiles(): void
     {
         $this->deleteMigrationFiles();
-        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::BASE_SCHEMA_DIR]);
         $this->assertGeneratedFileContainsCreateTableStatement(true, 'PropelMigration_*.php');
     }
 
@@ -89,7 +106,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     {
         $this->deleteMigrationFiles();
         $suffix = 'an_explanatory_filename_suffix';
-        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->runCommandAndAssertSuccess('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => self::BASE_SCHEMA_DIR, '--suffix' => $suffix]);
         $this->assertGeneratedFileContainsCreateTableStatement(true, "PropelMigration_*_$suffix.php");
     }
 
@@ -99,7 +116,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     public function testCreateCommandCreatesFiles(): void
     {
         $this->deleteMigrationFiles();
-        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR]);
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::BASE_SCHEMA_DIR]);
         $this->assertGeneratedFileContainsCreateTableStatement(false, 'PropelMigration_*.php');
     }
 
@@ -110,7 +127,7 @@ class MigrationTest extends TestCaseFixturesDatabase
     {
         $this->deleteMigrationFiles();
         $suffix = 'an_explanatory_filename_suffix';
-        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::SCHEMA_DIR, '--suffix' => $suffix]);
+        $this->runCommandAndAssertSuccess('migration:create', new MigrationCreateCommand(), ['--schema-dir' => self::BASE_SCHEMA_DIR, '--suffix' => $suffix]);
         $this->assertGeneratedFileContainsCreateTableStatement(false, "PropelMigration_*_$suffix.php");
     }
 
@@ -379,11 +396,11 @@ class MigrationTest extends TestCaseFixturesDatabase
     {
         $additionalArguments['command'] = $commandName;
 
-        $dsn = $this->getConnectionDsn('bookstore', true);
+        $dsn = $this->getConnectionDsn(static::DATABASE_NAME, true);
         $connectionOption = ['migration_command=' . $dsn];
 
         $defaultAppArguments = [
-            '--config-dir' => self::SCHEMA_DIR,
+            '--config-dir' => self::CONNECTION_CONFIG_DIR,
             '--output-dir' => self::OUTPUT_DIR,
             '--platform' => ucfirst($this->getDriver()) . 'Platform',
             '--connection' => $connectionOption,
@@ -434,6 +451,9 @@ class MigrationTest extends TestCaseFixturesDatabase
     }
 
     /**
+     * Creates migratoins according to the schemas in the folders
+     * ./util/migrate-to-version/version-* and applies them.
+     * 
      * @return void
      */
     private function setUpMigrateToVersion(): void
@@ -441,19 +461,12 @@ class MigrationTest extends TestCaseFixturesDatabase
         $this->deleteMigrationFiles();
 
         /** @var array<string> $versionDirectories */
-        $versionDirectories = glob(
-            sprintf(
-                '%s%s*',
-                self::SCHEMA_DIR_MIGRATE_TO_VERSION,
-                DIRECTORY_SEPARATOR,
-            ),
-            GLOB_ONLYDIR,
-        );
+        $versionDirectories = glob(self::SCHEMA_DIR_MIGRATE_TO_VERSION_PATTERN, GLOB_ONLYDIR);
 
         foreach ($versionDirectories as $versionDirectory) {
             $this->runCommand('migration:diff', new MigrationDiffCommand(), ['--schema-dir' => $versionDirectory]);
             $this->migrateUp();
-            sleep(1);
+            time_nanosleep(1, 0); // sleep one second to ensure distinct timestamps on migration files
         }
     }
 

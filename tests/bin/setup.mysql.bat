@@ -37,6 +37,7 @@ DROP SCHEMA IF EXISTS second_hand_books;^
 DROP SCHEMA IF EXISTS contest;^
 DROP SCHEMA IF EXISTS bookstore_schemas;^
 DROP SCHEMA IF EXISTS migration;^
+DROP SCHEMA IF EXISTS migration_command_db;^
 SET FOREIGN_KEY_CHECKS = 1;^
 "
 call %DIR%\base.bat :check
@@ -49,6 +50,7 @@ CREATE SCHEMA bookstore_schemas;^
 CREATE SCHEMA contest;^
 CREATE SCHEMA second_hand_books;^
 CREATE SCHEMA migration;^
+CREATE SCHEMA migration_command_db;^
 "
 call %DIR%\base.bat :check
 if "%errorlevel%" == "1" exit /B 1

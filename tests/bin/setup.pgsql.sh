@@ -16,7 +16,7 @@ if [ "$DB_NAME" = "" ]; then
 fi
 
 DB_HOSTNAME=${DB_HOSTNAME-127.0.0.1};
-DB_PW=${DB_PW-$PGPASSWORD};.0.1};
+DB_PW=${DB_PW-$PGPASSWORD};
 DB_PORT=${DB_PORT-5432};
 
 if [ -z "$DB_PW" ]; then
@@ -40,6 +40,7 @@ fi
     CREATE SCHEMA contest;
     CREATE SCHEMA second_hand_books;
     CREATE SCHEMA migration;
+    CREATE SCHEMA migration_command_db;
     ' "$DB_NAME" >/dev/null;
 ) || exit 1;
 
