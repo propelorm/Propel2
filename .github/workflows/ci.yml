@@ -16,13 +16,15 @@ jobs:
             matrix:
                 php-version: [ '7.4', '8.2' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
-                symfony-version: [ '4-min', '4-max', '5-min', '5-max', '6-min', '6-max' ]
+                symfony-version: [ '5-min', '5-max', '6-min', '6-max', '7-min', '7-max']
                 exclude:
-                  - symfony-version: '4-min'
-                    php-version: '8.2'
                   - symfony-version: '6-min'
                     php-version: '7.4'
                   - symfony-version: '6-max'
+                    php-version: '7.4'
+                  - symfony-version: '7-min'
+                    php-version: '7.4'
+                  - symfony-version: '7-max'
                     php-version: '7.4'
         env:
             DB_NAME: 'propel_tests'
@@ -125,6 +127,8 @@ jobs:
                   else
                     vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
                   fi
+              env:
+                SYMFONY_VERSION: ${{ matrix.symfony-version }}
 
             - name: Code Coverage Report
               if: success() && matrix.php-version == '7.4' && matrix.symfony-version == '5-max'
@@ -166,6 +170,8 @@ jobs:
               run: composer install --prefer-dist --no-interaction
 
             - name: PHPStan
+              env:
+                PHPSTAN: 1
               run: composer stan
 
             - name: Psalm
