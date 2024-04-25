@@ -122,24 +122,24 @@ EOF;
             'EmployeeId' => 1,
             'Login' => 'le login',
         ];
-        $accountPublic = [
-            ...$accountShort,
+        $accountPublic = array_merge(
+            $accountShort, [
             'Created' => '2024-04-18 11:52:13.533707',
             'RoleId' => 5,
             'Authenticator' => 'Password',
-        ];
+        ]);
 
         $employeeShort = [
             'Id' => 1,
             'Name' => 'le name',
         ];
 
-        $employeePublic = [
-            ...$employeeShort,
+        $employeePublic = array_merge(
+            $employeeShort, [
             'JobTitle' => 'Manger',
             'SupervisorId' => null,
             'Photo' => null,
-        ];
+        ]);
 
         $role = [
             'Id' => 5,
@@ -158,19 +158,19 @@ EOF;
         return [
             [
                 'public',
-                [
-                    ...$accountPublic,
+                array_merge(
+                    $accountPublic, [
                     'OgEmployee' => $employeePublic,
                     'OgRole' => $role,
                     'OgLogs' => $logsPublic,
-                ],
+                ]),
             ],
             [
                 'short',
-                [
-                    ...$accountShort,
+                array_merge(
+                    $accountShort, [
                     'OgEmployee' => $employeeShort,
-                ],
+                ]),
             ],
             [
                 [
@@ -178,12 +178,12 @@ EOF;
                     OgEmployee::class => 'public',
                     'default' => 'short',
                 ],
-                [
-                    ...$accountPublic,
+                array_merge(
+                    $accountPublic, [
                     'OgEmployee' => $employeePublic,
                     'OgRole' => $role,
                     'OgLogs' => $logsShort,
-                ],
+                ]),
             ],
         ];
     }
