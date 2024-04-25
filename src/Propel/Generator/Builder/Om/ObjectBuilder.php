@@ -1213,10 +1213,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (null === \$this->$cloUnserialized) {
+        if (\$this->$cloUnserialized === null) {
             \$this->$cloUnserialized = [];
         }
-        if (!\$this->$cloUnserialized && null !== \$this->$clo) {
+        if (!\$this->$cloUnserialized && \$this->$clo !== null) {
             \$$cloUnserialized = substr(\$this->$clo, 2, -2);
             \$this->$cloUnserialized = '' !== \$$cloUnserialized ? explode(' | ', \$$cloUnserialized) : array();
         }
@@ -1365,7 +1365,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-        if (null === \$this->$clo) {
+        if (\$this->$clo === null) {
             return null;
         }
         \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
@@ -1439,10 +1439,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         );
 
         $script .= "
-        if (null === \$this->$cloConverted) {
+        if (\$this->$cloConverted === null) {
             \$this->$cloConverted = [];
         }
-        if (!\$this->$cloConverted && null !== \$this->$clo) {
+        if (!\$this->$cloConverted && \$this->$clo !== null) {
             \$valueSet = " . $this->getTableMapClassName() . '::getValueSet(' . $this->getColumnConstant($column) . ");
             try {
                 \$this->$cloConverted = SetColumnConverter::convertIntToArray(\$this->$clo, \$valueSet);
@@ -1667,15 +1667,17 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $platform = $this->getPlatform();
         $clo = $column->getLowercasedName();
+        $columnConstant = $this->getColumnConstant($column);
+        $queryClassName = $this->getQueryClassName();
 
         // pdo_sqlsrv driver requires the use of PDOStatement::bindColumn() or a hex string will be returned
         if ($column->getType() === PropelTypes::BLOB && $platform instanceof SqlsrvPlatform) {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(" . $this->getColumnConstant($column) . ");
+        \$c->addSelectColumn($columnConstant);
         try {
             \$row = [0 => null];
-            \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$dataFetcher = {$queryClassName}::create(null, \$c)->fetch(\$con);
             if (\$dataFetcher instanceof PDODataFetcher) {
                 \$dataFetcher->bindColumn(1, \$row[0], PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
             }
@@ -1684,9 +1686,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         } else {
             $script .= "
         \$c = \$this->buildPkeyCriteria();
-        \$c->addSelectColumn(" . $this->getColumnConstant($column) . ");
+        \$c->addSelectColumn($columnConstant);
         try {
-            \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$dataFetcher = {$queryClassName}::create(null, \$c)->fetch(\$con);
             \$row = \$dataFetcher->fetch();
             \$dataFetcher->close();";
         }
@@ -2110,7 +2112,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $this->addMutatorOpen($script, $col);
 
         $script .= "
-        if (null === \$this->$clo || stream_get_contents(\$this->$clo) !== serialize(\$v)) {
+        if (\$this->$clo === null || stream_get_contents(\$this->$clo) !== serialize(\$v)) {
             \$this->$cloUnserialized = \$v;
             \$this->$clo = fopen('php://memory', 'r+');
             fwrite(\$this->$clo, serialize(\$v));
@@ -2703,7 +2705,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$clo = stream_get_contents(\$col);";
                 } elseif ($col->isLobType() && !$platform->hasStreamBlobImpl()) {
                     $script .= "
-            if (null !== \$col) {
+            if (\$col !== null) {
                 \$this->$clo = fopen('php://memory', 'r+');
                 fwrite(\$this->$clo, \$col);
                 rewind(\$this->$clo);
@@ -2730,7 +2732,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }";
                     }
                     $script .= "
-            \$this->$clo = (null !== \$col) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
+            \$this->$clo = (\$col !== null) ? PropelDateTime::newInstance(\$col, null, '$dateTimeClass') : null;";
                 } elseif ($col->isUuidBinaryType()) {
                     $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
                     $script .= "
@@ -2740,7 +2742,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$clo = UuidConverter::binToUuid(\$col, $uuidSwapFlag);";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
-            \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
+            \$this->$clo = (\$col !== null) ? (" . $col->getPhpType() . ') $col : null;';
                 } elseif ($col->getType() === PropelTypes::OBJECT) {
                     $script .= "
             \$this->$clo = \$col;";
@@ -2756,7 +2758,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->$cloConverted = null;";
                 } elseif ($col->isPhpObjectType()) {
                     $script .= "
-            \$this->$clo = (null !== \$col) ? new " . $col->getPhpType() . '($col) : null;';
+            \$this->$clo = (\$col !== null) ? new " . $col->getPhpType() . '($col) : null;';
                 } else {
                     $script .= "
             \$this->$clo = \$col;";
@@ -3029,14 +3031,14 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *                    TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                    Defaults to TableMap::$defaultKeyType.
      * @param bool \$includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-     * @param array \$alreadyDumpedObjects List of objects to skip to avoid recursion";
+     * @param array<string, array<string>> \$alreadyDumpedObjects List of objects to skip to avoid recursion";
         if ($hasFks) {
             $script .= "
      * @param bool \$includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.";
         }
         $script .= "
      *
-     * @return array An associative array containing the field names (as keys) and field values
+     * @return array<mixed> An associative array containing the field names (as keys) and field values
      */
     public function toArray(string \$keyType = TableMap::$defaultKeyType, bool \$includeLazyLoadColumns = true, array \$alreadyDumpedObjects = []" . ($hasFks ? ', bool $includeForeignObjects = false' : '') . "): array
     {
@@ -3047,12 +3049,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         \$keys = " . $this->getTableMapClassName() . "::getFieldNames(\$keyType);
         \$result = [";
         foreach ($this->getTable()->getColumns() as $num => $col) {
+            $columnName = $col->getPhpName();
             if ($col->isLazyLoad()) {
                 $script .= "
-            \$keys[$num] => (\$includeLazyLoadColumns) ? \$this->get" . $col->getPhpName() . '() : null,';
+            \$keys[$num] => (\$includeLazyLoadColumns) ? \$this->get{$columnName}() : null,";
             } else {
                 $script .= "
-            \$keys[$num] => \$this->get" . $col->getPhpName() . '(),';
+            \$keys[$num] => \$this->get{$columnName}(),";
             }
         }
         $script .= "
@@ -3078,7 +3081,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if (\$includeForeignObjects) {";
             foreach ($fks as $fk) {
                 $script .= "
-            if (null !== \$this->" . $this->getFKVarName($fk) . ") {
+            if (\$this->" . $this->getFKVarName($fk) . " !== null) {
                 {$this->addToArrayKeyLookUp($fk->getPhpName(), $fk->getForeignTable(), false)}
                 \$result[\$key] = \$this->" . $this->getFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns,  \$alreadyDumpedObjects, true);
             }";
@@ -3086,13 +3089,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             foreach ($referrers as $fk) {
                 if ($fk->isLocalPrimaryKey()) {
                     $script .= "
-            if (null !== \$this->" . $this->getPKRefFKVarName($fk) . ") {
+            if (\$this->" . $this->getPKRefFKVarName($fk) . " !== null) {
                 {$this->addToArrayKeyLookUp($fk->getRefPhpName(), $fk->getTable(), false)}
                 \$result[\$key] = \$this->" . $this->getPKRefFKVarName($fk) . "->toArray(\$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects, true);
             }";
                 } else {
                     $script .= "
-            if (null !== \$this->" . $this->getRefFKCollVarName($fk) . ") {
+            if (\$this->" . $this->getRefFKCollVarName($fk) . " !== null) {
                 {$this->addToArrayKeyLookUp($fk->getRefPhpName(), $fk->getTable(), true)}
                 \$result[\$key] = \$this->" . $this->getRefFKCollVarName($fk) . "->toArray(null, false, \$keyType, \$includeLazyLoadColumns, \$alreadyDumpedObjects);
             }";
@@ -3108,7 +3111,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 ";
     }
 
- // addToArray()
+    // addToArray()
 
 
     /**
@@ -3132,21 +3135,22 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $fieldName = $table->getName();
 
         if ($plural) {
-            $phpName = $this->getPluralizer()->getPluralForm($phpName);
-            $camelCaseName = $this->getPluralizer()->getPluralForm($camelCaseName);
-            $fieldName = $this->getPluralizer()->getPluralForm($fieldName);
+            $pluralizer = $this->getPluralizer();
+            $phpName = $pluralizer->getPluralForm($phpName);
+            $camelCaseName = $pluralizer->getPluralForm($camelCaseName);
+            $fieldName = $pluralizer->getPluralForm($fieldName);
         }
 
         return "
                 switch (\$keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        \$key = '" . $camelCaseName . "';
+                        \$key = '{$camelCaseName}';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        \$key = '" . $fieldName . "';
+                        \$key = '{$fieldName}';
                         break;
                     default:
-                        \$key = '" . $phpName . "';
+                        \$key = '{$phpName}';
                 }
         ";
     }
@@ -3160,24 +3164,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addGetByName(string &$script): void
     {
-        $this->addGetByNameComment($script);
-        $this->addGetByNameOpen($script);
-        $this->addGetByNameBody($script);
-        $this->addGetByNameClose($script);
-    }
-
-    /**
-     * Adds the comment for the getByName method
-     *
-     * @see addGetByName
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByNameComment(string &$script): void
-    {
         $defaultKeyType = $this->getDefaultKeyType();
+        $tableMapClassName = $this->getTableMapClassName();
         $script .= "
     /**
      * Retrieves a field from the object by name passed in as a string.
@@ -3188,56 +3176,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *                     TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                     Defaults to TableMap::$defaultKeyType.
      * @return mixed Value of field.
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the getByName method
-     *
-     * @see addGetByName
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
      */
-    protected function addGetByNameOpen(string &$script): void
-    {
-        $defaultKeyType = $this->getDefaultKeyType();
-        $script .= "
     public function getByName(string \$name, string \$type = TableMap::$defaultKeyType)
-    {";
-    }
-
-    /**
-     * Adds the function body for the getByName method
-     *
-     * @see addGetByName
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByNameBody(string &$script): void
     {
-        $script .= "
-        \$pos = " . $this->getTableMapClassName() . "::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
-        \$field = \$this->getByPosition(\$pos);";
-    }
+        /** @var int **/
+        \$pos = {$tableMapClassName}::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
-    /**
-     * Adds the function close for the getByName method
-     *
-     * @see addGetByName
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByNameClose(string &$script): void
-    {
-        $script .= "
-
-        return \$field;
+        return \$this->getByPosition(\$pos);
     }
 ";
     }
@@ -3251,23 +3196,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addGetByPosition(string &$script): void
     {
-        $this->addGetByPositionComment($script);
-        $this->addGetByPositionOpen($script);
-        $this->addGetByPositionBody($script);
-        $this->addGetByPositionClose($script);
-    }
-
-    /**
-     * Adds comment for the getByPosition method
-     *
-     * @see addGetByPosition
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByPositionComment(string &$script): void
-    {
+        $table = $this->getTable();
+        $columnNames = array_values(array_map(fn ($col) => $col->getPhpName(), $table->getColumns()));
         $script .= "
     /**
      * Retrieves a field from the object by Position as specified in the xml schema.
@@ -3275,66 +3205,20 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @param int \$pos Position in XML schema
      * @return mixed Value of field at \$pos
-     */";
-    }
-
-    /**
-     * Adds the function declaration for the getByPosition method
-     *
-     * @see addGetByPosition
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
      */
-    protected function addGetByPositionOpen(string &$script): void
-    {
-        $script .= "
     public function getByPosition(int \$pos)
-    {";
-    }
-
-    /**
-     * Adds the function body for the getByPosition method
-     *
-     * @see addGetByPosition
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByPositionBody(string &$script): void
     {
-        $table = $this->getTable();
-        $script .= "
         switch (\$pos) {";
-        $i = 0;
-        foreach ($table->getColumns() as $col) {
-            $cfc = $col->getPhpName();
+        foreach ($columnNames as $i => $columnName) {
             $script .= "
             case $i:
-                return \$this->get$cfc();
-                ";
-            $i++;
-        } /* foreach */
+                return \$this->get$columnName();
+";
+        }
         $script .= "
             default:
                 return null;
-        } // switch()";
-    }
-
-    /**
-     * Adds the function close for the getByPosition method
-     *
-     * @see addGetByPosition
-     *
-     * @param string $script The script will be modified in this method.
-     *
-     * @return void
-     */
-    protected function addGetByPositionClose(string &$script): void
-    {
-        $script .= "
+        }
     }
 ";
     }
@@ -3347,6 +3231,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addSetByName(string &$script): void
     {
         $defaultKeyType = $this->getDefaultKeyType();
+        $tableMapClassName = $this->getTableMapClassName();
         $script .= "
     /**
      * Sets a field from the object by name passed in as a string.
@@ -3361,7 +3246,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function setByName(string \$name, \$value, string \$type = TableMap::$defaultKeyType)
     {
-        \$pos = " . $this->getTableMapClassName() . "::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
+        /** @var int */
+        \$pos = {$tableMapClassName}::translateFieldName(\$name, \$type, TableMap::TYPE_NUM);
 
         \$this->setByPosition(\$pos, \$value);
 
@@ -3460,7 +3346,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      * The default key type is the column's TableMap::$defaultKeyType.
      *
-     * @param array \$arr An array to populate the object from.
+     * @param array<mixed> \$arr An array to populate the object from.
      * @param string \$keyType The type of keys the array uses.
      * @return \$this
      */
@@ -3656,6 +3542,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addReload(string &$script): void
     {
         $table = $this->getTable();
+        $tableMapClass = $this->getTableMapClass();
+        $queryClassName = $this->getQueryClassName();
         $script .= "
     /**
      * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
@@ -3678,13 +3566,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         if (\$con === null) {
-            \$con = Propel::getServiceContainer()->getReadConnection(" . $this->getTableMapClass() . "::DATABASE_NAME);
+            \$con = Propel::getServiceContainer()->getReadConnection({$tableMapClass}::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        \$dataFetcher = " . $this->getQueryClassName() . "::create(null, \$this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+        \$dataFetcher = {$queryClassName}::create(null, \$this->buildPkeyCriteria())->fetch(\$con);
         \$row = \$dataFetcher->fetch();
         \$dataFetcher->close();
         if (!\$row) {
@@ -3695,14 +3583,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         // support for lazy load columns
         foreach ($table->getColumns() as $col) {
-            if ($col->isLazyLoad()) {
-                $clo = $col->getLowercasedName();
-                $script .= "
-        // Reset the $clo lazy-load column
-        \$this->" . $clo . " = null;
-        \$this->" . $clo . "_isLoaded = false;
-";
+            if (!$col->isLazyLoad()) {
+                continue;
             }
+            $clo = $col->getLowercasedName();
+            $script .= "
+        // Reset the $clo lazy-load column
+        \$this->{$clo} = null;
+        \$this->{$clo}_isLoaded = false;
+";
         }
 
         $script .= "
@@ -3738,8 +3627,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 ";
     }
 
- // addReload()
-
     /**
      * Adds the methods related to refreshing, saving and deleting the object.
      *
@@ -3772,57 +3659,56 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @return int|string Hashcode
      */
     public function hashCode()
-    {
-        \$validPk = ";
-
-        $pkCheck = [];
-        foreach ($this->getTable()->getPrimaryKey() as $pk) {
-            $pkCheck[] = 'null !== $this->get' . $pk->getPhpName() . '()';
+    {";
+        // use PK if available
+        if ($this->getTable()->hasPrimaryKey()) {
+            $primaryKeys = $this->getTable()->getPrimaryKey();
+            $checks = array_map(fn ($pk) => "\$this->get{$pk->getPhpName()}() !== null", $primaryKeys);
+            $offset = '                     ';
+            $checkExpression = implode(" &&\n$offset", $checks);
+            $script .= "
+        \$pkIsValid = $checkExpression;
+        
+        if (\$pkIsValid) {
+            return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
+        }
+";
         }
 
-        $script .= $pkCheck ? implode(" &&\n            ", $pkCheck) : 'false';
-
-        $script .= ";\n";
-
-        /** @var array<\Propel\Generator\Model\ForeignKey> $primaryKeyFKs */
-        $primaryKeyFKs = [];
+        // use foreign object hashes if available
+        $primaryKeyFKNames = [];
         $foreignKeyPKCount = 0;
         foreach ($this->getTable()->getForeignKeys() as $foreignKey) {
             $foreignKeyPKCount += count($foreignKey->getLocalPrimaryKeys());
             if ($foreignKey->getLocalPrimaryKeys()) {
-                $primaryKeyFKs[] = $foreignKey;
+                $primaryKeyFKNames[] = 'a' . $this->getFKPhpNameAffix($foreignKey);
             }
         }
-
-        $script .= "
-        \$validPrimaryKeyFKs = " . var_export($foreignKeyPKCount, true) . ";
+        if ($foreignKeyPKCount > 0) {
+            $fkNamesString = "['" . implode("', '", $primaryKeyFKNames) . "']";
+            $script .= "
+        \$fkFieldNames = $fkNamesString;
+        \$foreignPksAreValid = true;
         \$primaryKeyFKs = [];
-";
-
-        if ($foreignKeyPKCount) {
-            foreach ($primaryKeyFKs as $foreignKey) {
-                $name = '$this->a' . $this->getFKPhpNameAffix($foreignKey);
-                $script .= "
-        //relation {$foreignKey->getName()} to table {$foreignKey->getForeignTableName()}
-        if ($name && \$hash = spl_object_hash($name)) {
-            \$primaryKeyFKs[] = \$hash;
-        } else {
-            \$validPrimaryKeyFKs = false;
-        }
-";
+        foreach (\$fkFieldNames as \$fkFieldName) {
+            \$fkObject = \$this->\$fkFieldName;
+            if (!\$fkObject) {
+                \$foreignPksAreValid = false;
+                break;
             }
+            \$primaryKeyFKs[] = spl_object_hash(\$fkObject);
         }
-
-        $script .= "
-        if (\$validPk) {
-            return crc32(json_encode(\$this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
-        } elseif (\$validPrimaryKeyFKs) {
+";
+            $script .= "
+        if (\$foreignPksAreValid) {
             return crc32(json_encode(\$primaryKeyFKs, JSON_UNESCAPED_UNICODE));
+        }";
         }
+        $script .= "
 
         return spl_object_hash(\$this);
     }
-        ";
+";
     }
 
     /**
@@ -3856,16 +3742,17 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $table = $this->getTable();
         $pkeys = $table->getPrimaryKey();
-        $cptype = $pkeys[0]->getPhpType();
+        $type = $pkeys[0]->getPhpType();
+        $name = $pkeys[0]->getPhpName();
 
         $script .= "
     /**
      * Returns the primary key for this object (row).
-     * @return $cptype
+     * @return $type
      */
     public function getPrimaryKey()
     {
-        return \$this->get" . $pkeys[0]->getPhpName() . "();
+        return \$this->get{$name}();
     }
 ";
     }
@@ -3879,6 +3766,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function addGetPrimaryKeyMultiPK(string &$script): void
     {
+        $keyColumns = $this->getTable()->getPrimaryKey();
+        $names = array_values(array_map(fn ($column) => $column->getPhpName(), $keyColumns));
+        $setters = array_map(fn ($index, $name) => "\$pks[{$index}] = \$this->get{$name}();", array_keys($names), $names);
+        $settersBlock = implode("\n", $setters);
+
         $script .= "
     /**
      * Returns the composite primary key for this object.
@@ -3887,14 +3779,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function getPrimaryKey()
     {
-        \$pks = [];";
-        $i = 0;
-        foreach ($this->getTable()->getPrimaryKey() as $pk) {
-            $script .= "
-        \$pks[$i] = \$this->get" . $pk->getPhpName() . '();';
-            $i++;
-        } /* foreach */
-        $script .= "
+        \$pks = [];
+        {$settersBlock}
 
         return \$pks;
     }
@@ -4013,6 +3899,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     {
         $table = $this->getTable();
         $pkeys = $table->getPrimaryKey();
+        $checks = array_map(fn ($col) => "\$this->get{$col->getPhpName()}() === null", $pkeys);
+
+        if (count($pkeys) === 1) {
+            $returnExpression = $checks[0];
+        } elseif ($pkeys) {
+            $returnExpression = '(' . implode(') && (', $checks) . ')';
+        } else {
+            $returnExpression = 'false';
+        }
 
         $script .= "
     /**
@@ -4021,22 +3916,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @return bool
      */
     public function isPrimaryKeyNull(): bool
-    {";
-        if (count($pkeys) === 1) {
-            $script .= '
-        return null === $this->get' . $pkeys[0]->getPhpName() . '();';
-        } elseif ($pkeys) {
-            $tests = [];
-            foreach ($pkeys as $pkey) {
-                $tests[] = '(null === $this->get' . $pkey->getPhpName() . '())';
-            }
-            $script .= "
-        return " . implode(' && ', $tests) . ';';
-        } else {
-            $script .= "
-        return false;";
-        }
-        $script .= "
+    {
+        return {$returnExpression};
     }
 ";
     }
@@ -4110,7 +3991,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= "
     /**
-     * @var        $className
+     * @var        $className|null
      */
     protected $" . $varName . ";
 ";
@@ -4399,15 +4280,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if ($refFK->isLocalPrimaryKey()) {
             $script .= "
     /**
-     * @var        $className one-to-one related $className object
+     * @var        $className|null one-to-one related $className object
      */
     protected $" . $this->getPKRefFKVarName($refFK) . ";
 ";
         } else {
             $script .= "
     /**
-     * @var        ObjectCollection|{$className}[] Collection to store aggregation of $className objects.
-     * @phpstan-var ObjectCollection&\Traversable<{$className}> Collection to store aggregation of $className objects.
+     * @var        ObjectCollection|{$className}[]|null Collection to store aggregation of $className objects.
+     * @phpstan-var ObjectCollection&\Traversable<{$className}>|null Collection to store aggregation of $className objects.
      */
     protected $" . $this->getRefFKCollVarName($refFK) . ";
     protected $" . $this->getRefFKCollVarName($refFK) . "Partial;
@@ -4547,7 +4428,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function init$relCol(bool \$overrideExisting = true): void
     {
-        if (null !== \$this->$collName && !\$overrideExisting) {
+        if (\$this->$collName  !== null&& !\$overrideExisting) {
             return;
         }
 
@@ -4639,8 +4520,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function count{$relCol}(?Criteria \$criteria = null, bool \$distinct = false, ?ConnectionInterface \$con = null): int
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria || \$partial) {
-            if (\$this->isNew() && null === \$this->$collName) {
+        if (\$this->$collName === null || \$criteria !== null || \$partial) {
+            if (\$this->isNew() && \$this->$collName === null) {
                 return 0;
             }
 
@@ -4698,10 +4579,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function get$relCol(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria || \$partial) {
+        if (\$this->$collName === null|| \$criteria !== null|| \$partial) {
             if (\$this->isNew()) {
                 // return empty collection
-                if (null === \$this->$collName) {
+                if (\$this->$collName === null) {
                     \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "();
                 } else {
                     \$collectionClassName = " . $this->getClassNameFromBuilder($this->getNewTableMapBuilder($refFK->getTable())) . "::getTableMap()->getCollectionClassName();
@@ -4716,7 +4597,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     ->filterBy" . $this->getFKPhpNameAffix($refFK) . "(\$this)
                     ->find(\$con);
 
-                if (null !== \$criteria) {
+                if (\$criteria !== null) {
                     if (false !== \$this->{$collName}Partial && count(\$$collName)) {
                         \$this->init" . $this->getRefFKPhpNameAffix($refFK, true) . "(false);
 
@@ -4885,7 +4766,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if (\$this->get{$relatedName}()->contains(\${$lowerRelatedObjectClassName})) {
             \$pos = \$this->{$collName}->search(\${$lowerRelatedObjectClassName});
             \$this->{$collName}->remove(\$pos);
-            if (null === \$this->{$inputCollection}) {
+            if (\$this->{$inputCollection} === null) {
                 \$this->{$inputCollection} = clone \$this->{$collName};
                 \$this->{$inputCollection}->clear();
             }";
@@ -5226,7 +5107,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if ($multipleFks) {
             $combineVarName = 'combination' . ucfirst($this->getCrossFKsVarName($crossFKs));
             $script .= "
-            if (null !== \$this->$combineVarName) {
+            if (\$this->$combineVarName !== null) {
                 foreach (\$this->$combineVarName as \$combination) {
 ";
 
@@ -5516,7 +5397,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function is{$relCol}Loaded(): bool
     {
-        return null !== \$this->$collName;
+        return \$this->$collName !== null;
     }
 ";
         }
@@ -5578,7 +5459,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $name = lcfirst($fk->getPhpName());
 
             $script .= "
-        if (null !== \$$name) {
+        if (\$$name !== null) {
             \${$relatedUseQueryVariableName}->filterBy{$filterName}(\$$name);
         }
             ";
@@ -5588,7 +5469,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $name = lcfirst($pk->getPhpName());
 
             $script .= "
-        if (null !== \$$name) {
+        if (\$$name !== null) {
             \${$relatedUseQueryVariableName}->filterBy{$filterName}(\$$name);
         }
             ";
@@ -5644,10 +5525,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function get{$relatedName}(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collVarName}Partial && !\$this->isNew();
-        if (null === \$this->$collVarName || null !== \$criteria || \$partial) {
+        if (\$this->$collVarName === null|| \$criteria !== null || \$partial) {
             if (\$this->isNew()) {
                 // return empty collection
-                if (null === \$this->$collVarName) {
+                if (\$this->$collVarName === null) {
                     \$this->init{$relatedName}();
                 }
             } else {
@@ -5685,7 +5566,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                     \${$collVarName}[] = \$combination;
                 }
 
-                if (null !== \$criteria) {
+                if (\$criteria !== null) {
                     return \$$collVarName;
                 }
 
@@ -5770,10 +5651,10 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function get{$relatedName}(?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria || \$partial) {
+        if (\$this->$collName === null || \$criteria !== null || \$partial) {
             if (\$this->isNew()) {
                 // return empty collection
-                if (null === \$this->$collName) {
+                if (\$this->$collName === null) {
                     \$this->init{$relatedName}();
                 }
             } else {
@@ -5781,7 +5662,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
                 \$query = $relatedQueryClassName::create(null, \$criteria)
                     ->filterBy{$selfRelationName}(\$this);
                 \$$collName = \$query->find(\$con);
-                if (null !== \$criteria) {
+                if (\$criteria !== null) {
                     return \$$collName;
                 }
 
@@ -5925,8 +5806,8 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     public function count{$relatedName}(?Criteria \$criteria = null, \$distinct = false, ?ConnectionInterface \$con = null): int
     {
         \$partial = \$this->{$collName}Partial && !\$this->isNew();
-        if (null === \$this->$collName || null !== \$criteria || \$partial) {
-            if (\$this->isNew() && null === \$this->$collName) {
+        if (\$this->$collName === null || \$criteria !== null || \$partial) {
+            if (\$this->isNew() && \$this->$collName === null) {
                 return 0;
             } else {
 
@@ -6084,9 +5965,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     protected function doAdd{$relatedObjectClassName}($signature)
     {
-        {$foreignObjectName} = new {$className}();
-";
-        if (1 < count($crossFKs->getCrossForeignKeys()) || $crossFKs->getUnclassifiedPrimaryKeys()) {
+        {$foreignObjectName} = new {$className}();";
+
+        if (count($crossFKs->getCrossForeignKeys()) > 1 || $crossFKs->getUnclassifiedPrimaryKeys()) {
             foreach ($crossFKs->getCrossForeignKeys() as $crossFK) {
                 $relatedObjectClassName = $this->getFKPhpNameAffix($crossFK, false);
                 $lowerRelatedObjectClassName = lcfirst($relatedObjectClassName);
@@ -6110,7 +5991,6 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $refFK = $crossFKs->getIncomingForeignKey();
         $script .= "
-
         {$foreignObjectName}->set" . $this->getFKPhpNameAffix($refFK, false) . "(\$this);
 
         \$this->add{$refKObjectClassName}({$foreignObjectName});\n";
@@ -6145,7 +6025,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
         } elseif (!\${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->contains(\$this)) {
             \${$lowerRelatedObjectClassName}->get{$selfRelationNamePlural}($getterSignature)->push(\$this);
-        }\n";
+        }";
         }
 
         $script .= "
@@ -6257,7 +6137,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             \$this->{$collName}->remove(\$this->{$collName}->search({$shortSignature}));
             ";
         $script .= "
-            if (null === \$this->{$M2MScheduledForDeletion}) {
+            if (\$this->{$M2MScheduledForDeletion} === null) {
                 \$this->{$M2MScheduledForDeletion} = clone \$this->{$collName};
                 \$this->{$M2MScheduledForDeletion}->clear();
             }
@@ -6573,13 +6453,13 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $columnProperty = $column->getLowercasedName();
             if (!$table->isAllowPkInsert()) {
                 $script .= "
-        if (null !== \$this->{$columnProperty}) {
+        if (\$this->{$columnProperty} !== null) {
             throw new PropelException('Cannot insert a value for auto-increment primary key (' . $constantName . ')');
         }";
             } elseif (!$platform->supportsInsertNullPk()) {
                 $script .= "
         // add primary key column only if it is not null since this database does not accept that
-        if (null !== \$this->{$columnProperty}) {
+        if (\$this->{$columnProperty} !== null) {
             \$this->modifiedColumns[$constantName] = true;
         }";
             }
@@ -6593,7 +6473,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             }
             $columnProperty = $column->getLowercasedName();
             $script .= "
-        if (null === \$this->{$columnProperty}) {
+        if (\$this->{$columnProperty} === null) {
             try {";
             $script .= $platform->getIdentifierPhp('$this->' . $columnProperty, '$con', $primaryKeyMethodInfo, '                ', $column->getPhpType());
             $script .= "
@@ -7177,7 +7057,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             $varName = $this->getFKVarName($fk);
             $removeMethod = 'remove' . $this->getRefFKPhpNameAffix($fk, false);
             $script .= "
-        if (null !== \$this->$varName) {
+        if (\$this->$varName !== null) {
             \$this->$varName->$removeMethod(\$this);
         }";
         }

@@ -909,7 +909,7 @@ static public function updateLoadedNodes(\$prune = null, ?ConnectionInterface \$
         }
 
         $script .= "
-            \$dataFetcher = $queryClassName::create(null, \$criteria)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+            \$dataFetcher = $queryClassName::create(null, \$criteria)->fetch(\$con);
             while (\$row = \$dataFetcher->fetch()) {
                 \$key = $tableMapClassName::getPrimaryKeyHashFromRow(\$row, 0);
                 /** @var \$object $objectClassName */
@@ -1012,7 +1012,7 @@ static public function fixLevels(" . ($useScope ? '$scope, ' : '') . "?Connectio
         }
         $script .= "
     \$c->addAscendingOrderByColumn($objectClassName::LEFT_COL);
-    \$dataFetcher = $queryClassName::create(null, \$c)->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find(\$con);
+    \$dataFetcher = $queryClassName::create(null, \$c)->fetch(\$con);
     ";
         if (!$this->table->getChildrenColumn()) {
             $script .= "

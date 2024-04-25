@@ -1358,17 +1358,10 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function find(?ConnectionInterface $con = null)
     {
-        if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
-        }
+        $criteria = $this->isKeepQuery() ? (clone $this)->keepQuery(false) : $this;
+        $dataFetcher = $criteria->fetch($con);
 
-        $this->basePreSelect($con);
-        $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $dataFetcher = $criteria->doSelect($con);
-
-        return $criteria
-            ->getFormatter()
-            ->init($criteria)->format($dataFetcher);
+        return $criteria->getFormatter()->init($criteria)->format($dataFetcher);
     }
 
     /**
@@ -1384,19 +1377,29 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function findOne(?ConnectionInterface $con = null)
     {
+        $criteria = $this->isKeepQuery() ? (clone $this)->keepQuery(false) : $this;
+        $dataFetcher = $criteria->limit(1)->fetch($con);
+
+        return $criteria->getFormatter()->init($criteria)->formatOne($dataFetcher);
+    }
+
+    /**
+     * Issue a SELECT query based on the current ModelCriteria
+     * and return the data fetcher.
+     *
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con An optional connection object
+     *
+     * @return \Propel\Runtime\DataFetcher\DataFetcherInterface
+     */
+    public function fetch(?ConnectionInterface $con = null): DataFetcherInterface
+    {
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection($this->getDbName());
         }
 
         $this->basePreSelect($con);
-        $criteria = $this->isKeepQuery() ? clone $this : $this;
-        $criteria->limit(1);
-        $dataFetcher = $criteria->doSelect($con);
 
-        return $criteria
-            ->getFormatter()
-            ->init($criteria)
-            ->formatOne($dataFetcher);
+        return $this->doSelect($con);
     }
 
     /**

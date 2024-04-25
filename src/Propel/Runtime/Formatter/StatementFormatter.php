@@ -17,6 +17,8 @@ use Propel\Runtime\Exception\PropelException;
  * format() returns a PDO statement
  *
  * @author Francois Zaninotto
+ *
+ * @deprecated Use Query::fetch() to get a data fetcher
  */
 class StatementFormatter extends AbstractFormatter
 {
@@ -43,11 +45,7 @@ class StatementFormatter extends AbstractFormatter
      */
     public function formatOne(?DataFetcherInterface $dataFetcher = null): ?DataFetcherInterface
     {
-        if ($dataFetcher) {
-            $this->setDataFetcher($dataFetcher);
-        } else {
-            $dataFetcher = $this->getDataFetcher();
-        }
+        $dataFetcher = $this->format($dataFetcher);
 
         return $dataFetcher->count() > 0 ? $dataFetcher : null;
     }

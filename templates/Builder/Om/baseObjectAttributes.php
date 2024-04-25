@@ -14,13 +14,13 @@
     /**
      * The columns that have been modified in current object.
      * Tracking modified columns allows us to only update modified columns.
-     * @var array
+     * @var array<bool>
      */
     protected $modifiedColumns = [];
 
     /**
      * The (virtual) columns that are added at runtime
      * The formatters can add supplementary columns based on a resultset
-     * @var array
+     * @var array<mixed>
      */
     protected $virtualColumns = [];

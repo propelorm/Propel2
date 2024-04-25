@@ -22,7 +22,7 @@
 
     /**
      * Get the columns that have been modified in this object.
-     * @return array A unique list of the modified column names for this object.
+     * @return array<string> A unique list of the modified column names for this object.
      */
     public function getModifiedColumns(): array
     {
@@ -103,7 +103,7 @@
             return true;
         }
 
-        if (null === $this->getPrimaryKey() || null === $obj->getPrimaryKey()) {
+        if ($this->getPrimaryKey() === null || $obj->getPrimaryKey() === null) {
             return false;
         }
 
@@ -113,7 +113,7 @@
     /**
      * Get the associative array of the virtual columns in this object
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getVirtualColumns(): array
     {

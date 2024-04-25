@@ -1076,7 +1076,7 @@ class GeneratedObjectRelTest extends BookstoreEmptyTestBase
     /**
      * @return void
      */
-    public function testManyToManySetterIsNotLoosingAnyReference()
+    public function testManyToManySetterIsNotLosingAnyReference()
     {
         $list1 = new BookClubList();
         $list2 = new BookClubList();
