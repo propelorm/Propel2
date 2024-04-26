@@ -2186,7 +2186,7 @@ class QueryBuilder extends AbstractOMBuilder
                         $columnL = $table->getColumn($columnNamesL[$x]);
                         $script .= "
             \$query->add(" . $refTableTableMapBuilder->getColumnConstant($columnFK) . ', $obj->get' . $columnL->getPhpName() . "());
-            \$updateValues[" . $refTableTableMapBuilder->getColumnConstant($columnFK) . "] = null;
+            \$updateValues['" . $columnFK->getPhpName() . "'] = null;
 ";
                     }
 
