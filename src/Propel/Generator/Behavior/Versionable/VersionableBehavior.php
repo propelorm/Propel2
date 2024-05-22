@@ -8,7 +8,8 @@
 
 namespace Propel\Generator\Behavior\Versionable;
 
-use Propel\Generator\Model\Behavior;
+use Propel\Generator\Behavior\SyncedTable\SyncedTableBehavior;
+use Propel\Generator\Behavior\SyncedTable\TableSyncer\TableSyncer;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Model\Table;
@@ -18,24 +19,33 @@ use Propel\Generator\Model\Table;
  *
  * @author Francois Zaninotto
  */
-class VersionableBehavior extends Behavior
+class VersionableBehavior extends SyncedTableBehavior
 {
     /**
-     * Default parameters value
+     * @see \Propel\Generator\Behavior\SyncedTable\SyncedTableBehavior::DEFAULT_SYNCED_TABLE_SUFFIX
      *
-     * @var array<string, mixed>
+     * @var string DEFAULT_SYNCED_TABLE_SUFFIX
      */
-    protected $parameters = [
-        'version_column' => 'version',
-        'version_table' => '',
-        'log_created_at' => 'false',
-        'log_created_by' => 'false',
-        'log_comment' => 'false',
-        'version_created_at_column' => 'version_created_at',
-        'version_created_by_column' => 'version_created_by',
-        'version_comment_column' => 'version_comment',
-        'indices' => 'false',
-    ];
+    protected const DEFAULT_SYNCED_TABLE_SUFFIX = '_version';
+
+    /**
+     * @see \Propel\Generator\Behavior\SyncedTable\SyncedTableBehavior::PARAMETER_KEY_SYNCED_TABLE
+     *
+     * @var string
+     */
+    public const PARAMETER_KEY_SYNCED_TABLE = 'version_table';
+
+    /**
+     * @see \Propel\Generator\Behavior\SyncedTable\SyncedTableBehavior::PARAMETER_KEY_SYNCED_PHPNAME
+     *
+     * @var string
+     */
+    public const PARAMETER_KEY_SYNCED_PHPNAME = 'version_phpname';
+
+    /**
+     * @var string
+     */
+    public const PARAMETER_KEY_SYNC_INDEXES = 'indices';
 
     /**
      * @var \Propel\Generator\Model\Table
@@ -58,179 +68,31 @@ class VersionableBehavior extends Behavior
     protected $tableModificationOrder = 80;
 
     /**
-     * @return void
+     * @see \Propel\Generator\Behavior\SyncedTable\SyncedTableBehavior::getDefaultParameters()
+     *
+     * @return array
      */
-    public function modifyDatabase(): void
+    protected function getDefaultParameters(): array
     {
-        foreach ($this->getDatabase()->getTables() as $table) {
-            if ($table->hasBehavior($this->getId())) {
-                // don't add the same behavior twice
-                continue;
-            }
-            if (property_exists($table, 'isVersionTable')) {
-                // don't add the behavior to version tables
-                continue;
-            }
-            $b = clone $this;
-            $table->addBehavior($b);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function modifyTable(): void
-    {
-        $this->addVersionColumn();
-        $this->addLogColumns();
-        $this->addVersionTable();
-        $this->addForeignKeyVersionColumns();
-    }
-
-    /**
-     * @return void
-     */
-    protected function addVersionColumn(): void
-    {
-        $table = $this->getTable();
-        // add the version column
-        if (!$table->hasColumn($this->getParameter('version_column'))) {
-            $table->addColumn([
-                'name' => $this->getParameter('version_column'),
-                'type' => 'INTEGER',
-                'default' => 0,
-            ]);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    protected function addLogColumns(): void
-    {
-        $table = $this->getTable();
-        if ($this->getParameter('log_created_at') === 'true' && !$table->hasColumn($this->getParameter('version_created_at_column'))) {
-            $table->addColumn([
-                'name' => $this->getParameter('version_created_at_column'),
-                'type' => 'TIMESTAMP',
-            ]);
-        }
-        if ($this->getParameter('log_created_by') === 'true' && !$table->hasColumn($this->getParameter('version_created_by_column'))) {
-            $table->addColumn([
-                'name' => $this->getParameter('version_created_by_column'),
-                'type' => 'VARCHAR',
-                'size' => 100,
-            ]);
-        }
-        if ($this->getParameter('log_comment') === 'true' && !$table->hasColumn($this->getParameter('version_comment_column'))) {
-            $table->addColumn([
-                'name' => $this->getParameter('version_comment_column'),
-                'type' => 'VARCHAR',
-                'size' => 255,
-            ]);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    protected function addVersionTable(): void
-    {
-        $table = $this->getTable();
-        $database = $table->getDatabase();
-        $versionTableName = $this->getParameter('version_table') ?: ($table->getOriginCommonName() . '_version');
-        if (!$database->hasTable($versionTableName)) {
-            // create the version table
-            $versionTable = $database->addTable([
-                'name' => $versionTableName,
-                'phpName' => $this->getVersionTablePhpName(),
-                'package' => $table->getPackage(),
-                'schema' => $table->getSchema(),
-                'namespace' => $table->getNamespace() ? '\\' . $table->getNamespace() : null,
-                'skipSql' => $table->isSkipSql(),
-                'identifierQuoting' => $table->isIdentifierQuotingEnabled(),
-            ]);
-            $versionTable->isVersionTable = true;
-            // every behavior adding a table should re-execute database behaviors
-            foreach ($database->getBehaviors() as $behavior) {
-                $behavior->modifyDatabase();
-            }
-            // copy all the columns
-            foreach ($table->getColumns() as $column) {
-                $columnInVersionTable = clone $column;
-                $columnInVersionTable->clearInheritanceList();
-                if ($columnInVersionTable->hasReferrers()) {
-                    $columnInVersionTable->clearReferrers();
-                }
-                if ($columnInVersionTable->isAutoincrement()) {
-                    $columnInVersionTable->setAutoIncrement(false);
-                }
-                $versionTable->addColumn($columnInVersionTable);
-            }
-            // create the foreign key
-            $fk = new ForeignKey();
-            $fk->setForeignTableCommonName($table->getCommonName());
-            $fk->setForeignSchemaName($table->getSchema());
-            $fk->setOnDelete('CASCADE');
-            $fk->setOnUpdate(null);
-            $tablePKs = $table->getPrimaryKey();
-            foreach ($versionTable->getPrimaryKey() as $key => $column) {
-                $fk->addReference($column, $tablePKs[$key]);
-            }
-            $versionTable->addForeignKey($fk);
-
-            if ($this->getParameter('indices') === 'true') {
-                foreach ($table->getIndices() as $index) {
-                    $index = clone $index;
-                    $versionTable->addIndex($index);
-                }
-            }
-
-            // add the version column to the primary key
-            $versionColumn = $versionTable->getColumn($this->getParameter('version_column'));
-            $versionColumn->setNotNull(true);
-            $versionColumn->setPrimaryKey(true);
-            $this->versionTable = $versionTable;
-        } else {
-            $this->versionTable = $database->getTable($versionTableName);
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function addForeignKeyVersionColumns(): void
-    {
-        $versionTable = $this->versionTable;
-        foreach ($this->getVersionableFks() as $fk) {
-            $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
-            if (!$versionTable->hasColumn($fkVersionColumnName)) {
-                $versionTable->addColumn([
-                    'name' => $fkVersionColumnName,
-                    'type' => 'INTEGER',
-                    'default' => 0,
-                ]);
-            }
-        }
-
-        foreach ($this->getVersionableReferrers() as $fk) {
-            $fkTableName = $fk->getTable()->getName();
-            $fkIdsColumnName = $fkTableName . '_ids';
-            if (!$versionTable->hasColumn($fkIdsColumnName)) {
-                $versionTable->addColumn([
-                    'name' => $fkIdsColumnName,
-                    'type' => 'ARRAY',
-                ]);
-            }
-
-            $fkVersionsColumnName = $fkTableName . '_versions';
-            if (!$versionTable->hasColumn($fkVersionsColumnName)) {
-                $versionTable->addColumn([
-                    'name' => $fkVersionsColumnName,
-                    'type' => 'ARRAY',
-                ]);
-            }
-        }
+        return [
+            'version_column' => 'version',
+            static::PARAMETER_KEY_SYNCED_TABLE => '',
+            static::PARAMETER_KEY_SYNCED_PHPNAME => null,
+            static::PARAMETER_KEY_SYNC => 'false',
+            static::PARAMETER_KEY_INHERIT_FOREIGN_KEY_RELATIONS => 'false',
+            static::PARAMETER_KEY_INHERIT_FOREIGN_KEY_CONSTRAINTS => 'false',
+            static::PARAMETER_KEY_FOREIGN_KEYS => null,
+            static::PARAMETER_KEY_SYNC_INDEXES => 'false',
+            static::PARAMETER_KEY_SYNC_UNIQUE_AS => null,
+            static::PARAMETER_KEY_RELATION => [['onDelete' => 'cascade']],
+            static::PARAMETER_KEY_ON_SKIP_SQL => 'inherit',
+            'log_created_at' => 'false',
+            'log_created_by' => 'false',
+            'log_comment' => 'false',
+            'version_created_at_column' => 'version_created_at',
+            'version_created_by_column' => 'version_created_by',
+            'version_comment_column' => 'version_comment',
+        ];
     }
 
     /**
@@ -238,15 +100,122 @@ class VersionableBehavior extends Behavior
      */
     public function getVersionTable(): Table
     {
-        return $this->versionTable;
+        return $this->syncedTable;
     }
 
     /**
-     * @return string
+     * @param \Propel\Generator\Model\Table $table
+     *
+     * @return void
      */
-    public function getVersionTablePhpName(): string
+    protected function addBehaviorToTable(Table $table): void
     {
-        return $this->getTable()->getPhpName() . 'Version';
+        if (property_exists($table, 'isVersionTable')) {
+            // don't add the behavior to version tables
+            return;
+        }
+        parent::addBehaviorToTable($table);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSyncedTablePhpName(): ?string
+    {
+        // required for BC
+        return parent::getSyncedTablePhpName() ?? $this->getTable()->getPhpName() . 'Version';
+    }
+
+    /**
+     * @return void
+     */
+    public function modifyTable(): void
+    {
+        $this->addColumnsToSourceTable();
+        parent::modifyTable();
+        $this->addForeignKeyVersionColumns();
+    }
+
+    /**
+     * @return void
+     */
+    protected function addColumnsToSourceTable(): void
+    {
+        $table = $this->getTable();
+
+        $this->addColumnFromParameterIfNotExists($table, 'version_column', [
+            'type' => 'INTEGER',
+            'default' => 0,
+        ]);
+
+        if ($this->getParameter('log_created_at') === 'true') {
+            $this->addColumnFromParameterIfNotExists($table, 'version_created_at_column', [
+                'type' => 'TIMESTAMP',
+            ]);
+        }
+
+        if ($this->getParameter('log_created_by') === 'true') {
+            $this->addColumnFromParameterIfNotExists($table, 'version_created_by_column', [
+                'type' => 'VARCHAR',
+                'size' => 100,
+            ]);
+        }
+
+        if ($this->getParameter('log_comment') === 'true') {
+            $this->addColumnFromParameterIfNotExists($table, 'version_comment_column', [
+                'type' => 'VARCHAR',
+                'size' => 255,
+            ]);
+        }
+    }
+
+    /**
+     * @param \Propel\Generator\Model\Table $syncedTable
+     * @param bool $tableExistsInSchema
+     *
+     * @return void
+     */
+    public function addTableElements(Table $syncedTable, bool $tableExistsInSchema): void
+    {
+        parent::addTableElements($syncedTable, $tableExistsInSchema);
+
+        if ($tableExistsInSchema) {
+            return;
+        }
+        $syncedTable->isVersionTable = true;
+
+        // add the version column to the primary key
+        $versionColumn = $syncedTable->getColumn($this->getParameter('version_column'));
+        $versionColumn->setNotNull(true);
+        $versionColumn->setPrimaryKey(true);
+    }
+
+    /**
+     * @return void
+     */
+    public function addForeignKeyVersionColumns(): void
+    {
+        $versionTable = $this->syncedTable;
+        foreach ($this->getVersionableFks() as $fk) {
+            $fkVersionColumnName = $fk->getLocalColumnName() . '_version';
+            TableSyncer::addColumnIfNotExists($versionTable, $fkVersionColumnName, [
+                'type' => 'INTEGER',
+                'default' => 0,
+            ]);
+        }
+
+        foreach ($this->getVersionableReferrers() as $fk) {
+            $fkTableName = $fk->getTable()->getName();
+            $fkIdsColumnName = $fkTableName . '_ids';
+            TableSyncer::addColumnIfNotExists($versionTable, $fkIdsColumnName, [
+                'type' => 'ARRAY',
+            ]);
+
+            $fkVersionsColumnName = $fkTableName . '_versions';
+            TableSyncer::addColumnIfNotExists($versionTable, $fkVersionsColumnName, [
+                'type' => 'ARRAY',
+            ]);
+        }
     }
 
     /**
@@ -297,7 +266,7 @@ class VersionableBehavior extends Behavior
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_ids';
 
-        return $this->versionTable->getColumn($fkIdsColumnName);
+        return $this->syncedTable->getColumn($fkIdsColumnName);
     }
 
     /**
@@ -310,7 +279,7 @@ class VersionableBehavior extends Behavior
         $fkTableName = $fk->getTable()->getName();
         $fkIdsColumnName = $fkTableName . '_versions';
 
-        return $this->versionTable->getColumn($fkIdsColumnName);
+        return $this->syncedTable->getColumn($fkIdsColumnName);
     }
 
     /**

@@ -25,7 +25,7 @@ use Map\ArchivableTest3TableMap;
 use Map\ArchivableTest4TableMap;
 use Map\ArchivableTest5TableMap;
 use Map\MyOldArchivableTest3TableMap;
-use Propel\Generator\Exception\SchemaException;
+use Propel\Generator\Behavior\SyncedTable\SyncedTableException;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 use function substr_count;
@@ -219,7 +219,6 @@ EOF;
      */
     public function testMissingFkParametersThrowsException(string $description, string $parameters)
     {
-        //$this->markTestSkipped();
         $schema = <<<EOF
         <database name="archivable_behavior_test_0">
         
@@ -241,7 +240,7 @@ EOF;
         $builder = new QuickBuilder();
         $builder->setSchema($schema);
 
-        $this->expectException(SchemaException::class);
+        $this->expectException(SyncedTableException::class);
         $builder->getDatabase();
     }
 

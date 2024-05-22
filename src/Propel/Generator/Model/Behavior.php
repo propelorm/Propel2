@@ -275,7 +275,7 @@ class Behavior extends MappingModel
      */
     public function parameterHasValue(string $paramName, $value): bool
     {
-        return $this->parameters[$paramName] === $value;
+        return ($this->parameters[$paramName] ?? null) === $value;
     }
 
     /**

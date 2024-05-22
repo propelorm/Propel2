@@ -11,7 +11,7 @@
     </UndefinedPropertyAssignment>
   </file>
   <file src="src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php">
-    <UndefinedPropertyAssignment occurrences="1">
+    <UndefinedPropertyAssignment occurrences="2">
       <code>$versionTable-&gt;isVersionTable</code>
     </UndefinedPropertyAssignment>
   </file>
