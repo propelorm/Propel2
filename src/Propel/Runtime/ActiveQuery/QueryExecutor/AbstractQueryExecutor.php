@@ -111,7 +111,7 @@ abstract class AbstractQueryExecutor
             }
             $stmt->execute();
         } catch (Throwable $e) {
-            $this->handleStatementException($e, $sql, $stmt ?: null);
+            $this->handleStatementException($e, $params, $sql, $stmt ?: null);
         }
 
         return $stmt;
@@ -121,6 +121,7 @@ abstract class AbstractQueryExecutor
      * Logs an exception and adds the complete SQL statement to the exception.
      *
      * @param \Throwable $e The initial exception.
+     * @param array<mixed> $params Parameters for the SQL statement which triggered the exception.
      * @param string|null $sql The SQL statement which triggered the exception.
      * @param \Propel\Runtime\Connection\StatementInterface|\PDOStatement|null $stmt The prepared statement.
      *
@@ -128,7 +129,7 @@ abstract class AbstractQueryExecutor
      *
      * @return void
      */
-    protected function handleStatementException(Throwable $e, ?string $sql, $stmt = null): void
+    protected function handleStatementException(Throwable $e, array $params, ?string $sql, $stmt = null): void
     {
         $internalMessage = $e->getMessage();
         Propel::log($internalMessage, Propel::LOG_ERR);
@@ -137,10 +138,11 @@ abstract class AbstractQueryExecutor
         if ($isDebugMode && $stmt instanceof StatementWrapper) {
             $sql = $stmt->getExecutedQueryString();
         }
-        $publicMessage = "Unable to execute statement [$sql]";
-        if ($isDebugMode) {
-            $publicMessage .= PHP_EOL . "Reason: [$internalMessage]";
+        $paramMessage = '';
+        foreach ($params as $parameter) {
+            $paramMessage .= 'column=`' . $parameter['column'] . '` value=`' . $parameter['value'] . '`, ';
         }
+        $publicMessage = "Unable to execute statement [$sql] with params [$paramMessage]. Reason: [$internalMessage]";
 
         throw new QueryExecutionException($publicMessage, 0, $e);
     }
