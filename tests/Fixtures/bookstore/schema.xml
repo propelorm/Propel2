@@ -323,6 +323,10 @@
         <foreign-key foreignTable="book" onDelete="setnull" phpName="Work">
             <reference local="prize_book_id" foreign="id"/>
         </foreign-key>
+        <unique>
+            <unique-column name="bookstore_id"/>
+            <unique-column name="contest_id"/>
+        </unique>
     </table>
 
     <table name="bookstore_contest_entry" reloadOnInsert="true">
