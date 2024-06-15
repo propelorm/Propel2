@@ -2,7 +2,7 @@
 /**
  * Flag to prevent endless validation loop, if this object is referenced
  * by another object which falls in this transaction.
- * @var        boolean
+ * @var        bool
  */
 protected $alreadyInValidation = false;
 

@@ -6684,7 +6684,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * @param ConnectionInterface \$con";
         if ($reloadOnUpdate || $reloadOnInsert) {
             $script .= "
-     * @param boolean \$skipReload Whether to skip the reload for this object from database.";
+     * @param bool \$skipReload Whether to skip the reload for this object from database.";
         }
         $script .= "
      * @return int The number of rows affected by this insert/update and any referring fk objects' save() operations.
