@@ -655,7 +655,7 @@ class ColumnTest extends ModelTestCase
         $column->setDomain($domain);
         $column->setType($mappingType);
 
-        $this->assertSame('boolean', $column->getPhpType());
+        $this->assertSame('bool', $column->getPhpType());
         $this->assertTrue($column->isPhpPrimitiveType());
         $this->assertTrue($column->isBooleanType());
     }

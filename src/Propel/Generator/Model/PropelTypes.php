@@ -304,12 +304,12 @@ class PropelTypes
     /**
      * @var string
      */
-    public const BOOLEAN_NATIVE_TYPE = 'boolean';
+    public const BOOLEAN_NATIVE_TYPE = 'bool';
 
     /**
      * @var string
      */
-    public const BOOLEAN_EMU_NATIVE_TYPE = 'boolean';
+    public const BOOLEAN_EMU_NATIVE_TYPE = 'bool';
 
     /**
      * @var string
@@ -660,7 +660,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float', 'string'], true);
+        return in_array($phpType, ['bool', 'boolean', 'int', 'double', 'float', 'string'], true);
     }
 
     /**
@@ -672,7 +672,7 @@ class PropelTypes
      */
     public static function isPhpPrimitiveNumericType(string $phpType): bool
     {
-        return in_array($phpType, ['boolean', 'int', 'double', 'float'], true);
+        return in_array($phpType, ['bool', 'boolean', 'int', 'double', 'float'], true);
     }
 
     /**
