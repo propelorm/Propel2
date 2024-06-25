@@ -14,7 +14,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.4', '8.2' ]
+                php-version: [ '7.4', '8.2', '8.3' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '5-min', '5-max', '6-min', '6-max', '7-min', '7-max']
                 exclude:
@@ -39,8 +39,17 @@ jobs:
                   postgresql user: $DB_USER
                   postgresql password: $DB_PW
 
+            - name: Install PostgreSQL 16
+              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4' && matrix.symfony-version == '6-max'
+              uses: CasperWA/postgresql-action@v1.2
+              with:
+                  postgresql version: 16
+                  postgresql db: $DB_NAME
+                  postgresql user: $DB_USER
+                  postgresql password: $DB_PW
+            
             - name: Install PostgreSQL min
-              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4'
+              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4' && matrix.symfony-version == '6-min'
               uses: CasperWA/postgresql-action@v1.2
               with:
                   postgresql version: 9
