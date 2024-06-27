@@ -227,6 +227,7 @@ class Index extends MappingModel
     {
         $this->columns = [];
         $this->columnsSize = [];
+        $this->columnObjects = [];
         foreach ($columns as $column) {
             $this->addColumn($column);
         }

@@ -289,7 +289,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      * Specifies the methods that are added as part of the basic OM class.
      * This can be overridden by subclasses that wish to add more methods.
      *
-     * @see ObjectBuilder::addClassBody()
+     * @see \Propel\Generator\Builder\Om\AbstractOMBuilder::addClassBody()
      *
      * @param string $script
      *

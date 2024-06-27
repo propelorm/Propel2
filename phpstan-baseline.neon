@@ -26,11 +26,6 @@ parameters:
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isArchiveTable\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
@@ -39,6 +34,11 @@ parameters:
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\ForeignKey\\:\\:\\$isParentChild\\.$#"
 			count: 1
 			path: src/Propel/Generator/Behavior/ConcreteInheritance/ConcreteInheritanceBehavior.php
+
+		-
+			message: "#^Parameter \\#1 \\$unique of method Propel\\\\Generator\\\\Model\\\\Table\\:\\:addUnique\\(\\) expects array\\|Propel\\\\Generator\\\\Model\\\\Unique, Propel\\\\Generator\\\\Model\\\\Index given\\.$#"
+			count: 1
+			path: src/Propel/Generator/Behavior/SyncedTable/TableSyncer.php
 
 		-
 			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
@@ -196,18 +196,8 @@ parameters:
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Domain.php
-
-		-
-			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Table.php
-
-		-
 			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
-			count: 2
+			count: 1
 			path: src/Propel/Generator/Platform/MysqlPlatform.php
 
 		-
@@ -379,11 +369,6 @@ parameters:
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:hashCode\\(\\)\\.$#"
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
-
-		-
-			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/OnDemandCollection.php
 
 		-
 			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:getProfiler\\(\\)\\.$#"
