@@ -2033,7 +2033,7 @@ class QueryBuilder extends AbstractOMBuilder
         ";
 
         $script .= "
-            \$affectedRows += ModelCriteria::delete(\$con);
+            \$affectedRows += parent::delete(\$con);
             {$this->getTableMapClassName()}::clearRelatedInstancePool();
 
             return \$affectedRows;
