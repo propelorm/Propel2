@@ -89,7 +89,6 @@
             <reference local="customer_id" foreign="id"/>
         </foreign-key>
         <foreign-key foreignTable="bookstore_contest" onDelete="cascade">
-            <reference local="bookstore_id" foreign="bookstore_id"/>
             <reference local="contest_id" foreign="id"/>
         </foreign-key>
     </table>
