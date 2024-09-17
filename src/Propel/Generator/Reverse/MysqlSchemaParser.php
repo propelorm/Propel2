@@ -237,7 +237,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $/x';
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
-            if (empty($matches[2])===false) {
+            if ($matches[2]) {
                 $cpos = strpos($matches[2], ',');
                 if ($cpos !== false) {
                     $size = (int)substr($matches[2], 0, $cpos);
@@ -246,7 +246,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
                     $size = (int)$matches[2];
                 }
             }
-            if (empty($matches[3])===false) {
+            if ($matches[3]) {
                 $sqlType = $row['Type'];
             }
             if (isset(static::$defaultTypeSizes[$nativeType]) && $scale == null && $size === static::$defaultTypeSizes[$nativeType]) {
