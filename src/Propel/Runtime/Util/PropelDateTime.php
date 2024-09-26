@@ -73,7 +73,7 @@ class PropelDateTime extends DateTime
      *
      * @throws \InvalidArgumentException
      *
-     * @return mixed An instance of $dateTimeClass
+     * @return DateTimeInterface An instance of $dateTimeClass
      */
     public static function createHighPrecision(?string $time = null, string $dateTimeClass = 'DateTime'): DateTimeInterface
     {
