@@ -101,9 +101,12 @@ class TimestampableBehavior extends Behavior
     public function preUpdate(AbstractOMBuilder $builder): string
     {
         if ($this->withUpdatedAt()) {
-            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
+            $updateColumn = $this->getTable()->getColumn($this->getParameter('update_column'));
+            $dateTimeClass = $builder->getDateTimeClass($updateColumn);
+
+            $valueSource = strtoupper($updateColumn->getType()) === 'INTEGER'
                 ? 'time()'
-                : '\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision()';
+                : "\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision(null, '$dateTimeClass')";
 
             return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "({$valueSource});
@@ -123,12 +126,18 @@ class TimestampableBehavior extends Behavior
     public function preInsert(AbstractOMBuilder $builder): string
     {
         $script = '$time = time();
-$highPrecision = \\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision();';
+$mtime = PropelDateTime::formatMicrotime(microtime(true));';
 
         if ($this->withCreatedAt()) {
-            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('create_column'))->getType()) === 'INTEGER'
+            $createColumn = $this->getTable()->getColumn($this->getParameter('create_column'));
+            $dateTimeClass = $builder->getDateTimeClass($createColumn);
+
+            $script .= "
+\$highPrecisionCreate = PropelDateTime::createHighPrecision(\$mtime, '$dateTimeClass');";
+
+            $valueSource = strtoupper($createColumn->getType()) === 'INTEGER'
                 ? '$time'
-                : '$highPrecision';
+                : '$highPrecisionCreate';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('create_column') . "({$valueSource});
@@ -136,9 +145,15 @@ if (!\$this->isColumnModified(" . $this->getColumnConstant('create_column', $bui
         }
 
         if ($this->withUpdatedAt()) {
-            $valueSource = strtoupper($this->getTable()->getColumn($this->getParameter('update_column'))->getType()) === 'INTEGER'
+            $updateColumn = $this->getTable()->getColumn($this->getParameter('update_column'));
+            $dateTimeClass = $builder->getDateTimeClass($updateColumn);
+
+            $script .= "
+\$highPrecisionUpdate = PropelDateTime::createHighPrecision(\$mtime, '$dateTimeClass');";
+
+            $valueSource = strtoupper($updateColumn->getType()) === 'INTEGER'
                 ? '$time'
-                : '$highPrecision';
+                : '$highPrecisionUpdate';
             $script .= "
 if (!\$this->isColumnModified(" . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "({$valueSource});
