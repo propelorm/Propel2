@@ -73,23 +73,33 @@ class PropelDateTime extends DateTime
      *
      * @throws \InvalidArgumentException
      *
-     * @return \DateTime
+     * @return mixed An instance of $dateTimeClass
      */
-    public static function createHighPrecision(?string $time = null): DateTime
+    public static function createHighPrecision(?string $time = null, string $dateTimeClass = 'DateTime'): DateTimeInterface
     {
-        $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+        $dateTime = $dateTimeClass::createFromFormat('U.u', $time ?: self::getMicrotime());
         if ($dateTime === false) {
             throw new InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
         }
 
-        $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+        $dateTime = $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 
         return $dateTime;
     }
 
     /**
-     * Get the current microtime with milliseconds. Making sure that the decimal point separator is always ".", ignoring
+     * Format the output of microtime(true) making sure that the decimal point separator is always ".", ignoring
      * what is set with the current locale. Otherwise, self::createHighPrecision would return false.
+     *
+     * @return string
+     */
+    public static function formatMicrotime(float $mtime): string
+    {
+        return number_format($mtime, 6, '.', '');
+    }
+
+    /**
+     * Get the current microtime with milliseconds.
      *
      * @return string
      */
@@ -97,7 +107,7 @@ class PropelDateTime extends DateTime
     {
         $mtime = microtime(true);
 
-        return number_format($mtime, 6, '.', '');
+        return self::formatMicrotime($mtime);
     }
 
     /**
