@@ -106,7 +106,7 @@ class TimestampableBehavior extends Behavior
 
             $valueSource = strtoupper($updateColumn->getType()) === 'INTEGER'
                 ? 'time()'
-                : "\\Propel\\Runtime\\Util\\PropelDateTime::createHighPrecision(null, '$dateTimeClass')";
+                : "PropelDateTime::createHighPrecision(null, '$dateTimeClass')";
 
             return 'if ($this->isModified() && !$this->isColumnModified(' . $this->getColumnConstant('update_column', $builder) . ")) {
     \$this->" . $this->getColumnSetter('update_column') . "({$valueSource});
