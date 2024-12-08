@@ -342,7 +342,7 @@ protected \$delegatedFields = [
  *
  * @return \$this The current object, for fluid interface
  */
-public function filterBy(string \$column, \$value, string \$comparison = null)
+public function filterBy(string \$column, \$value, ?string \$comparison = null)
 {
     if (isset(\$this->delegatedFields[\$column])) {
         \$methodUse = \"use{\$this->delegatedFields[\$column]}Query\";
