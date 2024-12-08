@@ -806,7 +806,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
         if ($crossFK instanceof ForeignKey) {
             $crossObjectName = '$' . lcfirst($this->getFKPhpNameAffix($crossFK));
             $crossObjectClassName = $this->getClassNameFromTable($crossFK->getForeignTableOrFail());
-            $signature[] = "$crossObjectClassName $crossObjectName" . ($crossFK->isAtLeastOneLocalColumnRequired() ? '' : ' = null');
+            if ($crossFK->isAtLeastOneLocalColumnRequired()) {
+                $signature[] = "$crossObjectClassName $crossObjectName";
+            } else {
+                $signature[] = "?$crossObjectClassName $crossObjectName = null";
+            }
             $shortSignature[] = $crossObjectName;
             $normalizedShortSignature[] = $crossObjectName;
             $phpDoc[] = "

@@ -6,7 +6,7 @@
  * @param ValidatorInterface|null $validator A Validator class instance
  * @return bool Whether all objects pass validation.
  */
-public function validate(ValidatorInterface $validator = null)
+public function validate(?ValidatorInterface $validator = null)
 {
     if (null === $validator) {
         $validator = new RecursiveValidator(
