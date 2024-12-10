@@ -44,6 +44,7 @@
             }
         }
 
+<?php if ($hasGenericMutators) :?>
         if (0 === strpos($name, 'from')) {
             $format = substr($name, 4);
             $inputData = $params[0];
@@ -52,6 +53,7 @@
             return $this->importFrom($format, $inputData, $keyType);
         }
 
+<?php endif?>
         if (0 === strpos($name, 'to')) {
             $format = substr($name, 2);
             $includeLazyLoadColumns = $params[0] ?? true;

@@ -194,7 +194,7 @@
             $parser = AbstractParser::getParser($parser);
         }
 
-        return $parser->fromArray($this->toArray($keyType, $includeLazyLoadColumns, array(), true));
+        return $parser->fromArray($this->toArray($keyType, $includeLazyLoadColumns, array()));
     }
 
     /**
