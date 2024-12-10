@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Util;
 
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -70,13 +71,18 @@ class PropelDateTime extends DateTime
      * Usually `new \Datetime()` does not contain milliseconds so you need a method like this.
      *
      * @param string|null $time Optional, in seconds. Floating point allowed.
+     * @param string $dateTimeClass Optional, class name of the created object.
      *
      * @throws \InvalidArgumentException
      *
-     * @return DateTimeInterface An instance of $dateTimeClass
+     * @return \DateTimeInterface An instance of $dateTimeClass
      */
     public static function createHighPrecision(?string $time = null, string $dateTimeClass = 'DateTime'): DateTimeInterface
     {
+        if (!is_subclass_of($dateTimeClass, DateTime::class) && !is_subclass_of($dateTimeClass, DateTimeImmutable::class)) {
+            throw new InvalidArgumentException('`' . $dateTimeClass . '` needs to be an instance of DateTime or DateTimeImmutable');
+        }
+
         $dateTime = $dateTimeClass::createFromFormat('U.u', $time ?: self::getMicrotime());
         if ($dateTime === false) {
             throw new InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
@@ -90,6 +96,8 @@ class PropelDateTime extends DateTime
     /**
      * Format the output of microtime(true) making sure that the decimal point separator is always ".", ignoring
      * what is set with the current locale. Otherwise, self::createHighPrecision would return false.
+     *
+     * @param float $mtime Time in milliseconds.
      *
      * @return string
      */

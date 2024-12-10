@@ -8,6 +8,7 @@
 
 namespace Propel\Generator\Behavior\Timestampable;
 
+use DateTime;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 use Propel\Generator\Builder\Om\ObjectBuilder;
 use Propel\Generator\Model\Behavior;
