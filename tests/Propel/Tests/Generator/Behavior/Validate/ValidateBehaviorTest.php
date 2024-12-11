@@ -79,7 +79,7 @@ class ValidateBehaviorTest extends BookstoreTestBase
     public function testHasAlreadyInValidationAttribute()
     {
         foreach ($this->classes as $class) {
-             $this->assertClassHasAttribute('alreadyInValidation', $class);
+            $this->assertTrue(property_exists($class, 'alreadyInValidation'));
         }
     }
 
@@ -89,7 +89,7 @@ class ValidateBehaviorTest extends BookstoreTestBase
     public function testHasValidationFailuresAttribute()
     {
         foreach ($this->classes as $class) {
-             $this->assertClassHasAttribute('validationFailures', $class);
+            $this->assertTrue(property_exists($class, 'validationFailures'));
         }
     }
 
