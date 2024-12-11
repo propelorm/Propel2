@@ -67,6 +67,10 @@
         <foreign-key foreignTable="bookstore" foreignSchema="bookstore_schemas" onDelete="cascade">
             <reference local="bookstore_id" foreign="id"/>
         </foreign-key>
+        <unique>
+            <unique-column name="bookstore_id"/>
+            <unique-column name="id"/>
+        </unique>
     </table>
 
     <table name="second_hand_book" schema="second_hand_books">
