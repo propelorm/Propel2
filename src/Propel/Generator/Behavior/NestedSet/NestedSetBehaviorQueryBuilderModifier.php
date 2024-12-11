@@ -464,7 +464,7 @@ public function orderByLevel(\$reverse = false)
  *
  * @return {$this->objectClassName} The tree root object
  */
-public function findRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
+public function findRoot(" . ($useScope ? '$scope = null, ' : '') . "?ConnectionInterface \$con = null)
 {
     return \$this
         ->addUsingAlias({$this->objectClassName}::LEFT_COL, 1, Criteria::EQUAL)";
@@ -524,7 +524,7 @@ public function findRoots(?ConnectionInterface \$con = null)
  *
  * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-public function findTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
+public function findTree(" . ($useScope ? '$scope = null, ' : '') . "?ConnectionInterface \$con = null)
 {
     return \$this";
         if ($useScope) {
@@ -593,7 +593,7 @@ static public function retrieveRoots(?Criteria \$criteria = null, ?ConnectionInt
  * @param ConnectionInterface \$con Connection to use.
  * @return {$this->objectClassName}            Propel object for root node
  */
-static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
+static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "?ConnectionInterface \$con = null)
 {
     \$c = new Criteria($tableMapClassName::DATABASE_NAME);
     \$c->add($objectClassName::LEFT_COL, 1, Criteria::EQUAL);";
@@ -633,7 +633,7 @@ static public function retrieveRoot(" . ($useScope ? '$scope = null, ' : '') . "
  * @param ConnectionInterface \$con Connection to use.
  * @return {$this->objectClassName}[]|ObjectCollection|mixed the list of results, formatted by the current formatter
  */
-static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "Criteria \$criteria = null, ?ConnectionInterface \$con = null)
+static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "?Criteria \$criteria = null, ?ConnectionInterface \$con = null)
 {
     if (null === \$criteria) {
         \$criteria = new Criteria($tableMapClassName::DATABASE_NAME);
@@ -666,7 +666,7 @@ static public function retrieveTree(" . ($useScope ? '$scope = null, ' : '') . "
  * @param $objectClassName \$node    Propel object for src node
  * @return bool
  */
-static public function isValid($objectClassName \$node = null)
+static public function isValid(?$objectClassName \$node = null)
 {
     if (is_object(\$node) && \$node->getRightValue() > \$node->getLeftValue()) {
         return true;
@@ -701,7 +701,7 @@ static public function isValid($objectClassName \$node = null)
  *
  * @return int The number of deleted nodes
  */
-static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "ConnectionInterface \$con = null)
+static public function deleteTree(" . ($useScope ? '$scope = null, ' : '') . "?ConnectionInterface \$con = null)
 {";
         if ($useScope) {
             $script .= "
