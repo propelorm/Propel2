@@ -237,7 +237,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $/x';
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
-            if ($matches[2]) {
+            if (trim($matches[2])) {
                 $cpos = strpos($matches[2], ',');
                 if ($cpos !== false) {
                     $size = (int)substr($matches[2], 0, $cpos);
