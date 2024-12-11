@@ -237,7 +237,7 @@ class MysqlSchemaParser extends AbstractSchemaParser
         $/x';
         if (preg_match($regexp, $row['Type'], $matches)) {
             $nativeType = $matches[1];
-            if ($matches[2]) {
+            if ($matches[2]) { // @phpstan-ignore if.alwaysTrue (see https://github.com/propelorm/Propel2/pull/2020#issuecomment-2535374330)
                 $cpos = strpos($matches[2], ',');
                 if ($cpos !== false) {
                     $size = (int)substr($matches[2], 0, $cpos);
