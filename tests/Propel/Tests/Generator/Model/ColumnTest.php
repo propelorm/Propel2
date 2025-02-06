@@ -702,7 +702,7 @@ class ColumnTest extends ModelTestCase
             ['SMALLINT', 'int', true],
             ['TINYINT', 'int', true],
             ['INTEGER', 'int', true],
-            ['BIGINT', 'int', true],
+            ['BIGINT', PHP_INT_SIZE === 8 ? 'int' : 'string', PHP_INT_SIZE === 8],
             ['FLOAT', 'double', true],
             ['DOUBLE', 'double', true],
             ['NUMERIC', 'string', false],
