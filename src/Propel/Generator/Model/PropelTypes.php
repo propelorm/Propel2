@@ -234,7 +234,7 @@ class PropelTypes
     /**
      * @var string
      */
-    public const BIGINT_NATIVE_TYPE = 'string';
+    public const BIGINT_NATIVE_TYPE = 'int';
 
     /**
      * @var string
