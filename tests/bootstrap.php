@@ -4,8 +4,8 @@ require_once __DIR__ . '/../autoload.php.dist';
 
 // check if user is root and
 if (function_exists("posix_getuid")) {
-    if (posix_getuid() === 0) {
-        echo('You must run tests suite with an unprivileged user.');
+    if (posix_getuid() === 0 && !getenv('ALLOW_TESTS_AS_ROOT')) {
+        echo 'Propel discourages running test suite as root. Set the environment variable ALLOW_TESTS_AS_ROOT if you really need to run as root.';
         die(1);
     }
 }
