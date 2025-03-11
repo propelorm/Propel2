@@ -508,39 +508,38 @@ class QueryBuilder extends AbstractOMBuilder
         $tableMapClassName = $this->getTableMapClassName();
         $table = $this->getTable();
 
+        if (!$table->hasCompositePrimaryKey()) {
+            $pkType = 'mixed';
+            $codeExample = '$obj  = $c->findPk(12, $con);';
+        } else {
+            $colNames = array_map(fn (Column $col) => '$' . $col->getName(), $table->getPrimaryKey());
+            $pkType = 'array[' . implode(', ', $colNames) . ']';
+            $randomPkValues = array_slice([12, 34, 56, 78, 91], 0, count($colNames));
+
+            $pkCsv = implode(', ', $randomPkValues);
+            $codeExample = "\$obj = \$c->findPk(array($pkCsv), \$con);";
+        }
+
+        $buildPoolKeyStatement = $this->getBuildPoolKeyStatement($table->getPrimaryKey());
+
         $script .= "
     /**
      * Find object by primary key.
      * Propel uses the instance pool to skip the database if the object exists.
      * Go fast if the query is untouched.
-     *";
-        if ($table->hasCompositePrimaryKey()) {
-            $pks = $table->getPrimaryKey();
-            $examplePk = array_slice([12, 34, 56, 78, 91], 0, count($pks));
-            $colNames = [];
-            foreach ($pks as $col) {
-                $colNames[] = '$' . $col->getName();
-            }
-            $pkType = 'array[' . implode(', ', $colNames) . ']';
-            $script .= "
+     *
      * <code>
-     * \$obj = \$c->findPk(array(" . implode(', ', $examplePk) . '), $con);';
-        } else {
-            $pkType = 'mixed';
-            $script .= "
-     * <code>
-     * \$obj  = \$c->findPk(12, \$con);";
-        }
-        $script .= "
+     * $codeExample
      * </code>
      *
-     * @param " . $pkType . " \$key Primary key to use for the query
+     * @param $pkType \$key Primary key to use for the query
      * @param ConnectionInterface \$con an optional connection object
      *
      * @return $class|array|mixed the result, formatted by the current formatter
      */
     public function findPk(\$key, ?ConnectionInterface \$con = null)
     {";
+
         if (!$table->hasPrimaryKey()) {
             $this->declareClass('Propel\\Runtime\\Exception\\LogicException');
             $script .= "
@@ -554,16 +553,7 @@ class QueryBuilder extends AbstractOMBuilder
         $script .= "
         if (\$key === null) {
             return null;
-        }";
-        if ($table->hasCompositePrimaryKey()) {
-            $numberOfPks = count($table->getPrimaryKey());
-            $pkIndexes = range(0, $numberOfPks - 1);
-            $pks = preg_filter('/(\d+)/', '$key[${1}]', $pkIndexes); // put ids into "$key[]"
-        } else {
-            $pks = '$key';
         }
-        $pkHash = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
-        $script .= "
 
         if (\$con === null) {
             \$con = Propel::getServiceContainer()->getReadConnection({$this->getTableMapClass()}::DATABASE_NAME);
@@ -579,8 +569,9 @@ class QueryBuilder extends AbstractOMBuilder
             return \$this->findPkComplex(\$key, \$con);
         }
 
-        if ((null !== (\$obj = {$tableMapClassName}::getInstanceFromPool({$pkHash})))) {
-            // the object is already in the instance pool
+        \$poolKey = $buildPoolKeyStatement;
+        \$obj = {$tableMapClassName}::getInstanceFromPool(\$poolKey);
+        if (\$obj !== null) {
             return \$obj;
         }
 
@@ -616,38 +607,18 @@ class QueryBuilder extends AbstractOMBuilder
             return;
         }
 
-        $platform = $this->getPlatform();
         $tableMapClassName = $this->getTableMapClassName();
         $ARClassName = $this->getObjectClassName();
         $this->declareClassFromBuilder($this->getStubObjectBuilder());
         $this->declareClasses('\PDO');
-        $selectColumns = [];
-        foreach ($table->getColumns() as $column) {
-            if (!$column->isLazyLoad()) {
-                $selectColumns[] = $this->quoteIdentifier($column->getName());
-            }
-        }
-        $conditions = [];
-        foreach ($table->getPrimaryKey() as $index => $column) {
-            $conditions[] = sprintf('%s = :p%d', $this->quoteIdentifier($column->getName()), $index);
-        }
-        $query = sprintf(
-            'SELECT %s FROM %s WHERE %s',
-            implode(', ', $selectColumns),
-            $this->quoteIdentifier($table->getName()),
-            implode(' AND ', $conditions),
-        );
-        $pks = [];
-        if ($table->hasCompositePrimaryKey()) {
-            foreach ($table->getPrimaryKey() as $index => $column) {
-                $pks[] = "\$key[$index]";
-            }
-        } else {
-            $pks[] = '$key';
-        }
 
-        $pkHashFromRow = $this->getTableMapBuilder()->getInstancePoolKeySnippet($pks);
-        $script .= "
+        $isBulkLoad = $table->isBulkLoadTable();
+        $query = $this->buildSimpleSqlSelectStatement($table, !$isBulkLoad);
+        $buildPoolKeyStatement = $this->getBuildPoolKeyStatement($table->getPrimaryKey(), $isBulkLoad ? '$pk' : '$key');
+        $bindValueStatements = $isBulkLoad ? '' : $this->buildPrimaryKeyColumnBindingStatements($table);
+        $ifWhile = $isBulkLoad ? 'while' : 'if';
+
+            $script .= "
     /**
      * Find object by primary key using raw SQL to go fast.
      * Bypass doSelect() and the object formatter by using generated code.
@@ -663,44 +634,134 @@ class QueryBuilder extends AbstractOMBuilder
     {
         \$sql = '$query';
         try {
-            \$stmt = \$con->prepare(\$sql);";
-        if ($table->hasCompositePrimaryKey()) {
-            foreach ($table->getPrimaryKey() as $index => $column) {
-                $script .= $platform->getColumnBindingPHP($column, "':p$index'", "\$key[$index]", '            ');
-            }
-        } else {
-            $pk = $table->getPrimaryKey();
-            $column = $pk[0];
-            $script .= $platform->getColumnBindingPHP($column, "':p0'", '$key', '            ');
-        }
-        $script .= "
+            \$stmt = \$con->prepare(\$sql);$bindValueStatements
             \$stmt->execute();
         } catch (Exception \$e) {
             Propel::log(\$e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', \$sql), 0, \$e);
         }
         \$obj = null;
-        if (\$row = \$stmt->fetch(\PDO::FETCH_NUM)) {";
+        $ifWhile (\$row = \$stmt->fetch(PDO::FETCH_NUM)) {";
 
-        if ($usesConcreteInheritance) {
+        if (!$usesConcreteInheritance) {
+            $classNameLiteral = $ARClassName;
+        } else {
+            $classNameLiteral = '$cls';
+
             $script .= "
-            \$cls = {$tableMapClassName}::getOMClass(\$row, 0, false);
+            {$classNameLiteral} = {$tableMapClassName}::getOMClass(\$row, 0, false);";
+        }
+
+        $script .= "
             /** @var $ARClassName \$obj */
-            \$obj = new \$cls();";
+            \$obj = new $classNameLiteral();
+            \$obj->hydrate(\$row);";
+
+        if ($isBulkLoad) {
+            $script .= "
+            \$pk = \$obj->getPrimaryKey();";
+        }
+
+        $script .= "
+            {$tableMapClassName}::addInstanceToPool(\$obj, $buildPoolKeyStatement);
+        }
+        \$stmt->closeCursor();";
+
+        if ($isBulkLoad) {
+            $buildPoolKeyStatementFromKey = $this->getBuildPoolKeyStatement($table->getPrimaryKey());
+
+            $script .= "
+        \$poolKey = $buildPoolKeyStatementFromKey;
+
+        return {$tableMapClassName}::getInstanceFromPool(\$poolKey);
+    }
+";
         } else {
             $script .= "
-            /** @var $ARClassName \$obj */
-            \$obj = new $ARClassName();";
-        }
-        $script .= "
-            \$obj->hydrate(\$row);
-            {$tableMapClassName}::addInstanceToPool(\$obj, $pkHashFromRow);
-        }
-        \$stmt->closeCursor();
 
         return \$obj;
     }
 ";
+        }
+    }
+
+    /**
+     * Create select SQL statement for the given table with binding statements
+     * for the primary key.
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param bool $withBinding If false, pk column bindings are omitted
+     *
+     * @return string
+     */
+    protected function buildSimpleSqlSelectStatement(Table $table, bool $withBinding = true): string
+    {
+        $selectColumns = array_filter(array_map(fn (Column $col) => $col->isLazyLoad() ? null : $col->getName(), $table->getColumns()));
+        $selectColumnsCSV = implode(', ', array_map([$this, 'quoteIdentifier'], $selectColumns));
+
+        if (!$withBinding) {
+            return sprintf('SELECT %s FROM %s', $selectColumnsCSV, $this->quoteIdentifier($table->getName()));
+        }
+
+        $conditions = [];
+        foreach ($table->getPrimaryKey() as $index => $column) {
+            $quotedColumnName = $this->quoteIdentifier($column->getName());
+            $conditions[] = sprintf('%s = :p%d', $quotedColumnName, $index);
+        }
+
+        return sprintf(
+            'SELECT %s FROM %s WHERE %s',
+            $selectColumnsCSV,
+            $this->quoteIdentifier($table->getName()),
+            implode(' AND ', $conditions),
+        );
+    }
+
+    /**
+     * Build PHP column binding statements for the primary key of a table (i.e. "$stmt->bindValue(':p0', $key, PDO::PARAM_INT);".
+     *
+     * @param \Propel\Generator\Model\Table $table
+     * @param string $keyVariableLiteral
+     *
+     * @return string
+     */
+    protected function buildPrimaryKeyColumnBindingStatements(Table $table, string $keyVariableLiteral = '$key'): string
+    {
+        $platform = $this->getPlatform();
+        $columns = (array)$table->getPrimaryKey();
+        $tab = '            ';
+
+        if (!$table->hasCompositePrimaryKey()) {
+            return $platform->getColumnBindingPHP($columns[0], "':p0'", $keyVariableLiteral, $tab);
+        }
+
+        $statements = '';
+        foreach ((array)$table->getPrimaryKey() as $index => $column) {
+            $accessorExpression = "{$keyVariableLiteral}[$index]"; // i.e. "$key[2]"
+            $statements .= $platform->getColumnBindingPHP($column, "':p$index'", $accessorExpression, $tab);
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Build PHP statement that creates a hash key from column values.
+     *
+     * @param array<\Propel\Generator\Model\Column> $pkColumns Columns used to build hash.
+     * @param string $varLiteral The literal for the variable holding the key in the script.
+     *
+     * @return string
+     */
+    protected function getBuildPoolKeyStatement(array $pkColumns, string $varLiteral = '$key'): string
+    {
+        $numberOfPks = count($pkColumns);
+        if ($numberOfPks === 1) {
+            return $this->getTableMapBuilder()->getInstancePoolKeySnippet($varLiteral);
+        }
+        $pkIndexes = range(0, $numberOfPks - 1);
+        $pkVariableLiteral = preg_filter('/(\d+)/', $varLiteral . '[${1}]', $pkIndexes); // put ids into "$key[]"
+
+        return $this->getTableMapBuilder()->getInstancePoolKeySnippet($pkVariableLiteral);
     }
 
     /**
@@ -2121,7 +2182,7 @@ class QueryBuilder extends AbstractOMBuilder
 ";
     }
 
- // end addDoOnDeleteCascade
+    // end addDoOnDeleteCascade
 
 
     /**
