@@ -76,7 +76,7 @@ jobs:
               run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
             - name: Composer cache dependencies
-              uses: actions/cache@v1
+              uses: actions/cache@v4.2.0
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
@@ -156,7 +156,7 @@ jobs:
                   echo "::set-output name=dir::$(composer config cache-files-dir)"
 
             - name: Composer cache
-              uses: actions/cache@v2
+              uses: actions/cache@v4.2.0
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
