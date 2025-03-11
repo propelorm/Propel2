@@ -2302,4 +2302,19 @@ class Table extends ScopedMappingModel implements IdMethod
         return $this->getForeignKeysReferencingTable($table->getName()) ||
             $table->getForeignKeysReferencingTable($this->getName());
     }
+
+    /**
+     * Check if the table data should be loaded in bulk.
+     *
+     * If true, Propel will load the whole table into memory rather than
+     * individual objects when resolving FK relations.
+     *
+     * @return bool
+     */
+    public function isBulkLoadTable(): bool
+    {
+        $value = $this->getAttribute('bulk-load') ?? 'false';
+
+        return strtolower($value) !== 'false';
+    }
 }

@@ -57,18 +57,19 @@ class UuidConverterTest extends BaseTestCase
      */
     public function testBinToUuidWithSwap($uuid, $hex, $hexWithSwap)
     {
-        $bin = hex2bin($hexWithSwap);
+        $bin = $hex ? hex2bin($hexWithSwap) : null;
         $result = UuidConverter::binToUuid($bin, true);
         $this->assertEquals($uuid, $result);
     }
 
     /**
      * @dataProvider uuidDataProvider
+     * 
      * @return void
      */
     public function testBinToUuidWithoutSwap($uuid, $hex, $hexWithSwap)
     {
-        $bin = hex2bin($hex);
+        $bin = $hex ? hex2bin($hex) : null;
         $result = UuidConverter::binToUuid($bin, false);
         $this->assertEquals($uuid, $result);
     }

@@ -156,7 +156,7 @@ class TestCase extends PHPUnitTestCase
      * @param object|class-string $obj Instance with protected or private property
      * @param string $name Name of the protected or private property
      *
-     * @return void
+     * @return ReflectionProperty
      */
     public function getProperty($obj, string $name): ReflectionProperty
     {

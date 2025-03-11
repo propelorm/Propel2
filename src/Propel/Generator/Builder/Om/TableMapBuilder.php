@@ -741,19 +741,10 @@ class " . $this->getUnqualifiedClassName() . " extends TableMap
     public function getInstancePoolKeySnippet($pkphp): string
     {
         $pkphp = (array)$pkphp; // make it an array if it is not.
-        $script = '';
-        if (count($pkphp) > 1) {
-            $script .= 'serialize([';
-            $i = 0;
-            foreach ($pkphp as $pkvar) {
-                $script .= ($i++ ? ', ' : '') . "(null === {$pkvar} || is_scalar({$pkvar}) || is_callable([{$pkvar}, '__toString']) ? (string) {$pkvar} : {$pkvar})";
-            }
-            $script .= '])';
-        } else {
-            $script .= "null === {$pkphp[0]} || is_scalar({$pkphp[0]}) || is_callable([{$pkphp[0]}, '__toString']) ? (string) {$pkphp[0]} : {$pkphp[0]}";
-        }
+        $format = '%1$s === null || is_scalar(%1$s) || is_callable([%1$s, \'__toString\']) ? (string) %1$s : %1$s';
+        $statements = array_map(fn ($keyLiteral) => sprintf($format, $keyLiteral), $pkphp);
 
-        return $script;
+        return (count($statements) === 1) ? $statements[0] : 'serialize([' . implode(', ', $statements) . '])';
     }
 
     /**

@@ -305,7 +305,7 @@
     </table>
 
     <!-- Test Views (read-only tables) -->
-    <table name="country" readOnly="true">
+    <table name="country" readOnly="true" bulk-load="true">
         <column name="code" type="VARCHAR" size="6" primaryKey="true"/>
         <column name="capital" type="VARCHAR" size="100"/>
     </table>
