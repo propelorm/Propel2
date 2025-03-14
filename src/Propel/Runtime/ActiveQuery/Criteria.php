@@ -390,23 +390,6 @@ class Criteria
     protected $identifierQuoting = false;
 
     /**
-     * @var array
-     */
-    public $replacedColumns = [];
-
-    /**
-     * temporary property used in replaceNames
-     *
-     * @var string|null
-     */
-    protected $currentAlias;
-
-    /**
-     * @var bool
-     */
-    protected $foundMatch = false;
-
-    /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
@@ -2193,72 +2176,27 @@ class Criteria
     }
 
     /**
-     * Replaces complete column names (like Article.AuthorId) in an SQL clause
-     * by their exact Propel column fully qualified name (e.g. article.author_id)
-     * but ignores the column names inside quotes
-     * e.g. 'CONCAT(Book.AuthorID, "Book.AuthorID") = ?'
-     *   => 'CONCAT(book.author_id, "Book.AuthorID") = ?'
+     * Default implementation.
      *
-     * @param string $sql SQL clause to inspect (modified by the method)
+     * @param string $sql
      *
-     * @return bool Whether the method managed to find and replace at least one column name
+     * @return bool
      */
     public function replaceNames(string &$sql): bool
     {
-        $this->replacedColumns = [];
-        $this->currentAlias = '';
-        $this->foundMatch = false;
-        $isAfterBackslash = false;
-        $isInString = false;
-        $stringQuotes = '';
-        $parsedString = '';
-        $stringToTransform = '';
-        $len = strlen($sql);
-        $pos = 0;
-        while ($pos < $len) {
-            $char = $sql[$pos];
-            // check flags for strings or escaper
-            switch ($char) {
-                case '\\':
-                    $isAfterBackslash = true;
+        return false;
+    }
 
-                    break;
-                case "'":
-                case '"':
-                    if ($isInString && $stringQuotes == $char) {
-                        if (!$isAfterBackslash) {
-                            $isInString = false;
-                        }
-                    } elseif (!$isInString) {
-                        $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", [$this, 'doReplaceNameInExpression'], $stringToTransform);
-                        $stringToTransform = '';
-                        $stringQuotes = $char;
-                        $isInString = true;
-                    }
-
-                    break;
-            }
-
-            if ($char !== '\\') {
-                $isAfterBackslash = false;
-            }
-
-            if ($isInString) {
-                $parsedString .= $char;
-            } else {
-                $stringToTransform .= $char;
-            }
-
-            $pos++;
-        }
-
-        if ($stringToTransform) {
-            $parsedString .= preg_replace_callback("/[\w\\\]+\.\w+/", [$this, 'doReplaceNameInExpression'], $stringToTransform);
-        }
-
-        $sql = $parsedString;
-
-        return $this->foundMatch;
+    /**
+     * Default implementation.
+     *
+     * @param string $sql
+     *
+     * @return string
+     */
+    public function replaceColumnNames(string $sql): string
+    {
+        return $sql;
     }
 
     /**

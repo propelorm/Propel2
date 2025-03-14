@@ -11,6 +11,7 @@ namespace Propel\Runtime\ActiveQuery;
 use ArrayIterator;
 use IteratorAggregate;
 use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
+use Propel\Runtime\ActiveQuery\Util\ColumnResolver;
 use Propel\Runtime\Exception\InvalidArgumentException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Formatter\AbstractFormatter;
@@ -67,6 +68,11 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
     protected $defaultFormatterClass = ModelCriteria::FORMAT_OBJECT;
 
     /**
+     * @var \Propel\Runtime\ActiveQuery\Util\ColumnResolver | null
+     */
+    protected $columnResolver;
+
+    /**
      * Creates a new instance with the default capacity which corresponds to
      * the specified database.
      *
@@ -79,6 +85,7 @@ class BaseModelCriteria extends Criteria implements IteratorAggregate
         parent::__construct($dbName);
         $this->setModelName($modelName);
         $this->modelAlias = $modelAlias;
+        $this->columnResolver = new ColumnResolver($this);
     }
 
     /**

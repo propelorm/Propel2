@@ -9,6 +9,7 @@
 namespace Propel\Tests\Runtime\ActiveQuery;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\Util\ColumnResolver;
 use Propel\Tests\Bookstore\AuthorQuery;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\TestCase;
@@ -23,7 +24,7 @@ class CriteriaReplaceNameTest extends TestCase
     /**
      * Provides test data
      *
-     * @return string[][]|NULL[][]
+     * @return string[][]|null[][]
      */
     public static function NamespacedBookReplaceNamesDataProvider()
     {
@@ -44,7 +45,7 @@ class CriteriaReplaceNameTest extends TestCase
     /**
      * Provides test data
      *
-     * @return string[][]|NULL[][]
+     * @return string[][]|null[][]
      */
     public static function BookReplaceNamesDataProvider()
     {
@@ -130,13 +131,12 @@ class CriteriaReplaceNameTest extends TestCase
      */
     protected function runTestReplaceName(ModelCriteria $c, string $origClause, ?string $columnPhpName, string $modifiedClause)
     {
-        $c->replaceNames($origClause);
-        $replacedColumns = $c->replacedColumns;
+        $replacedColumns = $this->replaceColumns($c, $origClause);
 
         if ($columnPhpName) {
             $this->assertCount(1, $replacedColumns);
             $columnMap = $c->getTableMap()->getColumnByPhpName($columnPhpName);
-            $this->assertEquals([$columnMap], $replacedColumns);
+            $this->assertEquals($columnMap, $replacedColumns[0]->getColumnMap());
         }
         $this->assertEquals($modifiedClause, $origClause);
     }
@@ -164,15 +164,14 @@ class CriteriaReplaceNameTest extends TestCase
     public function testReplaceMultipleNames($origClause, $expectedColumns, $modifiedClause)
     {
         $c = new ModelCriteria('bookstore', 'Propel\Tests\Bookstore\Book');
-        $c->replaceNames($origClause);
-        $replacedColumns = $c->replacedColumns;
+        $replacedColumns = $this->replaceColumns($c, $origClause);
 
         $this->assertCount(count($expectedColumns), $replacedColumns);
         foreach ($replacedColumns as $index => $replacedColumn) {
             $expectedColumnName = $expectedColumns[$index];
             $expectedColumnMap = $c->getTableMap()->getColumnByPhpName($expectedColumnName);
 
-            $this->assertEquals($expectedColumnMap, $replacedColumn);
+            $this->assertEquals($expectedColumnMap, $replacedColumn->getColumnMap());
         }
         $this->assertEquals($modifiedClause, $origClause);
     }
@@ -194,12 +193,26 @@ class CriteriaReplaceNameTest extends TestCase
         ->where($joinCondition)
         ->withColumn('numberOfBooks.NumberOfBooks', 'NumberOfBooks');
 
-        $authorQuery->replaceNames($joinCondition); // note that replaceNames() changes the input string
-        
+        $replacedColumns = $this->replaceColumns($authorQuery, $joinCondition);        
         $this->assertEquals('author.id = numberOfBooks.AuthorId', $joinCondition, 'Aliases from subquery should not be replaced');
 
         $authorIdColumnMap = $authorQuery->getTableMap()->getColumnByPhpName('Id');
-        $replacedColumns = $authorQuery->replacedColumns;
-        $this->assertEquals([$authorIdColumnMap], $replacedColumns, 'Only own column (AuthorId) should count as replaced column');
+        $this->assertCount(1, $replacedColumns);
+        $this->assertEquals($authorIdColumnMap, $replacedColumns[0]->getColumnMap(), 'Only own column (AuthorId) should count as replaced column');
+    }
+
+    /**
+     * 
+     * @param \Propel\Runtime\ActiveQuery\ModelCriteria $c
+     * @param mixed $sql
+     *
+     * @return \Propel\Runtime\ActiveQuery\Util\ResolvedColumn[]
+     */
+    protected function replaceColumns(ModelCriteria $c, &$sql): array
+    {
+        $replacer = new ColumnResolver($c);
+        $sql = $replacer->replaceColumnNames($sql);
+        
+        return $this->getProperty(ColumnResolver::class, 'replacedColumns')->getValue($replacer);
     }
 }

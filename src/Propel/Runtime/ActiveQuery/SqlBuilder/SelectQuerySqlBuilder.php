@@ -62,8 +62,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
 
         $groupBy = $this->adapter->getGroupBy($this->criteria);
         if ($groupBy) {
-            $this->criteria->replaceNames($groupBy);
-            $sqlClauses[] = $groupBy;
+            $sqlClauses[] = $this->criteria->replaceColumnNames($groupBy);
         }
 
         $havingSql = $this->buildHavingClause($params);
@@ -99,9 +98,8 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
     protected function buildSelectClause(array &$sourceTableNamesCollector): string
     {
         $selectSql = $this->adapter->createSelectSqlPart($this->criteria, $sourceTableNamesCollector);
-        $this->criteria->replaceNames($selectSql);
 
-        return $selectSql;
+        return $this->criteria->replaceCOlumnNames($selectSql);
     }
 
     /**
@@ -190,8 +188,7 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
             }
             $join->setAdapter($this->adapter);
             $joinClauseString = $join->getClause($params);
-            $this->criteria->replaceNames($joinClauseString);
-            $joinClause[] = $joinClauseString;
+            $joinClause[] = $this->criteria->replaceColumnNames($joinClauseString);
         }
 
         return $joinClause;
@@ -328,12 +325,10 @@ class SelectQuerySqlBuilder extends AbstractSqlQueryBuilder
             $column = ($tableName) ? $this->dbMap->getTable($tableName)->getColumn($columnName) : null;
             if ($this->criteria->isIgnoreCase() && $column && $column->isText()) {
                 $ignoreCaseColumn = $this->adapter->ignoreCaseInOrderBy("$tableAlias.$columnAlias");
-                $this->criteria->replaceNames($ignoreCaseColumn);
-                $orderByClause[] = $ignoreCaseColumn . $direction;
+                $orderByClause[] = $this->criteria->replaceColumnNames($ignoreCaseColumn) . $direction;
                 $additionalSelectStatements[] = ', ' . $ignoreCaseColumn;
             } else {
-                $this->criteria->replaceNames($orderByColumn);
-                $orderByClause[] = $orderByColumn;
+                $orderByClause[] = $this->criteria->replaceColumnNames($orderByColumn);
             }
         }
 

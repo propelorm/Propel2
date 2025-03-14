@@ -135,8 +135,7 @@ abstract class AbstractSqlQueryBuilder
     {
         $criterionSql = '';
         $criterion->appendPsTo($criterionSql, $params);
-        $this->criteria->replaceNames($criterionSql);
 
-        return $criterionSql;
+        return $this->criteria->replaceColumnNames($criterionSql);
     }
 }

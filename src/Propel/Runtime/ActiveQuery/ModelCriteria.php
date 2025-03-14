@@ -25,7 +25,6 @@ use Propel\Runtime\ActiveQuery\Criterion\RawCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\RawModelCriterion;
 use Propel\Runtime\ActiveQuery\Criterion\SeveralModelCriterion;
 use Propel\Runtime\ActiveQuery\Exception\UnknownColumnException;
-use Propel\Runtime\ActiveQuery\Exception\UnknownModelException;
 use Propel\Runtime\ActiveQuery\Exception\UnknownRelationException;
 use Propel\Runtime\ActiveQuery\ModelCriteria as ActiveQueryModelCriteria;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -348,15 +347,15 @@ class ModelCriteria extends BaseModelCriteria
      */
     public function orderBy(string $columnName, string $order = Criteria::ASC)
     {
-        [, $realColumnName] = $this->getColumnFromName($columnName, false);
+        $localColumnName = $this->columnResolver->resolveColumn($columnName, false)->getLocalColumnName();
         $order = strtoupper($order);
         switch ($order) {
             case Criteria::ASC:
-                $this->addAscendingOrderByColumn($realColumnName);
+                $this->addAscendingOrderByColumn($localColumnName);
 
                 break;
             case Criteria::DESC:
-                $this->addDescendingOrderByColumn($realColumnName);
+                $this->addDescendingOrderByColumn($localColumnName);
 
                 break;
             default:
@@ -378,25 +377,25 @@ class ModelCriteria extends BaseModelCriteria
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_ID)
      *    => $c->addGroupByColumn(BookTableMap::AUTHOR_NAME)
      *
-     * @param mixed $columnName an array of columns name (e.g. array('Book.AuthorId', 'Book.AuthorName')) or a single column name (e.g. 'Book.AuthorId')
+     * @param mixed $columnNames an array of columns name (e.g. array('Book.AuthorId', 'Book.AuthorName')) or a single column name (e.g. 'Book.AuthorId')
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return $this The current object, for fluid interface
      */
-    public function groupBy($columnName)
+    public function groupBy($columnNames)
     {
-        if (!$columnName) {
+        if (!$columnNames) {
             throw new PropelException('You must ask for at least one column');
         }
 
-        if (!is_array($columnName)) {
-            $columnName = [$columnName];
+        if (!is_array($columnNames)) {
+            $columnNames = [$columnNames];
         }
 
-        foreach ($columnName as $column) {
-            [, $realColumnName] = $this->getColumnFromName($column, false);
-            $this->addGroupByColumn($realColumnName);
+        foreach ($columnNames as $columnName) {
+            $localColumnName = $this->columnResolver->resolveColumn($columnName, false)->getLocalColumnName();
+            $this->addGroupByColumn($localColumnName);
         }
 
         return $this;
@@ -2126,38 +2125,39 @@ class ModelCriteria extends BaseModelCriteria
     protected function getCriterionForClause(string $clause, $value, ?int $bindingType = null): AbstractCriterion
     {
         $origin = $clause = trim($clause);
-        if ($this->replaceNames($clause)) {
+        $resolvedColumn = $this->columnResolver->resolveFirstColumn($clause);
+
+        if ($resolvedColumn) {
             // at least one column name was found and replaced in the clause
             // this is enough to determine the type to bind the parameter to
-            /** @var \Propel\Runtime\Map\ColumnMap $colMap */
-            $colMap = $this->replacedColumns[0];
-            $value = $this->convertValueForColumn($value, $colMap);
+
+            $value = $this->convertValueForColumn($value, $resolvedColumn->getColumnMap());
             $clauseLen = strlen($clause);
             if ($bindingType !== null) {
-                return new RawModelCriterion($this, $clause, $colMap, $value, $this->currentAlias, $bindingType);
+                return new RawModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias(), $bindingType);
             }
             if (stripos($clause, 'IN ?') == $clauseLen - 4) {
-                if ($colMap->isSetType()) {
+                if ($resolvedColumn->getColumnMap()->isSetType()) {
                     if (stripos($clause, 'NOT IN ?') == $clauseLen - 8) {
                         $clause = str_ireplace('NOT IN ?', '& ? = 0', $clause);
                     } else {
                         $clause = str_ireplace('IN ?', '& ?', $clause);
                     }
                 } else {
-                    return new InModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                    return new InModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias());
                 }
             }
             if (stripos($clause, '& ?') !== false) {
-                return new BinaryModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                return new BinaryModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias());
             }
             if (stripos($clause, 'LIKE ?') == $clauseLen - 6) {
-                return new LikeModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                return new LikeModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias());
             }
             if (substr_count($clause, '?') > 1) {
-                return new SeveralModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+                return new SeveralModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias());
             }
 
-            return new BasicModelCriterion($this, $clause, $colMap, $value, $this->currentAlias);
+            return new BasicModelCriterion($this, $clause, $resolvedColumn->getColumnMap(), $value, $resolvedColumn->getTableAlias());
         }
         // no column match in clause, must be an expression like '1=1'
         if (strpos($clause, '?') !== false) {
@@ -2205,114 +2205,40 @@ class ModelCriteria extends BaseModelCriteria
     }
 
     /**
-     * Callback function to replace column names by their real name in a clause
-     * e.g. 'Book.Title IN ?'
-     *    => 'book.title IN ?'
-     *
-     * @param array $matches Matches found by preg_replace_callback
-     *
-     * @return string the column name replacement
-     */
-    protected function doReplaceNameInExpression(array $matches): string
-    {
-        $key = $matches[0];
-        [$column, $realFullColumnName] = $this->getColumnFromName($key);
-
-        if (!$column instanceof ColumnMap) {
-            return $this->quoteIdentifier($key);
-        }
-
-        $this->replacedColumns[] = $column;
-        $this->foundMatch = true;
-
-        if (strpos($key, '.') !== false) {
-            [$tableName, $columnName] = explode('.', $key);
-            if (isset($this->aliases[$tableName])) {
-                //don't replace a alias with their real table name
-                $realColumnName = substr($realFullColumnName, strrpos($realFullColumnName, '.') + 1);
-
-                return $this->quoteIdentifier($tableName . '.' . $realColumnName);
-            }
-        }
-
-        return $this->quoteIdentifier($realFullColumnName);
-    }
-
-    /**
-     * Finds a column and a SQL translation for a pseudo SQL column name
-     * Respects table aliases previously registered in a join() or addAlias()
-     * Examples:
-     * <code>
-     * $c->getColumnFromName('Book.Title');
-     *   => array($bookTitleColumnMap, 'book.title')
-     * $c->join('Book.Author a')
-     *   ->getColumnFromName('a.FirstName');
-     *   => array($authorFirstNameColumnMap, 'a.first_name')
-     * </code>
+     * @deprecated Use ColumnResolver::resolveColumn()
      *
      * @param string $columnName String representing the column name in a pseudo SQL clause, e.g. 'Book.Title'
      * @param bool $failSilently
      *
-     * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownColumnException
-     * @throws \Propel\Runtime\ActiveQuery\Exception\UnknownModelException
-     *
-     * @return array List($columnMap, $realColumnName)
+     * @return array
      */
-    protected function getColumnFromName(string $columnName, bool $failSilently = true): array
+    public function getColumnFromName(string $columnName, bool $failSilently = true): array
     {
-        if (strpos($columnName, '.') === false) {
-            $prefix = (string)$this->getModelAliasOrName();
-        } else {
-            // $prefix could be either class name or table name
-            [$prefix, $columnName] = explode('.', $columnName);
-        }
+        $resolvedColumn = $this->columnResolver->resolveColumn($columnName, $failSilently);
 
-        $shortClass = static::getShortName($prefix);
+        return [$resolvedColumn->getColumnMap(), $resolvedColumn->getLocalColumnName()];
+    }
 
-        if ($prefix === $this->getModelAliasOrName()) {
-            // column of the Criteria's model
-            $tableMap = $this->getTableMap();
-        } elseif ($prefix === $this->getModelShortName()) {
-            // column of the Criteria's model
-            $tableMap = $this->getTableMap();
-        } elseif ($this->getTableMap() && $prefix == $this->getTableMap()->getName()) {
-            // column name from Criteria's tableMap
-            $tableMap = $this->getTableMap();
-        } elseif (isset($this->joins[$prefix])) {
-            // column of a relations's model
-            $tableMap = $this->joins[$prefix]->getTableMap();
-        } elseif (isset($this->joins[$shortClass])) {
-            // column of a relations's model
-            $tableMap = $this->joins[$shortClass]->getTableMap();
-        } elseif ($this->hasSelectQuery($prefix)) {
-            return $this->getColumnFromSubQuery($prefix, $columnName, $failSilently);
-        } elseif ($this->getModelJoinByTableName($prefix)) {
-            $tableMap = $this->getModelJoinByTableName($prefix)->getTableMap();
-        } elseif ($failSilently) {
-            return [null, null];
-        } else {
-            throw new UnknownModelException(sprintf('Unknown model, alias or table "%s"', $prefix));
-        }
+    /**
+     * @deprecated use ModelCriteria::replaceColumnNames()
+     *
+     * @param string $sql
+     *
+     * @return bool
+     */
+    public function replaceNames(string &$sql): bool
+    {
+        return $this->columnResolver->replaceColumnNamesAndReturnIndicator($sql);
+    }
 
-        $column = $tableMap->findColumnByName($columnName);
-
-        if ($column !== null) {
-            if (isset($this->aliases[$prefix])) {
-                $this->currentAlias = $prefix;
-                $realColumnName = $prefix . '.' . $column->getName();
-            } else {
-                $realColumnName = $column->getFullyQualifiedName();
-            }
-
-            return [$column, $realColumnName];
-        } elseif (isset($this->asColumns[$columnName])) {
-            // aliased column
-            return [null, $columnName];
-        } elseif ($failSilently) {
-            return [null, null];
-        } else {
-            throw new UnknownColumnException(sprintf('Unknown column "%s" on model, alias or table "%s"', $columnName, $prefix));
-        }
+    /**
+     * @param string $sql
+     *
+     * @return string
+     */
+    public function replaceColumnNames(string $sql): string
+    {
+        return $this->columnResolver->replaceColumnNames($sql);
     }
 
     /**
@@ -2387,46 +2313,13 @@ class ModelCriteria extends BaseModelCriteria
             if (array_key_exists($columnName, $this->asColumns)) {
                 continue;
             }
-            [$columnMap, $realColumnName] = $this->getColumnFromName($columnName);
-            if ($realColumnName === null) {
+            $localColumnName = $this->columnResolver->resolveColumn($columnName)->getLocalColumnName();
+            if ($localColumnName === null) {
                 throw new PropelException("Cannot find selected column '$columnName'");
             }
             // always put quotes around the columnName to be safe, we strip them in the formatter
-            $this->addAsColumn('"' . $columnName . '"', $realColumnName);
+            $this->addAsColumn('"' . $columnName . '"', $localColumnName);
         }
-    }
-
-    /**
-     * Special case for subquery columns
-     *
-     * @param string $class
-     * @param string $phpName
-     * @param bool $failSilently
-     *
-     * @throws \Propel\Runtime\Exception\PropelException
-     *
-     * @return array List($columnMap, $realColumnName)
-     */
-    protected function getColumnFromSubQuery(string $class, string $phpName, bool $failSilently = true): array
-    {
-        $subQueryCriteria = $this->getSelectQuery($class);
-        $tableMap = $subQueryCriteria->getTableMap();
-        if ($tableMap->hasColumnByPhpName($phpName)) {
-            $column = $tableMap->getColumnByPhpName($phpName);
-            $realColumnName = $class . '.' . $column->getName();
-            $this->currentAlias = $class;
-
-            return [null, $realColumnName];
-        }
-        if (isset($subQueryCriteria->asColumns[$phpName])) {
-            // aliased column
-            return [null, $class . '.' . $phpName];
-        }
-        if ($failSilently) {
-            return [null, null];
-        }
-
-        throw new PropelException(sprintf('Unknown column "%s" in the subQuery with alias "%s".', $phpName, $class));
     }
 
     /**
