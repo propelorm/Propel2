@@ -777,7 +777,7 @@ DROP SEQUENCE %s CASCADE;
      */
     public function isNumber(string $type): bool
     {
-        $numbers = ['INTEGER', 'INT4', 'INT2', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
+        $numbers = ['INTEGER', 'INT4', 'INT2','INT8', 'NUMBER', 'NUMERIC', 'SMALLINT', 'BIGINT', 'DECIMAL', 'REAL', 'DOUBLE PRECISION', 'SERIAL', 'BIGSERIAL'];
 
         return in_array(strtoupper($type), $numbers, true);
     }
