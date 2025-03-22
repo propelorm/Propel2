@@ -353,7 +353,9 @@ abstract class AbstractOMBuilder extends DataModelBuilder
                 //so use the fqcn
                 return ($namespace ? '\\' . $namespace : '') . '\\' . $class;
             } else {
-                $autoAliasName = 'Child' . $class;
+                // $autoAliasName = 'Child' . $class;
+                // FIXME: USE A DIFFERENT SYSTEM TO GENERATE AN UNIQUE NAME FOR THIS CLASS?
+                $autoAliasName = $class . md5($namespace);
             }
 
             return $this->declareClassNamespace($class, $namespace, $autoAliasName);
@@ -411,6 +413,11 @@ abstract class AbstractOMBuilder extends DataModelBuilder
             if (!in_array($class, $this->whiteListOfDeclaredClasses, true)) {
                 return true;
             }
+        }
+        
+        if (isset($this->declaredClasses[$this->getNamespace()][$class]) || isset($this->declaredClasses[$this->getNamespace()][str_replace("Query", "", $class)])) {
+            // classes that are already declared must be aliased to prevent collisions between namespaces
+            return true;
         }
 
         return false;
