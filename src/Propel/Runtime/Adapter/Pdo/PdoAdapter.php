@@ -79,6 +79,12 @@ abstract class PdoAdapter
             $con = new PdoConnection($dsn, $user, $password, $driverOptions);
             $this->initConnection($con, isset($params['settings']) && is_array($params['settings']) ? $params['settings'] : []);
         } catch (PDOException $e) {
+            // Detailed error logging
+            error_log(sprintf('PDO Connection Error: DSN: %s, Error: %s, Code: %s', 
+                preg_replace('/password=.*?;/', 'password=***;', $dsn), 
+                $e->getMessage(), 
+                $e->getCode()
+            ));
             throw new AdapterException('Unable to open PDO connection', 0, $e);
         }
 

@@ -51,28 +51,53 @@ class ConnectionFactory
         } else {
             $connectionClass = $defaultConnectionClass;
         }
-        try {
-            $adapterConnection = $adapter->getConnection($configuration);
-        } catch (AdapterException $e) {
-            throw new ConnectionException('Unable to open connection', 0, $e);
-        }
-        /** @var \Propel\Runtime\Connection\ConnectionInterface $connection */
-        $connection = new $connectionClass($adapterConnection);
-
-        // load any connection options from the config file
-        // connection attributes are those PDO flags that have to be set on the initialized connection
-        if (isset($configuration['attributes']) && is_array($configuration['attributes'])) {
-            foreach ($configuration['attributes'] as $option => $value) {
-                if (is_string($value) && strpos($value, '::') !== false) {
-                    if (!defined($value)) {
-                        throw new InvalidArgumentException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"', $value, $connection->getName()));
+        
+        $maxRetries = 2;
+        $retryCount = 0;
+        $lastException = null;
+        
+        while ($retryCount <= $maxRetries) {
+            try {
+                $adapterConnection = $adapter->getConnection($configuration);
+                
+                /** @var \Propel\Runtime\Connection\ConnectionInterface $connection */
+                $connection = new $connectionClass($adapterConnection);
+        
+                // load any connection options from the config file
+                // connection attributes are those PDO flags that have to be set on the initialized connection
+                if (isset($configuration['attributes']) && is_array($configuration['attributes'])) {
+                    foreach ($configuration['attributes'] as $option => $value) {
+                        if (is_string($value) && strpos($value, '::') !== false) {
+                            if (!defined($value)) {
+                                throw new InvalidArgumentException(sprintf('Invalid class constant specified "%s" while processing connection attributes for datasource "%s"', $value, $connection->getName()));
+                            }
+                            $value = constant($value);
+                        }
+                        $connection->setAttribute($option, $value);
                     }
-                    $value = constant($value);
                 }
-                $connection->setAttribute($option, $value);
+                
+                return $connection;
+                
+            } catch (AdapterException $e) {
+                $lastException = $e;
+                $retryCount++;
+                
+                // Log the connection attempt failure
+                error_log(sprintf('Propel connection attempt %d/%d failed: %s', 
+                    $retryCount, 
+                    $maxRetries + 1, 
+                    $e->getMessage() . ' - ' . ($e->getPrevious() ? $e->getPrevious()->getMessage() : '')
+                ));
+                
+                if ($retryCount <= $maxRetries) {
+                    // Wait before retrying
+                    usleep(100000); // 100ms
+                }
             }
         }
-
-        return $connection;
+        
+        // If we get here, all retries have failed
+        throw new ConnectionException('Unable to open connection after ' . ($maxRetries + 1) . ' attempts', 0, $lastException);
     }
 }
