@@ -982,9 +982,9 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         $script .= "
-    " . $visibility . " function get$cfc(\$format = " . $format;
+    " . $visibility . " function get$cfc(?string \$format = " . $format;
         if ($column->isLazyLoad()) {
-            $script .= ', $con = null';
+            $script .= ', ?ConnectionInterface $con = null';
         }
         $script .= ")
     {";
@@ -1158,7 +1158,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $visibility = $column->getAccessorVisibility();
 
         $script .= "
-    " . $visibility . " function get$cfc(\$asArray = true";
+    " . $visibility . " function get$cfc(bool \$asArray = true";
         if ($column->isLazyLoad()) {
             $script .= ', ?ConnectionInterface $con = null';
         }
@@ -6823,7 +6823,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         $reloadOnUpdate = $table->isReloadOnUpdate();
         $reloadOnInsert = $table->isReloadOnInsert();
         $script .= "
-    public function save(?ConnectionInterface \$con = null" . ($reloadOnUpdate || $reloadOnInsert ? ', $skipReload = false' : '') . "): int
+    public function save(?ConnectionInterface \$con = null" . ($reloadOnUpdate || $reloadOnInsert ? ', bool $skipReload = false' : '') . "): int
     {";
     }
 
