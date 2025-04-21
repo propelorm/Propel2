@@ -14,25 +14,16 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.4', '8.2' ]
+                php-version: [ '8.3', '8.4' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '5-min', '5-max', '6-min', '6-max', '7-min', '7-max']
-                exclude:
-                  - symfony-version: '6-min'
-                    php-version: '7.4'
-                  - symfony-version: '6-max'
-                    php-version: '7.4'
-                  - symfony-version: '7-min'
-                    php-version: '7.4'
-                  - symfony-version: '7-max'
-                    php-version: '7.4'
         env:
             DB_NAME: 'propel_tests'
             DB_USER: 'propel'
             DB_PW: 'propel'
         steps:
             - name: Install PostgreSQL latest
-              if: matrix.db-type == 'pgsql' && matrix.php-version != '7.4'
+              if: matrix.db-type == 'pgsql'
               uses: CasperWA/postgresql-action@v1.2
               with:
                   postgresql db: $DB_NAME
@@ -40,7 +31,7 @@ jobs:
                   postgresql password: $DB_PW
 
             - name: Install PostgreSQL min
-              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4'
+              if: matrix.db-type == 'pgsql'
               uses: CasperWA/postgresql-action@v1.2
               with:
                   postgresql version: 9
@@ -49,13 +40,13 @@ jobs:
                   postgresql password: $DB_PW
 
             - name: Install MySQL latest
-              if: matrix.db-type == 'mysql' && matrix.php-version != '7.4'
+              if: matrix.db-type == 'mysql'
               uses: mirromutth/mysql-action@v1.1
               with:
                   mysql root password: $DB_PW
 
             - name: Install MariaDb min
-              if: matrix.db-type == 'mysql' && matrix.php-version == '7.4'
+              if: matrix.db-type == 'mysql'
               uses: getong/mariadb-action@v1.1
               with:
                   mariadb version: '10.2'
@@ -121,12 +112,7 @@ jobs:
 
             - name: Run tests
               shell: 'script -q -e -c "bash {0}"'
-              run: |
-                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
-                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
-                  else
-                    vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
-                  fi
+              run: vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
               env:
                 SYMFONY_VERSION: ${{ matrix.symfony-version }}
 
@@ -144,7 +130,7 @@ jobs:
               id: setup-php
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: '8.1'
+                  php-version: '8.4'
                   extensions: json, libxml, pdo, pdo_mysql, pdo_sqlite, pdo_pgsql, sqlite3
                   coverage: pcov
 
