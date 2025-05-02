@@ -131,13 +131,16 @@ abstract class AbstractQueryExecutor
     protected function handleStatementException(Throwable $e, ?string $sql, $stmt = null): void
     {
         $internalMessage = $e->getMessage();
-        Propel::log($internalMessage, Propel::LOG_ERR);
 
         $isDebugMode = $this->connectionIsInDebugMode();
         if ($isDebugMode && $stmt instanceof StatementWrapper) {
             $sql = $stmt->getExecutedQueryString();
         }
         $publicMessage = "Unable to execute statement [$sql]";
+
+        $fullLogMessage = $publicMessage . PHP_EOL . "Reason: [$internalMessage]";
+        Propel::log($fullLogMessage, Propel::LOG_ERR);
+
         if ($isDebugMode) {
             $publicMessage .= PHP_EOL . "Reason: [$internalMessage]";
         }
