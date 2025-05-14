@@ -12,6 +12,9 @@
             return parent::preSave($con);
         }
         <?php endif?>
+        if ($this->isNew() && !$this->getId()) {
+            $this->setId((int) (microtime(true) * 1000000));
+        }
         return true;
     }
 
