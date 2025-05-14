@@ -73,7 +73,7 @@ jobs:
 
             - name: Composer get cache directory
               id: composer-cache
-              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+              run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
             - name: Composer cache dependencies
               uses: actions/cache@v4
@@ -122,11 +122,11 @@ jobs:
             - name: Run tests
               shell: 'script -q -e -c "bash {0}"'
               run: |
-                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
-                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
-                  else
-                    vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
-                  fi
+                if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version }} == '5-max' ]]; then
+                  export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
+                else
+                  vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
+                fi
               env:
                 SYMFONY_VERSION: ${{ matrix.symfony-version }}
 
@@ -153,7 +153,7 @@ jobs:
             - name: Composer get cache directory
               id: composer-cache
               run: |
-                  echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+                  echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
             - name: Composer cache
               uses: actions/cache@v4
