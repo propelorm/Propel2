@@ -7360,7 +7360,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      *
      * @return string
      */
-    protected function getDateTimeClass(Column $column): string
+    public function getDateTimeClass(Column $column): string
     {
         if (PropelTypes::isPhpObjectType($column->getPhpType())) {
             return $column->getPhpType();

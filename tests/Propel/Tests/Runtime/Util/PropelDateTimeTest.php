@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Util;
 
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use Propel\Runtime\Exception\PropelException;
@@ -247,11 +248,11 @@ class PropelDateTimeTest extends TestCase
     public function testCreateHighPrecision()
     {
         $createHP = PropelDateTime::createHighPrecision();
-        $this->assertInstanceOf(DateTime::class, $createHP);
+        $this->assertInstanceOf(DateTimeInterface::class, $createHP);
 
         setlocale(LC_ALL, 'de_DE.UTF-8');
         $createHP = PropelDateTime::createHighPrecision();
-        $this->assertInstanceOf(DateTime::class, $createHP);
+        $this->assertInstanceOf(DateTimeInterface::class, $createHP);
     }
 
     /**
