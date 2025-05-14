@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Timestampable;
 
+use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
@@ -17,6 +18,7 @@ use Propel\Tests\Bookstore\Behavior\Table2Query;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use TableWithoutCreatedAt;
 use TableWithoutUpdatedAt;
+use TableDateTimeClass;
 
 /**
  * Tests for TimestampableBehavior class
@@ -354,5 +356,41 @@ EOF;
         $this->assertNull($obj->getUpdatedAt());
         $this->assertEquals(1, $obj->save());
         $this->assertNotNull($obj->getUpdatedAt());
+    }
+
+    /**
+     * @return void
+     */
+    public function testDateTimeClass()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_date_time_class">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <behavior name="timestampable">
+        </behavior>
+    </table>
+</database>
+EOF;
+
+        // Custom Configuration to use DateTimeImmutable
+        $builder = new QuickBuilder();
+        $config = new QuickGeneratorConfig([
+            'propel' => [
+                'generator' => [
+                    'dateTime' => [
+                        'dateTimeClass' => 'DateTimeImmutable',
+                    ],
+                ],
+            ],
+        ]);
+        $builder->setSchema($schema);
+        $builder->setConfig($config);
+        $builder->build();
+
+        $obj = new TableDateTimeClass();
+        $obj->save();
+        $this->assertInstanceOf('DateTimeImmutable', $obj->getCreatedAt(), 'Timestampable behavior does not use the propel.generator.dateTime.dateTimeClass configuration property for created_column');
+        $this->assertInstanceOf('DateTimeImmutable', $obj->getUpdatedAt(), 'Timestampable behavior does not use the propel.generator.dateTime.dateTimeClass configuration property for updated_column');
     }
 }
