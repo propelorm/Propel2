@@ -62,7 +62,7 @@ class NestedSetBehaviorObjectBuilderModifierTest extends TestCase
     {
         $expectedAttributes = ['nestedSetQueries'];
         foreach ($expectedAttributes as $attribute) {
-            $this->assertClassHasAttribute($attribute, 'NestedSetTable9');
+            $this->assertTrue(property_exists('NestedSetTable9', $attribute));
         }
     }
 

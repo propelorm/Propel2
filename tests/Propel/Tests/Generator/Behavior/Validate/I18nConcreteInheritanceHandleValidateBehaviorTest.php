@@ -187,8 +187,8 @@ class I18nConcreteInheritanceHandleValidateBehaviorTest extends BookstoreTestBas
         $this->assertTrue(method_exists($class, 'validate'), "Class $class has no validate() method");
         $this->assertTrue(method_exists($class, 'getValidationFailures'), "Class $class has no getValidationFailures() method");
         $this->assertTrue(method_exists($class, 'loadValidatorMetadata'), "Class $class has no loadValidatorMetadata() method");
-        $this->assertClassHasAttribute('alreadyInValidation', $class, "Class $class has no 'alreadyInValidation' property");
-        $this->assertClassHasAttribute('validationFailures', $class, "Class $class has no 'validationFailures' property");
+        $this->assertTrue(property_exists($class, 'alreadyInValidation'), "Class $class has no 'alreadyInValidation' property");
+        $this->assertTrue(property_exists($class, 'validationFailures'), "Class $class has no 'validationFailures' property");
         $method = new ReflectionMethod($class, 'loadValidatorMetadata');
         $this->assertTrue($method->isStatic(), "Method loadValidatorMetadata() of class $class isn't static");
     }
