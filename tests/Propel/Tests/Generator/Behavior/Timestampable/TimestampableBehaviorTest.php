@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Timestampable;
 
+use Propel\Generator\Config\QuickGeneratorConfig;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Tests\Bookstore\Behavior\Map\Table1TableMap;
@@ -17,6 +18,7 @@ use Propel\Tests\Bookstore\Behavior\Table2Query;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 use TableWithoutCreatedAt;
 use TableWithoutUpdatedAt;
+use TableDateTimeClass;
 
 /**
  * Tests for TimestampableBehavior class
@@ -95,7 +97,6 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $t1->save();
         $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable sets updated_column to time() on creation');
         sleep(1);
-        $tupdate = time();
         $t1->save();
         $this->assertTimeEquals($tsave, $t1->getUpdatedAt('U'), 'Timestampable only changes updated_column if the object was modified');
     }
@@ -129,9 +130,9 @@ class TimestampableBehaviorTest extends BookstoreTestBase
         $tsave = time();
         $t1->save();
         $this->assertTimeEquals($tsave, $t1->getCreatedAt('U'), 'Timestampable sets created_column to time() on creation');
+        $this->assertEquals($t1->getCreatedAt('u'), $t1->getUpdatedAt('u'), 'Timestampable does not set created_column and updated_column to the same value on creation');
         sleep(1);
         $t1->setTitle('foo');
-        $tupdate = time();
         $t1->save();
         $this->assertTimeEquals($tsave, $t1->getCreatedAt('U'), 'Timestampable does not update created_column on update');
     }
@@ -355,5 +356,41 @@ EOF;
         $this->assertNull($obj->getUpdatedAt());
         $this->assertEquals(1, $obj->save());
         $this->assertNotNull($obj->getUpdatedAt());
+    }
+
+    /**
+     * @return void
+     */
+    public function testDateTimeClass()
+    {
+        $schema = <<<EOF
+<database name="timestampable_database">
+    <table name="table_date_time_class">
+        <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
+        <behavior name="timestampable">
+        </behavior>
+    </table>
+</database>
+EOF;
+
+        // Custom Configuration to use DateTimeImmutable
+        $builder = new QuickBuilder();
+        $config = new QuickGeneratorConfig([
+            'propel' => [
+                'generator' => [
+                    'dateTime' => [
+                        'dateTimeClass' => 'DateTimeImmutable',
+                    ],
+                ],
+            ],
+        ]);
+        $builder->setSchema($schema);
+        $builder->setConfig($config);
+        $builder->build();
+
+        $obj = new TableDateTimeClass();
+        $obj->save();
+        $this->assertInstanceOf('DateTimeImmutable', $obj->getCreatedAt(), 'Timestampable behavior does not use the propel.generator.dateTime.dateTimeClass configuration property for created_column');
+        $this->assertInstanceOf('DateTimeImmutable', $obj->getUpdatedAt(), 'Timestampable behavior does not use the propel.generator.dateTime.dateTimeClass configuration property for updated_column');
     }
 }

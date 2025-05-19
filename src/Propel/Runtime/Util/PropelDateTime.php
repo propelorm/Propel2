@@ -9,6 +9,7 @@
 namespace Propel\Runtime\Util;
 
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -70,26 +71,45 @@ class PropelDateTime extends DateTime
      * Usually `new \Datetime()` does not contain milliseconds so you need a method like this.
      *
      * @param string|null $time Optional, in seconds. Floating point allowed.
+     * @param string $dateTimeClass Optional, class name of the created object.
      *
      * @throws \InvalidArgumentException
      *
-     * @return \DateTime
+     * @return \DateTimeInterface An instance of $dateTimeClass
      */
-    public static function createHighPrecision(?string $time = null): DateTime
+    public static function createHighPrecision(?string $time = null, string $dateTimeClass = 'DateTime'): DateTimeInterface
     {
-        $dateTime = DateTime::createFromFormat('U.u', $time ?: self::getMicrotime());
+        $allowStringIsA = true;
+
+        if (!is_a($dateTimeClass, DateTime::class, $allowStringIsA) && !is_a($dateTimeClass, DateTimeImmutable::class, $allowStringIsA)) {
+            throw new InvalidArgumentException('`' . $dateTimeClass . '` needs to be an instance of DateTime or DateTimeImmutable');
+        }
+
+        $dateTime = $dateTimeClass::createFromFormat('U.u', $time ?: self::getMicrotime());
         if ($dateTime === false) {
             throw new InvalidArgumentException('Cannot create a datetime object from `' . $time . '`');
         }
 
-        $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+        $dateTime = $dateTime->setTimeZone(new DateTimeZone(date_default_timezone_get()));
 
         return $dateTime;
     }
 
     /**
-     * Get the current microtime with milliseconds. Making sure that the decimal point separator is always ".", ignoring
+     * Format the output of microtime(true) making sure that the decimal point separator is always ".", ignoring
      * what is set with the current locale. Otherwise, self::createHighPrecision would return false.
+     *
+     * @param float $mtime Time in milliseconds.
+     *
+     * @return string
+     */
+    public static function formatMicrotime(float $mtime): string
+    {
+        return number_format($mtime, 6, '.', '');
+    }
+
+    /**
+     * Get the current microtime with milliseconds.
      *
      * @return string
      */
@@ -97,7 +117,7 @@ class PropelDateTime extends DateTime
     {
         $mtime = microtime(true);
 
-        return number_format($mtime, 6, '.', '');
+        return self::formatMicrotime($mtime);
     }
 
     /**
