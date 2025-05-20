@@ -1723,7 +1723,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if (is_resource(\$firstColumn)) {
                 \$firstColumn = stream_get_contents(\$firstColumn);
             }
-            \$this->$clo = (\$firstColumn) ? UuidConverter::binToUuid(\$firstColumn, $uuidSwapFlag) : null;";
+            \$this->$clo = UuidConverter::binToUuid(\$firstColumn, $uuidSwapFlag);";
         } else {
             $script .= "
             \$this->$clo = \$firstColumn;";
@@ -2738,7 +2738,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
             if (is_resource(\$col)) {
                 \$col = stream_get_contents(\$col);
             }
-            \$this->$clo = (\$col) ? UuidConverter::binToUuid(\$col, $uuidSwapFlag) : null;";
+            \$this->$clo = UuidConverter::binToUuid(\$col, $uuidSwapFlag);";
                 } elseif ($col->isPhpPrimitiveType()) {
                     $script .= "
             \$this->$clo = (null !== \$col) ? (" . $col->getPhpType() . ') $col : null;';
@@ -2883,10 +2883,15 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
 
         $script .= "
         \$criteria = " . $this->getQueryClassName() . '::create();';
-        foreach ($this->getTable()->getPrimaryKey() as $col) {
-            $clo = $col->getLowercasedName();
+        foreach ($this->getTable()->getPrimaryKey() as $column) {
+            $dataAccessExpression = '$this->' . $column->getLowercasedName();
+            if ($column->getType() === PropelTypes::UUID_BINARY) {
+                $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
+                $dataAccessExpression = "UuidConverter::uuidToBin($dataAccessExpression, $uuidSwapFlag)";
+            }
+            $columnConstant = $this->getColumnConstant($column);
             $script .= "
-        \$criteria->add(" . $this->getColumnConstant($col) . ", \$this->$clo);";
+        \$criteria->add($columnConstant, $dataAccessExpression);";
         }
     }
 
@@ -6690,7 +6695,7 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         if ($column->isUuidBinaryType()) {
             $uuidSwapFlag = $this->getUuidSwapFlagLiteral();
 
-            return "(\$this->$columnName) ? UuidConverter::uuidToBin(\$this->$columnName, $uuidSwapFlag) : null";
+            return "UuidConverter::uuidToBin(\$this->$columnName, $uuidSwapFlag)";
         }
 
         return "\$this->$columnName";

@@ -360,6 +360,15 @@
         </index>
     </table>
 
+
+    <table name="book_uuid_binary" phpName="BookUuidBinary">
+        <column name="id" phpName="Id" type="UUID_BINARY" primaryKey="true" required="true"/>
+        <column name="title" type="VARCHAR"/>
+        <vendor type="mysql">
+        <parameter name="Engine" value="InnoDB"/>
+        </vendor>
+    </table>
+
     <!-- Test single table inheritance with Abstract true -->
     <table name="distribution" abstract="true">
         <column name="id" type="INTEGER" primaryKey="true" autoIncrement="true"/>
