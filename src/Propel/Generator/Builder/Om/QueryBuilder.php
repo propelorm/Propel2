@@ -1190,7 +1190,7 @@ class QueryBuilder extends AbstractOMBuilder
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy$singularPhpName(mixed \$$variableName = null, ?string \$comparison = null)
+    public function filterBy$singularPhpName(\$$variableName = null, ?string \$comparison = null)
     {
         if (null === \$comparison || \$comparison == Criteria::CONTAINS_ALL) {
             if (is_scalar(\$$variableName)) {
@@ -1240,7 +1240,7 @@ class QueryBuilder extends AbstractOMBuilder
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy$singularPhpName(mixed \$$variableName = null, ?string \$comparison = null)
+    public function filterBy$singularPhpName(\$$variableName = null, ?string \$comparison = null)
     {
         \$this->filterBy$colPhpName(\$$variableName, \$comparison);
 
