@@ -79,9 +79,7 @@ class PropelDateTime extends DateTime
      */
     public static function createHighPrecision(?string $time = null, string $dateTimeClass = 'DateTime'): DateTimeInterface
     {
-        $allowStringIsA = true;
-
-        if (!is_a($dateTimeClass, DateTime::class, $allowStringIsA) && !is_a($dateTimeClass, DateTimeImmutable::class, $allowStringIsA)) {
+        if (!is_a($dateTimeClass, DateTime::class, true) && !is_a($dateTimeClass, DateTimeImmutable::class, true)) {
             throw new InvalidArgumentException('`' . $dateTimeClass . '` needs to be an instance of DateTime or DateTimeImmutable');
         }
 
