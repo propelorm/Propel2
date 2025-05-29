@@ -10,4 +10,4 @@ parameters:
         - '#Call to an undefined method object::.+\(\)#'
         -
             identifier: missingType.iterableValue
-
+        - '#Call to deprecated method .* of class Propel\\#'
