@@ -1,412 +1,620 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:requiresAtLeastOneElement\\(\\)\\.$#"
+			message: '#^Call to function is_array\(\) with array\<string\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Propel/Common/Config/Loader/FileLoader.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Propel/Common/Config/Loader/FileLoader.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Propel/Common/Config/Loader/JsonFileLoader.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition\:\:requiresAtLeastOneElement\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:arrayNode\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\:\:arrayNode\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:booleanNode\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\:\:booleanNode\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:end\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\:\:end\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\:\\:scalarNode\\(\\)\\.$#"
+			message: '#^Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\:\:scalarNode\(\)\.$#'
+			identifier: method.notFound
 			count: 4
 			path: src/Propel/Common/Config/PropelConfiguration.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isArchiveTable\\.$#"
-			count: 1
-			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehavior.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Behavior/Archivable/ArchivableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\ForeignKey\\:\\:\\$isParentChild\\.$#"
+			message: '#^Access to an undefined property Propel\\Generator\\Model\\ForeignKey\:\:\$isParentChild\.$#'
+			identifier: property.notFound
 			count: 1
 			path: src/Propel/Generator/Behavior/ConcreteInheritance/ConcreteInheritanceBehavior.php
 
 		-
-			message: "#^Access to an undefined property Propel\\\\Generator\\\\Model\\\\Table\\:\\:\\$isVersionTable\\.$#"
+			message: '#^Method Propel\\Generator\\Behavior\\I18n\\I18nBehavior\:\:getI18nColumnNamesFromConfig\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Propel/Generator/Behavior/I18n/I18nBehavior.php
+
+		-
+			message: '#^Parameter &\$script by\-ref type of method Propel\\Generator\\Behavior\\I18n\\I18nBehaviorObjectBuilderModifier\:\:objectFilter\(\) expects string, string\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Generator/Behavior/I18n/I18nBehaviorObjectBuilderModifier.php
+
+		-
+			message: '#^Access to an undefined property Propel\\Generator\\Model\\Table\:\:\$isVersionTable\.$#'
+			identifier: property.notFound
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
 
 		-
-			message: "#^Variable \\$col might not be defined\\.$#"
+			message: '#^Variable \$col might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Behavior/Versionable/VersionableBehaviorObjectBuilderModifier.php
 
 		-
-			message: "#^Parameter \\#1 \\$v of method Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\:\\:setGeneratorConfig\\(\\) expects Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface, \\$this\\(Propel\\\\Generator\\\\Builder\\\\DataModelBuilder\\) given\\.$#"
+			message: '#^Parameter \#1 \$v of method Propel\\Generator\\Builder\\DataModelBuilder\:\:setGeneratorConfig\(\) expects Propel\\Generator\\Config\\GeneratorConfigInterface, \$this\(Propel\\Generator\\Builder\\DataModelBuilder\) given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Propel/Generator/Builder/DataModelBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addAddArrayElement\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addAddArrayElement\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addArrayAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addArrayMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addArrayMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addBooleanAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addBooleanMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addBooleanMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addDefaultAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addDefaultMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addDefaultMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addEnumAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addEnumMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addEnumMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addHasArrayElement\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addHasArrayElement\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addJsonAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addJsonMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addJsonMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addLazyLoader\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addLazyLoader\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addLobMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addLobMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addObjectAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addObjectMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addObjectMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addRemoveArrayElement\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addRemoveArrayElement\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addSetAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addSetMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addSetMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalAccessor\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addTemporalAccessor\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Builder\\\\Om\\\\AbstractObjectBuilder\\:\\:addTemporalMutator\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Builder\\Om\\AbstractObjectBuilder\:\:addTemporalMutator\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Builder/Om/AbstractObjectBuilder.php
 
 		-
-			message: "#^Variable \\$crossFK might not be defined\\.$#"
+			message: '#^Variable \$crossFK might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
-			message: "#^Variable \\$mysqlInvalidDateString might not be defined\\.$#"
+			message: '#^Variable \$mysqlInvalidDateString might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Builder/Om/ObjectBuilder.php
 
 		-
-			message: "#^Variable \\$migration might not be defined\\.$#"
+			message: '#^Variable \$migration might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Command/MigrationMigrateCommand.php
 
 		-
-			message: "#^Variable \\$countValidTimestamps might not be defined\\.$#"
+			message: '#^Variable \$countValidTimestamps might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Command/MigrationStatusCommand.php
 
 		-
-			message: "#^Variable \\$defaultDatasource might not be defined\\.$#"
+			message: '#^Variable \$defaultDatasource might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Config/ArrayToPhpConverter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Manager\\\\AbstractManager\\:\\:getLocation\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Manager\\AbstractManager\:\:getLocation\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Manager/AbstractManager.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between int and null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Propel/Generator/Model/Domain.php
+			message: '#^Method Propel\\Generator\\Manager\\MigrationManager\:\:getNonExecutedMigrationTimestampsByVersion\(\) should return list\<int\> but returns array\<int\>\.$#'
+			identifier: return.type
+			count: 3
+			path: src/Propel/Generator/Manager/MigrationManager.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between array\\<Propel\\\\Generator\\\\Model\\\\ForeignKey\\> and null will always evaluate to false\\.$#"
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
 			count: 1
-			path: src/Propel/Generator/Model/Table.php
+			path: src/Propel/Generator/Manager/SqlManager.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
-			count: 2
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
 			path: src/Propel/Generator/Platform/MysqlPlatform.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to function is_array\(\) with array\<Propel\\Generator\\Model\\Column\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Propel/Generator/Platform/OraclePlatform.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Generator\\Model\\ForeignKey\:\:equals\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Propel/Generator/Platform/Util/MysqlUuidMigrationBuilder.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Reverse/MysqlSchemaParser.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to function is_array\(\) with non\-empty\-list\{0\?\: string, 1\?\: ''CASCADE''\|''NO ACTION''\|''RESTRICT''\|''SET NULL''\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Propel/Generator/Reverse/MysqlSchemaParser.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Reverse/OracleSchemaParser.php
 
 		-
-			message: "#^Variable \\$strDefault might not be defined\\.$#"
+			message: '#^Variable \$strDefault might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Reverse/PgsqlSchemaParser.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
 
 		-
-			message: "#^Variable \\$fk might not be defined\\.$#"
+			message: '#^Variable \$fk might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: src/Propel/Generator/Reverse/SqliteSchemaParser.php
 
 		-
-			message: "#^Call to an undefined method DOMNode\\:\\:setAttribute\\(\\)\\.$#"
+			message: '#^Call to an undefined method DOMNode\:\:setAttribute\(\)\.$#'
+			identifier: method.notFound
 			count: 6
 			path: src/Propel/Generator/Schema/Dumper/XmlDumper.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Generator\\\\Config\\\\GeneratorConfigInterface\\:\\:get\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Generator\\Config\\GeneratorConfigInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Util/BehaviorLocator.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setAdapter\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ServiceContainer\\ServiceContainerInterface\:\:setAdapter\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ServiceContainer\\\\ServiceContainerInterface\\:\\:setConnection\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ServiceContainer\\ServiceContainerInterface\:\:setConnection\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Parameter \\#2 \\$code of class Propel\\\\Generator\\\\Exception\\\\BuildException constructor expects int, null given\\.$#"
+			message: '#^Parameter \#2 \$code of class Propel\\Generator\\Exception\\BuildException constructor expects int, null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Propel/Generator/Util/QuickBuilder.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\BaseModelCriteria\\:\\:find\\(\\)\\.$#"
+			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: src/Propel/Generator/Util/SqlParser.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\BaseModelCriteria\:\:find\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/BaseModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Adapter\\\\AdapterInterface\\:\\:ignoreCase\\(\\)\\.$#"
+			message: '#^Parameter \#2 \$existsQuery \(Propel\\Runtime\\ActiveQuery\\ModelCriteria\) of method Propel\\Runtime\\ActiveQuery\\Criterion\\ExistsCriterion\:\:__construct\(\) is not contravariant with parameter \#2 \$leftOperand \(string\|null\) of method Propel\\Runtime\\ActiveQuery\\Criterion\\AbstractInnerQueryCriterion\:\:__construct\(\)\.$#'
+			identifier: method.childParameterType
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/ExistsCriterion.php
+
+		-
+			message: '#^Parameter \#4 \$relationMap \(Propel\\Runtime\\Map\\RelationMap\|null\) of method Propel\\Runtime\\ActiveQuery\\Criterion\\ExistsCriterion\:\:__construct\(\) is not contravariant with parameter \#4 \$innerQuery \(Propel\\Runtime\\ActiveQuery\\Criteria\) of method Propel\\Runtime\\ActiveQuery\\Criterion\\AbstractInnerQueryCriterion\:\:__construct\(\)\.$#'
+			identifier: method.childParameterType
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/Criterion/ExistsCriterion.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\Adapter\\AdapterInterface\:\:ignoreCase\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Runtime/ActiveQuery/Criterion/LikeCriterion.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:addSelfSelectColumns\\(\\)\\.$#"
+			message: '#^Trait Propel\\Runtime\\ActiveQuery\\InstancePoolTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/InstancePoolTrait.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\Criteria\:\:addSelfSelectColumns\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criteria\\:\\:getTableMap\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\Criteria\:\:getTableMap\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Criterion\\\\AbstractCriterion\\:\\:setIgnoreCase\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\Criterion\\AbstractCriterion\:\:setIgnoreCase\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\Join\\:\\:getTableMap\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\Join\:\:getTableMap\(\)\.$#'
+			identifier: method.notFound
 			count: 5
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:addSelectColumns\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\Map\\TableMap\:\:addSelectColumns\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:clearInstancePool\\(\\)\\.$#"
+			message: '#^Call to an undefined static method Propel\\Runtime\\Map\\TableMap\:\:clearInstancePool\(\)\.$#'
+			identifier: staticMethod.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:clearRelatedInstancePool\\(\\)\\.$#"
+			message: '#^Call to an undefined static method Propel\\Runtime\\Map\\TableMap\:\:clearRelatedInstancePool\(\)\.$#'
+			identifier: staticMethod.notFound
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Parameter \\#1 \\$join of method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin\\:\\:setPreviousJoin\\(\\) expects Propel\\\\Runtime\\\\ActiveQuery\\\\ModelJoin, Propel\\\\Runtime\\\\ActiveQuery\\\\Join given\\.$#"
+			message: '#^Parameter \#1 \$join of method Propel\\Runtime\\ActiveQuery\\ModelJoin\:\:setPreviousJoin\(\) expects Propel\\Runtime\\ActiveQuery\\ModelJoin, Propel\\Runtime\\ActiveQuery\\Join given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionInterface\\:\\:sqliteCreateFunction\\(\\)\\.$#"
+			message: '#^Parameter \#1 \$values of method Propel\\Runtime\\ActiveQuery\\ModelCriteria\:\:basePreUpdate\(\) expects array, array\<mixed, mixed\>\|Propel\\Runtime\\ActiveQuery\\Criteria given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/ModelCriteria.php
+
+		-
+			message: '#^Method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\AbstractSqlQueryBuilder\:\:buildStatementFromCriterion\(\) never assigns null to &\$params so it can be removed from the by\-ref type\.$#'
+			identifier: parameterByRef.unusedType
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/AbstractSqlQueryBuilder.php
+
+		-
+			message: '#^Parameter &\$params by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:build\(\) expects array\<mixed\>, array\<mixed\>\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Parameter &\$params by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:build\(\) expects array\<mixed\>, array\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 2
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Parameter &\$params by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:buildHavingClause\(\) expects array, array\<mixed\>\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Parameter &\$sourceTableNamesCollector by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:buildJoinClauses\(\) expects array\<string\>, array\<int, string\|null\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Parameter &\$sourceTableNamesCollector by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:buildSelectClause\(\) expects array\<string\>, array given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Parameter &\$sourceTableNamesCollector by\-ref type of method Propel\\Runtime\\ActiveQuery\\SqlBuilder\\SelectQuerySqlBuilder\:\:buildWhereClause\(\) expects array\<string\>, array\<string\|null\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Propel/Runtime/ActiveQuery/SqlBuilder/SelectQuerySqlBuilder.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\Connection\\ConnectionInterface\:\:sqliteCreateFunction\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Adapter/Pdo/SqliteAdapter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:clear\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:clear\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:delete\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:fromArray\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:fromArray\(\)\.$#'
+			identifier: method.notFound
 			count: 3
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:save\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setDeleted\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:setDeleted\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setNew\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:setNew\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined static method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:getPrimaryKeyFromRow\\(\\)\\.$#"
+			message: '#^Call to an undefined static method Propel\\Runtime\\Map\\TableMap\:\:getPrimaryKeyFromRow\(\)\.$#'
+			identifier: staticMethod.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ArrayCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:delete\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:delete\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:fromArray\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:fromArray\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:getPrimaryKey\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:save\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:save\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:getPrimaryKey\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:hashCode\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:hashCode\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Collection/ObjectCombinationCollection.php
 
 		-
-			message: "#^Return type \\(Propel\\\\Runtime\\\\Collection\\\\OnDemandIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\OnDemandCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(Propel\\\\Runtime\\\\Collection\\\\CollectionIterator\\) of method Propel\\\\Runtime\\\\Collection\\\\Collection\\:\\:getIterator\\(\\)$#"
-			count: 1
-			path: src/Propel/Runtime/Collection/OnDemandCollection.php
-
-		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Connection\\\\ConnectionWrapper\\:\\:getProfiler\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\Connection\\ConnectionWrapper\:\:getProfiler\(\)\.$#'
+			identifier: method.notFound
 			count: 3
 			path: src/Propel/Runtime/Connection/ProfilerStatementWrapper.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:getPrimaryKey\\(\\)\\.$#"
+			message: '#^Strict comparison using \!\=\= between array and false will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Propel/Runtime/DataFetcher/PDODataFetcher.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:getPrimaryKey\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\Map\\\\TableMap\\:\\:populateObject\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\Map\\TableMap\:\:populateObject\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: src/Propel/Runtime/Formatter/ObjectFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveRecord\\\\ActiveRecordInterface\\:\\:setVirtualColumn\\(\\)\\.$#"
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveRecord\\ActiveRecordInterface\:\:setVirtualColumn\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Formatter/OnDemandFormatter.php
 
 		-
-			message: "#^Call to an undefined method Propel\\\\Runtime\\\\ActiveQuery\\\\ModelCriteria\\:\\:setQueryKey\\(\\)\\.$#"
+			message: '#^PHPDoc tag @var with type Closure\(class\-string\<Propel\\Runtime\\Map\\TableMap\>\|Propel\\Runtime\\Map\\TableMap\)\: class\-string\<Propel\\Runtime\\Map\\TableMap\> is not subtype of native type Closure\(mixed\)\: string\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Propel/Runtime/Map/DatabaseMap.php
+
+		-
+			message: '#^Trait Propel\\Runtime\\Map\\TableMapTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Propel/Runtime/Map/TableMapTrait.php
+
+		-
+			message: '#^Call to an undefined method Propel\\Runtime\\ActiveQuery\\ModelCriteria\:\:setQueryKey\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Propel/Runtime/Util/PropelModelPager.php
 
