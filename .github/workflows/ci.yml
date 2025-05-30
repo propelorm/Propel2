@@ -16,15 +16,11 @@ jobs:
             matrix:
                 php-version: [ '7.4', '8.2' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
-                symfony-version: [ '5-min', '5-max', '6-min', '6-max', '7-min', '7-max']
+                symfony-version: [ '5-latest', '6-latest', '7-latest']
                 exclude:
-                  - symfony-version: '6-min'
+                  - symfony-version: '6-latest'
                     php-version: '7.4'
-                  - symfony-version: '6-max'
-                    php-version: '7.4'
-                  - symfony-version: '7-min'
-                    php-version: '7.4'
-                  - symfony-version: '7-max'
+                  - symfony-version: '7-latest'
                     php-version: '7.4'
         env:
             DB_NAME: 'propel_tests'
@@ -122,7 +118,7 @@ jobs:
             - name: Run tests
               shell: 'script -q -e -c "bash {0}"'
               run: |
-                if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version }} == '5-max' ]]; then
+                if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version }} == '5-latest' ]]; then
                   export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
                 else
                   vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
@@ -131,7 +127,7 @@ jobs:
                 SYMFONY_VERSION: ${{ matrix.symfony-version }}
 
             - name: Code Coverage Report
-              if: success() && matrix.php-version == '7.4' && matrix.symfony-version == '5-max'
+              if: success() && matrix.php-version == '7.4' && matrix.symfony-version == '5-latest'
               uses: codecov/codecov-action@v1
               with:
                   flags: ${{ matrix.php-version }}, ${{ matrix.db-type }}, ${{ matrix.symfony-version }}
