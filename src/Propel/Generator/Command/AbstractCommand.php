@@ -162,11 +162,13 @@ abstract class AbstractCommand extends Command
                 $value = urldecode($parts[1]);
                 $extras[$key] = $value;
 
-                if ($key !== 'user' && $key !== 'password') {
+                if ($key === 'user' || $key === 'password') {
                     // dsn can't contain user or password for (at least) sql server
-                    $dsn .= $element . ';';
+                    continue;
                 }
             }
+
+            $dsn .= $element . ';';
         }
         $extras['adapter'] = $adapter;
 

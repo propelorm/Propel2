@@ -65,7 +65,7 @@ class AbstractCommandTest extends TestCase
     public function testParseConnectionWithoutCredentials(): void
     {
         $connectionName = 'bookstore';
-        $dsn = 'mysql:host=127.0.0.1;dbname=test';
+        $dsn = 'sqlite:/tmp/test.sq3';
         $connection = sprintf(
             '%s=%s',
             $connectionName,
@@ -77,7 +77,7 @@ class AbstractCommandTest extends TestCase
         $this->assertEquals($connectionName, $result[0]);
         $this->assertEquals($dsn, $result[1], 'DSN should not contain user and password parameters');
         $this->assertArrayHasKey('adapter', $result[2]);
-        $this->assertEquals('mysql', $result[2]['adapter']);
+        $this->assertEquals('sqlite', $result[2]['adapter']);
         $this->assertArrayNotHasKey('user', $result[2]);
         $this->assertArrayNotHasKey('password', $result[2]);
     }
