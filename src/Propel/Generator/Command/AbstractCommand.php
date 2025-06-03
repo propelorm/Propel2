@@ -144,23 +144,35 @@ abstract class AbstractCommand extends Command
      */
     protected function parseConnection(string $connection): array
     {
-        $length = strpos($connection, '=') ?: null;
-        $name = substr($connection, 0, $length);
-        $dsn = substr($connection, $length + 1, strlen($connection));
+        $firstEqualsSignPosition = strpos($connection, '=') ?: null;
+        $name = substr($connection, 0, $firstEqualsSignPosition);
+        $remainder = substr($connection, $firstEqualsSignPosition + 1);
 
-        $length = strpos($dsn, ':') ?: null;
-        $adapter = substr($dsn, 0, $length);
+        $firstColonPosition = strpos($remainder, ':') ?: null;
+        $adapter = substr($remainder, 0, $firstColonPosition);
+        $remainder = substr($remainder, $firstColonPosition + 1);
 
         $extras = [];
-        foreach (explode(';', $dsn) as $element) {
+        $dsn = $adapter . ':';
+        foreach (explode(';', $remainder) as $element) {
             $parts = explode('=', $element);
+
             if (count($parts) === 2) {
-                $extras[strtolower($parts[0])] = urldecode($parts[1]);
+                $key = strtolower($parts[0]);
+                $value = urldecode($parts[1]);
+                $extras[$key] = $value;
+
+                if ($key === 'user' || $key === 'password') {
+                    // dsn can't contain user or password for (at least) sql server
+                    continue;
+                }
             }
+
+            $dsn .= $element . ';';
         }
         $extras['adapter'] = $adapter;
 
-        return [$name, $dsn, $extras];
+        return [$name, trim($dsn, ';'), $extras];
     }
 
     /**
