@@ -35,14 +35,23 @@ class AbstractCommandTest extends TestCase
      */
     public function testParseConnection()
     {
+        $user = 'root';
         $password = 'H7{“Qj1n>\%28=;P';
         $connectionName = 'bookstore';
-        $dsn = 'mysql:host=127.0.0.1;dbname=test;user=root;password=' . urlencode($password);
-        $result = $this->command->parseConnection($connectionName . '=' . $dsn);
+        $dsn = 'mysql:host=127.0.0.1;dbname=test';
+        $connection = sprintf(
+            '%s=%s;user=%s;password=%s',
+            $connectionName,
+            $dsn,
+            $user,
+            urlencode($password)
+        );
+        $result = $this->command->parseConnection($connection);
 
+        $this->assertCount(3, $result);
         $this->assertEquals($connectionName, $result[0]);
-        $this->assertEquals($dsn, $result[1]);
-        $this->assertEquals('root', $result[2]['user']);
+        $this->assertEquals($dsn, $result[1], 'DSN should not contain user and password parameters');
+        $this->assertEquals($user, $result[2]['user']);
         $this->assertEquals($password, $result[2]['password']);
     }
 
