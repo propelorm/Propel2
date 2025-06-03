@@ -20,7 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class AbstractCommandTest extends TestCase
 {
-    protected $command;
+    protected TestableAbstractCommand $command;
 
     /**
      * @return void
@@ -33,7 +33,7 @@ class AbstractCommandTest extends TestCase
     /**
      * @return void
      */
-    public function testParseConnection()
+    public function testParseConnectionWithCredentials(): void
     {
         $user = 'root';
         $password = 'H7{“Qj1n>\%28=;P';
@@ -51,14 +51,41 @@ class AbstractCommandTest extends TestCase
         $this->assertCount(3, $result);
         $this->assertEquals($connectionName, $result[0]);
         $this->assertEquals($dsn, $result[1], 'DSN should not contain user and password parameters');
+        $this->assertArrayHasKey('adapter', $result[2]);
+        $this->assertEquals('mysql', $result[2]['adapter']);
+        $this->assertArrayHasKey('user', $result[2]);
         $this->assertEquals($user, $result[2]['user']);
+        $this->assertArrayHasKey('password', $result[2]);
         $this->assertEquals($password, $result[2]['password']);
     }
 
     /**
      * @return void
      */
-    public function testRecursiveSearch()
+    public function testParseConnectionWithoutCredentials(): void
+    {
+        $connectionName = 'bookstore';
+        $dsn = 'mysql:host=127.0.0.1;dbname=test';
+        $connection = sprintf(
+            '%s=%s',
+            $connectionName,
+            $dsn
+        );
+        $result = $this->command->parseConnection($connection);
+
+        $this->assertCount(3, $result);
+        $this->assertEquals($connectionName, $result[0]);
+        $this->assertEquals($dsn, $result[1], 'DSN should not contain user and password parameters');
+        $this->assertArrayHasKey('adapter', $result[2]);
+        $this->assertEquals('mysql', $result[2]['adapter']);
+        $this->assertArrayNotHasKey('user', $result[2]);
+        $this->assertArrayNotHasKey('password', $result[2]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testRecursiveSearch(): void
     {
         $app = new Application();
         $app->add($this->command);
@@ -92,7 +119,7 @@ class TestableAbstractCommand extends AbstractCommand
     /**
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->setName('testable-command');
