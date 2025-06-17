@@ -60,15 +60,6 @@ jobs:
                   postgresql user: $DB_USER
                   postgresql password: $DB_PW
 
-            - name: Install PostgreSQL 12
-              if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4'
-              uses: CasperWA/postgresql-action@v1.2
-              with:
-                  postgresql version: 12
-                  postgresql db: $DB_NAME
-                  postgresql user: $DB_USER
-                  postgresql password: $DB_PW
-
             - name: Install PostgreSQL min
               if: matrix.db-type == 'pgsql' && matrix.php-version == '7.4' && matrix.symfony-version == '6-min'
               uses: CasperWA/postgresql-action@v1.2
