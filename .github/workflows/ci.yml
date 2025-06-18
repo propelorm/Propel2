@@ -14,7 +14,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.4', '8.2' ]
+                php-version: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
                 db-type: [ sqlite, mysql, pgsql, agnostic ]
                 symfony-version: [ '5-min', '5-max', '6-min', '6-max', '7-min', '7-max']
                 exclude:
@@ -22,10 +22,22 @@ jobs:
                     php-version: '7.4'
                   - symfony-version: '6-max'
                     php-version: '7.4'
+                  - symfony-version: '6-min'
+                    php-version: '8.0'
+                  - symfony-version: '6-max'
+                    php-version: '8.0'
                   - symfony-version: '7-min'
                     php-version: '7.4'
                   - symfony-version: '7-max'
                     php-version: '7.4'
+                  - symfony-version: '7-min'
+                    php-version: '8.0'
+                  - symfony-version: '7-max'
+                    php-version: '8.0'
+                  - symfony-version: '7-min'
+                    php-version: '8.1'
+                  - symfony-version: '7-max'
+                    php-version: '8.1'
         env:
             DB_NAME: 'propel_tests'
             DB_USER: 'propel'
@@ -73,10 +85,10 @@ jobs:
 
             - name: Composer get cache directory
               id: composer-cache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+              run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
             - name: Composer cache dependencies
-              uses: actions/cache@v1
+              uses: actions/cache@v4
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
@@ -122,11 +134,11 @@ jobs:
             - name: Run tests
               shell: 'script -q -e -c "bash {0}"'
               run: |
-                  if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version == '5-max' }} ]]; then
-                    export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
-                  else
-                    vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
-                  fi
+                if [[ ${{ matrix.php-version }} == '7.4' && ${{ matrix.symfony-version }} == '5-max' ]]; then
+                  export CODECOVERAGE=1 && vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml --verbose --coverage-clover=tests/coverage.xml
+                else
+                  vendor/bin/phpunit -c tests/${{ matrix.db-type }}.phpunit.xml
+                fi
               env:
                 SYMFONY_VERSION: ${{ matrix.symfony-version }}
 
@@ -153,10 +165,10 @@ jobs:
             - name: Composer get cache directory
               id: composer-cache
               run: |
-                  echo "::set-output name=dir::$(composer config cache-files-dir)"
+                  echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
             - name: Composer cache
-              uses: actions/cache@v2
+              uses: actions/cache@v4
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}

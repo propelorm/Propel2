@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Util;
 
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use Propel\Runtime\Exception\PropelException;
@@ -208,6 +209,7 @@ class PropelDateTimeTest extends TestCase
             'Y-m-d' => ['2011-08-10', '2011-08-10 00:00:00'],
             // 1312960848 : Wed, 10 Aug 2011 07:20:48 GMT
             'unix_timestamp' => ['1312960848', '2011-08-10 07:20:48'],
+            'unix_timestamp_epoch' => ['0', '1970-01-01 00:00:00'],
             'Y-m-d H:is' => ['2011-08-10 10:22:15', '2011-08-10 10:22:15'],
             'Ymd' => ['20110810', '2011-08-10 00:00:00'],
             'Ymd2' => ['20110720', '2011-07-20 00:00:00'],
@@ -234,6 +236,7 @@ class PropelDateTimeTest extends TestCase
     public function testIsTimestamp()
     {
         $this->assertEquals(false, TestPropelDateTime::isTimestamp('20110325'));
+        $this->assertEquals(true, TestPropelDateTime::isTimestamp(0));
         $this->assertEquals(true, TestPropelDateTime::isTimestamp(1319580000));
         $this->assertEquals(true, TestPropelDateTime::isTimestamp('1319580000'));
         $this->assertEquals(false, TestPropelDateTime::isTimestamp('2011-07-20 00:00:00'));
@@ -245,11 +248,11 @@ class PropelDateTimeTest extends TestCase
     public function testCreateHighPrecision()
     {
         $createHP = PropelDateTime::createHighPrecision();
-        $this->assertInstanceOf(DateTime::class, $createHP);
+        $this->assertInstanceOf(DateTimeInterface::class, $createHP);
 
         setlocale(LC_ALL, 'de_DE.UTF-8');
         $createHP = PropelDateTime::createHighPrecision();
-        $this->assertInstanceOf(DateTime::class, $createHP);
+        $this->assertInstanceOf(DateTimeInterface::class, $createHP);
     }
 
     /**

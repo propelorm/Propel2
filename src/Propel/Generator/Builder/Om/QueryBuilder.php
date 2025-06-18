@@ -377,7 +377,7 @@ class QueryBuilder extends AbstractOMBuilder
     {
         $table = $this->getTable();
         $script .= "
-    public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . addslashes($this->getNewStubObjectBuilder($table)->getFullyQualifiedClassName()) . "', \$modelAlias = null)
+    public function __construct(\$dbName = '" . $table->getDatabase()->getName() . "', \$modelName = '" . addslashes($this->getNewStubObjectBuilder($table)->getFullyQualifiedClassName()) . "', ?string \$modelAlias = null)
     {";
     }
 
@@ -1567,7 +1567,7 @@ class QueryBuilder extends AbstractOMBuilder
      *
      * @return $queryClass A secondary query class using the current class as primary query
      */
-    public function use" . $relationName . 'Query($relationAlias = null, $joinType = ' . $joinType . ")
+    public function use" . $relationName . 'Query(?string $relationAlias = null, string $joinType = ' . $joinType . ")
     {
         return \$this
             ->join" . $relationName . "(\$relationAlias, \$joinType)
@@ -1672,7 +1672,7 @@ class QueryBuilder extends AbstractOMBuilder
      */
     public function with{$relationName}Query(
         callable \$callable,
-        string \$relationAlias = null,
+        ?string \$relationAlias = null,
         ?string \$joinType = {$joinType}
     ) {
         \$relatedQuery = \$this->use{$relationName}Query(
@@ -1714,7 +1714,7 @@ class QueryBuilder extends AbstractOMBuilder
      *
      * @return \$this The current query, for fluid interface
      */
-    public function filterBy{$relName}($objectName, string \$comparison = null)
+    public function filterBy{$relName}($objectName, ?string \$comparison = null)
     {
         \$this
             ->use{$relationName}Query()
