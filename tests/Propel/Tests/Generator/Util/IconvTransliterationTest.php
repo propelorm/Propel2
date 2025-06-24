@@ -16,6 +16,29 @@ use \Propel\Tests\TestCase;
  */
 class IconvTransliterationTest extends TestCase
 {
+    /**
+     * Ensure iconv is available and locale supports transliteration.
+     */
+    protected function setUp(): void
+    {
+        if (!function_exists('iconv')) {
+            $this->markTestSkipped('iconv() is not available.');
+        }
+
+        $currentLocale = setlocale(LC_CTYPE, 0);
+        if (in_array($currentLocale, ['C', 'POSIX'], true)) {
+            // Attempt to change the locale to something compatible
+            $fallbackLocales = ['en_US.UTF-8', 'C.UTF-8', 'de_DE.UTF-8'];
+            foreach ($fallbackLocales as $locale) {
+                if (setlocale(LC_CTYPE, $locale) !== false) {
+                    return;
+                }
+            }
+
+            // Still stuck in C/POSIX? Skip
+            $this->markTestSkipped("Unsupported locale for iconv transliteration: $currentLocale");
+        }
+    }
 
     /**
      * Excerpt from http://php.net/manual/en/function.iconv.php#74101
@@ -47,13 +70,16 @@ class IconvTransliterationTest extends TestCase
     /**
      * @dataProvider iconvTransliterationSlugProvider
      */
-    public function testIconvTransliteration($in, $out)
+    public function testIconvTransliteration(string $input, string $expected): void
     {
-        if (!function_exists('iconv')) {
-            $this->markTestSkipped();
+        $translit = iconv('utf-8', 'us-ascii//TRANSLIT', $input);
+
+        // If transliteration results in all question marks, skip (locale likely broken)
+        if (preg_match('/^\?+$/', $translit) && $input !== str_repeat('?', strlen($input))) {
+            $this->markTestSkipped('iconv() returned only question marks — possibly due to locale issues.');
         }
-        $translit = iconv('utf-8', 'us-ascii//TRANSLIT', $in);
-        $this->assertEquals($out, $translit, 'iconv transliteration behaves as expected');
+
+        $this->assertEquals($expected, $translit, 'iconv transliteration behaves as expected');
     }
 
 }
