@@ -61,9 +61,9 @@ class IconvTransliterationTest extends TestCase
             ['fôo', 'foo'],
             ['€', 'EUR'],
             ['CŠŒŽšœžŸµÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝßàáâãäåæçèéêëìíîïñòóôõöùúûüýÿ', 'CSOEZsoezYuAAAAAAAECEEEEIIIINOOOOOUUUUYssaaaaaaaeceeeeiiiinooooouuuuyy'],
-            ['ø', '?'],
-            ['Ø', '?'],
-            ['¥Ðð', '???'],
+            ['ø', 'o'],
+            ['Ø', 'O'],
+            ['¥Ðð', 'JPYDd'],
         ];
     }
 
