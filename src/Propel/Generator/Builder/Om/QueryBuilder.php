@@ -2179,14 +2179,14 @@ class QueryBuilder extends AbstractOMBuilder
                     $script .= "
             // set fkey col in related $fkClassName rows to NULL
             \$query = new " . $refTableTableMapBuilder->getQueryClassName(true) . "();
-            \$updateValues = new Criteria();";
+            \$updateValues = [];";
 
                     for ($x = 0, $xlen = count($columnNamesF); $x < $xlen; $x++) {
                         $columnFK = $tblFK->getColumn($columnNamesF[$x]);
                         $columnL = $table->getColumn($columnNamesL[$x]);
                         $script .= "
             \$query->add(" . $refTableTableMapBuilder->getColumnConstant($columnFK) . ', $obj->get' . $columnL->getPhpName() . "());
-            \$updateValues->add(" . $refTableTableMapBuilder->getColumnConstant($columnFK) . ", null);
+            \$updateValues['" . $columnFK->getPhpName() . "'] = null;
 ";
                     }
 
