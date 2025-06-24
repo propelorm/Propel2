@@ -10,7 +10,7 @@
      *
      * @return <?= $queryClass ?> The inner query object of the IN statement
      */
-    public function useIn<?= $relationName ?>Query($modelAlias = null, $queryClass = null, $typeOfIn = '<?= $inType ?>')
+    public function useIn<?= $relationName ?>Query(?string $modelAlias = null, ?string $queryClass = null, string $typeOfIn = '<?= $inType ?>')
     {
         /** @var $q <?= $queryClass ?> */
         $q = $this->useInQuery('<?= $relationName ?>', $modelAlias, $queryClass, $typeOfIn);
@@ -27,7 +27,7 @@
      *
      * @return <?= $queryClass ?> The inner query object of the NOT IN statement
      */
-    public function useNotIn<?= $relationName ?>Query($modelAlias = null, $queryClass = null)
+    public function useNotIn<?= $relationName ?>Query(?string $modelAlias = null, ?string $queryClass = null)
     {
         /** @var $q <?= $queryClass ?> */
         $q = $this->useInQuery('<?= $relationName ?>', $modelAlias, $queryClass, '<?= $notInType ?>');

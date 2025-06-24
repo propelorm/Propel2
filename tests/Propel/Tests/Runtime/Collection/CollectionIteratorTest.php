@@ -175,4 +175,22 @@ class CollectionIteratorTest extends BookstoreTestBase
             $this->assertEquals(!(bool)($key % 2), $iterator->isEven(), 'isEven() returns true only when the key is even');
         }
     }
+
+    /**
+     * @return void
+     */
+    public function testSortingUsesFlags()
+    {
+        $data = ['img10', 'img2'];
+        $collection = new Collection($data);
+        $iterator = new CollectionIterator($collection);
+        $iterator->asort(SORT_NATURAL);
+        $this->assertSame(['img2', 'img10'], array_values($iterator->getArrayCopy()), 'asort() should respect sorting flags');
+
+        $assoc = ['b10' => 'foo', 'b2' => 'bar'];
+        $collection = new Collection($assoc);
+        $iterator = new CollectionIterator($collection);
+        $iterator->ksort(SORT_NATURAL);
+        $this->assertSame(['b2', 'b10'], array_keys($iterator->getArrayCopy()), 'ksort() should respect sorting flags');
+    }
 }
