@@ -19,6 +19,7 @@ class UuidConverterTest extends BaseTestCase
             // uuid, hex, hexWithSwap
             ['11112222-3333-4444-5555-666677778888', '11112222333344445555666677778888', '44443333111122225555666677778888'],
             ['aab5d5fd-70c1-11e5-a4fb-b026b977eb28', 'aab5d5fd70c111e5a4fbb026b977eb28', '11e570c1aab5d5fda4fbb026b977eb28'],
+            [null, null, null],
         ]; 
     }
 
@@ -44,9 +45,9 @@ class UuidConverterTest extends BaseTestCase
 
     /**
      */
-    public function assertBinaryEquals(string $expected, $result)
+    public function assertBinaryEquals(?string $expected, ?string $result)
     {
-        $expected = hex2bin($expected);
+        $expected = $expected ? hex2bin($expected) : $expected;
         $this->assertEquals($expected, $result);
     }
 
@@ -71,20 +72,4 @@ class UuidConverterTest extends BaseTestCase
         $result = UuidConverter::binToUuid($bin, false);
         $this->assertEquals($uuid, $result);
     }
-
-    public function testFasterUuidToBin(){
-        $this->markTestSkipped();
-        $uuid = [];
-
-        for($i = 0; $i < 100000; $i++){
-            $uuids[] = $this->guidv4();
-        }
-        $swapFlag = true;
-        $regexDuration =  $this->measure([UuidConverter::class, 'uuidToBinRegex'], $uuids, $swapFlag);
-        $regularDuration = $this->measure([UuidConverter::class, 'uuidToBin'], $uuids, $swapFlag);
-
-        echo "regular took $regularDuration, regex took $regexDuration";
-        $this->assertLessThanOrEqual($regexDuration, $regularDuration, "regular took $regularDuration, regex took $regexDuration");
-    }
-
 }

@@ -9,8 +9,10 @@
 namespace Propel\Tests\Runtime\TypeTest;
 
 use Propel\Runtime\Util\UuidConverter;
-use Propel\Tests\Bookstore\Base\Book2Query;
 use Propel\Tests\Bookstore\Book2;
+use Propel\Tests\Bookstore\Book2Query;
+use Propel\Tests\Bookstore\BookUuidBinary;
+use Propel\Tests\Bookstore\BookUuidBinaryQuery;
 use Propel\Tests\Bookstore\Map\Book2TableMap;
 use Propel\Tests\Helpers\Bookstore\BookstoreTestBase;
 
@@ -122,5 +124,22 @@ class UuidBinaryTypeTest extends BookstoreTestBase
         $book->reload();
 
         $this->assertSame($updateUuid, $book->getUuidBin());
+    }
+
+    /**
+     * @return void
+     */
+    public function testModelCanUpdateUuidBinaryPk()
+    {
+        BookUuidBinaryQuery::create()->deleteAll();
+        $uuid = 'b41a29db-cf78-4d43-83a9-4cd3e1e1b41a';
+        $book = new BookUuidBinary();
+        $book->setId($uuid)->setTitle('First Title')->save();
+
+        $updatedTitle = 'Second Title';
+        $book->setTitle($updatedTitle)->save();
+        $book->reload();
+
+        $this->assertSame($updatedTitle, $book->getTitle());
     }
 }
