@@ -30,6 +30,8 @@ use Propel\Tests\Bookstore\Publisher;
 use Propel\Tests\Bookstore\PublisherQuery;
 use Propel\Tests\Bookstore\Review;
 use Propel\Tests\Bookstore\ReviewQuery;
+use Propel\Tests\Bookstore\Essay;
+use Propel\Tests\Bookstore\EssayQuery;
 use Propel\Tests\Helpers\Bookstore\BookstoreEmptyTestBase;
 
 /**
@@ -499,6 +501,35 @@ class BookstoreTest extends BookstoreEmptyTestBase
             $this->fail('Save Review records');
         }
 
+        // Add essay records
+        // ------------------
+
+        try {
+            $e1 = new Essay();
+            $e1->setTitle("Byron and Grass on Joins");
+            $e1->setFirstAuthor($byron);
+            $e1->setSecondAuthor($grass);
+            $e1->save();
+            $e1_id = $e1->getId();
+
+            $e2 = new Essay();
+            $e2->setTitle("Stephenson and Grass on Joins");
+            $e2->setFirstAuthor($stephenson);
+            $e2->setSecondAuthor($grass);
+            $e2->save();
+            $e2_id = $e2->getId();
+
+            $e3 = new Essay();
+            $e3->setTitle("Rowling on Joins");
+            $e3->setFirstAuthor($rowling);
+            $e3->setSecondAuthor();
+            $e3->save();
+            $e3_id = $e3->getId();
+            $this->assertTrue(true, 'Save Essay records');
+        } catch (\Exception $e) {
+            $this->fail('Save Essay records');
+        }
+
         // Perform a "complex" search
         // --------------------------
 
@@ -658,6 +689,180 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $relCount = $blc2->countBookListRels();
         $this->assertEquals(1, $relCount, 'BookClubList 2 has 1 BookListRel');
 
+        // query essays based a certain author being either first or second author
+
+        $essaysQuery = EssayQuery::create()
+            ->leftJoinFirstAuthor('first_author')
+            ->leftJoinSecondAuthor('second_author')
+            ->filterByFirstAuthor($grass)
+            ->_or()
+            ->filterBySecondAuthor($grass);
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM essay LEFT JOIN author first_author ON (essay.first_author_id=first_author.id) LEFT JOIN author second_author ON (essay.second_author_id=second_author.id) WHERE (essay.first_author_id=:p1 OR essay.second_author_id=:p2)',
+            $essaysQuery->createSelectSql($params)
+        );
+
+        $expected = EssayQuery::create()
+            ->filterById([$e1_id, $e2_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $essaysQuery->find()->toArray(),
+            "Found correct essays based a certain author being either first or second author"
+        );
+
+        // query authors based on being first author of a certain essay
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author')
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) WHERE essay_related_by_first_author.id=:p1',
+            $authorsQuery->createSelectSql($params)
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$stephenson_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found correct authors based on being either first or second author of a certain essay"
+        );
+
+        // query authors based on being either first or second author of a certain essay - without supplying relation-alias nor join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery()
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery()
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay ON (author.id=essay.first_author_id) INNER JOIN essay ON (author.id=essay.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
+            $authorsQuery->createSelectSql($params)
+        );
+
+        $exception = null;
+        try {
+            $authorsQuery->find()->toArray();
+            $this->assertEmpty(__LINE__);
+        } catch (\Exception $e) {
+            $exception = $e;
+        }
+        $this->assertInstanceOf(
+            'Propel\Runtime\Exception\PropelException',
+            $exception,
+            "Getting an exception about when querying authors based on being either first or second author of a certain essay - without supplying relation-alias nor join-type"
+        );
+        $this->assertEquals(
+            'Unable to execute SELECT statement [SELECT author.id, author.first_name, author.last_name, author.email, author.age FROM author LEFT JOIN essay ON (author.id=essay.first_author_id) INNER JOIN essay ON (author.id=essay.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)]',
+            $exception->getMessage()
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('EssayRelatedByFirstAuthorId')
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('EssayRelatedBySecondAuthorId')
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM author CROSS JOIN essay LEFT JOIN essay EssayRelatedByFirstAuthorId ON (author.id=EssayRelatedByFirstAuthorId.first_author_id) INNER JOIN essay EssayRelatedBySecondAuthorId ON (author.id=EssayRelatedBySecondAuthorId.second_author_id) WHERE (essay.id=:p1 OR essay.id=:p2)',
+            $authorsQuery->createSelectSql($params)
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id])
+            ->find();
+        $expected
+            ->append(
+                AuthorQuery::create()
+                    ->filterById([$grass_id])
+                    ->findOne()
+            );
+        $expected = $expected->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found incorrect authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type"
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying another relation-alias but not join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author')
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('essay_related_by_second_author')
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) INNER JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
+            $authorsQuery->createSelectSql($params)
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id /*, $stephenson_id*/])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found incorrect authors based on being either first or second author of a certain essay - supplying relation-alias but not join-type"
+        );
+
+        // query authors based on being either first or second author of a certain essay - supplying another relation-alias and join-type
+
+        $authorsQuery = AuthorQuery::create()
+            ->useEssayRelatedByFirstAuthorIdQuery('essay_related_by_first_author', Criteria::LEFT_JOIN)
+            ->filterById($e2->getId())
+            ->endUse()
+            ->_or()
+            ->useEssayRelatedBySecondAuthorIdQuery('essay_related_by_second_author', Criteria::LEFT_JOIN)
+            ->filterById($e2->getId())
+            ->endUse();
+
+        $params = [];
+        $this->assertEquals(
+            'SELECT  FROM author LEFT JOIN essay essay_related_by_first_author ON (author.id=essay_related_by_first_author.first_author_id) LEFT JOIN essay essay_related_by_second_author ON (author.id=essay_related_by_second_author.second_author_id) WHERE (essay_related_by_first_author.id=:p1 OR essay_related_by_second_author.id=:p2)',
+            $authorsQuery->createSelectSql($params)
+        );
+
+        $expected = AuthorQuery::create()
+            ->filterById([$grass_id, $stephenson_id])
+            ->find()
+            ->toArray();
+
+        $this->assertEquals(
+            $expected,
+            $authorsQuery->find()->toArray(),
+            "Found correct authors based on being either first or second author of a certain essay - supplying relation-alias and join-type"
+        );
+
         // Cleanup (tests DELETE)
         // ----------------------
 
@@ -702,6 +907,11 @@ class BookstoreTest extends BookstoreEmptyTestBase
         PublisherQuery::create()->filterById($penguin_id)->delete();
         $vintage->delete();
 
+        // Attempting to delete essays
+        $e1->delete();
+        $e2->delete();
+        $e3->delete();
+
         // These have to be deleted manually also since we have onDelete
         // set to SETNULL in the foreign keys in book. Is this correct?
         $rowling->delete();
@@ -713,6 +923,7 @@ class BookstoreTest extends BookstoreEmptyTestBase
         $this->assertCount(0, PublisherQuery::create()->find(), 'no records in [publisher] table');
         $this->assertCount(0, BookQuery::create()->find(), 'no records in [book] table');
         $this->assertCount(0, ReviewQuery::create()->find(), 'no records in [review] table');
+        $this->assertCount(0, EssayQuery::create()->find(), 'no records in [essay] table');
         $this->assertCount(0, MediaQuery::create()->find(), 'no records in [media] table');
         $this->assertCount(0, BookClubListQuery::create()->find(), 'no records in [book_club_list] table');
         $this->assertCount(0, BookListRelQuery::create()->find(), 'no records in [book_x_list] table');
