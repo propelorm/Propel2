@@ -8,6 +8,8 @@
 
 namespace Propel\Tests\Runtime\Adapter\Pdo;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\SqlBuilder\DeleteQuerySqlBuilder;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -171,6 +173,25 @@ class MysqlAdapterTest extends TestCaseFixtures
         $params = [];
         $generatedSql = $query->createSelectSql($params);
         $this->assertSame($expectedSql, $generatedSql, 'Subquery should contain shared read lock');
+    }
+
+    /**
+     * Test `ApplyLimitForDelete`
+     *
+     * @return void
+     */
+    public function testApplyLimitForDelete()
+    {
+        $criteria = new Criteria();
+        $criteria->setLimit(10);
+
+        $queryBuilder = new DeleteQuerySqlBuilder($criteria);
+        $sql = $queryBuilder->build(BookTableMap::TABLE_NAME, []);
+
+        // Expect a TOP N result with no subquery
+        $expected = 'DELETE FROM book LIMIT 10';
+
+        $this->assertEquals($expected, $sql);
     }
 }
 

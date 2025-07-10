@@ -44,6 +44,11 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
         $deleteStatement = "$deleteFrom $where";
         $params = $whereDto->getParameters();
 
+        $limit = $this->criteria->getLimit();
+        if ($limit >= 0) {
+            $this->adapter->applyLimitForDelete($deleteStatement, $limit);
+        }
+
         return new PreparedStatementDto($deleteStatement, $params);
     }
 
