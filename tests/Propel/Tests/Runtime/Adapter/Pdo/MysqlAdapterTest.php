@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Adapter\Pdo;
 
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\SqlBuilder\DeleteQuerySqlBuilder;
+use Propel\Runtime\ActiveQuery\SqlBuilder\PreparedStatementDto;
 use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Tests\Bookstore\BookQuery;
 use Propel\Tests\Bookstore\Map\BookTableMap;
@@ -186,12 +187,12 @@ class MysqlAdapterTest extends TestCaseFixtures
         $criteria->setLimit(10);
 
         $queryBuilder = new DeleteQuerySqlBuilder($criteria);
-        $sql = $queryBuilder->build(BookTableMap::TABLE_NAME, []);
+        $statementDto = $queryBuilder->build(BookTableMap::TABLE_NAME, []);
 
         // Expect a TOP N result with no subquery
         $expected = 'DELETE FROM book LIMIT 10';
 
-        $this->assertEquals($expected, $sql);
+        $this->assertEquals($expected, $statementDto->getSqlStatement());
     }
 }
 
