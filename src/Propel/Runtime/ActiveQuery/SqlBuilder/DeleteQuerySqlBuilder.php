@@ -41,7 +41,7 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
         $deleteFrom = $this->buildDeleteFromClause($tableName);
         $whereDto = $this->buildWhereClause($columnNames);
         $where = $whereDto->getSqlStatement();
-        $deleteStatement = "$deleteFrom $where";
+        $deleteStatement = implode(' ', array_filter([$deleteFrom, $where]));
         $params = $whereDto->getParameters();
 
         $limit = $this->criteria->getLimit();
