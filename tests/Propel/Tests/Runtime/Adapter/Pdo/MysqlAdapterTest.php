@@ -189,7 +189,6 @@ class MysqlAdapterTest extends TestCaseFixtures
         $queryBuilder = new DeleteQuerySqlBuilder($criteria);
         $statementDto = $queryBuilder->build(BookTableMap::TABLE_NAME, []);
 
-        // Expect a TOP N result with no subquery
         $expected = 'DELETE FROM book LIMIT 10';
 
         $this->assertEquals($expected, $statementDto->getSqlStatement());
