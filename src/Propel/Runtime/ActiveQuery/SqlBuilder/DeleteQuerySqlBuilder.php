@@ -89,8 +89,12 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      */
     protected function buildWhereClause(array $columnNames): PreparedStatementDto
     {
-        $whereClause = [];
         $params = [];
+        if (count($columnNames) === 0) {
+            return new PreparedStatementDto('', $params);
+        }
+
+        $whereClause = [];
         foreach ($columnNames as $columnName) {
             $filter = $this->criteria->getCriterion($columnName);
             $whereClause[] = $this->buildStatementFromCriterion($filter, $params);
