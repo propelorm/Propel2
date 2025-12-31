@@ -185,6 +185,9 @@ class SchemaReader
 
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
+        if (version_compare(PHP_VERSION, '8.4.0', '<')) {
+            xml_set_object($this->parser, $this);
+        }
         xml_set_element_handler($this->parser, [$this, 'startElement'], [$this, 'endElement']);
         if (!xml_parse($this->parser, $xmlString)) {
             throw new SchemaException(
@@ -195,7 +198,9 @@ class SchemaReader
                 ),
             );
         }
-        xml_parser_free($this->parser);
+        if (version_compare(PHP_VERSION, '8.4.0', '<')) {
+            xml_parser_free($this->parser);
+        }
         $this->parser = $parserStash;
 
         array_pop($this->schemasTagsStack);
