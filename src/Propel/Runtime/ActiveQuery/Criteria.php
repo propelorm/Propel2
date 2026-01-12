@@ -1623,7 +1623,7 @@ class Criteria
      */
     public function clearSelectColumns()
     {
-        $this->selectColumns = $this->asColumns = [];
+        $this->selectColumns = $this->asColumns = $this->select = [];
 
         return $this;
     }
