@@ -262,7 +262,14 @@ class MysqlSchemaParser extends AbstractSchemaParser
         }
 
         // BLOBs can't have any default values in MySQL
-        $default = preg_match('~blob|text~', $nativeType) ? null : $row['Default'];
+        if (preg_match('~blob~', $nativeType)) {
+            $default = null;
+        } elseif ($row['Default'] !== null && $row['Default'] !== '' && preg_match('~text~', $nativeType)) {
+            // MariaDB wraps TEXT type default values in extra single quotes, but not other types
+            $default = preg_replace('@^\'(.*)\'$@', '$1', $row['Default']);
+        } else {
+            $default = $row['Default'];
+        }
 
         $propelType = $this->getMappedPropelType($nativeType);
         if (!$propelType) {

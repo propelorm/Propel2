@@ -10,6 +10,7 @@ namespace Propel\Tests\Generator\Platform;
 
 use Propel\Generator\Builder\Util\SchemaReader;
 use Propel\Generator\Config\GeneratorConfig;
+use Propel\Generator\Exception\EngineException;
 use Propel\Generator\Model\Column;
 use Propel\Generator\Model\ColumnDefaultValue;
 use Propel\Generator\Model\IdMethod;
@@ -479,6 +480,32 @@ DROP TABLE IF EXISTS `Woopah`.`foo`;
         $column->getDomain()->setDefaultValue(new ColumnDefaultValue(123, ColumnDefaultValue::TYPE_VALUE));
         $expected = '`foo` DOUBLE(3,2) DEFAULT 123 NOT NULL';
         $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetColumnDDLTextDefaultValue(): void
+    {
+        $column = new Column('foo');
+        $column->getDomain()->copy($this->getPlatform()->getDomainForType(PropelTypes::LONGVARCHAR));
+        $column->getDomain()->setDefaultValue(new ColumnDefaultValue('hello', ColumnDefaultValue::TYPE_VALUE));
+        $expected = '`foo` TEXT DEFAULT \'hello\'';
+        $this->assertEquals($expected, $this->getPlatform()->getColumnDDL($column));
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetColumnDDLBlobDefaultValueThrowsException(): void
+    {
+        $this->expectException(EngineException::class);
+        $this->expectExceptionMessage('BLOB columns cannot have DEFAULT values in MySQL.');
+
+        $column = new Column('bar');
+        $column->getDomain()->copy($this->getPlatform()->getDomainForType(PropelTypes::BLOB));
+        $column->getDomain()->setDefaultValue(new ColumnDefaultValue('data', ColumnDefaultValue::TYPE_VALUE));
+        $this->getPlatform()->getColumnDDL($column);
     }
 
     /**
