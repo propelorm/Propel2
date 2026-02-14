@@ -265,8 +265,9 @@ class MysqlSchemaParser extends AbstractSchemaParser
         if (preg_match('~blob~', $nativeType)) {
             $default = null;
         } elseif ($row['Default'] !== null && $row['Default'] !== '' && preg_match('~text~', $nativeType)) {
-            // MariaDB wraps TEXT type default values in extra single quotes, but not other types
-            $default = preg_replace('@^\'(.*)\'$@', '$1', $row['Default']);
+            // MySQL 8.0+ wraps TEXT defaults with a charset prefix like _utf8mb3'value'
+            // MariaDB wraps TEXT type default values in extra single quotes like 'value'
+            $default = preg_replace('~^(?:_\w+)?\'(.*)\'$~', '$1', $row['Default']);
         } else {
             $default = $row['Default'];
         }
