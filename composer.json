@@ -1,5 +1,5 @@
 {
-    "name": "gechetspr/propel",
+    "name": "propel/propel",
     "type": "library",
     "description": "Propel2 is an open-source Object-Relational Mapping (ORM) for PHP.",
     "keywords": [
