@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": ">=8.2",
-        "symfony/yaml": "~7.0.0",
+        "symfony/yaml": "~7.4.12",
         "symfony/config": "~7.0.0",
         "symfony/console": "~7.0.0",
         "symfony/filesystem": "~7.0.0",
         "symfony/finder": "~7.0.0",
         "symfony/translation": "~7.0.0",
-        "symfony/validator": "~7.0.0",
+        "symfony/validator": "~7.1.4",
         "psr/log": "^1.0 || ^2.0 || ^3.0"
     },
     "require-dev": {
