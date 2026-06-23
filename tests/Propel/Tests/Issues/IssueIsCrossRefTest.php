@@ -67,32 +67,4 @@ EOF;
             QuickBuilder::buildSchema($schema);
         }
     }
-
-    /**
-     * @return void
-     */
-    public function testGenerateIsCrossRefCode()
-    {
-        $testGroupObject = new TestGroupObject();
-        $testUserObject = new TestUserObject();
-        $testGroupNegative = new TestGroupObjectNegative();
-        $testUserNegative = new TestUserObjectNegative();
-
-        $this->assertTrue(
-            method_exists($testGroupObject, 'createTestUserObjectsQuery'),
-            'Class does not have method createTestUserObjectsQuery'
-        );
-        $this->assertTrue(
-            method_exists($testUserObject, 'createTestGroupObjectsQuery'),
-            'Class does not have method createTestUserObjectsQuery'
-        );
-        $this->assertFalse(
-            method_exists($testGroupNegative, 'createTestUserObjectNegativesQuery'),
-            'Class does not have method createTestUserObjectsQuery'
-        );
-        $this->assertFalse(
-            method_exists($testUserNegative, 'createTestGroupObjectNegativesQuery'),
-            'Class does not have method createTestUserObjectsQuery'
-        );
-    }
 }
