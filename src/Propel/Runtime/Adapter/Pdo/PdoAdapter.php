@@ -108,6 +108,18 @@ abstract class PdoAdapter
     }
 
     /**
+     * Modifies the passed-in SQL to add LIMIT for DELETE Query.
+     *
+     * @param string $sql
+     * @param int $limit
+     *
+     * @return void
+     */
+    public function applyLimitForDelete(string &$sql, int $limit): void
+    {
+    }
+
+    /**
      * Prepare the parameters for a Connection
      *
      * @param array $params the connection parameters from the configuration

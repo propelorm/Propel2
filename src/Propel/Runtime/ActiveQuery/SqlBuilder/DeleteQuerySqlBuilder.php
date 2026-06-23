@@ -41,8 +41,13 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
         $deleteFrom = $this->buildDeleteFromClause($tableName);
         $whereDto = $this->buildWhereClause($columnNames);
         $where = $whereDto->getSqlStatement();
-        $deleteStatement = "$deleteFrom $where";
+        $deleteStatement = implode(' ', array_filter([$deleteFrom, $where]));
         $params = $whereDto->getParameters();
+
+        $limit = $this->criteria->getLimit();
+        if ($limit >= 0) {
+            $this->adapter->applyLimitForDelete($deleteStatement, $limit);
+        }
 
         return new PreparedStatementDto($deleteStatement, $params);
     }
@@ -84,8 +89,12 @@ class DeleteQuerySqlBuilder extends AbstractSqlQueryBuilder
      */
     protected function buildWhereClause(array $columnNames): PreparedStatementDto
     {
-        $whereClause = [];
         $params = [];
+        if (count($columnNames) === 0) {
+            return new PreparedStatementDto('', $params);
+        }
+
+        $whereClause = [];
         foreach ($columnNames as $columnName) {
             $filter = $this->criteria->getCriterion($columnName);
             $whereClause[] = $this->buildStatementFromCriterion($filter, $params);
