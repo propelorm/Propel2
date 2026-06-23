@@ -1378,7 +1378,7 @@ class QueryBuilder extends AbstractOMBuilder
                 ->addUsingAlias(" . $this->getColumnConstant($localValueOrColumn) . ", $rightValue, \$comparison)";
             } else {
                 $leftValue = var_export($localValueOrColumn, true);
-                $bindingType = $foreignColumn->getPDOType();
+                $bindingType = $foreignColumn->getPdoType();
                 $script .= "
                 ->where(\"$leftValue = ?\", $rightValue, $bindingType)";
             }

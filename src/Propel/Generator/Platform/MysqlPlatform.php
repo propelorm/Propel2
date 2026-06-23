@@ -1047,7 +1047,7 @@ ALTER TABLE %s ADD %s %s;
     {
         // FIXME - This is a temporary hack to get around apparent bugs w/ PDO+MYSQL
         // See http://pecl.php.net/bugs/bug.php?id=9919
-        if ($column->getPDOType() === PDO::PARAM_BOOL) {
+        if ($column->getPdoType() === PDO::PARAM_BOOL) {
             return sprintf(
                 "
 %s\$stmt->bindValue(%s, (int) %s, PDO::PARAM_INT);",

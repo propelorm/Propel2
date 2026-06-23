@@ -442,7 +442,7 @@ class ColumnTest extends ModelTestCase
         $column->setDomain($domain);
         $column->setType($mappingType);
 
-        $this->assertSame($pdoType, $column->getPDOType());
+        $this->assertSame($pdoType, $column->getPdoType());
     }
 
     public function providePdoTypes()

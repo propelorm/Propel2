@@ -520,7 +520,7 @@ class PropelTypes
      *
      * @return int
      */
-    public static function getPDOType(string $type): int
+    public static function getPdoType(string $type): int
     {
         return self::$mappingTypeToPDOTypeMap[$type];
     }
