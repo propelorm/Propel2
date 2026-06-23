@@ -195,7 +195,9 @@ class SchemaReader
                 ),
             );
         }
-        xml_parser_free($this->parser);
+        if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+            xml_parser_free($this->parser);
+        }
         $this->parser = $parserStash;
 
         array_pop($this->schemasTagsStack);
