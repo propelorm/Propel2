@@ -32,6 +32,7 @@ class TableMap
      * @var array<string, string>
      */
     protected static $collectionClassNameCache = [];
+
     /**
      * phpname type
      * e.g. 'AuthorId'
