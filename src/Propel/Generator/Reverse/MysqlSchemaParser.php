@@ -464,6 +464,7 @@ EOT;
                         $result = null;
                         $regex = sprintf('/ %s (%s)/', $fkaction, $pipedActionsString);
                         preg_match($regex, $fkey, $result);
+                        /** @var $result array|null */
                         if ($result && is_array($result) && isset($result[1])) {
                             $fkactions[$fkaction] = $result[1];
                         }

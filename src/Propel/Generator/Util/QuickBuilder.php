@@ -525,11 +525,7 @@ class QuickBuilder
      */
     public function fixNamespaceDeclarations(string $source): string
     {
-        $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING];
-
-        if (PHP_VERSION_ID >= 80000) {
-            $cooperativeLexems = array_merge($cooperativeLexems, [T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED]);
-        }
+        $cooperativeLexems = [T_WHITESPACE, T_NS_SEPARATOR, T_STRING, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED];
 
         $source = $this->forceNamespace($source);
 
