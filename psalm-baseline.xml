@@ -10,11 +10,6 @@
       <code>$fk-&gt;isParentChild</code>
     </UndefinedPropertyAssignment>
   </file>
-  <file src="src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php">
-    <UndefinedPropertyAssignment occurrences="1">
-      <code>$versionTable-&gt;isVersionTable</code>
-    </UndefinedPropertyAssignment>
-  </file>
   <file src="src/Propel/Generator/Builder/DataModelBuilder.php">
     <InvalidArgument occurrences="1">
       <code>$this</code>

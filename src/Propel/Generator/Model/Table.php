@@ -159,6 +159,7 @@ class Table extends ScopedMappingModel implements IdMethod
     protected bool $isCrossRef = false;
 
     protected ?string $defaultStringFormat = null;
+    protected ?bool $isVersionTable = false;
 
     /**
      * Constructs a table object with a name
@@ -2301,5 +2302,13 @@ class Table extends ScopedMappingModel implements IdMethod
     {
         return $this->getForeignKeysReferencingTable($table->getName()) ||
             $table->getForeignKeysReferencingTable($this->getName());
+    }
+
+    public function isAVersionTable(): bool {
+        return $this->isVersionTable;
+    }
+
+    public function setAsVersionTable(bool $isVersionTable): void {
+        $this->isVersionTable = $isVersionTable;
     }
 }
