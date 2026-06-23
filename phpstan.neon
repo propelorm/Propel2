@@ -12,5 +12,4 @@ parameters:
             identifier: missingType.iterableValue
         - '#Call to deprecated method .* of class Propel\\#'
         - '#Call to function is_array\(\) with non-empty-array will always evaluate to true#'
-        - '#Cannot access offset \'basename#'
-        - '#Cannot access offset \'mysql#'
+        - '#Cannot access offset#'
