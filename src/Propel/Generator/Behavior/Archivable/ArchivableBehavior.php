@@ -109,11 +109,19 @@ class ArchivableBehavior extends Behavior
         $database = $table->getDatabase();
         $archiveTableName = $this->getArchiveTableName();
 
-        $archiveTableExistsInSchema = $database->hasTable($archiveTableName);
+        $archiveTable = $database->getTable($archiveTableName);
+        $schemaDelimiter = $database->getSchemaDelimiter();
+        if (
+            $archiveTable === null
+            && $table->getSchema()
+            && strpos($archiveTableName, $schemaDelimiter) === false
+        ) {
+            $archiveTableName = $table->getSchema() . $schemaDelimiter . $archiveTableName;
+            $archiveTable = $database->getTable($archiveTableName);
+        }
 
-        $this->archiveTable = $archiveTableExistsInSchema ?
-            $database->getTable($archiveTableName) :
-            $this->createArchiveTable();
+        $archiveTableExistsInSchema = $archiveTable !== null;
+        $this->archiveTable = $archiveTable ?? $this->createArchiveTable();
 
         if ($archiveTableExistsInSchema && !$this->parameterHasValue('sync', 'true')) {
             return;
