@@ -8,6 +8,7 @@
 
 namespace Propel\Tests\Generator\Behavior\Versionable;
 
+use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Util\QuickBuilder;
 
 /**
@@ -252,6 +253,45 @@ CREATE TABLE versionable_behavior_test_1_version
 );
 EOF;
         $this->assertStringContainsString($expected, $builder->getSQL());
+    }
+
+    /**
+     * @return void
+     */
+    public function testReferrerVersionColumnsDoNotIncludeTheTableSchema()
+    {
+        $schema = <<<EOF
+<database name="versionable_behavior_test_0" schema="grapevine">
+    <table name="responsibility_matrix" schema="grapevine">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <behavior name="versionable"/>
+    </table>
+    <table name="responsibility_matrix_item" schema="grapevine">
+        <column name="id" primaryKey="true" type="INTEGER" autoIncrement="true"/>
+        <column name="responsibility_matrix_id" type="INTEGER"/>
+        <foreign-key foreignTable="responsibility_matrix" foreignSchema="grapevine">
+            <reference local="responsibility_matrix_id" foreign="id"/>
+        </foreign-key>
+        <behavior name="versionable"/>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setPlatform(new MysqlPlatform());
+        $builder->setSchema($schema);
+
+        $database = $builder->getDatabase();
+        $versionTable = $database->getTable('grapevine.responsibility_matrix_version');
+        $this->assertTrue($versionTable->hasColumn('responsibility_matrix_item_ids'));
+        $this->assertTrue($versionTable->hasColumn('responsibility_matrix_item_versions'));
+        $this->assertFalse($versionTable->hasColumn('grapevine.responsibility_matrix_item_ids'));
+        $this->assertFalse($versionTable->hasColumn('grapevine.responsibility_matrix_item_versions'));
+
+        $table = $database->getTable('grapevine.responsibility_matrix');
+        $foreignKey = $table->getReferrers()[0];
+        $behavior = $table->getBehavior('versionable');
+        $this->assertSame('responsibility_matrix_item_ids', $behavior->getReferrerIdsColumn($foreignKey)->getName());
+        $this->assertSame('responsibility_matrix_item_versions', $behavior->getReferrerVersionsColumn($foreignKey)->getName());
     }
 
     /**
