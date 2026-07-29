@@ -576,6 +576,48 @@ class DatabaseTableComparatorTest extends TestCase
     /**
      * @return void
      */
+    public function testExcludedTablesMatchCommonNamesForSchemaQualifiedTables()
+    {
+        $d1 = new Database();
+        $d1->setPlatform($this->platform);
+        $d1->setSchema('grapevine');
+        $d1->addTable(new Table('t_audit_log'));
+
+        $d2 = new Database();
+        $d2->setPlatform($this->platform);
+        $d2->setSchema('grapevine');
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, ['t_audit_log']);
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, ['t_*']);
+        $this->assertFalse($diff);
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, ['grapevine.t_*']);
+        $this->assertFalse($diff);
+    }
+
+    /**
+     * @return void
+     */
+    public function testExcludedTablePatternsTreatRegexCharactersAsLiterals()
+    {
+        $d1 = new Database();
+        $d1->setPlatform($this->platform);
+        $d1->setSchema('grapevine');
+        $d1->addTable(new Table('tXaudit_log'));
+
+        $d2 = new Database();
+        $d2->setPlatform($this->platform);
+        $d2->setSchema('grapevine');
+
+        $diff = DatabaseComparator::computeDiff($d1, $d2, false, false, true, ['t.*']);
+        $this->assertInstanceOf('Propel\Generator\Model\Diff\DatabaseDiff', $diff);
+    }
+
+    /**
+     * @return void
+     */
     public function testExcludedTablesWithRenaming()
     {
         $dc = new DatabaseComparator();
