@@ -73,12 +73,6 @@ parameters:
 			path: src/Propel/Generator/Behavior/I18n/I18nBehaviorObjectBuilderModifier.php
 
 		-
-			message: '#^Access to an undefined property Propel\\Generator\\Model\\Table\:\:\$isVersionTable\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Propel/Generator/Behavior/Versionable/VersionableBehavior.php
-
-		-
 			message: '#^Variable \$col might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
