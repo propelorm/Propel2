@@ -304,14 +304,18 @@ class DatabaseComparator
      */
     protected function isTableExcluded(Table $table): bool
     {
-        $tableName = $table->getName();
-        if (in_array($tableName, $this->excludedTables, true)) {
-            return true;
-        }
+        $tableNames = [$table->getName(), $table->getCommonName()];
 
-        foreach ($this->excludedTables as $excludedTableName) {
-            if (preg_match('/^' . str_replace('*', '.*', $excludedTableName) . '$/', $tableName)) {
+        foreach ($tableNames as $tableName) {
+            if (in_array($tableName, $this->excludedTables, true)) {
                 return true;
+            }
+
+            foreach ($this->excludedTables as $excludedTableName) {
+                $pattern = str_replace('\\*', '.*', preg_quote($excludedTableName, '/'));
+                if (preg_match('/^' . $pattern . '$/', $tableName)) {
+                    return true;
+                }
             }
         }
 
