@@ -26,6 +26,7 @@ use Map\ArchivableTest4TableMap;
 use Map\ArchivableTest5TableMap;
 use Map\MyOldArchivableTest3TableMap;
 use Propel\Generator\Exception\SchemaException;
+use Propel\Generator\Platform\MysqlPlatform;
 use Propel\Generator\Util\QuickBuilder;
 use Propel\Tests\TestCase;
 use function substr_count;
@@ -140,6 +141,55 @@ EOF;
     {
         $table = ArchivableTest2TableMap::getTableMap();
         $this->assertTrue($table->getDatabaseMap()->hasTable('archivable_test_2_archive'));
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function existingArchiveTableSchemaProvider(): array
+    {
+        return [
+            'database schema' => [' schema="archive_schema"', ''],
+            'table schema' => ['', ' schema="archive_schema"'],
+        ];
+    }
+
+    /**
+     * @dataProvider existingArchiveTableSchemaProvider
+     *
+     * @param string $databaseSchema
+     * @param string $tableSchema
+     *
+     * @return void
+     */
+    public function testReusesExistingArchiveTableInSchema(string $databaseSchema, string $tableSchema)
+    {
+        $schema = <<<EOF
+<database name="archivable_behavior_schema_test"$databaseSchema>
+    <table name="source_table"$tableSchema>
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <behavior name="archivable">
+            <parameter name="archive_table" value="archive_table"/>
+        </behavior>
+    </table>
+
+    <table name="archive_table"$tableSchema>
+        <column name="id" required="true" primaryKey="true" type="INTEGER"/>
+        <column name="custom_column" type="VARCHAR"/>
+    </table>
+</database>
+EOF;
+        $builder = new QuickBuilder();
+        $builder->setPlatform(new MysqlPlatform());
+        $builder->setSchema($schema);
+
+        $database = $builder->getDatabase();
+        $archiveTable = $database->getTable('archive_schema.archive_table');
+
+        $this->assertCount(2, $database->getTables());
+        $this->assertNotNull($archiveTable);
+        $this->assertTrue($archiveTable->hasColumn('custom_column'));
+        $this->assertFalse($archiveTable->hasColumn('archived_at'));
     }
 
     /**
