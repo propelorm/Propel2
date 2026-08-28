@@ -1910,10 +1910,28 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
     protected function addMutatorCloseBody(string &$script, Column $column): void
     {
         $table = $this->getTable();
+        $database = $table->getDatabase();
+
+        $referencedTables = [];
+        if ($column->isForeignKey()) {
+            foreach ($column->getForeignKeys() as $fk) {
+                $tableName = $fk->getForeignTableName();
+                if (!isset($referencedTables[$tableName])) {
+                    $referencedTables[$tableName] = $database->getTable($tableName);
+                }
+            }
+        }
+
+        foreach ($column->getReferrers() as $refFK) {
+            $tableName = $refFK->getForeignTableName();
+            if (!isset($referencedTables[$tableName])) {
+                $referencedTables[$tableName] = $this->getDatabase()->getTable($tableName);
+            }
+        }
 
         if ($column->isForeignKey()) {
             foreach ($column->getForeignKeys() as $fk) {
-                $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+                $tblFK = $referencedTables[$fk->getForeignTableName()];
                 $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                 if (!$colFK) {
@@ -1931,11 +1949,11 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
         }
 
         foreach ($column->getReferrers() as $refFK) {
-            $tblFK = $this->getDatabase()->getTable($refFK->getForeignTableName());
+            $tblFK = $referencedTables[$refFK->getForeignTableName()];
 
             if ($tblFK->getName() != $table->getName()) {
                 foreach ($column->getForeignKeys() as $fk) {
-                    $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+                    $tblFK = $referencedTables[$fk->getForeignTableName()];
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($column->getName()));
 
                     if ($refFK->isLocalPrimaryKey()) {
@@ -6983,12 +7001,26 @@ abstract class " . $this->getUnqualifiedClassName() . $parentClass . ' implement
      */
     public function ensureConsistency(): void
     {";
+        $database = $table->getDatabase();
+
+        $referencedTables = [];
+        foreach ($table->getColumns() as $col) {
+            if ($col->isForeignKey()) {
+                foreach ($col->getForeignKeys() as $fk) {
+                    $tableName = $fk->getForeignTableName();
+                    if (!isset($referencedTables[$tableName])) {
+                        $referencedTables[$tableName] = $database->getTable($tableName);
+                    }
+                }
+            }
+        }
+
         foreach ($table->getColumns() as $col) {
             $clo = $col->getLowercasedName();
 
             if ($col->isForeignKey()) {
                 foreach ($col->getForeignKeys() as $fk) {
-                    $tblFK = $table->getDatabase()->getTable($fk->getForeignTableName());
+                    $tblFK = $referencedTables[$fk->getForeignTableName()];
                     $colFK = $tblFK->getColumn($fk->getMappedForeignColumn($col->getName()));
                     $varName = $this->getFKVarName($fk);
 
