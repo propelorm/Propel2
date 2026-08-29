@@ -234,7 +234,7 @@ class PropelTypes
     /**
      * @var string
      */
-    public const BIGINT_NATIVE_TYPE = 'string';
+    public const BIGINT_NATIVE_TYPE = PHP_INT_SIZE === 8 ? 'int' : 'string';
 
     /**
      * @var string
