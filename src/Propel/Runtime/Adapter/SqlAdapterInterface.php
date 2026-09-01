@@ -62,6 +62,16 @@ interface SqlAdapterInterface extends AdapterInterface
     public function applyLimit(string &$sql, int $offset, int $limit, ?Criteria $criteria = null): void;
 
     /**
+     * Modifies the passed-in SQL to add LIMIT for DELETE Query.
+     *
+     * @param string $sql
+     * @param int $limit
+     *
+     * @return void
+     */
+    public function applyLimitForDelete(string &$sql, int $limit): void;
+
+    /**
      * Modifies the passed-in SQL to add locking capabilities
      *
      * @param string $sql

@@ -136,6 +136,21 @@ class MysqlAdapter extends PdoAdapter implements SqlAdapterInterface
     }
 
     /**
+     * Modifies the passed-in SQL to add LIMIT for DELETE Query.
+     *
+     * @param string $sql
+     * @param int $limit
+     *
+     * @return void
+     */
+    public function applyLimitForDelete(string &$sql, int $limit): void
+    {
+        if ($limit >= 0) {
+            $sql .= ' LIMIT ' . $limit;
+        }
+    }
+
+    /**
      * @see SqlAdapterInterface::random()
      *
      * @param string|null $seed
