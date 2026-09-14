@@ -363,7 +363,7 @@ class MigrationTest extends TestCaseFixturesDatabase
         }
 
         $app = new Application('Propel', Propel::VERSION);
-        $app->add($commandInstance);
+        $app->addCommands([$commandInstance]);
         $app->setAutoExit(false);
 
         return $app->run($applicationInputArguments, $outputCapturer);

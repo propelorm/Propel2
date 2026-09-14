@@ -30,7 +30,7 @@ $ns = '\\Propel\\Generator\\Command\\';
 foreach ($finder as $file) {
     $r = new \ReflectionClass($ns . $file->getBasename('.php'));
     if ($r->isSubclassOf(Command::class) && !$r->isAbstract()) {
-        $app->add($r->newInstance());
+        $app->addCommands([$r->newInstance()]);
     }
 }
 

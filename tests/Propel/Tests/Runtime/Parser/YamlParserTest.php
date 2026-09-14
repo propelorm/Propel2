@@ -10,6 +10,7 @@ namespace Propel\Tests\Runtime\Parser;
 
 use Propel\Runtime\Parser\YamlParser;
 use Propel\Tests\TestCase;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Test for YamlParser class
@@ -21,7 +22,7 @@ class YamlParserTest extends TestCase
     public static function arrayYAMLConversionDataProvider()
     {
         return [
-            [[], '{  }', 'empty array'],
+            [[], Yaml::dump([], 3), 'empty array'],
             [[1, 2, 3],
         "- 1
 - 2

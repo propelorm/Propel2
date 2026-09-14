@@ -33,7 +33,7 @@ class ConfigConvertCommand extends AbstractCommand
     /**
      * @inheritDoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption('config-dir', null, InputOption::VALUE_REQUIRED, 'The directory where the configuration file is placed.', self::DEFAULT_CONFIG_DIRECTORY)

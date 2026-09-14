@@ -28,7 +28,7 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
     {
         $app = new Application('Propel', Propel::VERSION);
         $command = new DatabaseReverseCommand();
-        $app->add($command);
+        $app->addCommands([$command]);
 
         $currentDir = getcwd();
         $outputDir = __DIR__ . '/../../../../reversecommand';
@@ -76,7 +76,7 @@ class DatabaseReverseTest extends TestCaseFixturesDatabase
     {
         $app = new Application('Propel', Propel::VERSION);
         $command = new DatabaseReverseCommand();
-        $app->add($command);
+        $app->addCommands([$command]);
 
         $currentDir = getcwd();
         $outputDir = __DIR__ . '/../../../../reversecommand';

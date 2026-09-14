@@ -31,7 +31,7 @@ class MigrationStatusCommand extends AbstractCommand
     /**
      * @inheritDoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 

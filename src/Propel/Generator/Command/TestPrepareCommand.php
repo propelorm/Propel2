@@ -73,7 +73,7 @@ class TestPrepareCommand extends AbstractCommand
     /**
      * @inheritDoc
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDefinition([
