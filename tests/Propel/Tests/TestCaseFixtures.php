@@ -166,7 +166,7 @@ class TestCaseFixtures extends TestCase
         }
 
         $app = new Application('Propel', Propel::VERSION);
-        array_map([$app, 'add'], $commands);
+        $app->addCommands($commands);
         $app->setAutoExit(false);
 
         return $app;

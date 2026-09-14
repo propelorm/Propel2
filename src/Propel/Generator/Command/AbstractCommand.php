@@ -47,7 +47,7 @@ abstract class AbstractCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption('platform', null, InputOption::VALUE_REQUIRED, 'The platform to use. Define a full qualified class name or mysql|pgsql|sqlite|mssql|oracle.')

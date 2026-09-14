@@ -222,10 +222,7 @@ class ValidateBehavior extends Behavior
                     throw new InvalidArgumentException('The options value, in <parameter> tag must be an array');
                 }
 
-                $opt = var_export($properties['options'], true);
-                $opt = str_replace("\n", '', $opt);
-                $opt = str_replace('  ', '', $opt);
-                $properties['options'] = $opt;
+                $properties['options'] = $this->buildNamedArguments($properties['options']);
             }
 
             $constraints[] = $properties;
@@ -233,6 +230,33 @@ class ValidateBehavior extends Behavior
         }
 
         return $this->renderTemplate('objectLoadValidatorMetadata', ['constraints' => $constraints]);
+    }
+
+    /**
+     * Renders an options array as a PHP named-argument list (e.g. `min: 4, max: 128`), so the
+     * generated `new Constraint(...)` call keeps working now that Symfony's constraint classes
+     * (as of Symfony 8) no longer accept a single options array as their first constructor
+     * argument.
+     *
+     * @param array $options
+     *
+     * @throws \Propel\Generator\Exception\InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function buildNamedArguments(array $options): string
+    {
+        $arguments = [];
+
+        foreach ($options as $name => $value) {
+            if (!is_string($name) || !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+                throw new InvalidArgumentException('Each key of the options value, in <parameter> tag, must be a valid constructor argument name.');
+            }
+
+            $arguments[] = $name . ': ' . var_export($value, true);
+        }
+
+        return implode(', ', $arguments);
     }
 
     /**

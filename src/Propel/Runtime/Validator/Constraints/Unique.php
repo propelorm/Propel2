@@ -21,4 +21,18 @@ class Unique extends Constraint
      * @var string
      */
     public $column = '';
+
+    /**
+     * @param string|null $message
+     * @param string|null $column
+     * @param array|null $groups
+     * @param mixed $payload
+     */
+    public function __construct(?string $message = null, ?string $column = null, ?array $groups = null, $payload = null)
+    {
+        parent::__construct(null, $groups, $payload);
+
+        $this->message = $message ?? $this->message;
+        $this->column = $column ?? $this->column;
+    }
 }
