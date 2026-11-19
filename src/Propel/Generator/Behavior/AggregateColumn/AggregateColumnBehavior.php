@@ -82,6 +82,50 @@ class AggregateColumnBehavior extends Behavior
     }
 
     /**
+     * @return string
+     */
+    public function objectAttributes(): string
+    {
+        $columnPhpName = $this->getColumn()->getPhpName();
+
+        return "/**
+ * Tracks deferred aggregate recomputation during a parent cascade save().
+ *
+ * @var bool
+ */
+protected \$needUpdate{$columnPhpName} = false;
+";
+    }
+
+    /**
+     * Initializes the deferred-update flag from scheduled child deletions so DB-hydrated
+     * children (null parent back-ref) and unpooled cascade deletes trigger recomputation.
+     *
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
+    public function preDoSave(ObjectBuilder $builder): string
+    {
+        $columnPhpName = $this->getColumn()->getPhpName();
+
+        return "\$this->needUpdate{$columnPhpName} = {$builder->getScheduledDeletionCondition($this->getForeignKey())};";
+    }
+
+    /**
+     * @return string
+     */
+    public function postDoSave(): string
+    {
+        $columnPhpName = $this->getColumn()->getPhpName();
+
+        return "if (\$this->needUpdate{$columnPhpName}) {
+    \$this->needUpdate{$columnPhpName} = false;
+    \$this->set{$columnPhpName}(\$this->compute{$columnPhpName}(\$con));
+}";
+    }
+
+    /**
      * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
      *
      * @throws \InvalidArgumentException
