@@ -649,6 +649,11 @@ PRAGMA foreign_keys = ON;
             throw new RuntimeException('PdoConnection::query() did not return a result set as a statement object.');
         }
 
-        return (string)$pdoStatement->fetch(PDO::FETCH_NUM)[0];
+        $row = $pdoStatement->fetch(PDO::FETCH_NUM);
+        if (!is_array($row)) {
+            return '';
+        }
+
+        return (string)$row[0];
     }
 }

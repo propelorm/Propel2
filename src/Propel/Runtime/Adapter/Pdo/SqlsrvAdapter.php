@@ -122,6 +122,7 @@ class SqlsrvAdapter extends MssqlAdapter implements SqlAdapterInterface
             $blob = 'blob' . $position;
             $$blob = $value;
 
+            /** @var \Propel\Runtime\Connection\StatementInterface $stmt */
             return $stmt->bindParam($parameter, ${$blob}, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
         }
 
