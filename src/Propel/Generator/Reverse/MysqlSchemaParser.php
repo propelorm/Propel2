@@ -606,6 +606,8 @@ EOT;
         if (!$this->addVendorInfo) {
             // since we depend on `Engine` in the MysqlPlatform, we always have to extract this vendor information
             $row = ['Engine' => $row ? $row['Engine'] : null];
+        } elseif (!is_array($row)) {
+            $row = [];
         }
         $vi = $this->getNewVendorInfoObject($row);
         $table->addVendorInfo($vi);

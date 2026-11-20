@@ -267,6 +267,10 @@ class OracleSchemaParser extends AbstractSchemaParser
             $stmt3 = $this->dbh->query("SELECT TABLE_NAME, COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = '" . $row['R_CONSTRAINT_NAME'] . "'");
             $foreignReferenceInfo = $stmt3->fetch(PDO::FETCH_ASSOC);
 
+            if (!is_array($localReferenceInfo) || !is_array($foreignReferenceInfo)) {
+                continue;
+            }
+
             if (!isset($foreignKeys[(string)$row['CONSTRAINT_NAME']])) {
                 $fk = new ForeignKey($row['CONSTRAINT_NAME']);
                 $fk->setForeignTableCommonName($foreignReferenceInfo['TABLE_NAME']);
@@ -292,6 +296,7 @@ class OracleSchemaParser extends AbstractSchemaParser
         /** @var \PDOStatement $stmt */
         $stmt = $this->dbh->query("SELECT COLS.COLUMN_NAME FROM USER_CONSTRAINTS CONS, USER_CONS_COLUMNS COLS WHERE CONS.CONSTRAINT_NAME = COLS.CONSTRAINT_NAME AND CONS.TABLE_NAME = '" . $table->getName() . "' AND CONS.CONSTRAINT_TYPE = 'P'");
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            /** @var array<int|string, mixed> $row */
             // This fixes a strange behavior by PDO. Sometimes the
             // row values are inside an index 0 of an array
             if (isset($row[0])) {
