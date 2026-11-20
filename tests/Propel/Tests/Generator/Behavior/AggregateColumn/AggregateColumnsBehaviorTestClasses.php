@@ -13,6 +13,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Tests\Bookstore\Behavior\AggregateComment;
 use Propel\Tests\Bookstore\Behavior\AggregateCommentQuery;
+use Propel\Tests\Bookstore\Behavior\AggregatePost;
 use Propel\Tests\Bookstore\Behavior\Map\AggregateCommentTableMap;
 
 class TestableComment extends AggregateComment
@@ -74,5 +75,41 @@ class TestableAggregateCommentQuery extends AggregateCommentQuery
     protected function basePostDelete(int $affectedRows, ConnectionInterface $con): ?int
     {
         return $this->postDelete($affectedRows, $con);
+    }
+}
+
+class TestablePost extends AggregatePost
+{
+    /**
+     * @var int
+     */
+    public $computeCallCount = 0;
+
+    /**
+     * @var int|null
+     */
+    public $postSaveNbComments;
+
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface $con
+     *
+     * @return mixed
+     */
+    public function computeNbComments(ConnectionInterface $con)
+    {
+        $this->computeCallCount++;
+
+        return parent::computeNbComments($con);
+    }
+
+    /**
+     * @param \Propel\Runtime\Connection\ConnectionInterface|null $con
+     *
+     * @return void
+     */
+    public function postSave(?ConnectionInterface $con = null): void
+    {
+        parent::postSave($con);
+        $this->postSaveNbComments = $this->getNbComments();
     }
 }

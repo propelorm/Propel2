@@ -43,4 +43,22 @@
         </foreign-key>
     </table>
 
+    <table name="aggregate_order" phpName="AggregateOrder">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <behavior name="aggregate_column">
+            <parameter name="name" value="total_price"/>
+            <parameter name="expression" value="SUM(price)"/>
+            <parameter name="foreign_table" value="aggregate_order_item"/>
+        </behavior>
+    </table>
+
+    <table name="aggregate_order_item" phpName="AggregateOrderItem">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="INTEGER"/>
+        <column name="price" defaultValue="0" type="INTEGER"/>
+        <column name="order_id" required="true" type="INTEGER"/>
+        <foreign-key foreignTable="aggregate_order" onDelete="cascade" onUpdate="cascade">
+            <reference local="order_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
 </database>

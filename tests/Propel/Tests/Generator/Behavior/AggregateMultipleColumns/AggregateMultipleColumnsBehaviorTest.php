@@ -276,6 +276,75 @@ EOF;
     }
 
     /**
+     * Test that cascade-saving through the parent persists aggregated columns in the database.
+     *
+     * @return void
+     */
+    public function testCascadeSaveAggregateUpdate(): void
+    {
+        $this->clearTables();
+
+        $group = new AggregateMultipleScoreGroup();
+        $score1 = (new AggregateMultipleScore())->setScore(10)->setScoredAt('2021-02-25');
+        $score2 = (new AggregateMultipleScore())->setScore(25)->setScoredAt('2021-02-24');
+        $group->addAggregateMultipleScore($score1);
+        $group->addAggregateMultipleScore($score2);
+        $affectedRows = $group->save($this->con);
+
+        $this->assertEquals(3, $affectedRows);
+        $this->assertFalse($group->isModified(), 'Group must not remain modified after cascade save()');
+        AggregateMultipleScoreGroupTableMap::clearInstancePool();
+        $reloadedGroup = AggregateMultipleScoreGroupQuery::create()->findPk($group->getId(), $this->con);
+        $this->assertAggregates($reloadedGroup, 2, 35, 10, 25, '2021-02-24', '2021-02-25', 'cascade inserting group with scores');
+        $this->assertEquals(1, $reloadedGroup->getNumberOfBigScores());
+        $this->assertEquals(25, $reloadedGroup->getTotalBigScore());
+
+        $score2->setScore(30)->setScoredAt('2021-02-26');
+        $group->save($this->con);
+
+        $this->assertFalse($group->isModified());
+        AggregateMultipleScoreGroupTableMap::clearInstancePool();
+        $reloadedGroup = AggregateMultipleScoreGroupQuery::create()->findPk($group->getId(), $this->con);
+        $this->assertAggregates($reloadedGroup, 2, 40, 10, 30, '2021-02-25', '2021-02-26', 'cascade updating child score');
+        $this->assertEquals(1, $reloadedGroup->getNumberOfBigScores());
+        $this->assertEquals(30, $reloadedGroup->getTotalBigScore());
+
+        AggregateMultipleScoreGroupTableMap::clearInstancePool();
+        AggregateMultipleScoreTableMap::clearInstancePool();
+        $hydratedGroup = AggregateMultipleScoreGroupQuery::create()->findPk($group->getId(), $this->con);
+        $hydratedScores = $hydratedGroup->getAggregateMultipleScores(null, $this->con);
+        $hydratedScore1 = $this->findScoreById($hydratedScores, $score1->getId());
+        $hydratedGroup->removeAggregateMultipleScore($hydratedScore1);
+        $hydratedGroup->save($this->con);
+
+        $this->assertFalse($hydratedGroup->isModified());
+        $this->assertAggregates($hydratedGroup, 1, 30, 30, 30, '2021-02-26', '2021-02-26', 'in-memory group after cascade removing DB-hydrated score');
+
+        AggregateMultipleScoreGroupTableMap::clearInstancePool();
+        $reloadedGroup = AggregateMultipleScoreGroupQuery::create()->findPk($group->getId(), $this->con);
+        $this->assertAggregates($reloadedGroup, 1, 30, 30, 30, '2021-02-26', '2021-02-26', 'reloaded group after cascade removing DB-hydrated score');
+    }
+
+    /**
+     * Finds a hydrated score in a collection by primary key (independent of database row order).
+     *
+     * @param iterable<\Propel\Tests\Bookstore\Behavior\AggregateMultipleScore> $scores
+     * @param int $id
+     *
+     * @return \Propel\Tests\Bookstore\Behavior\AggregateMultipleScore
+     */
+    protected function findScoreById(iterable $scores, int $id): AggregateMultipleScore
+    {
+        foreach ($scores as $score) {
+            if ($score->getId() === $id) {
+                return $score;
+            }
+        }
+
+        $this->fail(sprintf('Score with ID %d not found in collection.', $id));
+    }
+
+    /**
      * @return void
      */
     private function clearTables(): void

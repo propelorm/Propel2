@@ -214,6 +214,57 @@ class AggregateMultipleColumnsBehavior extends Behavior
     }
 
     /**
+     * @return string
+     */
+    public function objectAttributes(): string
+    {
+        $aggregationName = $this->getAggregationName();
+
+        return "/**
+ * Tracks deferred aggregate recomputation during a parent cascade save().
+ *
+ * @var bool
+ */
+protected \$needUpdate{$aggregationName} = false;
+";
+    }
+
+    /**
+     * Initializes the deferred-update flag from scheduled child deletions so DB-hydrated
+     * children (null parent back-ref) and unpooled cascade deletes trigger recomputation.
+     *
+     * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
+     *
+     * @return string
+     */
+    public function preDoSave(ObjectBuilder $builder): string
+    {
+        $aggregationName = $this->getAggregationName();
+
+        return "\$this->needUpdate{$aggregationName} = {$builder->getScheduledDeletionCondition($this->getForeignKey())};";
+    }
+
+    /**
+     * @return string
+     */
+    public function postDoSave(): string
+    {
+        $aggregationName = $this->getAggregationName();
+        $setterLines = [];
+        foreach ($this->getColumnPhpNames() as $index => $columnPhpName) {
+            $setterLines[] = "        \$this->set{$columnPhpName}(\$aggregatedValues[{$index}]);";
+        }
+
+        return "if (\$this->needUpdate{$aggregationName}) {
+    \$this->needUpdate{$aggregationName} = false;
+    \$aggregatedValues = \$this->compute{$aggregationName}(\$con);
+    if (is_array(\$aggregatedValues)) {
+" . implode("\n", $setterLines) . "
+    }
+}";
+    }
+
+    /**
      * @param \Propel\Generator\Builder\Om\ObjectBuilder $builder
      *
      * @return string
@@ -290,18 +341,27 @@ class AggregateMultipleColumnsBehavior extends Behavior
      */
     protected function addObjectUpdate(): string
     {
-        $table = $this->getTable();
-        $columnPhpNames = array_map(function (array $columnParameters) use ($table) {
-            $columName = $columnParameters[self::PARAMETER_KEY_COLUMN_NAME];
-
-            return $table->getColumn($columName)->getPhpName();
-        },
-        $this->getParameter(static::PARAMETER_KEY_COLUMNS));
-
         return $this->renderTemplate('objectUpdate', [
             'aggregationName' => $this->getAggregationName(),
-            'columnPhpNames' => $columnPhpNames,
+            'columnPhpNames' => $this->getColumnPhpNames(),
         ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getColumnPhpNames(): array
+    {
+        $table = $this->getTable();
+
+        return array_map(
+            static function (array $columnParameters) use ($table): string {
+                $columnName = $columnParameters[self::PARAMETER_KEY_COLUMN_NAME];
+
+                return $table->getColumn($columnName)->getPhpName();
+            },
+            $this->getParameter(static::PARAMETER_KEY_COLUMNS),
+        );
     }
 
     /**
